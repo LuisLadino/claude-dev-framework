@@ -95,13 +95,21 @@ Your answer:
 Pick the option that best matches:
 
 A) 🎨 **Visual/UI** - Improve how something looks
+
 B) ⚙️ **Functional** - Add capability or feature
+
 C) 📊 **Content** - Display or manage content
+
 D) 🔗 **Integration** - Connect to external service
+
 E) 🐛 **Fix/Improve** - Fix issue or improve existing
+
 F) 🎭 **Interactive** - Add user interaction
+
 G) 📱 **Responsive** - Mobile/device adaptation
+
 H) ⚡ **Performance** - Speed or optimization
+
 I) ♿ **Accessibility** - Improve accessibility
 
 Type the letter (A-I):
@@ -121,9 +129,13 @@ Type the letter (A-I):
 Pick the primary user:
 
 A) 👔 **Potential Employers** - Recruiters, hiring managers
+
 B) 💼 **Clients** - People who might hire you
+
 C) 👨‍💻 **Developers** - Technical peers
+
 D) 📱 **General Visitors** - Anyone browsing
+
 E) 🎯 **Specific Persona** - [describe who]
 
 Type the letter (A-E) or describe:
@@ -253,18 +265,31 @@ Your preferences:
 Any specific technical needs?
 
 Pick all that apply:
+
 □ Form validation
+
 □ API integration
+
 □ Database/storage
+
 □ State management
+
 □ Authentication
+
 □ Real-time updates
+
 □ File uploads
+
 □ Animations
+
 □ Accessibility (WCAG AA)
+
 □ SEO optimization
+
 □ Performance requirements
+
 □ Browser compatibility
+
 □ Other: [specify]
 
 List your selections:
