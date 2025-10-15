@@ -182,16 +182,35 @@ update_framework_files() {
         ((updated++))
     fi
 
-    # Update scripts
+    # Update scripts (ALL scripts from framework)
     if [ -d "$TEMP_DIR/scripts" ]; then
         mkdir -p scripts
-        cp "$TEMP_DIR/scripts/validate-setup.sh" scripts/ 2>/dev/null || true
-        cp "$TEMP_DIR/scripts/update-framework.sh" scripts/ 2>/dev/null || true
-        cp "$TEMP_DIR/scripts/init-stack.sh" scripts/ 2>/dev/null || true
-        cp "$TEMP_DIR/scripts/import-company-standards.sh" scripts/ 2>/dev/null || true
+        # Copy all framework scripts
+        for script in "$TEMP_DIR/scripts/"*.sh; do
+            if [ -f "$script" ]; then
+                script_name=$(basename "$script")
+                # Skip install.sh and uninstall.sh (only needed for initial setup)
+                if [ "$script_name" != "install.sh" ] && [ "$script_name" != "uninstall.sh" ]; then
+                    cp "$script" "scripts/"
+                fi
+            fi
+        done
         chmod +x scripts/*.sh 2>/dev/null || true
         print_success "Updated scripts"
         ((updated++))
+    fi
+
+    # Update README if it exists in framework
+    if [ -f "$TEMP_DIR/.claude/README.md" ]; then
+        cp "$TEMP_DIR/.claude/README.md" .claude/
+        print_success "Updated README.md"
+        ((updated++))
+    fi
+
+    # Remove MIGRATION-GUIDE.md if it exists (only needed for initial merge)
+    if [ -f ".claude/MIGRATION-GUIDE.md" ]; then
+        rm -f .claude/MIGRATION-GUIDE.md
+        print_info "Removed MIGRATION-GUIDE.md (no longer needed)"
     fi
 
     echo ""
@@ -248,19 +267,25 @@ show_summary() {
     echo -e "${GREEN}════════════════════════════════════════════════════════════${NC}"
     echo ""
     echo -e "${BLUE}What was updated:${NC}"
-    echo "  ✓ Framework commands (.claude/commands/)"
-    echo "  ✓ Workflow files (.claude/workflows/)"
-    echo "  ✓ Tool integrations (.claude/tools/)"
-    echo "  ✓ Config files (.claude/config/)"
+    echo "  ✓ Framework commands (.claude/commands/) - All slash commands"
+    echo "  ✓ Workflow files (.claude/workflows/) - Multi-step workflows"
+    echo "  ✓ Tool integrations (.claude/tools/) - MCP, git hooks, etc."
+    echo "  ✓ Config files (.claude/config/) - Framework configs only"
     echo "  ✓ Core CLAUDE.md (if not customized)"
-    echo "  ✓ Helper scripts (scripts/)"
+    echo "  ✓ Helper scripts (scripts/) - ALL framework scripts"
+    echo "  ✓ README.md (.claude/README.md) - Framework documentation"
     echo ""
     echo -e "${BLUE}What was preserved:${NC}"
     echo "  ✓ Your stack configuration (.claude/your-stack/)"
-    echo "  ✓ Your custom standards"
-    echo "  ✓ Your documentation"
-    echo "  ✓ Your custom instructions"
-    echo "  ✓ Your tasks and PRDs"
+    echo "  ✓ Your custom standards (coding-standards/, architecture/, etc.)"
+    echo "  ✓ Your documentation standards"
+    echo "  ✓ Your custom instructions (PROJECT-INSTRUCTIONS.md, CLAUDE-OLD.md)"
+    echo "  ✓ Your tasks and PRDs (.claude/tasks/)"
+    echo "  ✓ Any custom files you created"
+    echo ""
+    echo -e "${BLUE}What was NOT installed:${NC}"
+    echo "  • templates/ - Framework development files (not for users)"
+    echo "  • install.sh/uninstall.sh - Only needed for initial setup"
     echo ""
     echo -e "${BLUE}Backup location:${NC}"
     echo "  $BACKUP_DIR"
