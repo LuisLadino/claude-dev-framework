@@ -1,0 +1,252 @@
+# Stack Configuration
+# 
+# This file defines your project's tech stack and tells the framework
+# which standards to apply when building code.
+#
+# The AI assistant reads this file to understand your project.
+
+# ==============================================================================
+# Project Information
+# ==============================================================================
+
+name: "My Project"
+version: "1.0.0"
+description: "A brief description of your project"
+
+# ==============================================================================
+# Tech Stack Definition
+# ==============================================================================
+
+stack:
+  # Primary framework (React, Vue, Svelte, Angular, Astro, Next.js, etc.)
+  framework: "React"
+  
+  # Framework version (helps AI find correct documentation)
+  framework_version: "19"
+  
+  # Primary language (TypeScript, JavaScript, etc.)
+  language: "TypeScript"
+  
+  # Language version/mode
+  language_mode: "strict"  # or "standard", "loose", etc.
+  
+  # Styling approach (Tailwind CSS, CSS Modules, Styled Components, etc.)
+  styling: "Tailwind CSS"
+  
+  # Styling version
+  styling_version: "4"
+  
+  # UI component library (if any)
+  component_library: "daisyUI"  # or "shadcn/ui", "MUI", "Chakra", null
+  component_library_version: "5"
+  
+  # Testing framework (Vitest, Jest, Cypress, Playwright, etc.)
+  testing: "Vitest"
+  testing_version: "latest"
+  
+  # Package manager (npm, yarn, pnpm, bun)
+  package_manager: "pnpm"
+  
+  # Build tool (Vite, Webpack, Turbopack, etc.)
+  build_tool: "Vite"
+  
+  # Additional technologies (state management, animation, etc.)
+  additional:
+    state_management: "Zustand"  # or "Redux", "MobX", "Pinia", "Nanostores", null
+    animation: "GSAP"  # or "Framer Motion", "React Spring", null
+    forms: "React Hook Form"  # or "Formik", null
+    data_fetching: "TanStack Query"  # or "SWR", "Apollo", null
+
+# ==============================================================================
+# Active Standards
+# ==============================================================================
+#
+# These lists tell Claude which standards files to read when coding.
+# Commands like /start-task, /verify, etc. automatically read files listed here.
+#
+# HOW TO ADD NEW STANDARDS:
+#
+# Option 1 (Recommended): Use the /add-standard command
+#   → /add-standard design-standards
+#   → It creates the file AND registers it here automatically
+#
+# Option 2 (Manual): Create file and add to list below
+#   1. Create: .claude/your-stack/coding-standards/design-standards.md
+#   2. Add "design-standards" to standards_active list below
+#   3. Run /verify to check it's discoverable
+#
+# ==============================================================================
+
+# Coding standards (in coding-standards/ directory)
+standards_active:
+  - react-standards        # Matches: coding-standards/react-standards.md
+  - typescript-standards   # Matches: coding-standards/typescript-standards.md
+  - styling-standards      # Matches: coding-standards/styling-standards.md
+  - testing-standards      # Matches: coding-standards/testing-standards.md
+  # Add more as needed:
+  # - design-standards     # Design tokens, component variants
+  # - animation-standards  # Animation patterns and transitions
+  # - accessibility-standards  # WCAG compliance patterns
+  # - performance-standards    # Performance optimization rules
+  # - seo-standards       # SEO best practices
+
+# Architecture patterns (in architecture/ directory)
+architecture_patterns:
+  - file-structure         # Matches: architecture/file-structure.md
+  - component-patterns     # Matches: architecture/component-patterns.md
+  # Add more as needed:
+  # - design-system-patterns  # Design system organization
+  # - api-patterns       # API route organization
+  # - state-management-patterns  # State management structure
+
+# Documentation requirements (in documentation-standards/ directory)
+documentation_standards:
+  - code-comments          # Matches: documentation-standards/code-comments.md
+  - component-docs         # Matches: documentation-standards/component-docs.md
+  # Add more as needed:
+  # - api-docs           # API documentation format
+  # - architecture-docs  # Architecture decision records
+
+# ==============================================================================
+# Tool Configuration
+# ==============================================================================
+
+tools:
+  # MCP servers (AI tool integrations)
+  mcp_servers:
+    - name: "context7"
+      enabled: true
+      description: "Access external documentation and company resources"
+    
+    - name: "web_search"
+      enabled: true
+      description: "Research best practices and current information"
+    
+    - name: "filesystem"
+      enabled: true
+      description: "Read and write project files"
+  
+  # Web search preferences
+  web_search:
+    enabled: true
+    prefer_official_docs: true
+    cite_sources: true
+
+# ==============================================================================
+# Project-Specific Settings
+# ==============================================================================
+
+project_specifics:
+  # Import alias (from tsconfig.json or similar)
+  import_alias: "@/"
+  
+  # Key directories
+  components_dir: "src/components"
+  pages_dir: "src/pages"        # or "app", "routes", etc.
+  utils_dir: "src/lib"
+  tests_dir: "tests"             # or "__tests__", "src/**/*.test.*"
+  types_dir: "src/types"
+  
+  # File naming conventions
+  component_naming: "PascalCase"     # PascalCase, kebab-case, etc.
+  utility_naming: "camelCase"
+  type_naming: "PascalCase"
+  
+  # Export patterns
+  prefer_named_exports: true
+  use_barrel_exports: true           # index.ts files
+  
+  # Testing requirements
+  test_coverage_required: true
+  test_coverage_minimum: 80          # percentage
+  
+  # Code formatting
+  formatter: "Prettier"
+  formatter_config: ".prettierrc"
+  
+  # Linting
+  linter: "ESLint"
+  linter_config: ".eslintrc.json"
+
+# ==============================================================================
+# Quality Gates
+# ==============================================================================
+
+quality_gates:
+  # What must pass before committing
+  pre_commit:
+    - format                # Run formatter
+    - lint                  # Run linter
+    - type_check            # TypeScript check
+    - build                 # Verify build succeeds
+    - test                  # Run tests (if test files exist)
+  
+  # What must pass in CI/CD
+  ci_requirements:
+    - all_tests_pass
+    - coverage_threshold_met
+    - no_type_errors
+    - build_succeeds
+
+# ==============================================================================
+# Workflow Preferences
+# ==============================================================================
+
+workflows:
+  # How detailed should standards checks be?
+  standards_check_verbosity: "detailed"  # "minimal", "standard", "detailed"
+  
+  # Should AI wait for approval before coding?
+  require_approval: true
+  
+  # Should AI explain decisions?
+  explain_decisions: true
+  
+  # How much should /learn command explain?
+  learning_mode: "thorough"  # "brief", "standard", "thorough"
+  
+  # Git commit message format
+  commit_format: "conventional"  # "conventional", "simple", "detailed"
+  
+  # Should AI suggest improvements?
+  suggest_improvements: true
+
+# ==============================================================================
+# Company-Specific Settings (if applicable)
+# ==============================================================================
+
+company:
+  # If this is a company project
+  has_company_standards: false
+  
+  # Where company standards were imported from
+  standards_source: null
+  # Example: "company-handbook.pdf" or "internal-wiki-url"
+  
+  # Company-specific patterns
+  conventions:
+    # Example: naming conventions, file organization rules, etc.
+    # feature_branch_prefix: "feature/"
+    # pr_template: ".github/pull_request_template.md"
+
+# ==============================================================================
+# Notes & Context
+# ==============================================================================
+
+# Additional context for AI (free-form text)
+notes: |
+  Add any additional context here that helps AI understand your project:
+  
+  - Specific architectural decisions
+  - Known issues or workarounds
+  - Domain-specific terminology
+  - Team preferences
+  
+  This is free-form text - write anything helpful.
+
+# ==============================================================================
+# Configuration Version
+# ==============================================================================
+
+# Don't edit this - tracks config file format version
+config_version: "1.0"
