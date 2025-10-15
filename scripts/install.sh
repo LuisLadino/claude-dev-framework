@@ -167,13 +167,15 @@ install_framework() {
 
     # Core framework files
     if [ "$merge_mode" -eq 1 ]; then
-        # Merge mode: Don't overwrite user's CLAUDE.md, but add migration guide
-        if [ ! -f ".claude/CLAUDE.md" ]; then
-            cp "$TEMP_DIR/.claude/CLAUDE.md" .claude/
-            print_success "Installed CLAUDE.md"
-        else
-            print_info "Keeping your existing CLAUDE.md"
+        # Merge mode: Backup user's CLAUDE.md and install framework version
+        if [ -f ".claude/CLAUDE.md" ]; then
+            mv .claude/CLAUDE.md .claude/CLAUDE-OLD.md
+            print_info "Backed up your CLAUDE.md to CLAUDE-OLD.md"
         fi
+        # Install framework CLAUDE.md (required for framework to work)
+        cp "$TEMP_DIR/.claude/CLAUDE.md" .claude/
+        print_success "Installed framework CLAUDE.md (required)"
+
         # Add migration guide in merge mode
         cp "$TEMP_DIR/.claude/MIGRATION-GUIDE.md" .claude/
         print_success "Added MIGRATION-GUIDE.md (for organizing files)"

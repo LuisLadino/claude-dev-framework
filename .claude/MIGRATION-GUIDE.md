@@ -100,16 +100,19 @@ Read the `.claude/` directory structure:
 
 **Correct approach:**
 
-If user has existing instructions (like `main-instructions.md`, old `CLAUDE.md`, etc.):
+**Note**: The installer automatically backs up user's CLAUDE.md to `CLAUDE-OLD.md` in merge mode.
+
+If user has existing instructions (like `main-instructions.md`, `CLAUDE-OLD.md`, etc.):
 
 ```bash
-# Rename their old instructions
+# Rename their old instructions to PROJECT-INSTRUCTIONS.md
 mv .claude/main-instructions.md .claude/PROJECT-INSTRUCTIONS.md
-# or if they had an old CLAUDE.md that got kept:
-mv .claude/CLAUDE-old.md .claude/PROJECT-INSTRUCTIONS.md
+# or if they had CLAUDE-OLD.md from installer backup:
+mv .claude/CLAUDE-OLD.md .claude/PROJECT-INSTRUCTIONS.md
+# or rename any other instruction files:
+mv .claude/[their-instructions-file] .claude/PROJECT-INSTRUCTIONS.md
 
-# The framework CLAUDE.md stays as-is
-# It's already the correct file
+# The framework CLAUDE.md is already installed correctly
 ```
 
 **Then add a reference at the END of framework CLAUDE.md:**
