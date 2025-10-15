@@ -133,23 +133,37 @@ update_framework_files() {
 
     # Update CLAUDE.md (core framework instructions)
     if [ -f "$TEMP_DIR/.claude/CLAUDE.md" ]; then
-        # Check if user has PROJECT-INSTRUCTIONS.md (custom instructions)
-        if [ -f ".claude/PROJECT-INSTRUCTIONS.md" ]; then
-            # User has separated custom instructions - safe to update CLAUDE.md
+        # Check if user has PROJECT-INSTRUCTIONS.md (custom instructions properly separated)
+        if [ -f ".claude/PROJECT-INSTRUCTIONS.md" ] || [ -f ".claude/CLAUDE-OLD.md" ]; then
+            # User has properly separated custom instructions - safe to update CLAUDE.md
             cp "$TEMP_DIR/.claude/CLAUDE.md" .claude/
-            print_success "Updated CLAUDE.md"
+            print_success "Updated CLAUDE.md (your custom instructions are in PROJECT-INSTRUCTIONS.md)"
             ((updated++))
         else
-            # Check if CLAUDE.md has been customized
+            # Check if CLAUDE.md is identical to framework version
             if diff -q .claude/CLAUDE.md "$TEMP_DIR/.claude/CLAUDE.md" > /dev/null 2>&1; then
-                # Same file, update it
+                # Same file, update it (no-op but for clarity)
                 cp "$TEMP_DIR/.claude/CLAUDE.md" .claude/
                 print_success "Updated CLAUDE.md"
                 ((updated++))
             else
-                # Different - user might have customized it
-                print_warning "CLAUDE.md appears customized - skipping"
-                echo "   To update: manually merge or move customizations to PROJECT-INSTRUCTIONS.md"
+                # Different - user has embedded custom instructions in CLAUDE.md
+                print_warning "CLAUDE.md contains custom instructions - NEEDS MANUAL UPDATE"
+                echo ""
+                echo "   Your CLAUDE.md has custom content mixed with framework instructions."
+                echo "   To get framework updates (including important MCP checks):"
+                echo ""
+                echo "   1. Separate your custom instructions:"
+                echo "      mv .claude/CLAUDE.md .claude/CLAUDE-CUSTOM-BACKUP.md"
+                echo ""
+                echo "   2. Extract your custom content to PROJECT-INSTRUCTIONS.md"
+                echo "      (Review CLAUDE-CUSTOM-BACKUP.md and copy your custom parts)"
+                echo ""
+                echo "   3. Re-run update to get latest framework CLAUDE.md:"
+                echo "      ./scripts/update-framework.sh"
+                echo ""
+                echo "   Latest framework includes: MCP tool usage checks, updated workflows"
+                echo ""
             fi
         fi
     fi
@@ -290,15 +304,26 @@ show_summary() {
     echo -e "${BLUE}Backup location:${NC}"
     echo "  $BACKUP_DIR"
     echo ""
+    echo -e "${BLUE}Latest Framework Features:${NC}"
+    echo "  🔧 MCP Tool Usage checks in Standards Check workflow"
+    echo "  🔧 Automatic context7 detection before web_search"
+    echo "  🔧 Improved migration guide for existing setups"
+    echo "  🔧 Enhanced update system (you just used it!)"
+    echo "  🔧 Comprehensive script updates"
+    echo ""
     echo -e "${BLUE}Next steps:${NC}"
     echo ""
     echo "  1. Verify setup:"
     echo "     ./scripts/validate-setup.sh"
     echo ""
-    echo "  2. Test framework:"
+    echo "  2. Test framework with MCP awareness:"
     echo "     Use /start-task in Claude Code"
+    echo "     Claude will now check for MCP servers before tasks"
     echo ""
-    echo "  3. If issues occur, restore from backup:"
+    echo "  3. If CLAUDE.md wasn't updated (custom content detected):"
+    echo "     Follow the instructions above to separate custom instructions"
+    echo ""
+    echo "  4. If issues occur, restore from backup:"
     echo "     cp -r $BACKUP_DIR/* .claude/"
     echo ""
 }
