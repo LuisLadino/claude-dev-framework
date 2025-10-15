@@ -65,11 +65,7 @@ check_existing_installation() {
         echo "  2) Merge with existing (keeps your files)"
         echo "  3) Cancel installation"
         echo ""
-
-        # Read from terminal explicitly
-        exec < /dev/tty
         read -p "Choice [1-3]: " choice
-        exec <&-
 
         case $choice in
             1)
