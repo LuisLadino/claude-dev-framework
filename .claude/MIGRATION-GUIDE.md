@@ -6,6 +6,29 @@
 
 ---
 
+## ⚠️ CRITICAL: Framework CLAUDE.md is Required
+
+**READ THIS FIRST BEFORE DOING ANYTHING:**
+
+The framework `CLAUDE.md` file MUST remain as the primary instructions file. It is NOT negotiable.
+
+**Why**: It contains the entire framework engine:
+- Standards Check workflow (mandatory before any coding)
+- Quality enforcement mechanisms
+- Stack configuration system
+- All slash commands and workflows integration
+
+**What this means:**
+- ✅ Framework CLAUDE.md stays as `.claude/CLAUDE.md`
+- ✅ User's old instructions get renamed to `PROJECT-INSTRUCTIONS.md`
+- ✅ Add reference to user's instructions at end of framework file
+- ❌ NEVER replace or delete framework CLAUDE.md
+- ❌ NEVER merge user's old file into framework file
+
+**Got it? Good. Now proceed with migration steps below.**
+
+---
+
 ## Your Role
 
 When the user asks for help organizing their `.claude/` directory, follow these steps:
@@ -51,25 +74,55 @@ Read the `.claude/` directory structure:
 - Environment/deployment configs
   → Move to `config/`
 
-### Step 3: Handle Custom Instructions
+### Step 3: Handle Custom Instructions (CRITICAL)
 
-If the user has an existing `CLAUDE.md` or similar:
+⚠️ **CRITICAL REQUIREMENT**: The framework `CLAUDE.md` MUST be used. It's not optional.
 
-**Option A: Append to framework CLAUDE.md**
+**Why**: The framework `CLAUDE.md` contains the engine that makes everything work:
+- Standards Check workflow (mandatory before coding)
+- Quality checklist enforcement
+- Stack configuration loading
+- All framework commands and workflows
+- Integration with your-stack/ directory
+
+**If the user has an existing CLAUDE.md or instructions:**
+
+**You MUST:**
+1. **Keep the framework CLAUDE.md as the primary file** (already in `.claude/CLAUDE.md`)
+2. **Rename user's old instructions** to something else
+3. **Preserve their content** in a separate file
+
+**DO NOT:**
+- ❌ Delete the framework CLAUDE.md
+- ❌ Replace the framework CLAUDE.md with user's old file
+- ❌ Try to merge the two files together
+- ❌ Skip the framework CLAUDE.md
+
+**Correct approach:**
+
+If user has existing instructions (like `main-instructions.md`, old `CLAUDE.md`, etc.):
+
+```bash
+# Rename their old instructions
+mv .claude/main-instructions.md .claude/PROJECT-INSTRUCTIONS.md
+# or if they had an old CLAUDE.md that got kept:
+mv .claude/CLAUDE-old.md .claude/PROJECT-INSTRUCTIONS.md
+
+# The framework CLAUDE.md stays as-is
+# It's already the correct file
+```
+
+**Then add a reference at the END of framework CLAUDE.md:**
 ```markdown
-# Add separator at end of framework CLAUDE.md
 ---
 
 # Project-Specific Instructions
 
-[User's custom content here]
+See [PROJECT-INSTRUCTIONS.md](PROJECT-INSTRUCTIONS.md) for additional project-specific guidance.
 ```
 
-**Option B: Create separate file**
-- Move user's instructions to `CLAUDE-PROJECT.md`
-- Reference it from main `CLAUDE.md`
-
-**Ask user which they prefer.**
+**Explain to user:**
+"The framework CLAUDE.md is required for the framework to function. I've preserved your existing instructions in PROJECT-INSTRUCTIONS.md and added a reference to it in the framework file. You can review both files and manually integrate any project-specific requirements you want Claude to follow."
 
 ### Step 4: Show Migration Plan
 
@@ -90,12 +143,15 @@ Present a clear plan:
 **Config → `config/`:**
 - `environment-setup.md`
 
-### Custom Instructions
+### ⚠️ Custom Instructions (Framework CLAUDE.md MUST Stay)
 
 Your existing instructions in:
-- `.claude/old-instructions.md` (150 lines)
+- `.claude/main-instructions.md` (150 lines)
 
-**Recommendation**: Append to framework `CLAUDE.md` or create `CLAUDE-PROJECT.md`?
+**Action Required:**
+- Rename to `PROJECT-INSTRUCTIONS.md`
+- Add reference at end of framework `CLAUDE.md`
+- Framework CLAUDE.md remains as primary (REQUIRED)
 
 ### Files to Archive
 
@@ -117,12 +173,21 @@ mv .claude/react-patterns.md .claude/your-stack/coding-standards/
 mv .claude/file-structure.md .claude/your-stack/architecture/
 ```
 
-**Handle instructions merge:**
+**Handle user's old instructions:**
 ```bash
-# If appending to CLAUDE.md
-echo "\n---\n\n# Project-Specific Instructions\n" >> .claude/CLAUDE.md
-cat .claude/old-instructions.md >> .claude/CLAUDE.md
+# Rename user's old instructions
+mv .claude/main-instructions.md .claude/PROJECT-INSTRUCTIONS.md
+
+# Add reference at END of framework CLAUDE.md
+echo "" >> .claude/CLAUDE.md
+echo "---" >> .claude/CLAUDE.md
+echo "" >> .claude/CLAUDE.md
+echo "# Project-Specific Instructions" >> .claude/CLAUDE.md
+echo "" >> .claude/CLAUDE.md
+echo "See [PROJECT-INSTRUCTIONS.md](PROJECT-INSTRUCTIONS.md) for additional project-specific guidance." >> .claude/CLAUDE.md
 ```
+
+**IMPORTANT**: Do NOT append the full content. Just add a reference link.
 
 **Archive old files:**
 ```bash
