@@ -33,6 +33,36 @@ The framework `CLAUDE.md` file MUST remain as the primary instructions file. It 
 
 When the user asks for help organizing their `.claude/` directory, follow these steps:
 
+### Step 0: Understand the Target Structure (READ THIS FIRST)
+
+**⚠️ CRITICAL: The `your-stack/` directory is where ALL user standards go.**
+
+The framework distinguishes between:
+- **Framework files** - Commands, workflows, tools (stay in root directories)
+- **User standards** - Coding patterns, architecture, docs (ALL go in `your-stack/`)
+
+**Target structure:**
+```
+.claude/
+├── CLAUDE.md                           (Framework - DO NOT MOVE)
+├── commands/                           (Framework - DO NOT MOVE)
+├── workflows/                          (Framework - DO NOT MOVE)
+├── tools/                              (Framework - DO NOT MOVE)
+├── config/                             (Framework operational configs ONLY)
+│   ├── version-control.md
+│   ├── deployment.md
+│   └── environment.md
+├── your-stack/                         ← ALL USER STANDARDS GO HERE
+│   ├── coding-standards/               ← ALL coding/language/framework standards
+│   ├── architecture/                   ← ALL architecture/structure/testing docs
+│   ├── documentation-standards/        ← ALL documentation guides
+│   └── stack-config.yaml
+├── tasks/                              (Generated PRDs)
+└── PROJECT-INSTRUCTIONS.md             (User's old instructions)
+```
+
+**If you see standards files anywhere except `your-stack/`, they MUST be moved there.**
+
 ### Step 1: Analyze Current Structure
 
 Read the `.claude/` directory structure:
@@ -42,37 +72,61 @@ Read the `.claude/` directory structure:
 ```
 
 **Look for:**
-- Loose files in root (standards, instructions, configs)
-- Files in wrong locations
-- Duplicate or outdated files
-- Custom user content that should be preserved
+- Loose standards files in `.claude/` root → MUST move to `your-stack/coding-standards/`
+- Standards files in `config/` or other directories → MUST move to `your-stack/`
+- Architecture docs anywhere → MUST move to `your-stack/architecture/`
+- Old instruction files → Rename to `PROJECT-INSTRUCTIONS.md`
 
 ### Step 2: Categorize Files
 
-**Framework Files** (already in correct locations):
-- `CLAUDE.md` - Framework instructions
+**Framework Files** (already in correct locations - DO NOT MOVE):
+- `CLAUDE.md` - Framework instructions (REQUIRED)
+- `MIGRATION-GUIDE.md` - This file (delete after migration)
 - `commands/` - Slash commands
 - `workflows/` - Multi-step workflows
-- `tools/` - Tool configurations
-- `config/` - Environment configs
-- `your-stack/` - Custom standards
+- `tools/` - Tool configurations (MCP, git hooks, etc.)
+- `config/` - ONLY version-control.md, deployment.md, environment.md
+- `your-stack/` - Empty structure for YOUR standards
 - `tasks/` - PRDs and task lists
 
-**User Files** (need to be organized):
-- Standards files (`*-standards.md`, `*-guide.md`, `*-patterns.md`)
-  → Move to `your-stack/coding-standards/`
+**⚠️ CRITICAL: ALL user standards files MUST go into `your-stack/` subdirectories**
 
-- Architecture docs (`architecture.md`, `file-structure.md`)
-  → Move to `your-stack/architecture/`
+**User Files that MUST be moved:**
 
-- Documentation standards
-  → Move to `your-stack/documentation-standards/`
+**ANY coding standards/patterns/guides:**
+- `*-standards.md`, `*-guide.md`, `*-patterns.md`, `*-conventions.md`
+- Examples: `react-standards.md`, `typescript-guide.md`, `coding-style.md`
+- Language-specific: `python-standards.md`, `javascript-patterns.md`
+- Framework-specific: `nextjs-patterns.md`, `vue-guide.md`
+- Component patterns: `component-library.md`, `design-patterns.md`
+  → **MOVE ALL to `your-stack/coding-standards/`**
 
-- Custom instructions (existing `CLAUDE.md`, `README.md`)
-  → Needs special handling (see Step 3)
+**ANY architecture documentation:**
+- `architecture.md`, `file-structure.md`, `project-structure.md`
+- `component-architecture.md`, `system-design.md`
+- Testing strategies: `testing-strategy.md`, `test-patterns.md`
+  → **MOVE ALL to `your-stack/architecture/`**
 
-- Environment/deployment configs
-  → Move to `config/`
+**ANY documentation standards:**
+- `documentation-guide.md`, `comment-standards.md`, `readme-template.md`
+  → **MOVE ALL to `your-stack/documentation-standards/`**
+
+**Custom instructions/old files:**
+- `CLAUDE-OLD.md`, `main-instructions.md`, old `README.md`
+  → **RENAME to `PROJECT-INSTRUCTIONS.md`** (see Step 3)
+
+**ONLY these config files stay in `config/`:**
+- `version-control.md` (git workflow)
+- `deployment.md` (deployment process)
+- `environment.md` (dev environment setup)
+- Any other environment/operational configs
+
+**Rule of thumb:**
+- If it's about HOW to code → `your-stack/coding-standards/`
+- If it's about project structure → `your-stack/architecture/`
+- If it's about documentation → `your-stack/documentation-standards/`
+- If it's about git/deploy/env → `config/`
+- If it's old instructions → `PROJECT-INSTRUCTIONS.md`
 
 ### Step 3: Handle Custom Instructions (CRITICAL)
 
