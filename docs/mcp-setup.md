@@ -37,9 +37,35 @@ With MCP:    Claude reads wiki and applies those standards
 
 ## Why Use MCP with This Framework?
 
+### MCP-Aware Workflow
+
+**The framework now includes MCP awareness in the Standards Check:**
+
+When starting any task, Claude will check:
+- Are MCP servers available for this task?
+- Should context7 be used for documentation research?
+- Are there specialized MCPs that would help?
+
+This ensures Claude always uses the best tools available, not just defaults like web_search.
+
 ### Enhanced Capabilities
 
-**1. Import Company Standards**
+**1. Better Documentation Research with context7**
+```
+/research-stack
+
+Claude (with context7 MCP):
+- Fetches official documentation directly
+- Gets complete, accurate docs (not summaries)
+- Faster and more reliable than web_search
+- Works with Next.js, React, Vue, TypeScript, etc.
+
+Claude (without context7):
+- Falls back to web_search (less accurate)
+- Gets summarized/incomplete information
+```
+
+**2. Import Company Standards**
 ```
 /import-standards
 
@@ -50,7 +76,7 @@ Claude (with MCP):
 - Saves to .claude/your-stack/
 ```
 
-**2. Learn From Existing Code**
+**3. Learn From Existing Code**
 ```
 /learn "our authentication pattern"
 
@@ -61,7 +87,7 @@ Claude (with MCP):
 - Documents as standard
 ```
 
-**3. Access Project Resources**
+**4. Access Project Resources**
 ```
 /start-task "Update API docs"
 
@@ -75,6 +101,7 @@ Claude (with MCP):
 ### Not Required, But Powerful
 
 The framework works great without MCP. But with MCP:
+- ✅ Better documentation research (context7 vs web_search)
 - ✅ Import existing company docs automatically
 - ✅ Search entire codebase for patterns
 - ✅ Access cloud resources
@@ -138,7 +165,67 @@ Claude will show available servers.
 
 ## Recommended MCP Servers
 
-### 1. Filesystem Server
+### 1. context7 (⭐ HIGHLY RECOMMENDED)
+
+**Purpose:** Fetch official documentation directly
+
+**Why it matters:** The framework's `/research-stack` command uses context7 to get complete, accurate documentation instead of web search summaries. This significantly improves the quality of generated standards.
+
+**Setup:**
+```bash
+# Install context7
+npm install -g @context7/mcp-server
+
+# Or use npx (no install needed)
+```
+
+**Configuration:**
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@context7/mcp-server"]
+    }
+  }
+}
+```
+
+**Use cases:**
+- `/research-stack` - Research tech stack documentation
+- Documentation lookups - Get official docs for any framework/library
+- API reference - Fetch complete API documentation
+- Best practices - Get authoritative guidance
+
+**With framework:**
+```
+/research-stack
+
+Claude (checking):
+✅ context7 available - Using for documentation research
+→ Fetching official Next.js docs...
+→ Fetching React 18 docs...
+→ Getting TypeScript handbook...
+
+Result: Complete, accurate standards based on official docs
+```
+
+**Without context7:**
+```
+/research-stack
+
+Claude (checking):
+❌ context7 NOT available - Falling back to web_search
+⚠️  Warning: Results may be less accurate
+
+Result: Standards based on web search summaries
+```
+
+**Installation guide:** [context7 on npm](https://www.npmjs.com/package/@context7/mcp-server)
+
+---
+
+### 2. Filesystem Server
 
 **Purpose:** Read local files
 
