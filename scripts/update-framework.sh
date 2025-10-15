@@ -45,6 +45,28 @@ print_info() {
 
 # Check prerequisites
 check_prerequisites() {
+    # Check if we're in the framework repo itself
+    if [ -f "scripts/install.sh" ] && [ -f ".claude/CLAUDE.md" ] && [ -d ".git" ]; then
+        if git remote -v | grep -q "claude-dev-framework"; then
+            print_error "This is the framework development repo!"
+            echo ""
+            echo "The update script is for projects that USE the framework,"
+            echo "not for the framework repo itself."
+            echo ""
+            echo "You're in: $(basename $(pwd))"
+            echo ""
+            echo "To test updates:"
+            echo "  1. Navigate to a project that has the framework installed"
+            echo "  2. Run: /update-framework"
+            echo ""
+            echo "To develop the framework:"
+            echo "  1. Make changes here"
+            echo "  2. Commit and push"
+            echo "  3. Users will get updates when they run /update-framework"
+            exit 1
+        fi
+    fi
+
     if [ ! -d ".claude" ]; then
         print_error "No .claude directory found!"
         echo "This script must be run from a project with the framework installed."

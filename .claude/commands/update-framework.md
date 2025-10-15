@@ -46,77 +46,43 @@ The update script:
 
 ## Execution
 
-When user runs `/update-framework`, follow these steps:
+When user runs `/update-framework`:
 
-### Step 1: Download Latest Update Script
+**DO NOT analyze their setup or give explanations. Just execute these commands:**
 
-First, ensure we have the latest update script (in case it was fixed):
-
-```bash
-# Download latest update script
-curl -fsSL https://raw.githubusercontent.com/LuisLadino/claude-dev-framework/main/scripts/update-framework.sh -o scripts/update-framework.sh
-
-# Make executable
-chmod +x scripts/update-framework.sh
-```
-
-Tell user:
-```
-Downloaded latest update script to ensure bug fixes are included.
-```
-
-### Step 2: Run Update Script
+### Step 1: Download and run the update
 
 ```bash
-./scripts/update-framework.sh
+# Download latest update script and run it
+curl -fsSL https://raw.githubusercontent.com/LuisLadino/claude-dev-framework/main/scripts/update-framework.sh | bash
 ```
 
-The script will:
-- Prompt user for confirmation
-- Download latest framework
-- Create backup
-- Update framework files
-- Preserve customizations
-- Show summary of changes
+That's it. The script handles everything:
+- Downloads latest framework
+- Creates backup automatically
+- Updates framework files
+- Preserves all user customizations
+- Shows summary when complete
 
-### Step 3: Verify Update
+### Step 2: After script completes
 
-After update completes, verify the installation:
-
-```bash
-./scripts/validate-setup.sh
-```
-
-### Step 4: Show What Changed
-
-Tell user what was updated and what they should know:
+If the script ran successfully, tell the user:
 
 ```
-✅ Framework Updated!
+✅ Framework updated!
 
-What was updated:
-• Commands - Latest slash commands and workflows
-• Tools - Updated documentation and integrations
-• Config - Framework operational configs
-• Scripts - Helper scripts including this update script
-• CLAUDE.md - Core instructions (if not customized)
+The update script has:
+• Downloaded latest framework files
+• Backed up your current framework
+• Updated commands, workflows, tools, and config
+• Preserved all your customizations in your-stack/
 
-What was preserved:
-• your-stack/ - All your custom standards
-• PROJECT-INSTRUCTIONS.md - Your custom instructions
-• tasks/ - Your PRDs and task lists
-• All your customizations
+Backup location shown in script output above.
 
-Backup created at: .claude-backup-update-[timestamp]
-
-To restore if needed:
-  cp -r .claude-backup-update-*/* .claude/
-
-Next steps:
-• Review any new commands in .claude/commands/
-• Check if any new MCP integrations are available
-• Continue working - everything should work as before
+Next: Continue working - all your customizations are preserved.
 ```
+
+**That's all. Don't overthink it. Just run the curl command and let the script do its job.**
 
 ---
 
