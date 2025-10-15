@@ -30,147 +30,99 @@ You have custom `.claud` files, project instructions, or your own standards? **J
 
 **Already using Claude Code with your own system?** Great! Here's how to adopt the framework without losing your work.
 
-### Scenario 1: You Have Custom Instructions
+### Scenario 1: You Have Existing `.claude/` Directory
 
 **What you have:**
-- Project instructions in `.claud/` or `.claude/`
-- Custom prompts or guidelines
-- Your own standards documented somewhere
+- Existing `.claude/` or `.claud/` directory
+- Custom instructions, standards, or patterns
+- Your own organization system
 
-**How to migrate:**
+**How to migrate (RECOMMENDED):**
 
 ```bash
-# 1. Backup your existing setup first
+# Install with --merge flag
 cd your-project
-mv .claude .claude-backup  # or .claud if that's what you use
+curl -fsSL https://raw.githubusercontent.com/LuisLadino/claude-dev-framework/main/scripts/install.sh | bash -s -- --merge
+```
 
-# 2. Install framework (it will merge automatically)
+**What happens:**
+1. ✅ Your existing `CLAUDE.md` backed up to `CLAUDE-OLD.md`
+2. ✅ Framework `CLAUDE.md` installed (required for framework to work)
+3. ✅ All your other files preserved (won't be overwritten)
+4. ✅ Framework files added alongside yours
+5. ✅ `MIGRATION-GUIDE.md` added to help organize
+
+**Next step - Organize your files:**
+
+In Claude Code, say this **EXACTLY**:
+
+```
+"Read the MIGRATION-GUIDE.md file and help me organize
+my .claude directory according to the framework structure"
+```
+
+Claude will then:
+- Read `.claude/MIGRATION-GUIDE.md` for instructions
+- Analyze your existing files
+- Show you a detailed migration plan
+- Move standards to `your-stack/coding-standards/`
+- Move architecture docs to `your-stack/architecture/`
+- Preserve your old instructions in `PROJECT-INSTRUCTIONS.md`
+- Organize everything into proper framework structure
+
+**Interactive process:** Claude shows you the plan first, you approve, then it executes safely.
+
+---
+
+### Scenario 2: Manual Migration (If You Prefer Control)
+
+If you prefer to organize files yourself without Claude's help:
+
+```bash
+# 1. Install framework with backup
+cd your-project
+curl -fsSL https://raw.githubusercontent.com/LuisLadino/claude-dev-framework/main/scripts/install.sh | bash -s -- --backup
+# This moves your .claude to .claude-backup-[timestamp]
+
+# 2. Manually organize your files:
+# Move coding standards
+cp .claude-backup-*/react-standards.md .claude/your-stack/coding-standards/
+cp .claude-backup-*/typescript-guide.md .claude/your-stack/coding-standards/
+
+# Move architecture docs
+cp .claude-backup-*/architecture.md .claude/your-stack/architecture/
+
+# Preserve old instructions
+cp .claude-backup-*/CLAUDE.md .claude/PROJECT-INSTRUCTIONS.md
+
+# 3. Add reference to your instructions (optional)
+echo "\n---\n\n# Project-Specific Instructions\n\nSee [PROJECT-INSTRUCTIONS.md](PROJECT-INSTRUCTIONS.md) for additional guidance.\n" >> .claude/CLAUDE.md
+```
+
+### Scenario 3: You Have Company Standards to Import
+
+**What you have:**
+- Company handbook, engineering docs, style guides
+- No existing `.claude/` directory
+
+**How to set up:**
+
+```bash
+# 1. Install framework fresh
+cd your-project
 curl -fsSL https://raw.githubusercontent.com/LuisLadino/claude-dev-framework/main/scripts/install.sh | bash
-
-# Select option 2: "Merge with existing" when prompted
-# This keeps your custom files
-```
-
-**Option A: Let Claude analyze and merge**
-```bash
-# In Claude Code:
-/import-standards analyze codebase
-
-# Claude will:
-# - Discover patterns from your code
-# - Find your existing instructions
-# - Merge with framework structure
-# - Keep all your custom standards
-```
-
-**Option B: Manual merge**
-```bash
-# Copy your existing standards into framework structure
-cp .claude-backup/instructions.md .claude/your-stack/coding-standards/custom-standards.md
-cp .claude-backup/patterns.md .claude/your-stack/architecture/patterns.md
-
-# Edit stack-config.yaml to register them
-nano .claude/your-stack/stack-config.yaml
-```
-
-Add to `standards_active`:
-```yaml
-standards_active:
-  - custom-standards  # Your existing instructions
-  - patterns          # Your existing patterns
-```
-
-### Scenario 2: You Have Structured Standards
-
-**What you have:**
-- Organized `.claude/` directory with multiple files
-- Coding standards, architecture docs, etc.
-- Already following a system
-
-**How to migrate:**
-
-```bash
-# 1. Clone framework to temp location
-git clone https://github.com/LuisLadino/claude-dev-framework.git /tmp/claude-framework
-
-# 2. Copy ONLY the parts you need:
-
-# Get the command system
-cp -r /tmp/claude-framework/.claude/commands .claude/
-
-# Get the workflows (optional)
-cp -r /tmp/claude-framework/.claude/workflows .claude/
-
-# Get the main CLAUDE.md file
-cp /tmp/claude-framework/.claude/CLAUDE.md .claude/
-
-# 3. Keep your existing standards
-# Your files stay in .claude/your-stack/ or wherever they are
-
-# 4. Create stack-config.yaml to register your standards
-cp /tmp/claude-framework/.claude/your-stack/stack-config.yaml .claude/your-stack/
-```
-
-Edit `.claude/your-stack/stack-config.yaml` to point to your existing files:
-```yaml
-standards_active:
-  - my-react-standards      # Your existing file
-  - my-typescript-standards # Your existing file
-  - my-custom-patterns      # Your existing file
-```
-
-### Scenario 3: You Use Project Knowledge Only
-
-**What you have:**
-- No `.claude/` directory
-- Everything in Claude's Project Knowledge
-- Relying on uploaded docs
-
-**How to migrate:**
-
-```bash
-# 1. Add the framework
-cd your-project
-git clone https://github.com/LuisLadino/claude-dev-framework.git .claude-temp
-cp -r .claude-temp/.claude ./
-rm -rf .claude-temp
-
-# 2. Extract your knowledge into standards
-# In Claude Code:
-/import-standards
-
-# Choose Option 2: Analyze codebase
-# Claude will discover all patterns from your code
-# and create standards files automatically
-```
-
-**Your Project Knowledge stays intact!** The framework adds structure, but Claude still uses uploaded docs.
-
-### Scenario 4: You Have Company Standards Docs
-
-**What you have:**
-- Company handbook (PDF, Google Drive, Confluence, etc.)
-- Engineering standards documentation
-- Style guides
-
-**How to migrate:**
-
-```bash
-# 1. Add the framework
-cd your-project
-git clone https://github.com/LuisLadino/claude-dev-framework.git .claude-temp
-cp -r .claude-temp/.claude ./
-rm -rf .claude-temp
 
 # 2. Import your company docs
 # In Claude Code:
-/import-standards from Google Drive "Engineering Standards"
+/import-standards
 
-# Or use shell script for local files:
-./scripts/import-company-standards.sh
+# Follow prompts to import from:
+# - URLs (company wiki, Confluence, etc.)
+# - Local files (PDF, markdown, etc.)
+# - Analyze existing codebase
 ```
 
-Claude will convert your existing docs into the framework format automatically.
+The framework will convert your docs into organized standards files in `your-stack/`.
 
 ---
 
