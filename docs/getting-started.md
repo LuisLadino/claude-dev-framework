@@ -301,6 +301,12 @@ Claude will ask what stack you're using, then:
 
 **Works with ANY stack:** React, Python, Rust, Go, Django, Rails, etc.
 
+**⚠️ For best results:** Install [context7 MCP server](./mcp-setup.md)
+- Without it: Uses web search (generic summaries)
+- With it: Fetches official docs directly (highly accurate)
+- Setup time: ~5 minutes
+- See: "What if I don't have context7?" in [FAQ](./faq.md)
+
 ### Step 3: Start Coding
 
 ```

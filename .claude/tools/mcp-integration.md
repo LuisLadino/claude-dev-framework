@@ -4,12 +4,49 @@
 
 ---
 
+## ⚡ Quick Start (Recommended Setup)
+
+**For best framework experience, install context7:**
+
+```bash
+# 1. Install context7
+npm install -g @context7/mcp-server
+
+# 2. Configure Claude Desktop
+# Edit: ~/Library/Application Support/Claude/claude_desktop_config.json (Mac)
+# Or: %APPDATA%\Claude\claude_desktop_config.json (Windows)
+
+# Add this to the file:
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@context7/mcp-server"]
+    }
+  }
+}
+
+# 3. Restart Claude Desktop
+
+# 4. Test it works
+# In Claude, run: /research-stack
+# You should see "✅ context7 available"
+```
+
+**Why context7 is critical:**
+- `/research-stack` needs it to fetch official docs directly
+- Without it: Limited to web search (less accurate)
+- With it: Full official documentation (highly accurate)
+
+---
+
 ## What is MCP?
 
 Model Context Protocol is a standardized way for AI assistants to connect to external tools, databases, APIs, and systems. Think of it as giving Claude superpowers to access information beyond its training data.
 
 ### Why MCP Matters for This Framework
 
+- **Fetch official documentation** during `/research-stack` (context7)
 - **Read company documentation** from Google Drive, Confluence, or local files
 - **Execute commands** to scaffold projects or run tests
 - **Query databases** for real-time project information
@@ -49,11 +86,17 @@ Claude can create files that match your existing code style
 Claude can update stack-config.yaml based on project changes
 ```
 
-### 2. **context7** (Recommended)
+### 2. **context7** (⭐ Highly Recommended for `/research-stack`)
 
-**Purpose:** Search and retrieve content from various sources
+**Purpose:** Search and retrieve content from various sources, fetch official documentation
+
+**Why Critical:**
+- **`/research-stack` NEEDS THIS** for fetching official framework docs directly
+- Without it: Falls back to web search (generic summaries, less accurate)
+- With it: Gets full official documentation (highly accurate, current)
 
 **Use Cases:**
+- **Fetch official docs** during `/research-stack` (React, Vue, Next.js, etc.)
 - Search Google Drive for company standards
 - Find relevant Slack conversations
 - Access Notion documentation
@@ -71,12 +114,30 @@ Claude can update stack-config.yaml based on project changes
 }
 ```
 
+**Installation:**
+```bash
+# Install context7 globally
+npm install -g @context7/mcp-server
+
+# Configure in Claude Desktop
+# Mac: ~/Library/Application Support/Claude/claude_desktop_config.json
+# Windows: %APPDATA%\Claude\claude_desktop_config.json
+
+# Restart Claude Desktop
+```
+
 **Framework Use:**
 ```
-/import-standards command uses this to read company docs
+/research-stack - Fetches official docs directly (PRIMARY USE CASE)
+/import-standards - Read company docs from various sources
 Claude searches your knowledge base for existing patterns
 Finds similar problems your team has solved before
 ```
+
+**Without context7:**
+- `/research-stack` uses web search only (limited accuracy)
+- May get outdated or generic information
+- Framework-specific details may be missed
 
 ### 3. **github** (Highly Recommended)
 

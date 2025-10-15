@@ -18,13 +18,40 @@ This command uses AI tools to research unfamiliar technology stacks and automati
 
 ---
 
+## Prerequisites
+
+### Recommended Setup (Best Results)
+
+**For optimal research quality, you need:**
+
+✅ **context7 MCP server** - Fetches official documentation directly
+- Install: See [MCP Integration Guide](../tools/mcp-integration.md)
+- Setup: `~/.config/claude/claude_desktop_config.json` (Mac)
+- Why: Gets full, accurate docs instead of summaries
+
+⚠️ **Without context7:** Research falls back to web search (limited accuracy)
+
+### Optional (Enhances Results)
+
+- `github` MCP - Find real-world examples in popular repos
+- `filesystem` MCP - Analyze your existing codebase patterns
+
+---
+
 ## How It Works
 
 This command follows the [Stack Research Workflow](../workflows/stack-research.md) and uses:
-- `web_search` - Find official docs and best practices
+
+**With context7 (Recommended):**
+- `context7` - Fetch official documentation pages directly
+- `web_search` - Find best practices and current trends
 - `web_fetch` - Read complete documentation
 - `github` (optional) - Find real-world examples
 - `filesystem` (optional) - Check existing code
+
+**Without context7 (Fallback):**
+- `web_search` - Find official docs and best practices (limited)
+- ⚠️ Results may be less accurate without direct doc access
 
 ---
 
@@ -49,6 +76,49 @@ Provide your stack upfront to skip the initial questions.
 ---
 
 ## Interactive Flow
+
+### Step 0: Prerequisites Check (FIRST)
+
+**Before starting, Claude MUST check for context7:**
+
+```
+🔍 CHECKING RESEARCH CAPABILITIES
+
+Checking for MCP tools...
+
+✅ web_search available (basic research)
+✅ web_fetch available (documentation reading)
+❌ context7 NOT available
+
+⚠️  WARNING: Limited Research Quality
+
+Without context7, I can only use web search for research.
+This means:
+- Generic summaries instead of full official docs
+- Potentially outdated information
+- Less accurate framework-specific details
+
+RECOMMENDED: Install context7 MCP server for best results
+See: .claude/tools/mcp-integration.md
+
+Options:
+1. Continue anyway (web search only)
+2. Cancel and set up context7 first
+3. Skip and use /import-standards instead
+
+What would you like to do?
+```
+
+**If context7 IS available:**
+```
+🔍 CHECKING RESEARCH CAPABILITIES
+
+✅ context7 available (fetch official docs)
+✅ web_search available (best practices)
+✅ web_fetch available (documentation)
+
+Ready to research with full capabilities!
+```
 
 ### Step 1: Stack Discovery
 

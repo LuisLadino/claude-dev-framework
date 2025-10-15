@@ -85,6 +85,10 @@ After installation, generate standards for YOUR stack:
 - 📝 Generates detailed, accurate standards
 - ✅ Creates patterns specific to YOUR stack version
 
+**Recommended:** Install [context7 MCP](https://github.com/context7/mcp-server) for best results
+- Fetches official documentation directly (more accurate than web search)
+- See [MCP Setup Guide](docs/mcp-setup.md) for installation
+
 **Works with ANY stack:**
 - Frontend: React, Vue, Svelte, Next.js, Angular, etc.
 - Backend: FastAPI, Django, Express, Rails, Laravel, etc.

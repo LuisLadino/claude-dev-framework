@@ -89,23 +89,56 @@ Each project can have completely different standards.
 
 ### Do I need MCP servers?
 
-No, MCP is optional but enhances capabilities:
+MCP is optional, but **highly recommended for `/research-stack`**:
 
-**Without MCP:**
+**Without MCP (context7):**
 - ✅ All commands work
 - ✅ Standards enforcement works
 - ✅ Quality checks work
+- ⚠️ `/research-stack` uses web search only (less accurate)
 - ❌ Can't auto-import company docs
 - ❌ Can't search entire codebase
 
-**With MCP:**
+**With MCP (context7):**
 - ✅ Everything above
+- ✅ `/research-stack` fetches official docs directly (highly accurate)
 - ✅ Auto-import company docs
 - ✅ Search codebase for patterns
 - ✅ Connect to databases
 - ✅ Access cloud resources
 
+**Recommended setup:** Install context7 for best `/research-stack` results
+- See [MCP Setup Guide](./mcp-setup.md)
+
 Start without MCP, add later if needed.
+
+### What if I don't have context7 for `/research-stack`?
+
+**Option 1: Continue with web search (limited)**
+- `/research-stack` will use web search as fallback
+- Results will be generic summaries, not full official docs
+- May be less accurate for framework-specific details
+- Good enough for getting started
+
+**Option 2: Install context7 (recommended)**
+```bash
+# See docs/mcp-setup.md for full instructions
+# Quick setup:
+1. Install context7: npm install -g @context7/mcp-server
+2. Configure Claude Desktop MCP settings
+3. Restart Claude
+4. Run /research-stack again
+```
+
+**Option 3: Use `/import-standards` instead**
+- Manually download framework docs
+- Use `/import-standards` to convert to framework format
+- More work, but doesn't require MCP
+
+**Which should you choose?**
+- Just testing? → Continue with web search
+- Serious project? → Install context7 (5 minutes)
+- Company standards? → Use `/import-standards`
 
 ### How do I update the framework?
 
