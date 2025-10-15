@@ -252,17 +252,23 @@ install_framework() {
     fi
 
     # Scripts (optional - users may want these for convenience)
-    if [ ! -d "scripts" ]; then
-        mkdir -p scripts
-        # Copy only the useful scripts, not install.sh/uninstall.sh
+    mkdir -p scripts
+    if [ "$merge_mode" -eq 1 ]; then
+        # Merge mode: Add framework scripts without overwriting
+        cp -n "$TEMP_DIR/scripts/init-stack.sh" scripts/ 2>/dev/null || true
+        cp -n "$TEMP_DIR/scripts/validate-setup.sh" scripts/ 2>/dev/null || true
+        cp -n "$TEMP_DIR/scripts/import-company-standards.sh" scripts/ 2>/dev/null || true
+        cp -n "$TEMP_DIR/scripts/update-framework.sh" scripts/ 2>/dev/null || true
+        chmod +x scripts/*.sh 2>/dev/null || true
+        print_success "Added framework scripts (kept yours)"
+    else
+        # Fresh install: Copy all scripts
         cp "$TEMP_DIR/scripts/init-stack.sh" scripts/ 2>/dev/null || true
         cp "$TEMP_DIR/scripts/validate-setup.sh" scripts/ 2>/dev/null || true
         cp "$TEMP_DIR/scripts/import-company-standards.sh" scripts/ 2>/dev/null || true
         cp "$TEMP_DIR/scripts/update-framework.sh" scripts/ 2>/dev/null || true
         chmod +x scripts/*.sh 2>/dev/null || true
-        print_success "Installed helper scripts (optional)"
-    else
-        print_info "Scripts directory exists, skipping"
+        print_success "Installed helper scripts"
     fi
 }
 
