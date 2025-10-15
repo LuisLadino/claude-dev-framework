@@ -5,6 +5,12 @@
 # This script installs ONLY the functional framework files into your project's .claude directory.
 # It excludes documentation, templates, examples, and other GitHub-specific files.
 #
+# Usage:
+#   bash install.sh              # Interactive mode (prompts for choice)
+#   bash install.sh --fresh      # Fresh install (error if .claude exists)
+#   bash install.sh --backup     # Backup existing .claude and install fresh
+#   bash install.sh --merge      # Merge with existing .claude (keep your files)
+#
 # What gets installed:
 #   - Core framework files (CLAUDE.md, workflows, tools, config)
 #   - Command system (/commands)
@@ -17,6 +23,26 @@
 #   - This installer script itself
 
 set -e
+
+# Parse command line arguments
+MODE="interactive"  # Default mode
+if [ "$1" = "--fresh" ]; then
+    MODE="fresh"
+elif [ "$1" = "--backup" ]; then
+    MODE="backup"
+elif [ "$1" = "--merge" ]; then
+    MODE="merge"
+elif [ -n "$1" ]; then
+    echo "Unknown option: $1"
+    echo ""
+    echo "Usage:"
+    echo "  bash install.sh              # Interactive mode"
+    echo "  bash install.sh --fresh      # Fresh install"
+    echo "  bash install.sh --backup     # Backup existing and install"
+    echo "  bash install.sh --merge      # Merge with existing"
+    echo ""
+    exit 1
+fi
 
 # Colors for output
 RED='\033[0;31m'
@@ -57,35 +83,57 @@ print_info() {
 # Check if .claude directory already exists
 check_existing_installation() {
     if [ -d ".claude" ]; then
-        echo ""
-        print_warning "Existing .claude directory found!"
-        echo ""
-        echo "What would you like to do?"
-        echo "  1) Backup existing and install fresh"
-        echo "  2) Merge with existing (keeps your files)"
-        echo "  3) Cancel installation"
-        echo ""
-        read -p "Choice [1-3]: " choice
 
-        case $choice in
-            1)
-                backup_dir=".claude-backup-$(date +%Y%m%d-%H%M%S)"
-                mv .claude "$backup_dir"
-                print_success "Backed up to $backup_dir"
-                return 0
-                ;;
-            2)
-                return 1  # Merge mode
-                ;;
-            3)
-                print_info "Installation cancelled"
-                exit 0
-                ;;
-            *)
-                print_error "Invalid choice"
-                exit 1
-                ;;
-        esac
+        # Handle based on MODE
+        if [ "$MODE" = "fresh" ]; then
+            print_error "Existing .claude directory found!"
+            echo "Use --backup or --merge flag, or remove .claude directory first."
+            exit 1
+        elif [ "$MODE" = "backup" ]; then
+            backup_dir=".claude-backup-$(date +%Y%m%d-%H%M%S)"
+            echo ""
+            print_warning "Existing .claude directory found!"
+            print_info "Backing up to $backup_dir..."
+            mv .claude "$backup_dir"
+            print_success "Backed up to $backup_dir"
+            return 0  # Fresh install mode
+        elif [ "$MODE" = "merge" ]; then
+            echo ""
+            print_warning "Existing .claude directory found!"
+            print_info "Merging with existing files (keeping your customizations)..."
+            return 1  # Merge mode
+        else
+            # Interactive mode
+            echo ""
+            print_warning "Existing .claude directory found!"
+            echo ""
+            echo "What would you like to do?"
+            echo "  1) Backup existing and install fresh"
+            echo "  2) Merge with existing (keeps your files)"
+            echo "  3) Cancel installation"
+            echo ""
+            read -p "Choice [1-3]: " choice
+
+            case $choice in
+                1)
+                    backup_dir=".claude-backup-$(date +%Y%m%d-%H%M%S)"
+                    mv .claude "$backup_dir"
+                    print_success "Backed up to $backup_dir"
+                    return 0
+                    ;;
+                2)
+                    return 1  # Merge mode
+                    ;;
+                3)
+                    print_info "Installation cancelled"
+                    exit 0
+                    ;;
+                *)
+                    print_error "Invalid choice"
+                    exit 1
+                    ;;
+            esac
+        fi
     fi
     return 0  # Fresh install
 }
