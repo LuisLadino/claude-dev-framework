@@ -4,7 +4,8 @@
 # Validate Claude Development Framework setup
 # Version: 1.0.0
 
-set -e  # Exit on error
+# Note: We don't use 'set -e' because we want to continue validation
+# even when individual checks fail. The goal is to report ALL issues.
 
 # Colors for output
 RED='\033[0;31m'

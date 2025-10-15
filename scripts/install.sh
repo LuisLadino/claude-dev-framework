@@ -264,6 +264,10 @@ show_next_steps() {
     echo "   • All standards are just markdown files - easy to customize"
     echo "   • Recommended: Install context7 MCP for best /research-stack results"
     echo ""
+    echo -e "${BLUE}🔍 Verify Your Setup:${NC}"
+    echo "   Run this anytime to check your framework configuration:"
+    echo -e "   ${YELLOW}./scripts/validate-setup.sh${NC}"
+    echo ""
 }
 
 # Main installation flow
