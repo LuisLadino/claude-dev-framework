@@ -159,16 +159,35 @@ install_framework() {
     fi
     print_success "Installed config"
 
-    # Your-stack structure (empty directories with .gitkeep)
+    # Your-stack structure
     if [ ! -d ".claude/your-stack" ]; then
         mkdir -p .claude/your-stack/{coding-standards,architecture,documentation-standards,config}
+
+        # Copy template stack-config.yaml if it doesn't exist
+        if [ ! -f ".claude/your-stack/stack-config.yaml" ]; then
+            cp "$TEMP_DIR/.claude/your-stack/stack-config.yaml" .claude/your-stack/ 2>/dev/null || true
+        fi
+
+        # Copy README
+        if [ ! -f ".claude/your-stack/README.md" ]; then
+            cp "$TEMP_DIR/.claude/your-stack/README.md" .claude/your-stack/ 2>/dev/null || true
+        fi
+
+        # Create empty directories with .gitkeep
         touch .claude/your-stack/coding-standards/.gitkeep
         touch .claude/your-stack/architecture/.gitkeep
         touch .claude/your-stack/documentation-standards/.gitkeep
         touch .claude/your-stack/config/.gitkeep
+
         print_success "Created your-stack directory structure"
     else
         print_info "Keeping existing your-stack directory"
+
+        # Still copy stack-config.yaml if it's missing
+        if [ ! -f ".claude/your-stack/stack-config.yaml" ]; then
+            cp "$TEMP_DIR/.claude/your-stack/stack-config.yaml" .claude/your-stack/ 2>/dev/null || true
+            print_success "Added missing stack-config.yaml"
+        fi
     fi
 
     # Tasks directory (for PRDs and task lists)
