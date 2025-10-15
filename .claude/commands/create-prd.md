@@ -262,37 +262,24 @@ Your preferences:
 
 **Your Stack:** [Framework] + [Language] + [Styling]
 
-Any specific technical needs?
+Any specific technical needs? Select all that apply from the list below:
 
-Pick all that apply:
+**Options:**
+- Form validation
+- API integration
+- Database/storage
+- State management
+- Authentication
+- Real-time updates
+- File uploads
+- Animations
+- Accessibility (WCAG AA)
+- SEO optimization
+- Performance requirements
+- Browser compatibility
+- Other: [specify]
 
-□ Form validation
-
-□ API integration
-
-□ Database/storage
-
-□ State management
-
-□ Authentication
-
-□ Real-time updates
-
-□ File uploads
-
-□ Animations
-
-□ Accessibility (WCAG AA)
-
-□ SEO optimization
-
-□ Performance requirements
-
-□ Browser compatibility
-
-□ Other: [specify]
-
-List your selections:
+**List your selections (comma-separated or one per line):**
 ```
 
 ---
