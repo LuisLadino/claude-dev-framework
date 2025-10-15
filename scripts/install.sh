@@ -202,10 +202,11 @@ install_framework() {
     # Scripts (optional - users may want these for convenience)
     if [ ! -d "scripts" ]; then
         mkdir -p scripts
-        # Copy only the useful scripts, not install.sh itself
+        # Copy only the useful scripts, not install.sh/uninstall.sh
         cp "$TEMP_DIR/scripts/init-stack.sh" scripts/ 2>/dev/null || true
         cp "$TEMP_DIR/scripts/validate-setup.sh" scripts/ 2>/dev/null || true
         cp "$TEMP_DIR/scripts/import-company-standards.sh" scripts/ 2>/dev/null || true
+        cp "$TEMP_DIR/scripts/update-framework.sh" scripts/ 2>/dev/null || true
         chmod +x scripts/*.sh 2>/dev/null || true
         print_success "Installed helper scripts (optional)"
     else
