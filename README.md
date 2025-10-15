@@ -290,7 +290,7 @@ Claude automatically adapts to your stack using `/research-stack`
 | `/create-prd`        | Generate detailed feature spec           | Big features (2+ hrs)   |
 | `/generate-tasks`    | Convert PRD → task list                  | After PRD creation      |
 | `/process-tasks`     | Execute tasks one by one                 | Implementing PRDs       |
-| `/update-framework`  | Pull latest company updates              | Framework updates       |
+| `/update-framework`  | Update framework & company standards     | Framework/standards updates |
 
 ### 🔄 Automated Workflows
 
@@ -355,16 +355,25 @@ Each step enforces quality and maintains consistency.
 
 ### 🔄 Easy Updates
 
-Framework gets better over time:
+Framework AND company standards get better over time:
 
 ```bash
-./scripts/update-framework.sh
+# In Claude Code:
+/update-framework
 
-# Updates framework files
-# Preserves YOUR customizations
-# Creates automatic backup
-# Shows what changed
+# Shows updates from:
+# ✓ Framework (new features, commands, improvements)
+# ✓ Company standards (if configured)
+# ✓ Interactive review with diffs
+# ✓ Choose what to update
+# ✓ Automatic backups
+# ✓ Preserves YOUR customizations
+
+# Or run script directly:
+./scripts/update-framework.sh
 ```
+
+**For companies:** Configure `standards_source` in `stack-config.yaml` to centrally manage team standards. See [Company Standards Management](docs/company-standards-management.md).
 
 ---
 

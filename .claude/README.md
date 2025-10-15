@@ -141,7 +141,7 @@ The framework provides slash commands:
 
 - **`/research-stack`** - Research & generate standards (coming soon)
 - **`/import-standards`** - Import company docs (coming soon)
-- **`/update-framework`** - Update the framework (coming soon)
+- **`/update-framework`** - Update framework & company standards
 
 **See `.claude/commands/` for detailed command documentation.**
 
@@ -394,17 +394,32 @@ AI will cite sources when using web research.
 
 ## Updating the Framework
 
-To get framework updates:
+To get framework AND company standards updates:
 
-```bash
-# Pull latest framework changes
-./scripts/update-framework.sh
-
-# Your customizations in your-stack/ are preserved
-# Only framework files update
+**In Claude Code:**
+```
+/update-framework
 ```
 
-Your `.claude/your-stack/` directory is gitignored in the framework repo, so updates won't overwrite your customizations.
+This shows you:
+- 📦 Available framework updates (new features, bug fixes, commands)
+- 📚 Available company standards updates (if standards_source configured)
+- ✅ Interactive review with diffs
+- ✅ Choose what to update
+- ✅ Automatic backups
+
+**Or run script directly:**
+```bash
+./scripts/update-framework.sh
+```
+
+**Your customizations are always preserved:**
+- ✅ `your-stack/` files never overwritten
+- ✅ Automatic backups before updates
+- ✅ Framework updates separate from your standards
+- ✅ Choose which updates to apply
+
+**For Teams:** Set up centrally-managed standards by configuring `standards_source` in `your-stack/stack-config.yaml`. See [Company Standards Management](../docs/company-standards-management.md) for details.
 
 ---
 

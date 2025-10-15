@@ -37,6 +37,7 @@ Start here if you're new:
 ### For Professional Use
 
 - **[Company Adoption](./company-adoption.md)** - Import and enforce company standards
+- **[Company Standards Management](./company-standards-management.md)** ⭐ - Centrally manage and distribute team standards
 - **[Team Collaboration](./team-collaboration.md)** - Using the framework in a team
 - **[MCP Setup](./mcp-setup.md)** - Configure AI tool integration for advanced features
 
@@ -106,7 +107,7 @@ Complete reference for all commands:
 - [`/process-tasks`](./commands/process-tasks.md) - Execute with checkpoints
 - [`/research-stack`](./commands/research-stack.md) - Auto-generate standards (coming soon)
 - [`/import-standards`](./commands/import-standards.md) - Import company docs (coming soon)
-- [`/update-framework`](./commands/update-framework.md) - Self-improvement (coming soon)
+- [`/update-framework`](./commands/update-framework.md) - Update framework & company standards
 
 ### Configuration
 
@@ -299,6 +300,7 @@ This documentation is under active development. Here's what's complete:
 
 **Professional:**
 - [Company Adoption](./company-adoption.md)
+- [Company Standards Management](./company-standards-management.md)
 - [MCP Setup](./mcp-setup.md)
 
 **Reference:**
@@ -321,9 +323,10 @@ This documentation is under active development. Here's what's complete:
 **Using at work?** Read in this order:
 
 1. [Company Adoption](./company-adoption.md)
-2. [Importing Standards](./importing-standards.md)
-3. [Team Collaboration](./team-collaboration.md)
-4. [MCP Setup](./mcp-setup.md)
+2. [Company Standards Management](./company-standards-management.md) ⭐
+3. [Importing Standards](./importing-standards.md)
+4. [Team Collaboration](./team-collaboration.md)
+5. [MCP Setup](./mcp-setup.md)
 
 ---
 

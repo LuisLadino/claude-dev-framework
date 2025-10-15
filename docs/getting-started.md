@@ -506,9 +506,15 @@ Import your company's existing standards
 ```
 
 **`/update-framework`**
-Update framework to latest version
+Update framework to latest version AND sync company standards (if configured)
 ```
 /update-framework
+
+# Shows updates from:
+# - Framework (new commands, features, bug fixes)
+# - Company standards (if standards_source configured)
+# - Interactive review with diffs
+# - Choose what to apply
 ```
 
 ---
@@ -813,9 +819,15 @@ Add architectural decision records (ADRs) to `.claude/your-stack/architecture/de
 
 Commit `.claude/` to git. Your whole team benefits from consistent standards.
 
-### 5. Keep Framework Updated
+### 5. Keep Framework & Standards Updated
 
-Run `/update-framework` occasionally to get latest improvements.
+Run `/update-framework` regularly to get:
+- Latest framework improvements
+- Company standards updates (if configured)
+- Security patches
+- New commands and features
+
+**For Teams:** Set up `standards_source` in stack-config.yaml to receive company standard updates automatically. See [Company Standards Management](./company-standards-management.md).
 
 ---
 
