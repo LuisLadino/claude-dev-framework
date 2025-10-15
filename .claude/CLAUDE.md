@@ -13,11 +13,23 @@ Before any coding task, you have access to:
 - **MCP servers** (if configured) - Access external resources like company docs
 - **File system access** - Read and write project files
 
+**IMPORTANT: Check for MCP servers before starting tasks**
+
+MCP servers provide specialized capabilities. Always check if relevant MCP tools are available:
+
+- **context7** - For documentation research (better than web_search for official docs)
+- **Company-specific MCPs** - Internal documentation, APIs, databases
+- **Specialized MCPs** - GitHub, Slack, Jira, etc.
+
+**Before using web_search for documentation, check if context7 is available.**
+
 Use these tools to:
+
 - Research unfamiliar patterns before implementing
-- Find authoritative documentation
+- Find authoritative documentation (prefer context7 over web_search when available)
 - Verify standards match current best practices
 - Import external standards when needed
+- Access company-specific resources via configured MCPs
 
 ---
 
@@ -44,6 +56,7 @@ Before writing ANY code, read the standards from `.claude/your-stack/`:
 ### Coding Standards
 
 Read all files in `.claude/your-stack/coding-standards/`:
+
 - Framework-specific patterns (React, Vue, etc.)
 - Language standards (TypeScript, JavaScript, etc.)
 - Styling conventions
@@ -52,12 +65,14 @@ Read all files in `.claude/your-stack/coding-standards/`:
 ### Documentation Standards
 
 Read files in `.claude/your-stack/documentation-standards/`:
+
 - How to comment code
 - Component documentation requirements
 
 ### Architecture
 
 Read files in `.claude/your-stack/architecture/`:
+
 - File structure and organization
 - Component patterns and composition
 - Testing strategies
@@ -65,6 +80,7 @@ Read files in `.claude/your-stack/architecture/`:
 ### Operational Standards
 
 Read when applicable:
+
 - `.claude/config/version-control.md` - Git workflow and commit standards
 - `.claude/config/deployment.md` - Deployment process
 - `.claude/config/environment.md` - Development environment setup
@@ -80,6 +96,7 @@ Read when applicable:
 ### 1. Understand the Stack
 
 Read `.claude/your-stack/stack-config.yaml` to understand:
+
 - What framework is being used
 - What language standards apply
 - Which standards files are active
@@ -88,6 +105,7 @@ Read `.claude/your-stack/stack-config.yaml` to understand:
 ### 2. Read Relevant Standards
 
 Use `project_knowledge_search` to read:
+
 - Standards files that apply to this task
 - Existing patterns in the codebase
 - Project-specific requirements
@@ -116,6 +134,11 @@ Display this checklist to the user:
 - Verified approach matches standards: [✓ or description]
 - Plan validated: [✓ or description]
 
+**MCP Tool Usage:**
+- [ ] Checked if MCP servers are available and needed for this task
+- [ ] Using context7 for documentation research (if available)
+- [ ] Using appropriate MCP tools for external data/APIs (if needed)
+
 **Quality Checklist** (will verify when done):
 - [ ] Follows patterns from standards files
 - [ ] Matches language conventions (TypeScript strict mode, etc.)
@@ -135,6 +158,7 @@ Is this approach correct? Should I proceed?
 ### 4. Execute the Task
 
 Follow the standards exactly as documented. If standards conflict or are unclear:
+
 - Ask for clarification
 - Use `web_search` to research best practices
 - Suggest the best approach and explain reasoning
@@ -142,6 +166,7 @@ Follow the standards exactly as documented. If standards conflict or are unclear
 ### 5. Verify Before Completion
 
 Before marking work complete, verify:
+
 - Code follows all applicable standards
 - Quality checklist items are met
 - All functionality works as requested
@@ -150,6 +175,7 @@ Before marking work complete, verify:
 ### 6. Commit Properly
 
 Follow version control standards when committing:
+
 - Use conventional commit format (from version-control.md)
 - Include meaningful commit messages
 - Stage only related changes
@@ -198,6 +224,7 @@ If you skip the Standards Check or don't wait for approval:
 **User will say: "Standards?"**
 
 When this happens:
+
 1. **Stop immediately**
 2. Acknowledge what was violated
 3. Show the complete Standards Check that should have been shown
@@ -207,7 +234,7 @@ When this happens:
 ### Communication Style
 
 - Be direct and clear
-- Use professional but friendly tone
+- Skip agreement/validation phrases ("you're right", "exactly", "great question", "you're absolutely right")
 - Explain decisions when relevant
 - Ask questions when unclear
 - Never be condescending
@@ -220,12 +247,14 @@ When this happens:
 ### project_knowledge_search
 
 Use to:
+
 - Find standards files in `.claude/your-stack/`
 - Search for existing patterns
 - Look up configuration details
 - Find examples in the codebase
 
 **Example:**
+
 ```
 project_knowledge_search("react component patterns")
 ```
@@ -233,12 +262,14 @@ project_knowledge_search("react component patterns")
 ### web_search
 
 Use to:
+
 - Research best practices for unfamiliar stack
 - Find official documentation
 - Verify current best practices
 - Look up specific APIs or features
 
 **Example:**
+
 ```
 web_search("Next.js 15 app router best practices")
 ```
@@ -262,6 +293,7 @@ This framework works with any stack. The key is `.claude/your-stack/`:
 ### For React Projects
 
 Standards in your-stack/ should cover:
+
 - Component patterns (functional, hooks)
 - Props and TypeScript interfaces
 - State management
@@ -270,6 +302,7 @@ Standards in your-stack/ should cover:
 ### For Vue Projects
 
 Standards in your-stack/ should cover:
+
 - Composition API vs Options API
 - Component structure
 - Composables
@@ -278,6 +311,7 @@ Standards in your-stack/ should cover:
 ### For Any Framework
 
 Standards in your-stack/ should cover:
+
 - Framework-specific patterns
 - Language conventions
 - Testing approach
@@ -292,30 +326,35 @@ Standards in your-stack/ should cover:
 Regardless of stack, all code must:
 
 ### Clarity
+
 - Variable names are descriptive
 - Logic is simple and straightforward
 - One responsibility per function/component
 - Self-documenting structure
 
 ### Consistency
+
 - Same patterns used throughout
 - Consistent naming conventions
 - Consistent file organization
 - Consistent code style
 
 ### Maintainability
+
 - Easy to modify
 - Dependencies clear
 - No tight coupling
 - Well-organized
 
 ### Documentation
+
 - Comments explain WHY (code shows WHAT)
 - Complex logic is explained
 - Non-obvious decisions documented
 - Public APIs have clear documentation
 
 ### Testing (if applicable)
+
 - Tests verify behavior, not implementation
 - Critical paths tested
 - Edge cases covered
@@ -335,6 +374,7 @@ Regardless of stack, all code must:
 ### When Uncertain
 
 If you're unsure about:
+
 - **Standards** - Ask the user for clarification
 - **Approach** - Propose options and explain trade-offs
 - **Patterns** - Search for examples in the codebase
@@ -349,6 +389,7 @@ If you're unsure about:
 ### Loading Stack Configuration
 
 At the start of any session:
+
 1. Search for `.claude/your-stack/stack-config.yaml`
 2. Load the stack configuration
 3. Understand which standards are active
@@ -357,6 +398,7 @@ At the start of any session:
 ### If Configuration is Missing
 
 If stack-config.yaml doesn't exist:
+
 1. Inform the user
 2. Suggest running initialization workflow
 3. Ask what stack they're using
@@ -384,24 +426,28 @@ The framework adapts to any stack by reading `.claude/your-stack/` configuration
 ## Quick Reference
 
 **Before coding:**
+
 - Read stack-config.yaml
 - Search for relevant standards
 - Show standards check
 - Wait for approval
 
 **During coding:**
+
 - Follow standards exactly
 - Search for existing patterns
 - Verify imports and paths
 - Build incrementally
 
 **Before completion:**
+
 - Run quality checks
 - Verify all requested features
 - Format and lint
 - Test if applicable
 
 **When committing:**
+
 - Follow commit message format
 - Stage only related changes
 - Meaningful commit messages
