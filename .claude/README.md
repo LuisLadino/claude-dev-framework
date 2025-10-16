@@ -410,7 +410,7 @@ This shows you:
 
 **Or run script directly:**
 ```bash
-./scripts/update-framework.sh
+/update-framework
 ```
 
 **Your customizations are always preserved:**

@@ -30,7 +30,7 @@ Import existing documentation into framework format. Handles single files, direc
 
 ### Update Framework
 ```bash
-./scripts/update-framework.sh
+/update-framework
 ```
 Update to latest framework version. Preserves your customizations, creates backups.
 
@@ -66,7 +66,7 @@ Check that everything is configured correctly. 45+ checks, health score, recomme
 
 ### Maintenance
 ```bash
-./scripts/update-framework.sh    # Update
+/update-framework    # Update
 ./scripts/validate-setup.sh       # Verify
 ```
 
@@ -158,7 +158,7 @@ cp -r .claude/your-stack .claude/your-stack.backup
 
 💡 **Update regularly** - Monthly or quarterly
 ```bash
-./scripts/update-framework.sh
+/update-framework
 ```
 
 💡 **Check health score** - Should be 90%+

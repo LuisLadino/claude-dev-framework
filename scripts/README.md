@@ -142,77 +142,7 @@ Backups are automatically created in `.claude/backups/`
 
 ---
 
-### 3. update-framework.sh
-
-**Purpose:** Update the framework to the latest version while preserving customizations.
-
-**When to use:**
-- New framework version available
-- Bug fixes released
-- New features added
-- Quarterly maintenance
-
-**What it does:**
-- Checks your current version
-- Fetches latest framework version
-- Creates backup of current setup
-- Updates framework files (commands, workflows, templates)
-- Preserves `.claude/your-stack/` customizations
-- Updates version in stack config
-- Shows changelog
-
-**Usage:**
-```bash
-./scripts/update-framework.sh
-```
-
-**What gets updated:**
-- ✅ `.claude/commands/` - Command definitions
-- ✅ `.claude/workflows/` - Workflow files
-- ✅ `.claude/templates/` - Stack templates
-- ✅ `.claude/tools/` - Tool integration docs
-- ✅ `.claude/CLAUDE.md` - Core instructions
-- ✅ `.claude/README.md` - Framework docs
-- ✅ `scripts/` - Helper scripts
-
-**What stays the same:**
-- ✅ `.claude/your-stack/` - Your customizations
-- ✅ Your project files
-- ✅ Your git history
-
-**Example:**
-```bash
-$ ./scripts/update-framework.sh
-
-Current version: 1.0.0
-✓ Downloaded latest framework
-
-Version Information:
-  Current: 1.0.0
-  Latest:  1.1.0
-
-Continue with update? (y/n) [y]: y
-
-✓ Updated commands
-✓ Updated workflows
-✓ Updated templates
-...
-
-✓ Update Complete!
-Updated from 1.0.0 to 1.1.0
-```
-
-**Rollback:**
-```bash
-./scripts/update-framework.sh --rollback .claude/backups/update_20250109_120000
-```
-
-**Configuration:**
-Edit `FRAMEWORK_REPO` variable in script to point to your framework repository.
-
----
-
-### 4. validate-setup.sh
+### 3. validate-setup.sh
 
 **Purpose:** Validate that your framework setup is complete and correct.
 
@@ -348,10 +278,7 @@ cd my-project
 ### Keeping Updated
 
 ```bash
-# Check for updates monthly
-./scripts/update-framework.sh
-
-# Validate after update
+# Validate setup
 ./scripts/validate-setup.sh
 ```
 
@@ -405,13 +332,7 @@ find scripts -name "*.sh" -exec chmod +x {} \;
 
 Feel free to customize scripts for your needs:
 
-1. **Change framework repository:**
-   ```bash
-   # In update-framework.sh
-   FRAMEWORK_REPO="https://github.com/your-org/your-fork.git"
-   ```
-
-2. **Add custom validations:**
+1. **Add custom validations:**
    ```bash
    # In validate-setup.sh
    validate_custom_rules() {
@@ -491,8 +412,6 @@ git config --list
 # Test network
 ping github.com
 
-# Update repository URL in script
-vim scripts/update-framework.sh
 ```
 
 ### Validation fails
@@ -534,13 +453,7 @@ vim scripts/update-framework.sh
    # .claude/your-stack/ stays local
    ```
 
-4. **Update regularly:**
-   ```bash
-   # Monthly or quarterly
-   ./scripts/update-framework.sh
-   ```
-
-5. **Document customizations:**
+4. **Document customizations:**
    ```bash
    # Add notes to your standards files
    vim .claude/your-stack/coding-standards/notes.md

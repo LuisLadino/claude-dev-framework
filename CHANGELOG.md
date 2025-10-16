@@ -58,7 +58,7 @@ The Claude Development Framework is now production-ready! This release includes 
 
 - **.claude/commands/research-stack.md** - Automatic stack research and standards generation (~3,500 words)
 - **.claude/commands/import-standards.md** - Import company documentation (~3,200 words)
-- **.claude/commands/update-framework.md** - Self-improvement workflow (~2,800 words)
+- **.claude/commands/update-framework.md** - Interactive update command (LLM-driven)
 
 #### Workflows
 
@@ -179,7 +179,7 @@ All documentation files average 3,000-5,000 words with:
   - Conflict resolution (overwrite/skip/merge)
   - Import metadata tracking
 
-- **scripts/update-framework.sh** - Framework updates (~550 lines)
+- **scripts/update-framework.sh** - Framework updates (deprecated, replaced by /update-framework command)
 
   - Version checking
   - Automatic backups
@@ -535,7 +535,7 @@ If you were using an earlier version or beta:
    ```bash
    git pull origin main
    # or
-   ./scripts/update-framework.sh
+   /update-framework
    ```
 
 3. **Restore your customizations:**

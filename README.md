@@ -368,9 +368,6 @@ Framework AND company standards get better over time:
 # ✓ Choose what to update
 # ✓ Automatic backups
 # ✓ Preserves YOUR customizations
-
-# Or run script directly:
-./scripts/update-framework.sh
 ```
 
 **For companies:** Configure `standards_source` in `stack-config.yaml` to centrally manage team standards. See [Company Standards Management](docs/company-standards-management.md).
@@ -519,7 +516,6 @@ your-project/
 ├── scripts/                      # Helper automation
 │   ├── init-stack.sh             # Initialize
 │   ├── import-company-standards.sh
-│   ├── update-framework.sh
 │   └── validate-setup.sh
 │
 └── docs/                         # Documentation
@@ -592,7 +588,7 @@ The framework gets better:
 | **Code Review**     | 50% of comments = style/pattern issues         | 10% - framework catches those automatically      |
 | **Production Ready**| Prototype quality, needs refactoring           | Production quality from first generation         |
 | **Cross-Stack**     | Re-learn patterns per stack                    | Consistent across frontend/backend/mobile/infra  |
-| **Updates**         | N/A                                            | `./update-framework.sh` - get improvements       |
+| **Updates**         | N/A                                            | `/update-framework` - get improvements           |
 
 ### The Reality
 

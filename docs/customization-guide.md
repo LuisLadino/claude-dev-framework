@@ -269,7 +269,7 @@ standards_active:
 2. **Flexibility Over Rules:** You decide what to share vs keep local
 3. **Non-Breaking Changes:** Extensions don't break existing functionality
 4. **Share What's Useful:** Good additions can become company standards
-5. **Updates Preserve Your Work:** `./scripts/update-framework.sh` keeps your changes
+5. **Updates Preserve Your Work:** `/update-framework` keeps your changes
 6. **Adapt to Your Needs:** Framework bends to your workflow, not the other way
 
 ---
@@ -1069,7 +1069,7 @@ git pull origin main
 
 **Framework update script handles it:**
 ```bash
-./scripts/update-framework.sh
+/update-framework
 
 # Preserves your customizations
 # Merges company updates
