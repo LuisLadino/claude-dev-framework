@@ -3,8 +3,24 @@
 # update-framework.sh
 # Update the Claude Development Framework while preserving customizations
 # Works in any project repo - doesn't require framework to be a git repo
+#
+# Usage:
+#   ./update-framework.sh           # Interactive mode (prompts for confirmation)
+#   ./update-framework.sh -y        # Auto-confirm mode (no prompts)
+#   ./update-framework.sh --yes     # Auto-confirm mode (no prompts)
 
 set -e  # Exit on error
+
+# Parse command line arguments
+AUTO_CONFIRM=false
+for arg in "$@"; do
+    case $arg in
+        -y|--yes)
+            AUTO_CONFIRM=true
+            shift
+            ;;
+    esac
+done
 
 # Colors for output
 RED='\033[0;31m'
@@ -338,12 +354,18 @@ main() {
     check_prerequisites
 
     echo ""
-    read -p "Continue with update? (y/n) [y]: " confirm
-    confirm=${confirm:-y}
 
-    if [ "$confirm" != "y" ] && [ "$confirm" != "Y" ]; then
-        print_info "Update cancelled"
-        exit 0
+    # Only prompt if not auto-confirming
+    if [ "$AUTO_CONFIRM" = false ]; then
+        read -p "Continue with update? (y/n) [y]: " confirm
+        confirm=${confirm:-y}
+
+        if [ "$confirm" != "y" ] && [ "$confirm" != "Y" ]; then
+            print_info "Update cancelled"
+            exit 0
+        fi
+    else
+        print_info "Auto-confirm mode: proceeding with update..."
     fi
 
     echo ""

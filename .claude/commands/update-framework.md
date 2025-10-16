@@ -4,6 +4,26 @@
 
 ---
 
+## Quick Non-Interactive Update
+
+**When Claude Code runs this command (no manual input needed):**
+
+```bash
+bash scripts/update-framework.sh -y
+```
+
+The `-y` flag auto-confirms the update without requiring interactive input.
+
+**For manual terminal use:**
+
+```bash
+bash scripts/update-framework.sh
+```
+
+This will prompt you to confirm before updating.
+
+---
+
 ## Purpose
 
 Check for and apply updates to:
@@ -221,8 +241,14 @@ Your choice (1-4):
 **If "1. Framework only" or "3. Both":**
 
 ```bash
-# Run the update script for framework
-curl -fsSL https://raw.githubusercontent.com/LuisLadino/claude-dev-framework/main/scripts/update-framework.sh | bash
+# Run the update script for framework (non-interactive)
+curl -fsSL https://raw.githubusercontent.com/LuisLadino/claude-dev-framework/main/scripts/update-framework.sh | bash -s -- -y
+```
+
+Or if script is already local:
+
+```bash
+bash scripts/update-framework.sh -y
 ```
 
 **If "2. Standards only" or "3. Both":**
