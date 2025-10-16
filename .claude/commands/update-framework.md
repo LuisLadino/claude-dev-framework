@@ -1,489 +1,608 @@
 # /update-framework
 
-**Update framework and/or company standards**
-
----
-
-## Quick Non-Interactive Update
-
-**When Claude Code runs this command (no manual input needed):**
-
-```bash
-bash scripts/update-framework.sh -y
-```
-
-The `-y` flag auto-confirms the update without requiring interactive input.
-
-**For manual terminal use:**
-
-```bash
-bash scripts/update-framework.sh
-```
-
-This will prompt you to confirm before updating.
+**Check for and apply updates from your framework source**
 
 ---
 
 ## Purpose
 
-Check for and apply updates to:
-- Framework files (commands, workflows, tools, config)
-- Company/team standards (your-stack/ from configured source)
+Claude Code checks the framework repository (yours or a fork) for updates and helps you selectively apply changes.
 
 **Use when:**
 - Monthly maintenance check
-- Company publishes standard updates
 - New framework features are available
 - Bug fixes are released
+- You see update notifications
 
 **Time:** 5-15 minutes
 
 ---
 
-## How It Works
+## How It Works (LLM-Driven)
 
-This command:
-1. Checks for framework updates (from GitHub)
-2. Checks for standards updates (from your configured source)
-3. Shows you what's available
-4. You choose what to update
-5. Reviews changes before applying
-6. Updates are applied with backups
+This is a **fully interactive command** - no bash scripts, Claude Code handles everything:
+
+1. **Detects your framework source** (from git remote or config)
+2. **Fetches latest version** from GitHub
+3. **Compares with your current installation**
+4. **Shows you what's new or changed**
+5. **You choose what to update**
+6. **Claude applies updates with backups**
 
 ---
 
-## Execution
+## STEP 1: Detect Framework Source
 
-When user runs `/update-framework`:
+**First, find where this framework came from:**
 
-### Step 1: Check for Framework Updates
+Use the `Bash` tool to check git remote:
 
 ```bash
-# Download latest framework to temp location
-temp_framework=".claude-framework-check-temp"
-curl -fsSL https://raw.githubusercontent.com/LuisLadino/claude-dev-framework/main/archive/refs/heads/main.tar.gz | tar -xz -C "$temp_framework" --strip-components=1
+cd .claude
+git remote -v 2>/dev/null || echo "No git remote"
 ```
 
-Compare with current installation to find what changed:
+**Parse the output:**
+
+- **If git remote exists:** Extract repo URL (e.g., `https://github.com/LuisLadino/claude-dev-framework.git`)
+- **If no git remote:** Check if `.claude/framework-source.txt` exists
+- **If neither:** Ask user for the source repo URL
+
+**Store the framework source URL for this session.**
+
+---
+
+## STEP 2: Fetch Latest Framework
+
+**Download the latest version from the source repository:**
+
+Use `Bash` tool:
 
 ```bash
-# Check each component
-framework_updates=()
+# Create temp directory
+temp_dir=".claude-update-check-$(date +%s)"
+mkdir -p "$temp_dir"
 
-# Check commands
-if ! diff -qr .claude/commands "$temp_framework/.claude/commands" > /dev/null 2>&1; then
-    framework_updates+=("commands")
-fi
-
-# Check workflows
-if ! diff -qr .claude/workflows "$temp_framework/.claude/workflows" > /dev/null 2>&1; then
-    framework_updates+=("workflows")
-fi
-
-# Check tools, config, scripts, CLAUDE.md, etc.
+# Download and extract latest framework
+curl -fsSL https://github.com/[USER]/[REPO]/archive/refs/heads/main.tar.gz | tar -xz -C "$temp_dir" --strip-components=1
 ```
 
-### Step 2: Check for Standards Updates
+**Replace `[USER]/[REPO]` with the actual source repo.**
 
+**Verify download:**
 ```bash
-# Read standards source from config
-standards_source=$(grep -A 5 "standards_source:" .claude/your-stack/stack-config.yaml)
+ls -la "$temp_dir/.claude/"
 ```
 
-If standards source is configured, fetch and compare:
+If successful, you should see framework structure.
+
+---
+
+## STEP 3: Compare Versions
+
+**Compare current installation with latest version:**
+
+### Check Commands
+
+Use `Bash` to compare:
 
 ```bash
-# Example for git source
-temp_standards=".claude-standards-check-temp"
-git clone --depth 1 [standards_url] "$temp_standards"
+# List new commands
+comm -13 <(ls .claude/commands/*.md 2>/dev/null | xargs -n1 basename | sort) \
+         <(ls "$temp_dir/.claude/commands/"*.md 2>/dev/null | xargs -n1 basename | sort)
 
-# Compare with current your-stack
-standards_updates=()
-
-for file in .claude/your-stack/coding-standards/*.md; do
-    filename=$(basename "$file")
-    if [ -f "$temp_standards/$filename" ]; then
-        if ! diff -q "$file" "$temp_standards/$filename" > /dev/null 2>&1; then
-            standards_updates+=("$filename")
-        fi
+# List modified commands
+for file in .claude/commands/*.md; do
+  filename=$(basename "$file")
+  if [ -f "$temp_dir/.claude/commands/$filename" ]; then
+    if ! diff -q "$file" "$temp_dir/.claude/commands/$filename" > /dev/null 2>&1; then
+      echo "$filename"
     fi
+  fi
 done
 ```
 
-### Step 3: Show Available Updates
+### Check Core Files
 
-Present a clear summary:
+Compare important files:
+
+```bash
+# Check if CLAUDE.md changed
+diff -q .claude/CLAUDE.md "$temp_dir/.claude/CLAUDE.md" || echo "CLAUDE.md updated"
+
+# Check workflows
+diff -qr .claude/workflows "$temp_dir/.claude/workflows" 2>/dev/null || echo "workflows updated"
+
+# Check tools
+diff -qr .claude/tools "$temp_dir/.claude/tools" 2>/dev/null || echo "tools updated"
+
+# Check config templates
+diff -qr .claude/config "$temp_dir/.claude/config" 2>/dev/null || echo "config updated"
+```
+
+### Store Results
+
+Create lists:
+- `new_commands[]` - Commands that don't exist locally
+- `updated_commands[]` - Commands that changed
+- `updated_files[]` - Other files that changed
+- `new_files[]` - New files/directories
+
+---
+
+## STEP 4: Present Findings
+
+**Show user what's available:**
 
 ```markdown
-## 🔍 Checking for Updates...
+🔍 **UPDATE CHECK COMPLETE**
 
-Connected to:
-• Framework: github.com/LuisLadino/claude-dev-framework
-• Standards: github.com/your-company/standards (if configured)
+**Source:** https://github.com/[USER]/[REPO]
+**Your version:** [Your .claude directory, approximate age based on file dates]
+**Latest version:** [Latest commit date from GitHub]
 
----
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-## 📦 Framework Updates Available (3 changes)
+## 📦 New Features Available (3)
 
-**New Features:**
-• commands/create-agent.md - NEW command for creating custom agents
-• workflows/team-collaboration.md - NEW team workflow
+**New Commands:**
+• /create-prd - Create Product Requirement Documents
+• /generate-tasks - Break down PRDs into task lists
+• /process-tasks - Execute task lists step-by-step
 
-**Updates:**
-• CLAUDE.md - Added MCP tool usage checks (IMPORTANT)
-• commands/research-stack.md - Improved context7 integration
-• scripts/update-framework.sh - Enhanced update logic (you're using it!)
+**What they do:**
+These commands add a workflow for building complex features systematically.
 
-**Bug Fixes:**
-• Fixed installer merge mode
-• Improved migration guide
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
----
+## 🔄 Updates Available (5)
 
-## 📚 Company Standards Updates Available (2 changes)
+**CLAUDE.md:**
+- Added Task-to-Standards Mapping table
+- Made operational standards explicit
+- Enhanced commit workflow
 
-Source: github.com/your-company/engineering-standards
+**Commands:**
+• /start-task - Now reads version-control.md before commits
+• /verify - Enhanced framework-specific checks
+• /standards - Added universal violation patterns
 
-**Updates:**
-• react-standards.md - Deprecated class components, added server components
-• typescript-standards.md - Stricter any usage policy
+**Tools:**
+• mcp-integration.md - Updated with latest MCP servers
 
-**New Files:**
-• testing-standards.md - New testing requirements (80% coverage)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
----
+## ✅ Your Customizations (Preserved)
 
-## What would you like to update?
+These will NOT be touched:
+✓ .claude/your-stack/ (all your standards)
+✓ .claude/tasks/ (your PRDs and task lists)
+✓ PROJECT-INSTRUCTIONS.md (if exists)
 
-1. **Framework only** - Get latest framework features
-2. **Standards only** - Get company standard updates
-3. **Both** - Update framework and standards
-4. **Review changes** - See diffs before deciding
-5. **Cancel** - Don't update anything
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Your choice (1-5):
-```
+**What would you like to do?**
 
-### Step 4: Handle User Choice
-
-**If user chooses "4. Review changes":**
-
-Show detailed diffs for each change:
-
-```markdown
-## 📝 Framework Changes
-
-### CLAUDE.md (UPDATED)
-
-**What changed:**
-```diff
-@@ Line 126 @@
-+ **MCP Tool Usage:**
-+ - [ ] Checked if MCP servers are available and needed for this task
-+ - [ ] Using context7 for documentation research (if available)
-+ - [ ] Using appropriate MCP tools for external data/APIs (if needed)
-```
-
-**Why this matters:** Framework now checks for MCP servers before tasks, ensuring better tool usage.
-
----
-
-### commands/create-agent.md (NEW)
-
-**What it does:** New command to create custom agent workflows for specialized tasks.
-
-**Preview:**
-```markdown
-# /create-agent
-
-Create a specialized agent for specific workflows...
-[First 20 lines shown]
-```
-
----
-
-## 📚 Standards Changes
-
-### react-standards.md (UPDATED)
-
-**What changed:**
-```diff
-@@ Lines 45-48 @@
-- Use class components for complex state
-+ Use functional components with hooks for ALL components
-+ Class components are deprecated
-
-@@ Lines 102+ @@
-+ ## Server Components
-+ - Use React Server Components by default
-+ - Mark client components with 'use client'
-```
-
-**Impact:** You'll need to migrate class components to hooks.
-
----
-
-After showing all changes, ask again:
-
-```
-Now that you've reviewed the changes, what would you like to update?
-
-1. Framework only
-2. Standards only
-3. Both
-4. Cancel
+1. **Show me details** - See specific changes in each file
+2. **Update all** - Apply all updates and new features
+3. **Choose what to update** - Pick specific items
+4. **Cancel** - Don't update anything
 
 Your choice (1-4):
 ```
 
-### Step 5: Apply Updates
+**⏸️ WAIT FOR USER RESPONSE**
 
-**If "1. Framework only" or "3. Both":**
+---
+
+## STEP 5: Handle User Choice
+
+### If "1. Show me details"
+
+For each changed file, use `Bash` to show diff:
 
 ```bash
-# Run the update script for framework (non-interactive)
-curl -fsSL https://raw.githubusercontent.com/LuisLadino/claude-dev-framework/main/scripts/update-framework.sh | bash -s -- -y
+diff -u .claude/CLAUDE.md "$temp_dir/.claude/CLAUDE.md" | head -50
 ```
 
-Or if script is already local:
-
-```bash
-bash scripts/update-framework.sh -y
-```
-
-**If "2. Standards only" or "3. Both":**
-
-For each changed standards file, show interactive approval:
+Show in readable format:
 
 ```markdown
-## Updating Standards...
+### CLAUDE.md Changes
 
-### 1/2: react-standards.md
+**Added Section: Task-to-Standards Mapping (Line 102)**
 
-**Changes:**
 ```diff
-- Use class components for complex state
-+ Use functional components with hooks
++## Task-to-Standards Mapping
++
++**This framework's power comes from reading the right standards for each action.**
++
++| Action You're Taking | Standards Files to Read |
++|---------------------|-------------------------|
++| **Writing code** | framework-standards.md, language-standards.md |
++| **Committing changes** | version-control.md |
 ```
 
-**Apply this update?**
-- [Y]es - Update this file
-- [N]o - Keep current version
-- [D]iff - Show full diff
-- [P]review - Show final file
+**Why this matters:**
+Makes it explicit for LLM to read correct standards file before each action.
 
-Your choice (Y/N/D/P):
+**Impact:**
+Low - Clarifies existing behavior, doesn't change workflow.
+
+---
+
+[Repeat for each changed file]
+
+**After showing details, return to choice menu.**
+
+### If "2. Update all"
+
+**Show confirmation:**
+
+```markdown
+⚠️  **CONFIRM UPDATE ALL**
+
+This will:
+✓ Backup your current .claude/ to .claude-backup-[timestamp]/
+✓ Update all framework files
+✓ Preserve .claude/your-stack/
+✓ Preserve .claude/tasks/
+✓ Add 3 new commands
+✓ Update 5 existing files
+
+Ready to proceed? (yes/no):
 ```
 
-Process each file based on user response:
+**⏸️ WAIT FOR "yes"**
+
+If yes, proceed to STEP 6 with `update_all=true`
+
+### If "3. Choose what to update"
+
+**Show interactive menu:**
+
+```markdown
+Select items to update (space to toggle, enter to confirm):
+
+**New Commands:**
+[ ] /create-prd
+[ ] /generate-tasks
+[ ] /process-tasks
+
+**Updated Commands:**
+[ ] /start-task
+[ ] /verify
+[ ] /standards
+
+**Core Files:**
+[x] CLAUDE.md (recommended)
+[ ] workflows/
+[ ] tools/
+[ ] config/
+
+**Select/deselect with:** [command name]
+**When done, type:** done
+```
+
+Wait for user to select items, then proceed to STEP 6 with selected items.
+
+### If "4. Cancel"
+
+```markdown
+Update cancelled. No changes made.
+
+To update later, run /update-framework again.
+```
+
+Clean up temp directory and exit.
+
+---
+
+## STEP 6: Apply Updates
+
+**Create backup first:**
 
 ```bash
-# If yes
-cp "$temp_standards/react-standards.md" .claude/your-stack/coding-standards/
-# Create backup first
-cp .claude/your-stack/coding-standards/react-standards.md .claude/your-stack/.backups/react-standards.md.backup-$(date +%Y%m%d-%H%M%S)
+timestamp=$(date +%Y%m%d-%H%M%S)
+cp -r .claude ".claude-backup-$timestamp"
 ```
 
-### Step 6: Summary
+**For each selected item, apply the update:**
+
+### For New Commands
+
+```bash
+cp "$temp_dir/.claude/commands/[command].md" .claude/commands/
+```
+
+Show:
+```markdown
+✓ Added: /create-prd
+```
+
+### For Updated Files
+
+Use `Edit` tool or `Bash`:
+
+```bash
+# Backup old version
+cp .claude/CLAUDE.md ".claude/CLAUDE.md.backup-$timestamp"
+
+# Copy new version
+cp "$temp_dir/.claude/CLAUDE.md" .claude/CLAUDE.md
+```
+
+Show:
+```markdown
+✓ Updated: CLAUDE.md
+  Backup: .claude/CLAUDE.md.backup-[timestamp]
+```
+
+### For Directories
+
+```bash
+# Backup
+cp -r .claude/workflows ".claude/workflows.backup-$timestamp"
+
+# Update
+rm -rf .claude/workflows
+cp -r "$temp_dir/.claude/workflows" .claude/workflows
+```
+
+### Preserve Customizations
+
+After updating, restore preserved directories:
+
+```bash
+# Restore your-stack if it was in backup
+if [ -d ".claude-backup-$timestamp/your-stack" ]; then
+  cp -r ".claude-backup-$timestamp/your-stack" .claude/
+fi
+
+# Restore tasks
+if [ -d ".claude-backup-$timestamp/tasks" ]; then
+  cp -r ".claude-backup-$timestamp/tasks" .claude/
+fi
+```
+
+---
+
+## STEP 7: Verification
+
+**Verify the update worked:**
+
+```bash
+# Check critical files exist
+ls -la .claude/CLAUDE.md
+ls -la .claude/commands/
+ls -la .claude/your-stack/ 2>/dev/null || echo "No your-stack (OK if new install)"
+
+# Show directory structure
+tree .claude -L 2 2>/dev/null || find .claude -maxdepth 2 -type d
+```
+
+---
+
+## STEP 8: Summary
 
 ```markdown
-## ✅ Update Complete!
+✅ **UPDATE COMPLETE!**
 
-**Framework:**
-✅ Updated commands/ (2 new, 1 updated)
-✅ Updated CLAUDE.md (MCP tool usage checks)
-✅ Updated scripts/ (all framework scripts)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-**Standards:**
-✅ Applied: react-standards.md
-⏭️  Skipped: typescript-standards.md (kept your version)
-✅ Added: testing-standards.md (new file)
+**What Was Updated:**
 
-**Backups created:**
-• Framework: .claude-backup-update-[timestamp]/
-• Standards: .claude/your-stack/.backups/
+✓ New Commands (3):
+  - /create-prd
+  - /generate-tasks
+  - /process-tasks
 
-**What's new:**
-🔧 MCP tool usage checks in workflow
-🔧 context7 automatic detection
-🎯 New /create-agent command
-📋 Company testing requirements (80% coverage)
+✓ Updated Files (5):
+  - CLAUDE.md (Task-to-Standards Mapping added)
+  - commands/start-task.md (Enhanced commit workflow)
+  - commands/verify.md (Framework-specific checks)
+  - commands/standards.md (Universal patterns)
+  - tools/mcp-integration.md (Latest MCP servers)
 
-**Next steps:**
-1. Review updated standards
-2. Test new features (/create-agent)
-3. Apply new standards to code
-4. Share updates with team
+**Preserved:**
+✓ .claude/your-stack/ (all your custom standards)
+✓ .claude/tasks/ (all your PRDs and tasks)
 
-**To revert:**
-Framework: cp -r .claude-backup-update-[timestamp]/* .claude/
-Standards: cp .claude/your-stack/.backups/[file].backup-[timestamp] .claude/your-stack/coding-standards/[file]
+**Backup Location:**
+.claude-backup-[timestamp]/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**What's New:**
+
+🎯 **Task-to-Standards Mapping**
+   Clear table showing which standards to read for each action.
+   Makes LLM behavior more predictable.
+
+🔧 **Enhanced Commit Workflow**
+   /start-task now explicitly reads version-control.md before commits.
+   No more missing commit standards.
+
+📋 **PRD-to-Tasks Workflow**
+   New commands for systematic feature development.
+   /create-prd → /generate-tasks → /process-tasks
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**Next Steps:**
+
+1. Try new commands: /create-prd, /generate-tasks, /process-tasks
+2. Review updated files to see what changed
+3. Continue using framework as normal
+
+**To revert (if needed):**
+```bash
+rm -rf .claude
+cp -r .claude-backup-[timestamp] .claude
+```
+
+**Framework source:** https://github.com/[USER]/[REPO]
+**Next update:** Run /update-framework again in 30 days
 ```
 
 ---
 
-## If No Standards Source Configured
+## STEP 9: Cleanup
 
-If user doesn't have `standards_source` in stack-config.yaml:
+```bash
+# Remove temp download directory
+rm -rf "$temp_dir"
+```
+
+---
+
+## Edge Cases
+
+### If No Updates Available
 
 ```markdown
-## 📦 Framework Updates Available (3 changes)
+✅ **YOU'RE UP TO DATE!**
 
-[Show framework updates as above]
+Your framework is current with the source repository.
 
----
+**Source:** https://github.com/[USER]/[REPO]
+**Last checked:** [timestamp]
 
-## 📚 Company Standards
+**What's installed:**
+- Commands: [count]
+- Workflows: [count]
+- Tools: [count]
 
-⚠️  No standards source configured
-
-To get company/team standard updates, configure the source in:
-.claude/your-stack/stack-config.yaml
-
-Example:
-```yaml
-standards_source:
-  type: "git"
-  url: "https://github.com/your-company/standards.git"
-  branch: "main"
-  path: "standards/"
+No updates needed. Check again in 30 days or when you see announcements.
 ```
 
-Or run: /import-standards to set up company standards
+### If Cannot Reach Source
 
-For now, you can update framework only.
+```markdown
+❌ **CANNOT REACH FRAMEWORK SOURCE**
 
----
+Unable to fetch updates from:
+https://github.com/[USER]/[REPO]
 
-What would you like to update?
-1. Framework only (no standards source configured)
-2. Cancel
+**Possible causes:**
+- No internet connection
+- Repository moved or deleted
+- GitHub is down
+- Repository is private (need authentication)
 
-Your choice:
+**Solutions:**
+- Check your internet connection
+- Verify the repository URL is correct
+- Try again later
+- If repo moved, update your remote:
+  ```bash
+  cd .claude
+  git remote set-url origin [new-url]
+  ```
+
+**Your current framework continues to work normally.**
 ```
+
+### If Download Fails
+
+```markdown
+❌ **DOWNLOAD FAILED**
+
+Started downloading but failed during extraction.
+
+**This could be:**
+- Network timeout
+- Corrupted download
+- Insufficient disk space
+
+**To retry:**
+Run /update-framework again
+
+**Your framework is unchanged and working.**
+```
+
+### If Framework Source Unknown
+
+```markdown
+⚠️  **FRAMEWORK SOURCE UNKNOWN**
+
+I couldn't determine where this framework came from.
+
+**Please provide the GitHub repository URL:**
+
+Example: https://github.com/LuisLadino/claude-dev-framework
+
+Or if you forked it: https://github.com/your-username/your-fork
+
+[Wait for user to provide URL]
+
+**I'll remember this for future updates by storing in:**
+.claude/framework-source.txt
+```
+
+Then proceed with provided URL.
 
 ---
 
 ## Configuration
 
-### For Company Standards Updates
+### Storing Framework Source
 
-Add to `.claude/your-stack/stack-config.yaml`:
+After first update, create `.claude/framework-source.txt`:
 
-```yaml
-standards_source:
-  type: "git"  # or "url", "local"
-  url: "https://github.com/company/engineering-standards.git"
-  branch: "main"
-  path: "standards/"  # Path within repo
+```
+https://github.com/[USER]/[REPO]
 ```
 
-### Supported Source Types
+This way future updates don't need to detect source.
 
-**Git Repository:**
-```yaml
-standards_source:
-  type: "git"
-  url: "https://github.com/company/standards.git"
-  branch: "main"
+### For Forked Frameworks
+
+If user forked the framework:
+
+```markdown
+📌 **USING FORKED FRAMEWORK**
+
+**Your fork:** https://github.com/your-user/your-fork
+**Original:** https://github.com/LuisLadino/claude-dev-framework
+
+You'll get updates from YOUR fork.
+
+**To also check original for updates:**
+I can check both repositories and show you:
+- Updates in your fork
+- Updates in original (that you might want to merge)
+
+Check both? (yes/no):
 ```
-
-**Direct URL:**
-```yaml
-standards_source:
-  type: "url"
-  url: "https://company.com/standards/"
-```
-
-**Local Path:**
-```yaml
-standards_source:
-  type: "local"
-  path: "/shared/company-standards/"
-```
-
----
-
-## Update Types
-
-### Framework Updates
-
-**What gets updated:**
-- commands/ - All slash commands
-- workflows/ - Multi-step workflows
-- tools/ - Tool integrations
-- config/ - Framework configs
-- CLAUDE.md - Core instructions (if not customized)
-- scripts/ - All framework scripts
-- README.md - Framework documentation
-
-**What's preserved:**
-- your-stack/ - All custom standards
-- PROJECT-INSTRUCTIONS.md - Custom instructions
-- tasks/ - PRDs and task lists
-
-### Standards Updates
-
-**What gets updated:**
-- your-stack/coding-standards/
-- your-stack/architecture/
-- your-stack/documentation-standards/
-- Any other standards from company source
-
-**What's preserved:**
-- Custom modifications (you review each change)
-- Files not in company standards
-- Your project-specific additions
 
 ---
 
 ## Best Practices
 
-**Before updating:**
-- Commit your current code
-- Check what's changing
-- Read changelogs
+**For Users:**
 
-**During update:**
-- Review each change carefully
-- Understand why standards changed
-- Consider impact on your code
+✅ **Review changes** before applying (use "Show me details")
+✅ **Update regularly** (monthly is good)
+✅ **Read what's new** in the summary
+✅ **Test after updating** (try a /start-task)
+✅ **Keep backups** (.claude-backup-* directories)
 
-**After update:**
-- Verify setup: `./scripts/validate-setup.sh`
-- Test new features
-- Apply new standards gradually
-- Share updates with team
+**For Framework Maintainers:**
 
----
-
-## Troubleshooting
-
-### "Cannot connect to standards source"
-
-- Check network access
-- Verify URL in stack-config.yaml
-- Ensure authentication (if required)
-
-### "No updates available"
-
-You're already up to date!
-
-### "Framework update failed"
-
-Restore from backup:
-```bash
-cp -r .claude-backup-update-[timestamp]/* .claude/
-```
+✅ **Document changes** in commit messages
+✅ **Keep CLAUDE.md backward compatible** when possible
+✅ **Test updates** on sample projects before releasing
+✅ **Announce major changes** to users
 
 ---
 
-## Related
+## Related Commands
 
-- `/import-standards` - Initial standards import
-- `/research-stack` - Generate new standards
-- Validation: `./scripts/validate-setup.sh`
+- `/research-stack` - Generate new standards for a different stack
+- `/import-standards` - Import company standards
+- `/verify` - Verify framework installation
 
 ---
 
-**Note:** This single command handles both framework and standards updates. You control what gets updated and can review all changes before applying.
+**This command is 100% LLM-driven. No bash scripts required. Claude Code handles everything interactively.**
