@@ -120,6 +120,52 @@ diff -qr .claude/tools "$temp_dir/.claude/tools" 2>/dev/null || echo "tools upda
 diff -qr .claude/config "$temp_dir/.claude/config" 2>/dev/null || echo "config updated"
 ```
 
+### Check Company/Team Standards (Your Stack)
+
+**Important:** If the source repo includes managed `your-stack/` (company fork), check for updates:
+
+```bash
+# Check if source has your-stack directory
+if [ -d "$temp_dir/.claude/your-stack" ]; then
+  echo "Source includes managed standards in your-stack/"
+
+  # Compare standards files
+  if [ -d ".claude/your-stack/coding-standards" ]; then
+    for file in "$temp_dir/.claude/your-stack/coding-standards/"*.md; do
+      filename=$(basename "$file")
+      if [ -f ".claude/your-stack/coding-standards/$filename" ]; then
+        if ! diff -q ".claude/your-stack/coding-standards/$filename" "$file" > /dev/null 2>&1; then
+          echo "Standards updated: $filename"
+        fi
+      else
+        echo "New standard: $filename"
+      fi
+    done
+  fi
+
+  # Check architecture patterns
+  if [ -d "$temp_dir/.claude/your-stack/architecture" ]; then
+    diff -qr .claude/your-stack/architecture "$temp_dir/.claude/your-stack/architecture" 2>/dev/null || echo "architecture updated"
+  fi
+
+  # Check documentation standards
+  if [ -d "$temp_dir/.claude/your-stack/documentation-standards" ]; then
+    diff -qr .claude/your-stack/documentation-standards "$temp_dir/.claude/your-stack/documentation-standards" 2>/dev/null || echo "documentation standards updated"
+  fi
+
+  # Check stack config
+  if [ -f "$temp_dir/.claude/your-stack/stack-config.yaml" ]; then
+    diff -q .claude/your-stack/stack-config.yaml "$temp_dir/.claude/your-stack/stack-config.yaml" || echo "stack-config.yaml updated"
+  fi
+fi
+```
+
+**Why this matters:**
+
+- **For companies:** You maintain team standards in your fork's `your-stack/`
+- **For individuals:** Your fork doesn't include `your-stack/`, so this is skipped
+- **Updates detected:** New standards, changed rules, updated conventions
+
 ### Store Results
 
 Create lists:
@@ -127,6 +173,8 @@ Create lists:
 - `updated_commands[]` - Commands that changed
 - `updated_files[]` - Other files that changed
 - `new_files[]` - New files/directories
+- `updated_standards[]` - Standards files that changed (your-stack/)
+- `new_standards[]` - New standards files (your-stack/)
 
 ---
 
@@ -172,12 +220,29 @@ These commands add a workflow for building complex features systematically.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+## 📚 Company/Team Standards Updates (3)
+
+**Updated Standards:**
+• react-standards.md - Added new hooks patterns
+• typescript-standards.md - Stricter error handling rules
+
+**New Standards:**
+• security-standards.md - New security requirements
+
+**What they do:**
+Your company/team has updated coding standards. These affect
+how code should be written going forward.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 ## ✅ Your Customizations (Preserved)
 
 These will NOT be touched:
-✓ .claude/your-stack/ (all your standards)
 ✓ .claude/tasks/ (your PRDs and task lists)
 ✓ PROJECT-INSTRUCTIONS.md (if exists)
+
+Note: If source repo includes your-stack/, those are MANAGED
+standards from your company. They can be updated.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -280,6 +345,11 @@ Select items to update (space to toggle, enter to confirm):
 [ ] tools/
 [ ] config/
 
+**Company/Team Standards:**
+[x] react-standards.md (recommended)
+[x] typescript-standards.md (recommended)
+[ ] security-standards.md (new)
+
 **Select/deselect with:** [command name]
 **When done, type:** done
 ```
@@ -349,17 +419,43 @@ rm -rf .claude/workflows
 cp -r "$temp_dir/.claude/workflows" .claude/workflows
 ```
 
-### Preserve Customizations
+### For Company/Team Standards
 
-After updating, restore preserved directories:
+If source includes managed `your-stack/` and user selected standards to update:
 
 ```bash
-# Restore your-stack if it was in backup
-if [ -d ".claude-backup-$timestamp/your-stack" ]; then
-  cp -r ".claude-backup-$timestamp/your-stack" .claude/
+# Update standards files
+cp "$temp_dir/.claude/your-stack/coding-standards/react-standards.md" .claude/your-stack/coding-standards/
+cp "$temp_dir/.claude/your-stack/coding-standards/typescript-standards.md" .claude/your-stack/coding-standards/
+
+# Copy new standards
+cp "$temp_dir/.claude/your-stack/coding-standards/security-standards.md" .claude/your-stack/coding-standards/
+```
+
+Show:
+```markdown
+✓ Updated: react-standards.md (company managed)
+✓ Updated: typescript-standards.md (company managed)
+✓ Added: security-standards.md (new company standard)
+```
+
+### Preserve Custom Modifications
+
+**Important distinction:**
+
+- **If your-stack/ came from source:** It's managed by company, update it
+- **If your-stack/ is local only:** It's your customization, preserve it
+
+```bash
+# Only restore if your-stack wasn't in source
+if [ ! -d "$temp_dir/.claude/your-stack" ]; then
+  # Restore local customizations
+  if [ -d ".claude-backup-$timestamp/your-stack" ]; then
+    cp -r ".claude-backup-$timestamp/your-stack" .claude/
+  fi
 fi
 
-# Restore tasks
+# Always restore tasks (always local)
 if [ -d ".claude-backup-$timestamp/tasks" ]; then
   cp -r ".claude-backup-$timestamp/tasks" .claude/
 fi
@@ -404,9 +500,14 @@ tree .claude -L 2 2>/dev/null || find .claude -maxdepth 2 -type d
   - commands/standards.md (Universal patterns)
   - tools/mcp-integration.md (Latest MCP servers)
 
+✓ Company/Team Standards (3):
+  - react-standards.md (updated - new hooks patterns)
+  - typescript-standards.md (updated - stricter error handling)
+  - security-standards.md (new - security requirements)
+
 **Preserved:**
-✓ .claude/your-stack/ (all your custom standards)
 ✓ .claude/tasks/ (all your PRDs and tasks)
+✓ PROJECT-INSTRUCTIONS.md (if exists)
 
 **Backup Location:**
 .claude-backup-[timestamp]/
