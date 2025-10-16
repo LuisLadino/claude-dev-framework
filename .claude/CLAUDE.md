@@ -79,13 +79,52 @@ Read files in `.claude/your-stack/architecture/`:
 
 ### Operational Standards
 
-Read when applicable:
+**CRITICAL: Read operational standards BEFORE performing the corresponding action:**
 
-- `.claude/config/version-control.md` - Git workflow and commit standards
-- `.claude/config/deployment.md` - Deployment process
-- `.claude/config/environment.md` - Development environment setup
+**Before committing code:**
+- `.claude/config/version-control.md` - Git workflow and commit message format
+- Use `project_knowledge_search` to read this file before EVERY commit
 
-**Use `project_knowledge_search` to find and read these files before coding.**
+**Before deploying:**
+- `.claude/config/deployment.md` - Deployment process and checklist
+- Use `project_knowledge_search` to read this file before any deployment
+
+**Before environment setup:**
+- `.claude/config/environment.md` - Development environment requirements
+- Use `project_knowledge_search` to read this file when setting up or troubleshooting environment
+
+**If a standards file doesn't exist:** Note that it's missing and proceed using framework best practices, then inform the user.
+
+**Use `project_knowledge_search` to find and read these files BEFORE taking the corresponding action.**
+
+---
+
+## Task-to-Standards Mapping
+
+**This framework's power comes from reading the right standards for each action.**
+
+**For EVERY task, identify what you're about to do, then load the corresponding standards:**
+
+| Action You're Taking | Standards Files to Read |
+|---------------------|-------------------------|
+| **Writing code** | framework-standards.md, language-standards.md, styling-standards.md |
+| **Committing changes** | version-control.md (commit format, pre-commit checks) |
+| **Running tests** | testing-standards.md |
+| **Adding documentation** | documentation-standards/ (code-comments.md, component-docs.md) |
+| **Organizing files** | architecture/file-structure.md |
+| **Setting up environment** | environment.md |
+| **Deploying** | deployment.md |
+| **API work** | api-standards.md (if exists) |
+| **Database work** | database-standards.md (if exists) |
+
+**Pattern to follow:**
+1. Identify the action: "I'm about to [commit/test/deploy/code]"
+2. Find corresponding standards file from table above
+3. Use `project_knowledge_search` to read it
+4. Apply the standards from that file
+5. Show user what you read in Standards Check
+
+**If standards file doesn't exist:** Inform user and proceed with framework best practices.
 
 ---
 
@@ -174,11 +213,23 @@ Before marking work complete, verify:
 
 ### 6. Commit Properly
 
-Follow version control standards when committing:
+**Before committing, read version control standards:**
 
+Use `project_knowledge_search` to read:
+```
+Query: "version control standards commit format"
+```
+
+From `.claude/config/version-control.md`, extract:
+- Commit message format (type, scope, message structure)
+- Pre-commit checklist requirements
+- What should/shouldn't be committed
+
+**Then apply those standards:**
 - Use conventional commit format (from version-control.md)
 - Include meaningful commit messages
 - Stage only related changes
+- Follow pre-commit checklist from standards file
 
 ---
 
@@ -410,16 +461,18 @@ If stack-config.yaml doesn't exist:
 
 This framework ensures quality by:
 
-1. **Reading standards** before any coding
+1. **Reading standards** before any action (coding, committing, deploying, testing)
 2. **Showing your plan** to the user
 3. **Getting approval** before executing
 4. **Following standards** exactly
 5. **Verifying quality** before completion
-6. **Committing properly** with good messages
+6. **Committing properly** by reading version-control.md first
 
 The framework adapts to any stack by reading `.claude/your-stack/` configuration and standards.
 
 **The goal: Professional, consistent code regardless of what you're building.**
+
+**Key principle: Every action has a corresponding standards file. Always read it first using `project_knowledge_search`.**
 
 ---
 
@@ -448,9 +501,11 @@ The framework adapts to any stack by reading `.claude/your-stack/` configuration
 
 **When committing:**
 
-- Follow commit message format
+- Read version-control.md first using project_knowledge_search
+- Extract commit message format from standards file
+- Follow pre-commit checklist from standards
 - Stage only related changes
-- Meaningful commit messages
+- Write meaningful commit messages per standards
 
 ---
 

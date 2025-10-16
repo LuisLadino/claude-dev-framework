@@ -159,6 +159,8 @@ revert: feat(auth): add password reset functionality
 - ❌ Be vague ("update stuff", "fix bug", "changes")
 - ❌ Include implementation details in subject
 - ❌ Commit unrelated changes together
+- ❌ Mention "Claude", "Claude Code", or AI tools in commit messages
+- ❌ Include Co-Authored-By: Claude or similar AI attribution
 
 ### Detailed Messages
 

@@ -211,9 +211,10 @@ Show complete checklist for user approval:
   - testing-standards.md (test requirements, coverage)
   - [any company-specific standards]
 
-✓ Operational:
-  - version-control.md (git workflow, commit format)
-  - [environment/deployment if applicable]
+✓ Operational Standards:
+  - version-control.md (will read before committing - commit format, pre-commit checks)
+  - [environment.md if environment work needed]
+  - [deployment.md if deployment needed]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -429,12 +430,33 @@ Re-running all checks...
 
 ## STEP 7: Commit Changes
 
-Prepare for commit:
+**First, load version control standards:**
+
+Use `project_knowledge_search` to read version-control.md:
+```
+Query: "version control standards commit format"
+```
+
+**Extract from version-control.md:**
+- Commit message format (type, scope, structure)
+- Allowed commit types (feat, fix, refactor, etc.)
+- Pre-commit checklist requirements
+- Message formatting rules
+
+Then prepare for commit:
 
 ```
 📦 **PREPARING COMMIT**
 
-Changes to commit:
+**Version Control Standards Loaded:**
+✓ Read: .claude/config/version-control.md
+  - Commit format: [format from standards file]
+  - Types: [allowed types from standards]
+  - Pre-commit checks: [checklist items from standards]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**Changes to commit:**
 - [file1] (new/modified)
 - [file2] (modified)
 - [test-file] (new)
@@ -442,6 +464,7 @@ Changes to commit:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 **Suggested Commit Message:**
+(Following format from version-control.md)
 
 [type]([scope]): [description]
 
@@ -492,12 +515,13 @@ git commit -m "[commit message]"
 - [Other key technologies]
 
 **Standards followed:**
+✓ CLAUDE.md - [Workflow adherence, task-to-standards mapping]
 ✓ [framework]-standards.md - [Key patterns used]
 ✓ [language]-standards.md - [Key rules followed]
 ✓ [styling]-standards.md - [Styling approach]
 ✓ testing-standards.md - [Test coverage]
 ✓ file-structure.md - [Organization]
-✓ version-control.md - [Commit format]
+✓ version-control.md - [Commit format, pre-commit checks]
 
 **Files created/modified:**
 - [file1] - [Purpose]
