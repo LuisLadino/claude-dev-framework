@@ -1,6 +1,6 @@
 # Framework Self-Update Workflow
 
-**Last Updated:** 2025-01-09
+**Last Updated:** 2025-01-16
 
 This workflow explains how to keep your Claude Development Framework up-to-date while preserving your customizations.
 
@@ -8,12 +8,13 @@ This workflow explains how to keep your Claude Development Framework up-to-date 
 
 ## Overview
 
-The framework is designed to update itself easily:
+The framework updates using the `/update-framework` slash command:
 
-- **Framework files** get updated from the repository
-- **Your customizations** stay untouched in `.claude/your-stack/`
-- **Automatic backups** created before every update
-- **Rollback support** if something goes wrong
+- **Claude Code handles everything** - fully interactive, no scripts
+- **Your customizations stay untouched** - `.claude/your-stack/` preserved
+- **Automatic backups** - created before every update
+- **Selective updates** - choose what to apply
+- **Full transparency** - see exactly what changes
 
 ---
 
@@ -23,747 +24,419 @@ The framework is designed to update itself easily:
 
 **Recommended Schedule:**
 
-- **Monthly**: Check for updates and review changelog
-- **Quarterly**: Major version updates (new features)
-- **Immediately**: Critical security fixes
+- **Monthly**: Check for updates and review what's new
+- **Quarterly**: Major feature updates
+- **Immediately**: Critical fixes or security patches
 
 **How to check:**
 
-```bash
-# Option 1: Manual check
-git fetch origin main
-git log HEAD..origin/main --oneline
+Simply run the update command:
 
-# Option 2: GitHub releases
-# Visit: https://github.com/LuisLadino/claude-dev-framework/releases
-
-# Option 3: Update script (shows version)
-./scripts/update-framework.sh
-# Will show current vs latest version
 ```
+/update-framework
+```
+
+Claude Code will fetch the latest version and show you what's available.
 
 ---
 
 ## Update Process
 
-### Step 1: Before Updating
+### Method 1: Using Claude Code (Recommended)
 
-#### Review What's Changed
+**In your Claude Code conversation:**
+
+```
+/update-framework
+```
+
+**Claude Code will:**
+
+1. Detect your framework source (git remote or config)
+2. Fetch latest version from repository
+3. Compare with your current installation
+4. Show you what's new or changed
+5. Let you choose what to update
+6. Create automatic backups
+7. Apply selected updates
+8. Verify everything works
+9. Show summary
+
+**Interactive workflow:**
+
+```
+🔍 UPDATE CHECK COMPLETE
+
+Source: https://github.com/YourUser/your-repo
+Your version: ~30 days old
+Latest version: 2 days ago
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## 📦 New Features Available (3)
+
+New Commands:
+• /create-prd - Create Product Requirement Documents
+• /generate-tasks - Break down PRDs into task lists
+• /process-tasks - Execute task lists step-by-step
+
+## 🔄 Updates Available (5)
+
+CLAUDE.md:
+- Added Task-to-Standards Mapping table
+- Made operational standards explicit
+
+Commands:
+• /start-task - Now reads version-control.md before commits
+• /verify - Enhanced framework-specific checks
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## ✅ Your Customizations (Preserved)
+
+These will NOT be touched:
+✓ .claude/your-stack/ (all your standards)
+✓ .claude/tasks/ (your PRDs and task lists)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+What would you like to do?
+
+1. Show me details - See specific changes
+2. Update all - Apply everything
+3. Choose what to update - Select items
+4. Cancel - Don't update
+
+Your choice (1-4):
+```
+
+**You choose what happens:**
+
+- **Option 1**: See detailed diffs for each file
+- **Option 2**: Update everything automatically
+- **Option 3**: Pick specific commands/files to update
+- **Option 4**: Cancel and update later
+
+### Method 2: Manual Git Update (Advanced)
+
+If you prefer manual control:
 
 ```bash
-# See what's new
-git log HEAD..origin/main
-
-# View specific changes
-git diff HEAD..origin/main
-
-# Or check CHANGELOG.md on GitHub
-```
-
-#### Check Current State
-
-```bash
-# Verify you have no uncommitted changes
-git status
-
-# Should show:
-# "nothing to commit, working tree clean"
-
-# If you have changes, commit them first:
-git add .
-git commit -m "chore: save work before framework update"
-```
-
-#### Backup Your Customizations
-
-```bash
-# Script creates automatic backup, but you can do manual backup too:
-cp -r .claude/your-stack .claude/your-stack.backup-$(date +%Y%m%d)
-```
-
----
-
-### Step 2: Run Update
-
-#### Using Update Script (Recommended)
-
-```bash
-./scripts/update-framework.sh
-```
-
-**The script will:**
-
-1. Check your current version
-2. Fetch latest version from GitHub
-3. Show what will be updated
-4. Create automatic backup
-5. Update framework files
-6. Preserve your customizations
-7. Update version in your stack config
-8. Show summary of changes
-
-**Interactive prompts:**
-
-```
-Current version: 1.0.0
-Latest version: 1.1.0
-
-Continue with update? (y/n) [y]:
-```
-
-**What gets updated:**
-
-- ✅ `.claude/commands/` - AI commands
-- ✅ `.claude/workflows/` - Workflow guides
-- ✅ `.claude/templates/` - Stack templates
-- ✅ `.claude/tools/` - Tool integration docs
-- ✅ `.claude/config/` - Generic operational standards
-- ✅ `.claude/documentation-standards/` - Generic doc standards
-- ✅ `scripts/` - Helper scripts
-- ✅ `docs/` - Framework documentation
-
-**What stays the same:**
-
-- ✅ `.claude/your-stack/` - Your customizations
-- ✅ Your project files
-- ✅ Your git history
-
----
-
-#### Manual Update (Advanced)
-
-```bash
-# 1. Backup
-cp -r .claude/your-stack .claude-backup/
-
-# 2. Fetch latest
+# 1. Check what's new
+cd .claude
 git fetch origin main
+git log HEAD..origin/main --oneline
 
-# 3. Merge framework updates
-git merge origin/main
+# 2. Backup your customizations
+cp -r your-stack ../your-stack-backup-$(date +%Y%m%d)
 
-# 4. Resolve any conflicts (rare)
-# Your-stack is gitignored so shouldn't conflict
+# 3. Pull updates
+git pull origin main
 
-# 5. Update scripts permissions
-chmod +x scripts/*.sh
+# 4. Restore your customizations if needed
+cp -r ../your-stack-backup-* your-stack/
+```
 
-# 6. Verify
-./scripts/validate-setup.sh
+**Note:** The `/update-framework` command is easier and safer.
+
+---
+
+## What Gets Updated
+
+### Framework Files (Updated)
+
+These are replaced with latest versions:
+
+```
+.claude/
+├── CLAUDE.md           # Core instructions
+├── commands/           # All slash commands
+├── workflows/          # Multi-step workflows
+├── tools/              # Tool integrations
+├── config/             # Template configs
+└── templates/          # Standard templates
+```
+
+### Your Customizations (Preserved)
+
+These are NEVER touched by updates:
+
+```
+.claude/
+├── your-stack/               # ← PRESERVED
+│   ├── stack-config.yaml
+│   ├── coding-standards/
+│   ├── architecture/
+│   └── documentation-standards/
+├── tasks/                    # ← PRESERVED
+│   ├── PRDs/
+│   └── task-lists/
+└── PROJECT-INSTRUCTIONS.md   # ← PRESERVED (if exists)
+```
+
+### Scripts (Updated if present)
+
+```
+scripts/
+├── install.sh          # Updated
+├── init-stack.sh       # Updated
+├── validate-setup.sh   # Updated
+└── uninstall.sh        # Updated
 ```
 
 ---
 
-### Step 3: After Updating
+## After Updating
 
-#### Review Changes
+### Verify the Update
+
+**Claude Code shows verification automatically, but you can also check:**
 
 ```bash
-# See what was updated
-git log --oneline -10
+# Check critical files exist
+ls -la .claude/CLAUDE.md
+ls -la .claude/commands/
 
-# Read the changelog
-cat CHANGELOG.md
+# Check your customizations are intact
+ls -la .claude/your-stack/
 
-# Check for breaking changes
-# Look for version bumps: 1.x → 2.0 means breaking changes
+# Verify directory structure
+tree .claude -L 2
 ```
 
-#### Test the Update
+### Test New Features
+
+Try the new commands or features mentioned in the update summary:
+
+```
+/create-prd
+/generate-tasks
+/start-task
+```
+
+### Review What Changed
+
+Look at the files that were updated:
 
 ```bash
-# 1. Validate setup
-./scripts/validate-setup.sh
+# See your backup
+ls -la .claude-backup-*/
 
-# Should show:
-# ✓ All checks passing
-# Health Score: 95%+
-
-# 2. Test in Claude
-# Open Claude and run a simple task:
-# /start-task
-# "Test update - create a simple component"
-
-# 3. Verify standards load
-# Ask Claude: "What coding standards should I follow?"
-# Should load from .claude/your-stack/
+# Compare if needed
+diff .claude/CLAUDE.md .claude-backup-*/CLAUDE.md
 ```
 
-#### Update Your Project (if needed)
+---
 
-Some updates might require changes to your project:
+## Rollback (If Needed)
+
+If something doesn't work after updating:
+
+### Using Backup
 
 ```bash
-# Check if package.json needs updates
-npm install
+# Claude Code creates backups automatically
+# Named: .claude-backup-YYYYMMDD-HHMMSS/
 
-# Run any migration scripts (if provided)
-# Migration instructions would be in CHANGELOG.md
+# To rollback:
+rm -rf .claude
+cp -r .claude-backup-[timestamp] .claude
 
-# Update your stack config if new features available
-nano .claude/your-stack/stack-config.yaml
+# Example:
+rm -rf .claude
+cp -r .claude-backup-20250116-143022 .claude
 ```
 
----
-
-### Step 4: Commit the Update
+### Using Git (if .claude is git repo)
 
 ```bash
-# Stage framework updates
-git add .claude/commands/ .claude/workflows/ .claude/templates/
-git add scripts/ docs/
-git add CHANGELOG.md
-
-# Commit with version
-git commit -m "chore: update framework to v1.1.0
-
-- Updated commands
-- Updated workflows
-- Updated templates
-- See CHANGELOG.md for full details"
-
-# Push to your repo
-git push origin main
+cd .claude
+git log --oneline  # Find the commit before update
+git reset --hard [commit-hash]
 ```
 
 ---
 
-## Version Types
+## Troubleshooting
 
-### Understanding Semantic Versioning
+### "Cannot reach framework source"
 
-**Format:** `MAJOR.MINOR.PATCH` (e.g., 2.3.1)
+**Problem:** Can't fetch updates from repository
 
-#### Patch Updates (1.0.0 → 1.0.1)
+**Solutions:**
 
-**What:** Bug fixes, typos, small improvements  
-**Breaking:** No  
-**Update:** Always safe to update immediately
+1. Check internet connection
+2. Verify repository URL:
+   ```bash
+   cd .claude
+   git remote -v
+   ```
+3. Update remote if repo moved:
+   ```bash
+   git remote set-url origin [new-url]
+   ```
 
-**Example changes:**
+### "Framework source unknown"
 
-- Fix typo in documentation
-- Improve error message
-- Fix script bug
-- Update dependencies (non-breaking)
+**Problem:** Can't determine where framework came from
 
-**Action:** Update immediately
+**Solution:**
 
----
+Claude Code will ask you for the repository URL. Provide:
 
-#### Minor Updates (1.0.0 → 1.1.0)
+```
+https://github.com/YourUser/your-repo
+```
 
-**What:** New features, new templates, new commands  
-**Breaking:** No (backward compatible)  
-**Update:** Safe, but review changelog
+It will save this for future updates.
 
-**Example changes:**
+### "Download failed"
 
-- Add new framework template (Angular, Solid)
-- Add new helper script
-- Add new command feature
-- Improve existing functionality
-- Add new workflow guide
+**Problem:** Update download failed mid-way
 
-**Action:** Update when convenient, review changelog
+**Solutions:**
 
----
+1. Check disk space: `df -h`
+2. Check internet connection
+3. Try again: `/update-framework`
 
-#### Major Updates (1.0.0 → 2.0.0)
+### "Your customizations were overwritten"
 
-**What:** Breaking changes, major overhauls  
-**Breaking:** Yes  
-**Update:** Carefully, with testing
+**Problem:** Lost files in your-stack/
 
-**Example changes:**
+**Solution:**
 
-- Change command structure
-- Change file organization
-- Remove deprecated features
-- Change how customizations work
-- Require manual migration
-
-**Action:** Read changelog carefully, test thoroughly, have rollback plan
-
----
-
-## Update Strategies
-
-### Conservative (Recommended for Production)
+Your customizations should be preserved, but if not, use backup:
 
 ```bash
-# Only update on patch releases
-# Wait for minor releases to be proven
-# Major releases: wait for X.Y.1 (first patch)
+# Backups are at:
+ls -la .claude-backup-*/
 
-# Check version
-./scripts/update-framework.sh
-# See: 1.0.0 → 1.0.1 (patch)
-
-# Update immediately
-# Say "yes" to update
-
-# See: 1.0.0 → 1.1.0 (minor)
-# Review changelog first
-# Update if changes are valuable
-
-# See: 1.0.0 → 2.0.0 (major)
-# Wait for 2.0.1
-# Read migration guide
-# Test in separate branch first
+# Restore your-stack:
+cp -r .claude-backup-[timestamp]/your-stack .claude/
 ```
-
----
-
-### Balanced (Most Users)
-
-```bash
-# Update monthly
-# Review changelog
-# Test after update
-
-# Schedule:
-# 1st of each month: Check for updates
-./scripts/update-framework.sh
-
-# If update available:
-# - Read CHANGELOG.md
-# - Backup important work
-# - Run update
-# - Test with validate-setup.sh
-# - Use framework for a day
-# - Commit if all good
-```
-
----
-
-### Aggressive (Early Adopters)
-
-```bash
-# Update immediately when available
-# Help find bugs
-# Provide feedback
-
-# Daily check:
-git fetch origin main
-git log HEAD..origin/main
-
-# If updates:
-./scripts/update-framework.sh
-# Always say yes
-# Report issues on GitHub
-```
-
----
-
-## Rollback Procedure
-
-### If Update Causes Issues
-
-#### Option 1: Script Rollback (Easiest)
-
-```bash
-# Find backup directory
-ls -la .claude/backups/
-
-# You'll see:
-# update_20250109_120000/
-
-# Rollback to that backup
-./scripts/update-framework.sh --rollback .claude/backups/update_20250109_120000
-
-# This restores:
-# - All framework files
-# - Your customizations (from backup)
-```
-
----
-
-#### Option 2: Git Rollback
-
-```bash
-# See recent commits
-git log --oneline -5
-
-# Find the update commit
-# Something like: "chore: update framework to v1.1.0"
-
-# Revert that commit
-git revert <commit-hash>
-
-# Or reset to before update
-git reset --hard HEAD~1
-
-# Restore your customizations if needed
-cp -r .claude-backup/your-stack .claude/
-```
-
----
-
-#### Option 3: Manual Restore
-
-```bash
-# Delete updated framework files
-rm -rf .claude/commands .claude/workflows .claude/templates
-
-# Restore from backup
-cp -r .claude/backups/update_20250109_120000/commands .claude/
-cp -r .claude/backups/update_20250109_120000/workflows .claude/
-cp -r .claude/backups/update_20250109_120000/templates .claude/
-
-# Verify
-./scripts/validate-setup.sh
-```
-
----
-
-## Merge Conflicts (Rare)
-
-### If Git Shows Conflicts
-
-This is rare because `.claude/your-stack/` is gitignored, but if it happens:
-
-```bash
-# During update, you see:
-CONFLICT (content): Merge conflict in .claude/commands/start-task.md
-
-# 1. View conflict
-cat .claude/commands/start-task.md
-
-# Look for markers:
-<<<<<<< HEAD
-// Your version
-=======
-// New version
->>>>>>> origin/main
-
-# 2. Decide what to keep
-# Usually: keep new version (framework update)
-# But: if you modified framework file, merge carefully
-
-# 3. Edit file to resolve
-nano .claude/commands/start-task.md
-
-# 4. Remove conflict markers
-# Keep the code you want
-
-# 5. Stage resolved file
-git add .claude/commands/start-task.md
-
-# 6. Complete merge
-git commit -m "chore: merge framework update v1.1.0"
-```
-
-**Prevention:**
-Never modify files in:
-
-- `.claude/commands/`
-- `.claude/workflows/`
-- `.claude/templates/`
-
-Only customize files in:
-
-- `.claude/your-stack/`
 
 ---
 
 ## Best Practices
 
-### 1. Read Changelogs
+### Before Updating
 
-Always read `CHANGELOG.md` before updating:
+✅ **Commit your work** - `git commit` any uncommitted changes
+✅ **Review what's new** - Choose "Show me details" to see changes
+✅ **Read the summary** - Understand what's being updated
+✅ **Update during downtime** - Not in the middle of critical work
+
+### During Update
+
+✅ **Read the options** - Don't rush through choices
+✅ **Use selective updates** - Pick what you need
+✅ **Keep backups** - Don't delete .claude-backup-* directories immediately
+✅ **Test after updating** - Try a /start-task to ensure it works
+
+### After Updating
+
+✅ **Review the summary** - See what changed
+✅ **Test new features** - Try new commands
+✅ **Update your team** - Share what's new
+✅ **Keep backups for a week** - In case you need to rollback
+
+---
+
+## Update Frequency
+
+### Personal Projects
+
+- **Monthly check** - Run `/update-framework` once a month
+- **Update when convenient** - No rush if everything works
+- **Update for new features** - When you see something useful
+
+### Team Projects
+
+- **Coordinate updates** - Update together as a team
+- **Test first** - Update on one project, test, then roll out
+- **Document changes** - Share what's new with team
+- **Scheduled updates** - Quarterly team update sessions
+
+### Production Projects
+
+- **Test in development first** - Never update directly in production
+- **Review changes carefully** - Use "Show me details"
+- **Schedule updates** - During maintenance windows
+- **Keep backups longer** - Keep 2-3 backup versions
+
+---
+
+## Framework Version Tracking
+
+The framework doesn't use semantic versioning yet. Instead:
+
+**Check age of your installation:**
 
 ```bash
-# On GitHub
-https://github.com/LuisLadino/claude-dev-framework/blob/main/CHANGELOG.md
+# See when you last updated
+ls -lt .claude/commands/ | head -5
 
-# Or after fetching
-git fetch origin main
-git show origin/main:CHANGELOG.md
+# Or check last commit
+cd .claude
+git log -1 --format="%ai - %s"
 ```
 
-Look for:
-
-- **Breaking changes** (red flag for major versions)
-- **New features** you might want to use
-- **Bug fixes** that affect you
-- **Migration instructions**
-
----
-
-### 2. Update in Safe Environment
+**Check latest version:**
 
 ```bash
-# Option A: Update in separate branch
-git checkout -b update-framework
-./scripts/update-framework.sh
-# Test everything
-git checkout main
-git merge update-framework
-
-# Option B: Update staging first
-# If you have staging environment
-# Update there, test, then update production
-```
-
----
-
-### 3. Test After Update
-
-```bash
-# 1. Validate setup
-./scripts/validate-setup.sh
-
-# 2. Test commands in Claude
-/start-task
-"Simple test task"
-
-# 3. Run your project
-npm run dev
-npm run build
-
-# 4. Use framework for real work
-# If issues arise, rollback
-```
-
----
-
-### 4. Keep Backups
-
-```bash
-# Automatic backups in:
-.claude/backups/
-
-# Keep last 3 backups:
-ls -t .claude/backups/ | tail -n +4 | xargs -I {} rm -rf .claude/backups/{}
-
-# Or keep all (they're small)
-```
-
----
-
-### 5. Stay Informed
-
-**Watch GitHub repository:**
-
-- Star the repo
-- Watch for releases
-- Read release notes
-
-**Check for updates regularly:**
-
-- Add to monthly calendar
-- Run update script monthly
-- Review changelog quarterly
-
----
-
-## Update Troubleshooting
-
-### Update Script Fails
-
-**Problem:** Script errors during update
-
-**Solution:**
-
-```bash
-# Check internet connection
-ping github.com
-
-# Check git configuration
-git config --list
-
-# Try manual update
-git fetch origin main
-git merge origin/main
-
-# Check script permissions
-chmod +x scripts/update-framework.sh
-
-# Run with verbose output
-bash -x scripts/update-framework.sh
+# Run update command to see
+/update-framework
+# It shows: "Your version: ~30 days old" vs "Latest: 2 days ago"
 ```
 
 ---
 
-### Validation Fails After Update
+## For Forked Frameworks
 
-**Problem:** `validate-setup.sh` shows errors after update
+If you forked the framework:
 
-**Solution:**
+### Checking Your Fork
 
-```bash
-# See specific errors
-./scripts/validate-setup.sh
-
-# Common issues:
-# - Script permissions: chmod +x scripts/*.sh
-# - Missing dependencies: npm install
-# - Stale cache: rm -rf node_modules && npm install
-
-# If persistent, rollback:
-./scripts/update-framework.sh --rollback .claude/backups/update_YYYYMMDD_HHMMSS
+```
+/update-framework
 ```
 
----
+Will check YOUR fork for updates.
 
-### Commands Don't Work After Update
+### Checking Original + Your Fork
 
-**Problem:** `/start-task` or other commands fail in Claude
+Claude Code can check both:
 
-**Solution:**
+```
+📌 USING FORKED FRAMEWORK
 
-```bash
-# 1. Check files exist
-ls -la .claude/commands/
+Your fork: https://github.com/your-user/your-fork
+Original: https://github.com/LuisLadino/claude-dev-framework
 
-# 2. Validate structure
-./scripts/validate-setup.sh
+You'll get updates from YOUR fork.
 
-# 3. Test file reading in Claude
-# Ask: "Can you read .claude/commands/start-task.md?"
+To also check original for updates:
+I can check both repositories and show you:
+- Updates in your fork
+- Updates in original (that you might want to merge)
 
-# 4. Check your-stack is intact
-ls -la .claude/your-stack/
-
-# 5. If broken, rollback:
-./scripts/update-framework.sh --rollback .claude/backups/update_YYYYMMDD_HHMMSS
+Check both? (yes/no):
 ```
 
----
-
-### Lost Customizations
-
-**Problem:** Your customizations seem missing after update
-
-**Solution:**
-
-```bash
-# Your customizations are in backups
-ls -la .claude/backups/update_*/your-stack/
-
-# Restore them
-cp -r .claude/backups/update_YYYYMMDD_HHMMSS/your-stack .claude/
-
-# Verify
-ls -la .claude/your-stack/
-
-# Should see:
-# - stack-config.yaml
-# - coding-standards/
-# - architecture/
-# - config/
-# - documentation-standards/
-```
+This helps you:
+- Stay updated with your customizations
+- See what's new in the original
+- Decide what to merge into your fork
 
 ---
 
-## Update Checklist
+## Related
 
-Before updating:
-
-- [ ] Committed all local changes
-- [ ] Read CHANGELOG.md for new version
-- [ ] Understand what will change
-- [ ] Know how to rollback if needed
-- [ ] Have time to test after update
-
-During update:
-
-- [ ] Run `./scripts/update-framework.sh`
-- [ ] Review changes before confirming
-- [ ] Let script complete fully
-
-After update:
-
-- [ ] Run `./scripts/validate-setup.sh`
-- [ ] Test commands in Claude
-- [ ] Test your project builds
-- [ ] Use framework for real work
-- [ ] Commit update to your repo
-- [ ] Delete old backups (optional)
+- `/verify` - Verify framework installation
+- `/research-stack` - Research and generate new standards
+- `/import-standards` - Import company standards
 
 ---
 
-## Getting Help
-
-If update issues persist:
-
-1. **Check documentation:**
-
-   - `docs/faq.md`
-   - `CHANGELOG.md`
-   - GitHub Issues
-
-2. **Rollback to known good state:**
-
-   ```bash
-   ./scripts/update-framework.sh --rollback [backup-dir]
-   ```
-
-3. **Report issue on GitHub:**
-
-   - Include error messages
-   - Include framework version
-   - Include steps to reproduce
-
-4. **Ask in Discussions:**
-   - GitHub Discussions
-   - Include context
-   - Share what you've tried
-
----
-
-## Framework Evolution
-
-### Planned Updates
-
-**v1.x (Current):**
-
-- Stable, production-ready
-- Bug fixes and minor improvements
-- New templates for more frameworks
-
-**v2.0 (Future):**
-
-- Visual setup wizard
-- Enhanced automation
-- Team collaboration features
-- Breaking changes (with migration guide)
-
-**Stay informed:**
-
-- Watch GitHub repository
-- Read quarterly roadmap updates
-- Participate in discussions
-
----
-
-## Summary
-
-**The framework updates are designed to be:**
-
-- ✅ Safe (automatic backups)
-- ✅ Easy (one command)
-- ✅ Reversible (rollback support)
-- ✅ Non-destructive (preserves customizations)
-
-**Update regularly to get:**
-
-- 🐛 Bug fixes
-- ✨ New features
-- 📚 Better documentation
-- 🚀 Performance improvements
-
-**When in doubt:**
-
-1. Read the changelog
-2. Create backup
-3. Test the update
-4. Rollback if needed
-
----
-
-**Keep your framework fresh! 🚀**
-
-Regular updates ensure you have the latest features, fixes, and improvements while keeping your customizations safe.
+**Updates are now 100% LLM-driven through Claude Code. No bash scripts needed.**
