@@ -144,13 +144,6 @@ docs/.vitepress/cache/
 docs/.vitepress/dist/
 
 # ============================================
-# Optional: User Scripts
-# ============================================
-# If users create custom scripts
-scripts/user-*.sh
-scripts/user-*.js
-
-# ============================================
 # Git Internals
 # ============================================
 *.orig

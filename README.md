@@ -3,7 +3,7 @@
 **A structured `.claude/` directory that makes Claude Code follow your standards consistently.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2.0.0-brightgreen.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2.0.1-brightgreen.svg)](CHANGELOG.md)
 
 ---
 
@@ -20,29 +20,41 @@ Works with any stack: React, Vue, Python, Rust, Go, Swift, etc.
 
 ---
 
-## Quick Start
+## Setup
 
-### Option A: One-Line Install
+### 1. Fork this repo
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/LuisLadino/claude-dev-framework/main/scripts/install.sh | bash
-```
+Fork [claude-dev-framework](https://github.com/LuisLadino/claude-dev-framework) to your own GitHub account.
 
-### Option B: Manual Install
+### 2. Copy `.claude/` into your project
 
 ```bash
-git clone https://github.com/LuisLadino/claude-dev-framework.git .claude-temp
-cd .claude-temp && bash scripts/install.sh
-cd .. && rm -rf .claude-temp
+git clone https://github.com/YOUR-USERNAME/claude-dev-framework.git
+cp -r claude-dev-framework/.claude your-project/.claude
 ```
 
-### After Installation
+Or use the fork directly as your project's starting point.
 
-In Claude Code:
+### 3. Generate standards for your stack
 
 ```
-/research-stack          # Generate standards for your stack
-/start-task              # Start building with enforced standards
+/research-stack          # Asks about your stack, researches docs, generates standards
+```
+
+### 4. Point `framework-source.txt` at your fork
+
+In `.claude/framework-source.txt`:
+
+```
+https://github.com/YOUR-USERNAME/claude-dev-framework
+```
+
+This lets `/update-framework` pull updates from your fork across all your projects.
+
+### 5. Start building
+
+```
+/start-task              # Every task enforces your standards
 ```
 
 ---
@@ -174,22 +186,9 @@ v2.0 is a structural simplification:
 - **Removed `.claude/templates/`** - `/research-stack` generates standards dynamically
 - **Moved config out of templates** - `config/` is now a top-level directory
 - **Added `framework-source.txt`** - Enables `/update-framework` to find the source repo
-- **Streamlined install script** - Simpler, focused on what matters
+- **Removed install/uninstall scripts** - Fork-based setup is simpler and how people actually use it
 
 See [CHANGELOG.md](CHANGELOG.md) for full details.
-
----
-
-## Uninstalling
-
-```bash
-bash scripts/uninstall.sh
-```
-
-Options:
-1. Backup standards and remove everything
-2. Keep standards, remove framework
-3. Remove everything
 
 ---
 

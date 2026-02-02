@@ -3,7 +3,7 @@
 **Template Version:** 1.0.0  
 **Last Updated:** 2025-01-09
 
-> **Note:** This is a template file. When you run `init-stack.sh`, it gets copied to `.claude/your-stack/config/deployment.md` where you can customize it for your specific deployment platform.
+> **Note:** This is a template file. Running `/research-stack` generates a customized version in `.claude/your-stack/`.
 
 ---
 

@@ -92,9 +92,6 @@ claude-dev-framework/
 │   │   └── utilities/                     # Helper commands
 │   ├── config/                            # Operational config
 │   └── your-stack/                        # User customizations
-├── scripts/
-│   ├── install.sh                         # Installation script
-│   └── uninstall.sh                       # Removal script
 ├── README.md
 ├── CHANGELOG.md
 ├── CONTRIBUTING.md

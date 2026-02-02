@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.0.1] - 2026-02-02
+
+### Removed
+
+- **scripts/** directory -- `install.sh` and `uninstall.sh` removed
+- Install/uninstall scripts added complexity without matching how people actually use the framework
+
+### Changed
+
+- **README.md** -- Setup instructions now use fork-based workflow (fork repo, copy `.claude/`, run `/research-stack`)
+- Cleaned up remaining script references in CONTRIBUTING.md and .gitignore
+
+---
+
 ## [2.0.0] - 2025-02-02
 
 ### Breaking Changes
