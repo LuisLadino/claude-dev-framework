@@ -1,9 +1,8 @@
 #!/bin/bash
 
-# Claude Development Framework - Clean Installation Script
+# Claude Development Framework - Installation Script
 #
-# This script installs ONLY the functional framework files into your project's .claude directory.
-# It excludes documentation, templates, examples, and other GitHub-specific files.
+# Installs the framework into your project's .claude directory.
 #
 # Usage:
 #   bash install.sh              # Interactive mode (prompts for choice)
@@ -12,14 +11,14 @@
 #   bash install.sh --merge      # Merge with existing .claude (keep your files)
 #
 # What gets installed:
-#   - Core framework files (CLAUDE.md, workflows, tools, config)
-#   - Command system (/commands)
+#   - Core framework files (CLAUDE.md, config)
+#   - Command system (commands/ with organized categories)
 #   - Empty your-stack/ structure (you'll populate via /research-stack)
+#   - framework-source.txt (for /update-framework)
 #
 # What stays in GitHub repo only:
-#   - Templates (you generate actual standards via /research-stack)
 #   - Documentation (README, CHANGELOG, docs/)
-#   - Examples
+#   - Helper scripts (scripts/)
 #   - This installer script itself
 
 set -e
@@ -52,32 +51,32 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-FRAMEWORK_REPO="https://github.com/luisladino/claude-dev-framework.git"
+FRAMEWORK_REPO="https://github.com/LuisLadino/claude-dev-framework.git"
 TEMP_DIR=".claude-framework-temp"
 
 # Helper functions
 print_header() {
     echo ""
-    echo -e "${BLUE}═══════════════════════════════════════════════════════════${NC}"
-    echo -e "${BLUE}  Claude Development Framework - Installation${NC}"
-    echo -e "${BLUE}═══════════════════════════════════════════════════════════${NC}"
+    echo -e "${BLUE}════════════════════════════════════════════════════════════${NC}"
+    echo -e "${BLUE}  Claude Development Framework v2.0 - Installation${NC}"
+    echo -e "${BLUE}════════════════════════════════════════════════════════════${NC}"
     echo ""
 }
 
 print_success() {
-    echo -e "${GREEN}✓${NC} $1"
+    echo -e "${GREEN}+${NC} $1"
 }
 
 print_error() {
-    echo -e "${RED}✗${NC} $1"
+    echo -e "${RED}x${NC} $1"
 }
 
 print_warning() {
-    echo -e "${YELLOW}⚠${NC} $1"
+    echo -e "${YELLOW}!${NC} $1"
 }
 
 print_info() {
-    echo -e "${BLUE}ℹ${NC} $1"
+    echo -e "${BLUE}>${NC} $1"
 }
 
 # Check if .claude directory already exists
@@ -165,54 +164,36 @@ install_framework() {
     # Create .claude directory if it doesn't exist
     mkdir -p .claude
 
-    # Core framework files
+    # Core framework files - CLAUDE.md
     if [ "$merge_mode" -eq 1 ]; then
-        # Merge mode: Backup user's CLAUDE.md and install framework version
         if [ -f ".claude/CLAUDE.md" ]; then
             mv .claude/CLAUDE.md .claude/CLAUDE-OLD.md
             print_info "Backed up your CLAUDE.md to CLAUDE-OLD.md"
         fi
-        # Install framework CLAUDE.md (required for framework to work)
         cp "$TEMP_DIR/.claude/CLAUDE.md" .claude/
-        print_success "Installed framework CLAUDE.md (required)"
-
-        # Add migration guide in merge mode
-        cp "$TEMP_DIR/.claude/MIGRATION-GUIDE.md" .claude/
-        print_success "Added MIGRATION-GUIDE.md (for organizing files)"
+        print_success "Installed framework CLAUDE.md"
     else
-        # Fresh install: Just copy
         cp "$TEMP_DIR/.claude/CLAUDE.md" .claude/
         print_success "Installed CLAUDE.md"
     fi
 
-    # Commands
+    # Framework source reference
+    cp "$TEMP_DIR/.claude/framework-source.txt" .claude/
+    print_success "Installed framework-source.txt"
+
+    # Commands (organized in categories)
     if [ "$merge_mode" -eq 1 ] && [ -d ".claude/commands" ]; then
-        cp -n "$TEMP_DIR/.claude/commands/"* .claude/commands/ 2>/dev/null || true
+        # Merge: copy category directories without overwriting
+        cp -rn "$TEMP_DIR/.claude/commands/coding-framework" .claude/commands/ 2>/dev/null || true
+        cp -rn "$TEMP_DIR/.claude/commands/standards-management" .claude/commands/ 2>/dev/null || true
+        cp -rn "$TEMP_DIR/.claude/commands/utilities" .claude/commands/ 2>/dev/null || true
         print_success "Added framework commands (kept yours)"
     else
         mkdir -p .claude/commands
-        cp -r "$TEMP_DIR/.claude/commands/"* .claude/commands/
-        print_success "Installed commands"
-    fi
-
-    # Workflows
-    if [ "$merge_mode" -eq 1 ] && [ -d ".claude/workflows" ]; then
-        cp -rn "$TEMP_DIR/.claude/workflows/"* .claude/workflows/ 2>/dev/null || true
-        print_success "Added framework workflows (kept yours)"
-    else
-        mkdir -p .claude/workflows
-        cp -r "$TEMP_DIR/.claude/workflows/"* .claude/workflows/
-        print_success "Installed workflows"
-    fi
-
-    # Tools
-    if [ "$merge_mode" -eq 1 ] && [ -d ".claude/tools" ]; then
-        cp -rn "$TEMP_DIR/.claude/tools/"* .claude/tools/ 2>/dev/null || true
-        print_success "Added framework tools (kept yours)"
-    else
-        mkdir -p .claude/tools
-        cp -r "$TEMP_DIR/.claude/tools/"* .claude/tools/
-        print_success "Installed tools"
+        cp -r "$TEMP_DIR/.claude/commands/coding-framework" .claude/commands/
+        cp -r "$TEMP_DIR/.claude/commands/standards-management" .claude/commands/
+        cp -r "$TEMP_DIR/.claude/commands/utilities" .claude/commands/
+        print_success "Installed commands (coding-framework, standards-management, utilities)"
     fi
 
     # Config
@@ -227,50 +208,20 @@ install_framework() {
 
     # Your-stack structure
     if [ ! -d ".claude/your-stack" ]; then
-        mkdir -p .claude/your-stack/{coding-standards,architecture,documentation-standards,config}
+        mkdir -p .claude/your-stack/{coding-standards,architecture,design-standards,documentation-standards}
         cp "$TEMP_DIR/.claude/your-stack/stack-config.yaml" .claude/your-stack/ 2>/dev/null || true
         cp "$TEMP_DIR/.claude/your-stack/README.md" .claude/your-stack/ 2>/dev/null || true
         touch .claude/your-stack/coding-standards/.gitkeep
         touch .claude/your-stack/architecture/.gitkeep
+        touch .claude/your-stack/design-standards/.gitkeep
         touch .claude/your-stack/documentation-standards/.gitkeep
-        touch .claude/your-stack/config/.gitkeep
         print_success "Created your-stack directory structure"
     else
         print_info "Keeping existing your-stack directory"
-        # Still copy stack-config.yaml if missing
         if [ ! -f ".claude/your-stack/stack-config.yaml" ]; then
             cp "$TEMP_DIR/.claude/your-stack/stack-config.yaml" .claude/your-stack/ 2>/dev/null || true
             print_success "Added missing stack-config.yaml"
         fi
-    fi
-
-    # Tasks directory
-    if [ ! -d ".claude/tasks" ]; then
-        mkdir -p .claude/tasks
-        touch .claude/tasks/.gitkeep
-        print_success "Created tasks directory"
-    else
-        print_info "Keeping existing tasks directory"
-    fi
-
-    # Scripts (optional - users may want these for convenience)
-    mkdir -p scripts
-    if [ "$merge_mode" -eq 1 ]; then
-        # Merge mode: Add framework scripts without overwriting
-        cp -n "$TEMP_DIR/scripts/init-stack.sh" scripts/ 2>/dev/null || true
-        cp -n "$TEMP_DIR/scripts/validate-setup.sh" scripts/ 2>/dev/null || true
-        cp -n "$TEMP_DIR/scripts/import-company-standards.sh" scripts/ 2>/dev/null || true
-        cp -n "$TEMP_DIR/scripts/update-framework.sh" scripts/ 2>/dev/null || true
-        chmod +x scripts/*.sh 2>/dev/null || true
-        print_success "Added framework scripts (kept yours)"
-    else
-        # Fresh install: Copy all scripts
-        cp "$TEMP_DIR/scripts/init-stack.sh" scripts/ 2>/dev/null || true
-        cp "$TEMP_DIR/scripts/validate-setup.sh" scripts/ 2>/dev/null || true
-        cp "$TEMP_DIR/scripts/import-company-standards.sh" scripts/ 2>/dev/null || true
-        cp "$TEMP_DIR/scripts/update-framework.sh" scripts/ 2>/dev/null || true
-        chmod +x scripts/*.sh 2>/dev/null || true
-        print_success "Installed helper scripts"
     fi
 }
 
@@ -292,76 +243,43 @@ show_next_steps() {
     echo -e "${GREEN}════════════════════════════════════════════════════════════${NC}"
     echo ""
 
+    echo -e "${BLUE}Installed:${NC}"
+    echo "   .claude/CLAUDE.md                          - Framework instructions"
+    echo "   .claude/commands/coding-framework/         - Development commands"
+    echo "   .claude/commands/standards-management/     - Standards commands"
+    echo "   .claude/commands/utilities/                - Utility commands"
+    echo "   .claude/config/                            - Operational config"
+    echo "   .claude/your-stack/                        - Your custom standards (empty)"
+    echo "   .claude/framework-source.txt               - Framework update source"
+    echo ""
+
     if [ "$merge_mode" -eq 1 ]; then
-        # Merge mode - show migration instructions
-        echo -e "${YELLOW}📦 Merged Installation${NC}"
-        echo ""
-        echo "   Framework files added alongside your existing files."
+        echo -e "${YELLOW}Merged with existing .claude/ directory.${NC}"
         echo "   Your files were NOT overwritten."
+        if [ -f ".claude/CLAUDE-OLD.md" ]; then
+            echo "   Your previous CLAUDE.md saved as CLAUDE-OLD.md."
+        fi
         echo ""
-        echo -e "${BLUE}🚀 Next Step - Organize Your Files:${NC}"
-        echo ""
-        echo -e "${BLUE}In Claude Code (not your terminal), say this EXACTLY:${NC}"
-        echo ""
-        echo -e "   ${YELLOW}\"Read the MIGRATION-GUIDE.md file and help me organize${NC}"
-        echo -e "   ${YELLOW}my .claude directory according to the framework structure\"${NC}"
-        echo ""
-        echo "   Claude will then:"
-        echo "   • Read .claude/MIGRATION-GUIDE.md for instructions"
-        echo "   • Analyze your existing files"
-        echo "   • Show you a detailed migration plan"
-        echo "   • Organize files into proper framework structure"
-        echo "   • Preserve your CLAUDE-OLD.md and other custom files"
-        echo ""
-        echo -e "${BLUE}📚 After Organization:${NC}"
-        echo ""
-        echo "1. Set up your stack standards:"
-        echo -e "   ${YELLOW}/research-stack${NC}"
-        echo ""
-        echo "2. Start coding with the framework:"
-        echo -e "   ${YELLOW}/start-task \"your task description\"${NC}"
-    else
-        # Fresh install - show normal instructions
-        echo -e "${BLUE}📁 Installed Files:${NC}"
-        echo "   .claude/CLAUDE.md              - Main framework instructions"
-        echo "   .claude/commands/              - All slash commands"
-        echo "   .claude/workflows/             - Multi-step workflows"
-        echo "   .claude/tools/                 - Tool configurations"
-        echo "   .claude/config/                - Environment configs"
-        echo "   .claude/your-stack/            - Your custom standards (empty)"
-        echo "   .claude/tasks/                 - Generated PRDs and task lists"
-        echo "   scripts/                       - Helper scripts (optional)"
-        echo ""
-        echo -e "${BLUE}🚀 Next Steps:${NC}"
-        echo ""
-        echo -e "${BLUE}In Claude Code (not your terminal):${NC}"
-        echo ""
-        echo "1. Set up your stack standards:"
-        echo -e "   ${YELLOW}/research-stack${NC}"
-        echo "   → Automatically generates standards for your stack"
-        echo ""
-        echo "2. Or import existing company standards:"
-        echo -e "   ${YELLOW}/import-standards${NC}"
-        echo "   → Import from docs or analyze your codebase"
-        echo ""
-        echo "3. Start coding with the framework:"
-        echo -e "   ${YELLOW}/start-task \"your task description\"${NC}"
-        echo "   → Claude will follow your standards automatically"
     fi
+
+    echo -e "${BLUE}Next Steps (in Claude Code):${NC}"
     echo ""
-    echo -e "${BLUE}📚 Documentation:${NC}"
-    echo "   Getting Started: https://github.com/luisladino/claude-dev-framework#getting-started"
-    echo "   Customization:   https://github.com/luisladino/claude-dev-framework/blob/main/docs/customization-guide.md"
+    echo "1. Set up your stack standards:"
+    echo -e "   ${YELLOW}/research-stack${NC}"
     echo ""
-    echo -e "${BLUE}💡 Pro Tips:${NC}"
-    echo "   • The framework adapts to ANY stack (React, Python, Rust, etc.)"
-    echo "   • Slash commands (/research-stack, /start-task) run in Claude chat"
-    echo "   • All standards are just markdown files - easy to customize"
-    echo "   • Recommended: Install context7 MCP for best /research-stack results"
+    echo "2. Start coding with the framework:"
+    echo -e "   ${YELLOW}/start-task${NC}"
     echo ""
-    echo -e "${BLUE}🔍 Verify Your Setup:${NC}"
-    echo "   Run this anytime to check your framework configuration:"
-    echo -e "   ${YELLOW}./scripts/validate-setup.sh${NC}"
+    echo "3. Update framework later:"
+    echo -e "   ${YELLOW}/update-framework${NC}"
+    echo ""
+    echo -e "${BLUE}Available Command Categories:${NC}"
+    echo "   coding-framework/    - init-project, start-task, research-stack, etc."
+    echo "   standards-management/ - standards, add-standard, analyze-standards, update-framework"
+    echo "   utilities/           - learn, verify, contribute-to-opensource"
+    echo ""
+    echo -e "${BLUE}Documentation:${NC}"
+    echo "   https://github.com/LuisLadino/claude-dev-framework"
     echo ""
 }
 

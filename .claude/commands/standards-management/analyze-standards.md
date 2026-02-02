@@ -1,14 +1,14 @@
-# /import-standards
+# /analyze-standards
 
-**Import or discover coding standards - from documentation OR by analyzing your codebase**
+**Analyze your codebase or documentation to discover and create coding standards**
 
 ---
 
 ## Purpose
 
-Two powerful ways to establish standards:
+Two powerful ways to discover and establish standards:
 
-**Option 1:** Import from existing documentation (Google Drive, PDFs, company handbooks)
+**Option 1:** Analyze existing documentation (Google Drive, PDFs, company handbooks)
 **Option 2:** Analyze codebase and discover patterns automatically (no docs needed!)
 
 **Use when:**
@@ -25,12 +25,13 @@ Two powerful ways to establish standards:
 
 ## How It Works
 
-### Option 1: From Documentation
+### Option 1: Analyze Documentation
 - Read company handbooks, PDFs, wikis
-- Convert to framework standards
+- Extract coding standards and patterns
+- Convert to framework standards format
 - Merge with or replace existing standards
 
-### Option 2: From Codebase (⭐ Intelligent Discovery)
+### Option 2: Analyze Codebase (⭐ Intelligent Discovery)
 - Analyze your entire codebase
 - Identify actual patterns in use
 - Compare to existing standards (suggest edits)
@@ -60,7 +61,7 @@ Two powerful ways to establish standards:
 ### Basic Usage
 
 ```
-/import-standards
+/analyze-standards
 ```
 
 Claude will ask which option you want.
@@ -68,18 +69,18 @@ Claude will ask which option you want.
 ### Quick Option 1 (From Docs)
 
 ```
-/import-standards from Google Drive "Engineering Standards"
+/analyze-standards docs "Engineering Standards"
 ```
 
 ### Quick Option 2 (From Codebase)
 
 ```
-/import-standards analyze codebase
+/analyze-standards codebase
 ```
 
 ---
 
-## Option 1: Import from Documentation
+## Option 1: Analyze Documentation
 
 ### Step 1: Source Selection
 

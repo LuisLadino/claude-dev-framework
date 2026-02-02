@@ -23,9 +23,9 @@ This command ensures:
 Reading: .claude/your-stack/stack-config.yaml
 ```
 
-Use `project_knowledge_search` to find and read stack-config.yaml:
+Use `Read` to find and read stack-config.yaml:
 ```
-Query: "stack-config.yaml stack configuration"
+Path: ".claude/your-stack/stack-config.yaml"
 ```
 
 **Extract:**
@@ -44,12 +44,64 @@ Query: "stack-config.yaml stack configuration"
 ⚠️  Stack configuration not found!
 
 Options:
-1. Run /research-stack to set up your stack
-2. Run /import-standards if you have company docs
-3. Provide stack details manually
+1. Run /init-stack to configure your stack
+2. Run /research-stack to generate standards
+3. Run /import-standards if you have company docs
+4. Provide stack details manually
 
 Which would you like to do?
 ```
+
+---
+
+## STEP 1.5: Check for Project Guidelines (Optional)
+
+**Check if project has specific quality requirements:**
+
+Use `Read` or `Grep`:
+```
+Path: ".claude/your-stack/init/project-guidelines.md"
+```
+
+**If found (.claude/your-stack/init/project-guidelines.md):**
+```
+📋 **PROJECT REQUIREMENTS DETECTED**
+
+Reading: .claude/your-stack/init/project-guidelines.md
+
+Extracting project-specific requirements:
+✓ Quality approach: [Balanced / Enterprise rigor / Speed first]
+✓ Testing requirements: [Coverage % or level]
+✓ Accessibility: [WCAG A/AA/AAA or Basic/Standard/Exceptional]
+✓ Performance targets: [Load times, Lighthouse scores]
+✓ Must-have integrations: [Salesforce, SSO, etc.]
+✓ Team agreements: [Code review, deployment rules]
+```
+
+**Extract and store for later use:**
+- Development approach (speed vs quality balance)
+- Test coverage requirements (if any)
+- Accessibility level required
+- Performance targets
+- Required integrations
+- Deployment constraints
+
+**Apply during execution:**
+These requirements will be checked during standards check and verification.
+
+**If not found:**
+```
+ℹ️  No project guidelines found (optional)
+
+Using universal CLAUDE.md standards only.
+
+To add project-specific requirements:
+→ Run /init-project
+
+This is optional - the task will proceed normally.
+```
+
+**Continue normally - project guidelines are optional enhancement**
 
 ---
 
@@ -90,13 +142,13 @@ Let me clarify a few things:
 
 ### Find Your Standards
 
-Use `project_knowledge_search` to find applicable standards:
+Use `Read` or `Grep` to find applicable standards:
 
 ```
-Query: "coding standards [framework]"
-Query: "architecture patterns"
-Query: "testing standards"
-Query: "[specific feature] standards"
+Pattern: "coding standards [framework]"
+Pattern: "architecture patterns"
+Pattern: "testing standards"
+Pattern: "[specific feature] standards"
 ```
 
 **Search for:**
@@ -130,33 +182,44 @@ Read `.claude/CLAUDE.md` (the master file) and acknowledge:
 
 ### Load Active Standards Files
 
-Based on stack-config.yaml `standards_active` field, load:
+Based on stack-config.yaml `standards` field (NEW DYNAMIC SCHEMA), load:
 
 **Always read:**
 ```
-□ Coding standards for your framework
-□ Language standards (TypeScript/JavaScript/etc.)
-□ Documentation standards
-□ Architecture/file structure
-□ Version control standards (if committing)
+□ Framework standards (from standards.coding-standards)
+□ Language standards (from standards.coding-standards)
+□ Documentation standards (from standards.documentation-standards)
+□ Architecture patterns (from standards.architecture)
+□ Version control standards (if committing - from .claude/config/)
 ```
 
-**Conditionally read:**
+**Conditionally read based on task keywords:**
 ```
-□ Styling standards (if applicable)
-□ Testing standards (if tests needed)
-□ API standards (if backend work)
-□ Database standards (if data layer)
-□ Deployment standards (if deploying)
-□ Company-specific standards (if imported)
+□ Styling standards (if UI work - from standards.coding-standards)
+□ Testing standards (if tests needed - from standards.coding-standards)
+□ Design system standards (if component/design/brand work - from standards.design-system)
+□ API standards (if backend/api/endpoint work - from standards.api-standards)
+□ Database standards (if data layer/schema/query work - from standards.database-standards)
+□ Security standards (if auth/security work - from standards.security-standards)
+□ Performance standards (if optimization work - from standards.performance-standards)
+□ Accessibility standards (if a11y/UI work - from standards.accessibility-standards)
+□ Any custom directories (from standards.[custom-directory])
 ```
 
-**Use project_knowledge_search for each:**
+**Smart detection logic:**
+- Analyze task description for keywords (component, api, database, auth, etc.)
+- Check stack-config.yaml `standards` section for matching directories
+- Only load standards that are relevant to the task
+- Use `Read` or `Grep` to find files in those directories
+
+**Use Read or Grep for each relevant category:**
 ```
-Query: "[framework] coding standards"
-Query: "[language] standards"
-Query: "component patterns"
-Query: "testing requirements"
+Pattern: "[framework] coding standards"
+Pattern: "[language] standards"
+Pattern: "component patterns"
+Pattern: "design system standards" (if design work detected)
+Pattern: "api standards" (if API work detected)
+Pattern: "database standards" (if database work detected)
 ```
 
 ---
@@ -432,9 +495,9 @@ Re-running all checks...
 
 **First, load version control standards:**
 
-Use `project_knowledge_search` to read version-control.md:
+Use `Read` to read version-control.md:
 ```
-Query: "version control standards commit format"
+Path: ".claude/config/version-control.md"
 ```
 
 **Extract from version-control.md:**
@@ -562,7 +625,7 @@ Ready for another task?
 
 1. **Always load stack-config.yaml first**
    - Cannot proceed without knowing the stack
-   - Use project_knowledge_search to find it
+   - Use Read to find it
    - Extract all relevant configuration
 
 2. **Must show Standards Check**
@@ -595,20 +658,20 @@ Ready for another task?
 
 ## Tool Usage
 
-### Use project_knowledge_search for:
+### Use Read or Grep for:
 - Loading stack-config.yaml
 - Finding user's custom standards
 - Locating framework-specific patterns
 - Checking architectural decisions
 - Finding existing similar code
 
-### Example queries:
+### Example usage:
 ```
-"stack configuration yaml"
-"[framework] coding standards"
-"component architecture patterns"
-"testing requirements"
-"[feature] implementation examples"
+Read file_path:".claude/your-stack/stack-config.yaml"
+Grep pattern:"[framework] coding standards" path:".claude/your-stack"
+Grep pattern:"component architecture" path:".claude"
+Grep pattern:"testing requirements"
+Grep pattern:"[feature] implementation"
 ```
 
 ### Use web_search for:

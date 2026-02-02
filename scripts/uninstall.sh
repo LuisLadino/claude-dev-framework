@@ -70,15 +70,6 @@ main() {
             rm -rf .claude
             print_success "Removed .claude directory"
 
-            if [ -d "scripts" ] && [ -f "scripts/init-stack.sh" ]; then
-                print_info "Remove scripts directory? (y/n)"
-                read -p "> " remove_scripts
-                if [[ $remove_scripts =~ ^[Yy]$ ]]; then
-                    rm -rf scripts
-                    print_success "Removed scripts directory"
-                fi
-            fi
-
             echo ""
             print_success "Framework uninstalled"
             print_info "Your standards are backed up in: $backup_dir"
@@ -100,15 +91,6 @@ main() {
                 print_success "Restored your-stack directory"
             fi
 
-            if [ -d "scripts" ] && [ -f "scripts/init-stack.sh" ]; then
-                print_info "Remove scripts directory? (y/n)"
-                read -p "> " remove_scripts
-                if [[ $remove_scripts =~ ^[Yy]$ ]]; then
-                    rm -rf scripts
-                    print_success "Removed scripts directory"
-                fi
-            fi
-
             echo ""
             print_success "Framework removed, standards preserved"
             print_info "Your standards are still in: .claude/your-stack"
@@ -126,11 +108,6 @@ main() {
 
             rm -rf .claude
             print_success "Removed .claude directory"
-
-            if [ -d "scripts" ] && [ -f "scripts/init-stack.sh" ]; then
-                rm -rf scripts
-                print_success "Removed scripts directory"
-            fi
 
             echo ""
             print_success "Framework completely removed"

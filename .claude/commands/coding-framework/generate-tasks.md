@@ -10,9 +10,9 @@ Use after `/create-prd` to break down complex features into manageable steps.
 
 **First, understand the tech stack:**
 
-Use `project_knowledge_search`:
+Use `Read` or `Grep`:
 ```
-Query: "stack-config.yaml configuration"
+Path: ".claude/your-stack/stack-config.yaml"
 ```
 
 **Extract:**
@@ -24,6 +24,47 @@ Query: "stack-config.yaml configuration"
 - Active standards
 
 **This ensures tasks match your stack's patterns**
+
+---
+
+## STEP 1.5: Check for Project Guidelines (Optional)
+
+**Check if project has specific quality requirements:**
+
+Use `Read` or `Grep`:
+```
+Path: ".claude/your-stack/init/project-guidelines.md"
+```
+
+**If found (.claude/your-stack/init/project-guidelines.md):**
+
+```
+📋 **PROJECT REQUIREMENTS DETECTED**
+
+Extracting project-specific standards:
+✓ Quality approach: [Speed First / Balanced / Quality First]
+✓ Testing requirements: [Coverage % or approach]
+✓ Accessibility: [WCAG A / AA / AAA or None]
+✓ Performance targets: [Load times, Lighthouse scores]
+✓ Must-have integrations: [List from project guidelines]
+
+**These will be incorporated into task generation:**
+- Test coverage requirements will determine testing task scope
+- Accessibility level affects validation and testing subtasks
+- Performance targets determine optimization subtasks
+- Quality approach affects verification rigor
+```
+
+**If not found:**
+
+```
+ℹ️  No project guidelines found (optional)
+
+Using universal standards from CLAUDE.md.
+Project-specific requirements can be added via `/init-project`.
+
+This is optional - task generation will proceed normally.
+```
 
 ---
 
@@ -79,12 +120,12 @@ Analyzing complexity...
 
 ## STEP 4: Check Current Codebase
 
-Use `project_knowledge_search` to understand existing code:
+Use `Read` or `Grep` to understand existing code:
 
 ```
-Query: "[feature area] existing components"
-Query: "similar implementations"
-Query: "architecture patterns [framework]"
+Pattern: "[feature area] existing components"
+Pattern: "similar implementations"
+Pattern: "architecture patterns [framework]"
 ```
 
 ```
@@ -147,6 +188,8 @@ Based on:
 
 - [ ] 5.0 Write tests
   - Purpose: Test with [test framework]
+  - [If project-guidelines.md exists: Coverage: [% from project guidelines]]
+  - [If project-guidelines.md exists: Accessibility: [WCAG level from project guidelines]]
   - Est. time: 1.5 hours
   - Dependencies: 2.0, 3.0
 
@@ -352,6 +395,14 @@ Per file-structure.md standards:
 
 All code must follow standards in .claude/your-stack/:
 
+[If project-guidelines.md exists:]
+**Project Requirements (project-guidelines.md):**
+- Quality Approach: [Speed First / Balanced / Quality First]
+- Testing Coverage: [% or approach]
+- Accessibility: [WCAG level]
+- Performance: [Load times, Lighthouse scores]
+- Required Integrations: [From project guidelines]
+
 **Framework Standards:**
 - [framework]-standards.md - [Key patterns]
   - [Pattern 1]
@@ -372,6 +423,7 @@ All code must follow standards in .claude/your-stack/:
 - testing-standards.md - [Requirements]
   - [Requirement 1]
   - [Requirement 2]
+  - [If project-guidelines.md: Coverage minimum: [%]]
 
 **Architecture:**
 - file-structure.md - [Organization]

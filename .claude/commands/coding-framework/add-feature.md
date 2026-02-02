@@ -27,9 +27,9 @@ Use this command when a feature needs thoughtful planning before implementation.
 
 **Before asking questions, understand the tech stack:**
 
-Use `project_knowledge_search`:
+Use `Read` or `Grep`:
 ```
-Query: "stack-config.yaml configuration"
+Path: ".claude/your-stack/stack-config.yaml"
 ```
 
 **Extract:**
@@ -40,6 +40,44 @@ Query: "stack-config.yaml configuration"
 - Key technologies
 
 **This informs technical questions later**
+
+---
+
+## STEP 1.5: Check for Project Guidelines (Optional)
+
+**Check if project has specific quality requirements:**
+
+Use `Read` or `Grep`:
+```
+Path: ".claude/your-stack/init/project-guidelines.md"
+```
+
+**If found (.claude/your-stack/init/project-guidelines.md):**
+
+```
+📋 **PROJECT REQUIREMENTS DETECTED**
+
+Extracting project-specific standards:
+✓ Quality approach: [Speed First / Balanced / Quality First]
+✓ Testing requirements: [Coverage % or approach]
+✓ Accessibility: [WCAG A / AA / AAA or None]
+✓ Performance targets: [Load times, Lighthouse scores]
+✓ Must-have integrations: [List from project guidelines]
+✓ Project constraints: [Timeline, budget, resources]
+
+**These will be incorporated into PRD generation.**
+```
+
+**If not found:**
+
+```
+ℹ️  No project guidelines found (optional)
+
+Using universal standards from CLAUDE.md.
+Project-specific requirements can be added via `/init-project`.
+
+This is optional - PRD generation will proceed normally.
+```
 
 ---
 
@@ -250,7 +288,16 @@ Your preferences:
 
 **Your Stack:** [Framework] + [Language] + [Styling]
 
-Any specific technical needs? Select all that apply from the list below:
+[If project-guidelines.md exists:]
+**Project Standards (from project-guidelines.md):**
+✓ Accessibility: [WCAG level from project guidelines]
+✓ Performance: [Targets from project guidelines]
+✓ Testing: [Requirements from project guidelines]
+✓ Must-have integrations: [From project guidelines]
+
+**These are automatically included based on project requirements.**
+
+Any ADDITIONAL technical needs? Select all that apply from the list below:
 
 **Options:**
 - Form validation
@@ -261,9 +308,9 @@ Any specific technical needs? Select all that apply from the list below:
 - Real-time updates
 - File uploads
 - Animations
-- Accessibility (WCAG AA)
+- Accessibility (WCAG AA) [if not in project guidelines]
 - SEO optimization
-- Performance requirements
+- Performance requirements [if not in project guidelines]
 - Browser compatibility
 - Other: [specify]
 
@@ -409,6 +456,13 @@ These may be considered in future iterations.
 **Language:** [Language]
 **Styling:** [Styling solution]
 **Testing:** [Test framework]
+
+**Project Requirements:** [If project-guidelines.md exists]
+- Quality Approach: [Speed First / Balanced / Quality First]
+- Accessibility: [WCAG level]
+- Performance Targets: [Load times, Lighthouse scores]
+- Testing Coverage: [% or approach]
+- Required Integrations: [From project guidelines]
 
 **Additional Tech:**
 [From Q9 - list all selected requirements]

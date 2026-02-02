@@ -1,224 +1,483 @@
-# Your Stack Customizations
+# Your Stack - Coding Standards Framework
 
-This directory contains YOUR project's customized standards and configurations.
-
----
-
-## What Goes Here?
-
-After forking/cloning the Claude Development Framework, customize these files for YOUR project:
-
-### 1. `stack-config.yaml` (Required)
-
-**What it is:** Defines your tech stack (framework, language, styling, testing, etc.)
-
-**How to customize:**
-```bash
-# Edit this file to match YOUR stack
-stack-config.yaml
-```
-
-Update the `stack` section with your actual technologies:
-```yaml
-stack:
-  framework: "Your Framework"    # React, Vue, Svelte, etc.
-  language: "Your Language"      # TypeScript, JavaScript
-  styling: "Your Styling"        # Tailwind, CSS Modules, etc.
-  testing: "Your Testing"        # Vitest, Jest, etc.
-```
+**Purpose:** Define and enforce coding standards for any project you work on.
 
 ---
 
-### 2. `coding-standards/` (Recommended)
+## What Is This?
 
-**What it is:** Your project-specific coding patterns and conventions
+The `your-stack/` directory contains:
 
-**How to customize:**
-1. Copy templates from `.claude/templates/coding-standards/`
-2. Paste into this `coding-standards/` directory
-3. Customize for your project's needs
+1. **`init/`** (Optional) - Project foundation for enterprise teams
+   - `product-brief.md` - What you're building and why
+   - `project-guidelines.md` - Project requirements and quality commitments
+   - `technical-spec.md` - Technical specifications (from /generate-project-specs)
+2. **`stack-config.yaml`** - Defines your tech stack for the current project
+3. **`stack-config.template.yaml`** - Template to copy for new projects
+4. **`coding-standards/`** - Language/framework-specific coding patterns
+5. **`architecture/`** - File organization and structure standards
+6. **`documentation-standards/`** - How to document code
 
-**Example:**
-```bash
-# Copy React template
-cp .claude/templates/coding-standards/_react.md \
-   .claude/your-stack/coding-standards/react-standards.md
-
-# Edit to match your preferences
-```
-
-**Common files:**
-- `react-standards.md` or `vue-standards.md` or `svelte-standards.md`
-- `typescript-standards.md` or `javascript-standards.md`
-- `styling-standards.md`
-- `testing-standards.md`
+When you start coding, AI reads these files to understand:
+- What framework/language you're using
+- What patterns you prefer
+- What quality gates to enforce
+- How to organize files
 
 ---
 
-### 3. `architecture/` (Recommended)
+## Quick Start
 
-**What it is:** Your project's file structure and component patterns
+### Two Approaches
 
-**How to customize:**
-1. Copy templates from `.claude/templates/architecture/`
-2. Paste into this `architecture/` directory
-3. Document YOUR project's structure
+**Simple Projects (Individual Developers):**
+→ Skip to "Configure Stack" below
 
-**Example:**
-```bash
-# Copy architecture templates
-cp .claude/templates/architecture/_file-structure.md \
-   .claude/your-stack/architecture/file-structure.md
-
-cp .claude/templates/architecture/_component-patterns.md \
-   .claude/your-stack/architecture/component-patterns.md
-```
-
-**Common files:**
-- `file-structure.md` - Your directory organization
-- `component-patterns.md` - Your component design patterns
+**Enterprise Projects (Teams):**
+→ Start with "Initialize Project Foundation"
 
 ---
 
-### 4. `documentation-standards/` (Optional)
+### Initialize Project Foundation (Optional)
 
-**What it is:** How you want code documented in your project
+**For enterprise teams or projects requiring heavy guidance:**
 
-**How to customize:**
-Create markdown files explaining:
-- Code comment requirements
-- Component documentation format
-- API documentation standards
+1. **Run initialization:**
+   ```bash
+   /init-project
+   ```
 
----
+2. **Answer beginner-friendly questionnaire:**
+   - Problem you're solving
+   - Solution type (web app, mobile, extension, etc.)
+   - Quality commitments (speed vs quality, accessibility, performance)
+   - Timeline and constraints
 
-## Quick Setup
+3. **Outputs created:**
+   - `.claude/your-stack/init/product-brief.md` - Product context
+   - `.claude/your-stack/init/project-guidelines.md` - Project requirements
+   - `README.md` - Project documentation
+   - `PROJECT-STATE.md` - Cross-session progress tracking
 
-### Option 1: Use Helper Scripts (Recommended)
-
-```bash
-# Initialize with AI assistance
-./scripts/init-stack.sh
-
-# This will:
-# - Ask about your stack
-# - Copy relevant templates
-# - Customize stack-config.yaml
-# - Set up your-stack/ directory
-```
-
-### Option 2: Manual Setup
-
-```bash
-# 1. Edit stack config
-nano .claude/your-stack/stack-config.yaml
-
-# 2. Copy templates you need
-cp .claude/templates/coding-standards/_react.md \
-   .claude/your-stack/coding-standards/react-standards.md
-
-# 3. Customize the copied files
-```
+4. **Continue to stack configuration below**
 
 ---
 
-## After Customization
+### Configure Stack
 
-Once you've customized `your-stack/`:
+1. **Run stack setup:**
+   ```bash
+   /init-stack
+   ```
 
-### Commit Everything
+   This will:
+   - Guide you through stack selection
+   - Update `stack-config.yaml`
+   - Read project-guidelines.md if it exists (from `/init-project`)
+   - Generate or update coding standards
 
-```bash
-# This entire directory should be committed to YOUR project
-git add .claude/
-git commit -m "chore: configure Claude Development Framework for project"
-```
+2. **Or manually configure:**
 
-### Start Using Commands
+   Copy the template:
+   ```bash
+   cp .claude/your-stack/stack-config.template.yaml .claude/your-stack/stack-config.yaml
+   ```
 
-```bash
-# Now AI commands will use YOUR standards
-/start-task "Build a feature"
-# → Uses YOUR stack config
-# → Follows YOUR coding standards
-# → Matches YOUR architecture patterns
-```
+   Fill in your stack:
+   - Project name and description
+   - Framework (React, Vue, Astro, Next.js, etc.)
+   - Language (TypeScript, JavaScript)
+   - Styling (Tailwind, CSS Modules, etc.)
+   - Other tools
+
+   Activate relevant standards:
+   ```yaml
+   standards_active:
+     - react-standards        # If using React
+     - typescript-standards   # If using TypeScript
+     - styling-standards      # Your CSS approach
+   ```
+
+3. **Start coding:**
+   ```bash
+   /start-task "Build a feature"
+   ```
+
+   AI automatically:
+   - Reads your stack config
+   - Loads project-guidelines.md (if exists)
+   - Applies your standards
+   - Enforces project requirements
 
 ---
 
 ## Directory Structure
 
-After setup, your structure should look like:
-
 ```
 .claude/your-stack/
-├── README.md                       # This file
-├── stack-config.yaml               # YOUR stack definition
+├── init/                             # Project foundation (optional)
+│   ├── product-brief.md              # Created by /init-project
+│   ├── project-guidelines.md         # Created by /init-project
+│   └── technical-spec.md             # Created by /generate-project-specs
 │
-├── coding-standards/               # YOUR coding patterns
-│   ├── [framework]-standards.md   # React, Vue, Svelte, etc.
-│   ├── [language]-standards.md    # TypeScript, JavaScript
-│   ├── styling-standards.md       # CSS approach
-│   └── testing-standards.md       # Test patterns
+├── stack-config.yaml                 # Your current project config (NEW SCHEMA)
+├── stack-config.template.yaml        # Template for new projects
+├── README.md                         # This file
 │
-├── architecture/                   # YOUR architecture
-│   ├── file-structure.md          # Directory organization
-│   └── component-patterns.md      # Component design
+├── coding-standards/                 # Framework/language/styling patterns
+│   ├── react-standards.md
+│   ├── vue-standards.md
+│   ├── typescript-standards.md
+│   ├── javascript-standards.md
+│   ├── styling-standards.md         # Tailwind/CSS Modules/etc
+│   ├── testing-standards.md
+│   └── [create more as needed]
 │
-└── documentation-standards/        # YOUR doc requirements (optional)
-    ├── code-comments.md
-    └── component-docs.md
+├── architecture/                     # File organization
+│   ├── file-structure.md
+│   ├── component-patterns.md
+│   ├── component-implementation.md
+│   └── [create more as needed]
+│
+├── documentation-standards/          # How to document
+│   ├── code-comments.md
+│   ├── component-docs.md
+│   └── [create more as needed]
+│
+├── design-system/                    # Design system standards (auto-discovered)
+│   ├── component-patterns.md        # Component specs and variations
+│   ├── brand-identity.md            # Brand guidelines, visual identity
+│   ├── design-tokens.md             # Colors, spacing, typography
+│   └── [create more as needed]
+│
+├── api-standards/                    # API patterns (auto-discovered)
+│   ├── rest-api.md                  # REST endpoint patterns
+│   ├── graphql-api.md               # GraphQL schema patterns
+│   └── [create more as needed]
+│
+├── database-standards/               # Database patterns (auto-discovered)
+│   ├── schema-design.md
+│   ├── query-patterns.md
+│   └── [create more as needed]
+│
+├── security-standards/               # Security patterns (auto-discovered)
+│   ├── authentication.md
+│   ├── authorization.md
+│   └── [create more as needed]
+│
+├── performance-standards/            # Performance patterns (auto-discovered)
+│   ├── optimization-patterns.md
+│   ├── caching-strategies.md
+│   └── [create more as needed]
+│
+├── accessibility-standards/          # Accessibility patterns (auto-discovered)
+│   ├── wcag-compliance.md
+│   ├── aria-patterns.md
+│   └── [create more as needed]
+│
+└── [any-custom-directory]/           # Auto-discovered by /init-stack --review
+    └── [your domain-specific standards]
+```
+
+**Key change:** Standards are now **dynamically discovered**. Create any directory with `.md` files and run `/init-stack --review` to add it to your config automatically.
+
+---
+
+## How It Works
+
+### 1. (Optional) Define Project Requirements
+
+**Enterprise teams run `/init-project` first:**
+
+Creates `init/constitution.md` with:
+- Problem definition and solution type
+- Quality approach (Speed First / Balanced / Quality First)
+- Testing requirements (coverage %, approach)
+- Accessibility level (WCAG A/AA/AAA or None)
+- Performance targets (load times, Lighthouse scores)
+- Must-have integrations
+- Timeline and constraints
+
+**Simple projects skip this step.**
+
+### 2. Define Your Stack
+
+In `stack-config.yaml`:
+```yaml
+stack:
+  framework: "React"
+  language: "TypeScript"
+  styling: "Tailwind CSS"
+```
+
+Run `/init-stack` to configure or review.
+
+### 3. AI Reads Standards Before Coding
+
+When you use `/start-task`, AI:
+1. Reads `stack-config.yaml`
+2. **If exists:** Reads `init/constitution.md` for project requirements
+3. Loads `react-standards.md`, `typescript-standards.md`, `styling-standards.md`
+4. Shows you what standards it found (including project requirements)
+5. Waits for approval
+6. Codes following your patterns
+7. Enforces project requirements (if constitution exists)
+
+### 4. Quality Gates Enforce Standards
+
+Before committing, AI verifies:
+```yaml
+quality_gates:
+  pre_commit:
+    - format      # Prettier/Biome
+    - lint        # ESLint/Biome
+    - type_check  # TypeScript
+```
+
+**If constitution.md exists and quality approach is "Quality First":**
+- Accessibility validation (WCAG level from constitution)
+- Performance benchmarks (targets from constitution)
+- Test coverage measurement (minimum from constitution)
+
+---
+
+## Creating Standards Files
+
+### Option 1: Copy from Templates
+
+Many frameworks have standard patterns. Create a new file:
+
+```bash
+# Example: Create Vue standards
+touch .claude/your-stack/coding-standards/vue-standards.md
+```
+
+Then add Vue-specific patterns (composition API, script setup, etc.)
+
+### Option 2: Let AI Help
+
+Ask AI to create standards:
+```
+"Create typescript-standards.md based on best practices"
+```
+
+### What to Include in Standards Files
+
+**Coding Standards:**
+- Component structure
+- Naming conventions
+- Import order
+- State management patterns
+- Error handling
+- API patterns
+
+**Architecture:**
+- Where files go
+- Component hierarchy
+- Data flow
+- Testing organization
+
+**Documentation:**
+- Comment style
+- Component documentation
+- API documentation
+
+---
+
+## Examples by Framework
+
+### React + TypeScript + Tailwind
+
+**stack-config.yaml:**
+```yaml
+stack:
+  framework: "React"
+  language: "TypeScript"
+  styling: "Tailwind CSS"
+
+standards_active:
+  - react-standards
+  - typescript-standards
+  - styling-standards
+```
+
+**What AI reads:**
+- `coding-standards/react-standards.md` - Functional components, hooks patterns
+- `coding-standards/typescript-standards.md` - Type definitions, interfaces
+- `coding-standards/styling-standards.md` - Tailwind utility patterns
+
+### Next.js + TypeScript + shadcn/ui
+
+**stack-config.yaml:**
+```yaml
+stack:
+  framework: "Next.js"
+  framework_version: "14.0"
+  language: "TypeScript"
+  styling: "Tailwind CSS"
+  component_library: "shadcn/ui"
+
+standards_active:
+  - react-standards       # Next.js uses React
+  - typescript-standards
+  - styling-standards
+  - shadcn-standards      # Create this
+```
+
+### Astro + TypeScript + daisyUI
+
+**stack-config.yaml:**
+```yaml
+stack:
+  framework: "Astro"
+  language: "TypeScript"
+  styling: "Tailwind CSS"
+  component_library: "daisyUI"
+
+standards_active:
+  - astro-standards
+  - react-standards      # If using React islands
+  - typescript-standards
+  - daisyui-standards
 ```
 
 ---
 
-## Template vs Your-Stack
+## Best Practices
 
-### `.claude/templates/` (Don't Edit)
-- Generic patterns for popular stacks
-- Starting points to copy from
-- Maintained by the framework
-- **Copy from here, don't edit directly**
+### 1. Start Simple
 
-### `.claude/your-stack/` (Edit Freely)
-- YOUR project's specific patterns
-- Customized for YOUR team
-- Committed to YOUR repository
-- **This is where YOUR customizations live**
+Don't create every possible standard file upfront. Start with:
+- Framework standards (react/vue/etc)
+- Language standards (typescript/javascript)
+- Styling standards
 
----
+Add more as needed.
 
-## Examples
+### 2. Keep Standards Focused
 
-See complete configurations in `docs/examples/`:
-- [Astro + React Example](../../docs/examples/astro-react/)
-- [Next.js Example](../../docs/examples/nextjs/)
-- [Vue 3 Example](../../docs/examples/vue/)
+Each file should cover ONE topic:
+- ✅ `react-standards.md` - React patterns
+- ✅ `typescript-standards.md` - TypeScript patterns
+- ❌ `react-typescript-standards.md` - Too broad
 
----
+### 3. Use Templates
 
-## Need Help?
+The current files are good templates. Copy and modify:
+```bash
+cp react-standards.md vue-standards.md
+# Edit vue-standards.md for Vue-specific patterns
+```
 
-- **Documentation:** [docs/customization-guide.md](../../docs/customization-guide.md)
-- **FAQ:** [docs/faq.md](../../docs/faq.md)
-- **Issues:** [GitHub Issues](https://github.com/LuisLadino/claude-dev-framework/issues)
+### 4. Version Your Standards
 
----
+Track changes in git. When best practices evolve, update files.
 
-## Important Notes
+### 5. Share Across Projects
 
-### This Directory is for YOUR Project
-
-Unlike the rest of `.claude/`, which is the framework itself, **this directory is for YOUR customizations**.
-
-### Commit to Your Repo
-
-After forking the framework and customizing `your-stack/`, commit everything to YOUR project repository. The AI assistant will read these files to understand YOUR project's standards.
-
-### Update as You Evolve
-
-Your standards can change! Update these files as your project evolves and the AI will adapt.
+Keep this `your-stack/` directory in a central location (like my-brain).
+Copy `stack-config.yaml` to each project and customize.
 
 ---
 
-**Ready to customize? Edit `stack-config.yaml` and copy templates from `.claude/templates/`!**
+## Common Workflows
+
+### Starting a New Project (Enterprise)
+
+**Full workflow with project foundation:**
+
+1. Initialize project: `/init-project`
+2. Answer questionnaire about requirements
+3. Configure stack: `/init-stack`
+4. Generate standards: `/research-stack` (if needed)
+5. Start building: `/start-task [feature]`
+
+**constitution.md automatically enforces:**
+- Quality commitments throughout development
+- Testing requirements in verification
+- Accessibility validation
+- Performance benchmarks
+
+### Starting a New Project (Simple)
+
+**Quick workflow for individual developers:**
+
+1. Configure stack: `/init-stack`
+2. Or manually: Copy template and fill in stack
+3. Start coding: `/start-task [feature]`
+
+**Universal CLAUDE.md standards apply** (no project-specific requirements)
+
+### Switching Projects
+
+1. If project has constitution: AI automatically loads it
+2. Update `stack-config.yaml` for the new project's stack
+3. Activate different standards files
+4. AI adapts to new patterns + project requirements
+
+### Adding a New Framework
+
+1. Create `coding-standards/framework-name-standards.md`
+2. Document framework patterns
+3. Add to `standards_active` in stack-config
+4. AI reads and applies
+
+---
+
+## Troubleshooting
+
+**"AI isn't following my standards"**
+→ Check `stack-config.yaml` - is the standard file listed in `standards_active`?
+→ Check the file exists: `ls .claude/your-stack/coding-standards/`
+
+**"Where do I put X standard?"**
+→ Framework/language patterns → `coding-standards/`
+→ File organization → `architecture/`
+→ Documentation rules → `documentation-standards/`
+
+**"Can I have multiple configs?"**
+→ Yes! Copy `stack-config.template.yaml` with different names
+→ Load different configs for different projects
+→ But typically one `stack-config.yaml` per project
+
+---
+
+## Integration with my-brain
+
+This `your-stack/` framework is part of the larger my-brain system:
+
+- **Knowledge Foundations** (`.claude/foundations/`) - Professional expertise (UX, PM, Research)
+- **Coding Framework** (`.claude/your-stack/`) - How to write code
+- **Commands** (`.claude/commands/`) - Workflows like /start-task, /verify
+- **Workflows** (`.claude/workflows/`) - Complex execution templates
+
+**Together they enable:**
+- Knowledge foundations inform WHAT to build
+- Coding framework enforces HOW to build it
+- Commands orchestrate execution
+- Workflows handle complex multi-step tasks
+
+---
+
+## Summary
+
+**Purpose:** Define coding standards for any project
+
+**Key Files:**
+- `stack-config.yaml` - Your current project
+- `stack-config.template.yaml` - Template for new projects
+- `coding-standards/*.md` - Framework/language patterns
+- `architecture/*.md` - File organization
+- `documentation-standards/*.md` - How to document
+
+**Workflow:**
+1. Define your stack in `stack-config.yaml`
+2. Create/activate relevant standards files
+3. Use `/start-task` - AI reads standards automatically
+4. AI enforces quality gates before commits
+
+**Result:** Consistent, professional code across all projects.
+
+---
+
+**Your standards, enforced. Your patterns, followed. Your quality, maintained. 🚀**

@@ -84,20 +84,43 @@ If successful, you should see framework structure.
 
 ### Check Commands
 
+**Only check these command directories:**
+- `coding-framework/`
+- `design-review/`
+- `standards-management/`
+- `utilities/`
+
+**Skip these directories** (project-specific):
+- `project-management/` - User's custom project commands
+- `knowledge-research/` - User's custom research commands
+- `career/` - User's personal career commands
+
 Use `Bash` to compare:
 
 ```bash
-# List new commands
-comm -13 <(ls .claude/commands/*.md 2>/dev/null | xargs -n1 basename | sort) \
-         <(ls "$temp_dir/.claude/commands/"*.md 2>/dev/null | xargs -n1 basename | sort)
+# Directories to update
+update_dirs="coding-framework design-review standards-management utilities"
 
-# List modified commands
-for file in .claude/commands/*.md; do
-  filename=$(basename "$file")
-  if [ -f "$temp_dir/.claude/commands/$filename" ]; then
-    if ! diff -q "$file" "$temp_dir/.claude/commands/$filename" > /dev/null 2>&1; then
-      echo "$filename"
-    fi
+# List new commands (only in update directories)
+for dir in $update_dirs; do
+  if [ -d "$temp_dir/.claude/commands/$dir" ]; then
+    echo "=== Checking $dir ==="
+    comm -13 <(ls .claude/commands/$dir/*.md 2>/dev/null | xargs -n1 basename | sort) \
+             <(ls "$temp_dir/.claude/commands/$dir/"*.md 2>/dev/null | xargs -n1 basename | sort)
+  fi
+done
+
+# List modified commands (only in update directories)
+for dir in $update_dirs; do
+  if [ -d ".claude/commands/$dir" ] && [ -d "$temp_dir/.claude/commands/$dir" ]; then
+    for file in .claude/commands/$dir/*.md; do
+      filename=$(basename "$file")
+      if [ -f "$temp_dir/.claude/commands/$dir/$filename" ]; then
+        if ! diff -q "$file" "$temp_dir/.claude/commands/$dir/$filename" > /dev/null 2>&1; then
+          echo "$dir/$filename"
+        fi
+      fi
+    done
   fi
 done
 ```
@@ -193,13 +216,16 @@ Create lists:
 
 ## 📦 New Features Available (3)
 
-**New Commands:**
-• /create-prd - Create Product Requirement Documents
-• /generate-tasks - Break down PRDs into task lists
-• /process-tasks - Execute task lists step-by-step
+**New Commands (from framework-managed directories only):**
+• coding-framework/init-project - Initialize new projects
+• design-review/evaluate-quick - Quick UI/UX evaluation
+• standards-management/analyze-standards - Discover coding patterns
 
 **What they do:**
-These commands add a workflow for building complex features systematically.
+These commands add core framework functionality.
+
+**Note:** Commands in project-management/, knowledge-research/, and career/
+are project-specific and will NOT be updated automatically.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -210,10 +236,10 @@ These commands add a workflow for building complex features systematically.
 - Made operational standards explicit
 - Enhanced commit workflow
 
-**Commands:**
-• /start-task - Now reads version-control.md before commits
-• /verify - Enhanced framework-specific checks
-• /standards - Added universal violation patterns
+**Commands (from framework-managed directories):**
+• coding-framework/add-feature - Enhanced task breakdown
+• standards-management/verify - Framework-specific checks
+• utilities/standards - Universal violation patterns
 
 **Tools:**
 • mcp-integration.md - Updated with latest MCP servers
@@ -239,7 +265,16 @@ how code should be written going forward.
 
 These will NOT be touched:
 ✓ .claude/tasks/ (your PRDs and task lists)
+✓ .claude/commands/project-management/ (your custom commands)
+✓ .claude/commands/knowledge-research/ (your custom commands)
+✓ .claude/commands/career/ (your personal commands)
 ✓ PROJECT-INSTRUCTIONS.md (if exists)
+
+**Framework-managed directories** (will be updated):
+• coding-framework/ - Core project setup workflow
+• design-review/ - UI/UX evaluation system
+• standards-management/ - Standards discovery and enforcement
+• utilities/ - Helper commands
 
 Note: If source repo includes your-stack/, those are MANAGED
 standards from your company. They can be updated.
@@ -329,15 +364,15 @@ If yes, proceed to STEP 6 with `update_all=true`
 ```markdown
 Select items to update (space to toggle, enter to confirm):
 
-**New Commands:**
-[ ] /create-prd
-[ ] /generate-tasks
-[ ] /process-tasks
+**New Commands (framework-managed only):**
+[ ] coding-framework/init-project
+[ ] design-review/evaluate-quick
+[ ] standards-management/sync-stack
 
-**Updated Commands:**
-[ ] /start-task
-[ ] /verify
-[ ] /standards
+**Updated Commands (framework-managed only):**
+[ ] coding-framework/add-feature
+[ ] standards-management/verify
+[ ] utilities/standards
 
 **Core Files:**
 [x] CLAUDE.md (recommended)
@@ -349,6 +384,10 @@ Select items to update (space to toggle, enter to confirm):
 [x] react-standards.md (recommended)
 [x] typescript-standards.md (recommended)
 [ ] security-standards.md (new)
+
+**Note:** Commands in project-management/, knowledge-research/, and career/
+directories are NOT listed here - they are your custom commands and will
+never be automatically updated.
 
 **Select/deselect with:** [command name]
 **When done, type:** done
@@ -381,13 +420,23 @@ cp -r .claude ".claude-backup-$timestamp"
 
 ### For New Commands
 
+**Only copy commands from update directories:**
+
 ```bash
-cp "$temp_dir/.claude/commands/[command].md" .claude/commands/
+# Directories to update
+update_dirs="coding-framework design-review standards-management utilities"
+
+# Copy new command (example: coding-framework/init-project.md)
+for dir in $update_dirs; do
+  if [ -f "$temp_dir/.claude/commands/$dir/[command].md" ]; then
+    cp "$temp_dir/.claude/commands/$dir/[command].md" .claude/commands/$dir/
+  fi
+done
 ```
 
 Show:
 ```markdown
-✓ Added: /create-prd
+✓ Added: coding-framework/init-project.md
 ```
 
 ### For Updated Files
@@ -488,16 +537,16 @@ tree .claude -L 2 2>/dev/null || find .claude -maxdepth 2 -type d
 
 **What Was Updated:**
 
-✓ New Commands (3):
-  - /create-prd
-  - /generate-tasks
-  - /process-tasks
+✓ New Commands (3) - framework-managed only:
+  - coding-framework/init-project
+  - design-review/evaluate-quick
+  - standards-management/sync-stack
 
 ✓ Updated Files (5):
   - CLAUDE.md (Task-to-Standards Mapping added)
-  - commands/start-task.md (Enhanced commit workflow)
-  - commands/verify.md (Framework-specific checks)
-  - commands/standards.md (Universal patterns)
+  - coding-framework/add-feature.md (Enhanced task breakdown)
+  - standards-management/verify.md (Framework-specific checks)
+  - utilities/standards.md (Universal patterns)
   - tools/mcp-integration.md (Latest MCP servers)
 
 ✓ Company/Team Standards (3):
@@ -505,8 +554,11 @@ tree .claude -L 2 2>/dev/null || find .claude -maxdepth 2 -type d
   - typescript-standards.md (updated - stricter error handling)
   - security-standards.md (new - security requirements)
 
-**Preserved:**
+**Preserved (never updated):**
 ✓ .claude/tasks/ (all your PRDs and tasks)
+✓ .claude/commands/project-management/ (your custom commands)
+✓ .claude/commands/knowledge-research/ (your custom commands)
+✓ .claude/commands/career/ (your personal commands)
 ✓ PROJECT-INSTRUCTIONS.md (if exists)
 
 **Backup Location:**

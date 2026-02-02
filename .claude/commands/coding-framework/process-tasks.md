@@ -24,9 +24,9 @@ This command:
 
 **Before starting, understand the tech stack:**
 
-Use `project_knowledge_search`:
+Use `Read` or `Grep`:
 ```
-Query: "stack-config.yaml configuration"
+Path: ".claude/your-stack/stack-config.yaml"
 ```
 
 **Extract:**
@@ -38,6 +38,47 @@ Query: "stack-config.yaml configuration"
 - Active standards
 
 **This ensures each subtask follows your stack's patterns**
+
+---
+
+## STEP 1.5: Check for Project Guidelines (Optional)
+
+**Check if project has specific quality requirements:**
+
+Use `Read` or `Grep`:
+```
+Path: ".claude/your-stack/init/project-guidelines.md"
+```
+
+**If found (.claude/your-stack/init/project-guidelines.md):**
+
+```
+📋 **PROJECT REQUIREMENTS DETECTED**
+
+Extracting project-specific standards:
+✓ Quality approach: [Speed First / Balanced / Quality First]
+✓ Testing requirements: [Coverage % or approach]
+✓ Accessibility: [WCAG A / AA / AAA or None]
+✓ Performance targets: [Load times, Lighthouse scores]
+✓ Must-have integrations: [List from project guidelines]
+
+**These will be enforced during task execution:**
+- Verification rigor adjusted for quality approach
+- Test coverage measured against project guidelines requirements
+- Accessibility validation at specified WCAG level
+- Performance benchmarks checked against targets
+```
+
+**If not found:**
+
+```
+ℹ️  No project guidelines found (optional)
+
+Using universal standards from CLAUDE.md.
+Project-specific requirements can be added via `/init-project`.
+
+This is optional - task execution will proceed normally.
+```
 
 ---
 
@@ -138,6 +179,13 @@ Ready to start? (yes/no)
 [How this will be implemented]
 
 **Standards Loaded:**
+[If project-guidelines.md exists:]
+✓ project-guidelines.md - [Project requirements]
+  - Quality: [Speed First / Balanced / Quality First]
+  - Testing: [Coverage requirement]
+  - Accessibility: [WCAG level]
+  - Performance: [Targets]
+
 ✓ [framework]-standards.md - [Key patterns]
 ✓ [language]-standards.md - [Key rules]
 ✓ [styling]-standards.md - [Styling approach]
@@ -172,12 +220,21 @@ Running checks:
 - Build: [build command]
 - Tests: [test command if tests exist]
 
+[If project-guidelines.md exists and quality approach is "Quality First":]
+- Accessibility: [WCAG validator if UI work]
+- Performance: [Lighthouse if UI work]
+- Test Coverage: [Coverage tool]
+
 Results:
 ✓ Format: Pass
 ✓ Lint: Pass
 ✓ Type check: Pass
 ✓ Build: Pass
 ✓ Tests: Pass
+[If project guidelines requirements checked:]
+✓ Accessibility: [WCAG level] compliant
+✓ Performance: Meets [targets]
+✓ Coverage: [%] (minimum: [% from project guidelines])
 
 All checks passed!
 ```
