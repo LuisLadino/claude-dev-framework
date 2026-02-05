@@ -7,6 +7,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.0] - 2026-02-05
+
+### Added
+
+- **Skills system** - Auto-routing skills that detect user intent and route to appropriate commands
+  - `dev-workflow` - Routes to development commands (start-task, add-feature, generate-tasks, process-tasks)
+  - `project-sync` - Routes to project management commands (init-project, research-stack, sync-stack, generate-project-specs, update-framework)
+  - `standards-sync` - Routes to standards commands (add-standard, analyze-standards, verify)
+  - `custom-commands` - Routes to project-specific custom commands
+  - `contribute-to-opensource` - Migrated from command to skill with expanded capabilities (supports both "in their repo" and "their code in my repo" scenarios)
+
+### Changed
+
+- **Commands reorganized into new categories:**
+  - `commands/development/` - start-task, add-feature, generate-tasks, process-tasks
+  - `commands/project-management/` - init-project, research-stack, sync-stack, generate-project-specs, update-framework
+  - `commands/standards/` - add-standard, analyze-standards, verify
+  - `commands/utilities/` - learn
+- **All command files trimmed** - 76% total reduction (~9,200 → 2,174 lines) for faster context loading
+  - Removed decorative elements (box drawing, emoji)
+  - Removed prescriptive output templates
+  - Removed redundant framework-specific examples
+  - Preserved all behavioral logic, decision trees, and workflow steps
+- **`/verify` moved** - From utilities/ to standards/ (where it belongs)
+- **`/add-feature` renamed** - Header changed from `/create-prd` to `/add-feature` (matches filename)
+- **CLAUDE.md updated** - Documents skills and command routing
+
+### Removed
+
+- **`/standards` command** - Redundant with `/verify`
+- **`/contribute-to-opensource` command** - Migrated to skill
+- **Old command directories** - `coding-framework/`, `standards-management/` replaced by new structure
+
+### Fixed
+
+- All cross-references updated (`/create-prd` → `/add-feature`, `/import-standards` → `/analyze-standards`, `/init-stack` → `/init-project` or `/sync-stack`)
+- Command headers now match filenames
+
+---
+
 ## [2.0.1] - 2026-02-02
 
 ### Removed
@@ -77,5 +117,7 @@ The Claude Development Framework v1.0.0 with:
 
 ---
 
+[2.1.0]: https://github.com/LuisLadino/claude-dev-framework/compare/v2.0.1...v2.1.0
+[2.0.1]: https://github.com/LuisLadino/claude-dev-framework/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/LuisLadino/claude-dev-framework/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/LuisLadino/claude-dev-framework/releases/tag/v1.0.0

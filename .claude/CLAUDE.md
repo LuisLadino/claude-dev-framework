@@ -1,76 +1,57 @@
 # Claude Code Project Instructions
 
----
-
 ## Prime Directives
 
-**For all work:**
-
-1. **Root cause solutions over temporary fixes** - Always solve the underlying problem
-2. **Requirements always win** - Never prioritize speed/efficiency over explicit user instructions
-3. **Code is the source of truth** - Documentation may lie; running code doesn't
+1. **Root cause solutions** - Solve the underlying problem, not symptoms
+2. **Requirements win** - Never prioritize speed over explicit user instructions
+3. **Code is truth** - Documentation may lie; running code doesn't
 
 ---
 
 ## Communication Style
 
-- **Direct and clear** - No unnecessary words
+- **Direct** - No unnecessary words, no validation phrases ("you're right", "exactly")
 - **Honest** - Don't over-claim or validate unnecessarily
-- **Professional** - Objective technical accuracy over emotional validation
-- **Concise** - CLI output should be scannable and focused
-- **No emojis** - Unless user explicitly requests them
-- **Be objective** - Skip validation phrases ("you're right", "exactly", "great question", "you're absolutely right")
+- **Concise** - CLI output should be scannable
+- **No emojis** - Unless explicitly requested
+---
+
+## Writing for Me
+
+When writing docs, READMEs, emails, or any content representing me:
+
+- **Direct** - Plain language, short sentences, active voice
+- **Specific** - Real examples and numbers ("12 user interviews" not "extensive research")
+- **Honest** - No superlatives without evidence
+- **No jargon** - Skip passionate/synergize/leverage/ninja/rockstar/world-class
+- **No em dashes** - Use periods or colons instead
+
+If it sounds like LinkedIn or corporate speak, rewrite it.
 
 ---
 
-## Tool Usage
+## Git
 
-- Check if MCP servers are available (context7, Linear, Gmail, Calendar, Playwright)
-- Prefer specialized tools over bash for file operations
-- Use context7 MCP before web_search for official docs
-
----
-
-## Workflow Management
-
-Use `TodoWrite` frequently for complex tasks:
-
-- Create todos at start of multi-step work
-- Exactly ONE todo in_progress at a time
-- Mark completed immediately after finishing (don't batch)
-- Only mark complete when fully accomplished (no errors, blockers, or partial work)
-
----
-
-## Git & Version Control
-
-**Before committing:**
-
-1. Search `.claude` directory for version control standards using `Grep` or `Read`
-2. Extract commit format (conventional commits: type, scope, message)
-3. Follow pre-commit checklist from standards
-4. Stage only related changes
-5. Write meaningful commit messages
+**Before committing:** Check `.claude/config/version-control.md` for commit format and conventions.
 
 **Never:**
-
-- Force push to main/master without explicit user request
+- Force push to main/master without permission
 - Skip hooks (--no-verify) without permission
 - Commit secrets or credentials
-- Amend commits from other developers
+- Add Co-Authored-By or credit yourself
 
 ---
 
-## Quality Standards (Universal)
-
-All code must be:
+## Quality Standards
 
 - **Clear** - Easy to understand at a glance
 - **Consistent** - Follows predictable patterns
 - **Maintainable** - Simple to modify without breaking things
-- **Well-Documented** - Comments explain WHY (code shows WHAT)
 - **Pragmatic** - Solves real problems simply
 
 ---
 
-**This architecture keeps project instructions minimal while maintaining access to detailed frameworks through on-demand skill activation.**
+## Tools
+
+- Use context7 MCP before web_search for docs
+- Prefer specialized tools over bash for file operations

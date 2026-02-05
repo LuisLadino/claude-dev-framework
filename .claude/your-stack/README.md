@@ -67,7 +67,7 @@ When you start coding, AI reads these files to understand:
 
 1. **Run stack setup:**
    ```bash
-   /init-stack
+   /sync-stack
    ```
 
    This will:
@@ -175,11 +175,11 @@ When you start coding, AI reads these files to understand:
 │   ├── aria-patterns.md
 │   └── [create more as needed]
 │
-└── [any-custom-directory]/           # Auto-discovered by /init-stack --review
+└── [any-custom-directory]/           # Auto-discovered by /sync-stack --review
     └── [your domain-specific standards]
 ```
 
-**Key change:** Standards are now **dynamically discovered**. Create any directory with `.md` files and run `/init-stack --review` to add it to your config automatically.
+**Key change:** Standards are now **dynamically discovered**. Create any directory with `.md` files and run `/sync-stack --review` to add it to your config automatically.
 
 ---
 
@@ -189,7 +189,7 @@ When you start coding, AI reads these files to understand:
 
 **Enterprise teams run `/init-project` first:**
 
-Creates `init/constitution.md` with:
+Creates `init/project-guidelines.md` with:
 - Problem definition and solution type
 - Quality approach (Speed First / Balanced / Quality First)
 - Testing requirements (coverage %, approach)
@@ -210,13 +210,13 @@ stack:
   styling: "Tailwind CSS"
 ```
 
-Run `/init-stack` to configure or review.
+Run `/sync-stack` to configure or review.
 
 ### 3. AI Reads Standards Before Coding
 
 When you use `/start-task`, AI:
 1. Reads `stack-config.yaml`
-2. **If exists:** Reads `init/constitution.md` for project requirements
+2. **If exists:** Reads `init/project-guidelines.md` for project requirements
 3. Loads `react-standards.md`, `typescript-standards.md`, `styling-standards.md`
 4. Shows you what standards it found (including project requirements)
 5. Waits for approval
@@ -234,7 +234,7 @@ quality_gates:
     - type_check  # TypeScript
 ```
 
-**If constitution.md exists and quality approach is "Quality First":**
+**If project-guidelines.md exists and quality approach is "Quality First":**
 - Accessibility validation (WCAG level from constitution)
 - Performance benchmarks (targets from constitution)
 - Test coverage measurement (minimum from constitution)
@@ -375,7 +375,7 @@ Track changes in git. When best practices evolve, update files.
 
 ### 5. Share Across Projects
 
-Keep this `your-stack/` directory in a central location (like my-brain).
+Keep this `your-stack/` directory in a central location or share across projects.
 Copy `stack-config.yaml` to each project and customize.
 
 ---
@@ -388,11 +388,11 @@ Copy `stack-config.yaml` to each project and customize.
 
 1. Initialize project: `/init-project`
 2. Answer questionnaire about requirements
-3. Configure stack: `/init-stack`
+3. Configure stack: `/sync-stack`
 4. Generate standards: `/research-stack` (if needed)
 5. Start building: `/start-task [feature]`
 
-**constitution.md automatically enforces:**
+**project-guidelines.md automatically enforces:**
 - Quality commitments throughout development
 - Testing requirements in verification
 - Accessibility validation
@@ -402,7 +402,7 @@ Copy `stack-config.yaml` to each project and customize.
 
 **Quick workflow for individual developers:**
 
-1. Configure stack: `/init-stack`
+1. Configure stack: `/sync-stack`
 2. Or manually: Copy template and fill in stack
 3. Start coding: `/start-task [feature]`
 
@@ -442,20 +442,18 @@ Copy `stack-config.yaml` to each project and customize.
 
 ---
 
-## Integration with my-brain
+## Integration with Claude Development Framework
 
-This `your-stack/` framework is part of the larger my-brain system:
+This `your-stack/` directory is part of the Claude Development Framework:
 
-- **Knowledge Foundations** (`.claude/foundations/`) - Professional expertise (UX, PM, Research)
-- **Coding Framework** (`.claude/your-stack/`) - How to write code
+- **Your Stack** (`.claude/your-stack/`) - How to write code for this project
 - **Commands** (`.claude/commands/`) - Workflows like /start-task, /verify
-- **Workflows** (`.claude/workflows/`) - Complex execution templates
+- **Skills** (`.claude/skills/`) - Auto-routing for intelligent command selection
 
 **Together they enable:**
-- Knowledge foundations inform WHAT to build
-- Coding framework enforces HOW to build it
+- Your stack defines HOW to build
 - Commands orchestrate execution
-- Workflows handle complex multi-step tasks
+- Skills auto-detect which command to use
 
 ---
 
@@ -480,4 +478,4 @@ This `your-stack/` framework is part of the larger my-brain system:
 
 ---
 
-**Your standards, enforced. Your patterns, followed. Your quality, maintained. 🚀**
+**Your standards, enforced. Your patterns, followed. Your quality, maintained.**

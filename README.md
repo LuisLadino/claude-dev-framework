@@ -3,7 +3,7 @@
 **A structured `.claude/` directory that makes Claude Code follow your standards consistently.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2.0.1-brightgreen.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2.1.0-brightgreen.svg)](CHANGELOG.md)
 
 ---
 
@@ -12,11 +12,11 @@
 A portable framework that lives in your project's `.claude/` directory and gives Claude Code:
 
 - **Your coding standards** - enforced on every task
-- **Organized commands** - structured workflows for common development tasks
+- **Smart routing** - skills auto-detect what you need and route to the right command
 - **Stack awareness** - adapts to any technology via `/research-stack`
 - **Self-updating** - pull framework improvements with `/update-framework`
 
-Works with any stack: React, Vue, Python, Rust, Go, Swift, etc.
+Works with any stack: React, Vue, Svelte, Next.js, Python, Rust, Go, Swift, etc.
 
 ---
 
@@ -63,92 +63,175 @@ This lets `/update-framework` pull updates from your fork across all your projec
 
 ```
 your-project/.claude/
-├── CLAUDE.md                              # Framework instructions
-├── framework-source.txt                   # Update source URL
+├── CLAUDE.md                    # Core instructions for Claude
+├── framework-source.txt         # Update source URL
+├── skills/                      # Auto-routing (Claude invokes these)
+│   ├── dev-workflow/            # Routes to development commands
+│   ├── project-sync/            # Routes to project management commands
+│   ├── standards-sync/          # Routes to standards commands
+│   ├── contribute-to-opensource/# Open source contribution setup
+│   └── custom-commands/         # Routes to your custom commands
 ├── commands/
-│   ├── coding-framework/                  # Development workflow
-│   │   ├── init-project.md                # /init-project
-│   │   ├── start-task.md                  # /start-task
-│   │   ├── research-stack.md              # /research-stack
-│   │   ├── sync-stack.md                  # /sync-stack
-│   │   ├── add-feature.md                 # /add-feature (create-prd)
-│   │   ├── generate-project-specs.md      # /generate-project-specs
-│   │   ├── generate-tasks.md              # /generate-tasks
-│   │   └── process-tasks.md               # /process-tasks
-│   ├── standards-management/              # Standards enforcement
-│   │   ├── standards.md                   # /standards
-│   │   ├── add-standard.md                # /add-standard
-│   │   ├── analyze-standards.md           # /analyze-standards
-│   │   └── update-framework.md            # /update-framework
-│   └── utilities/                         # Helpers
-│       ├── learn.md                       # /learn
-│       ├── verify.md                      # /verify
-│       └── contribute-to-opensource.md    # /contribute-to-opensource
+│   ├── development/             # Building features
+│   │   ├── start-task.md
+│   │   ├── add-feature.md
+│   │   ├── generate-tasks.md
+│   │   └── process-tasks.md
+│   ├── project-management/      # Setup and maintenance
+│   │   ├── init-project.md
+│   │   ├── research-stack.md
+│   │   ├── sync-stack.md
+│   │   ├── generate-project-specs.md
+│   │   └── update-framework.md
+│   ├── standards/               # Quality and patterns
+│   │   ├── add-standard.md
+│   │   ├── analyze-standards.md
+│   │   └── verify.md
+│   └── utilities/               # General tools
+│       └── learn.md
 ├── config/
-│   ├── version-control.md                 # Git workflow standards
-│   ├── deployment.md                      # Deployment process
-│   └── environment.md                     # Dev environment setup
-└── your-stack/                            # YOUR customizations
-    ├── stack-config.yaml                  # Your stack definition
-    ├── README.md                          # Customization guide
-    ├── coding-standards/                  # Your coding patterns
-    ├── architecture/                      # Your architecture docs
-    ├── design-standards/                  # Your design standards
-    └── documentation-standards/           # Your doc standards
+│   ├── version-control.md       # Git workflow standards
+│   ├── deployment.md            # Deployment process
+│   └── environment.md           # Dev environment setup
+└── your-stack/                  # YOUR customizations
+    ├── stack-config.yaml        # Your stack definition
+    ├── coding-standards/        # Your coding patterns
+    ├── architecture/            # Your architecture docs
+    ├── design-system/           # Your design tokens and standards
+    └── documentation-standards/ # Your doc standards
 ```
+
+---
+
+## Skills
+
+Skills auto-detect what you're trying to do and route to the right command. You don't invoke them directly - Claude uses them automatically.
+
+| Skill | What It Detects | Routes To |
+|-------|-----------------|-----------|
+| **dev-workflow** | Building, fixing, implementing features | start-task, add-feature, generate-tasks, process-tasks |
+| **project-sync** | Setting up projects, managing stack | init-project, research-stack, sync-stack, generate-project-specs, update-framework |
+| **standards-sync** | Adding or checking standards | add-standard, analyze-standards, verify |
+| **contribute-to-opensource** | Contributing to open source projects | Multi-step workflow |
+| **custom-commands** | Project-specific commands | Your custom commands |
+
+**Example:** Say "I want to build a login form" and Claude automatically routes to `/start-task`.
 
 ---
 
 ## Commands
 
-### Coding Framework
+### Development Commands
 
-| Command | Purpose |
-|---------|---------|
-| `/init-project` | Initialize a new project with framework structure |
-| `/start-task` | Begin any coding task with standards enforcement |
-| `/research-stack` | Generate AI-researched standards for your stack |
-| `/sync-stack` | Sync stack configuration with current project |
-| `/add-feature` | Create a PRD for a new feature |
-| `/generate-project-specs` | Generate project specifications |
-| `/generate-tasks` | Convert PRD into task list |
-| `/process-tasks` | Execute tasks sequentially |
+Use these when building features and writing code.
 
-### Standards Management
+| Command | When to Use | What It Does |
+|---------|-------------|--------------|
+| `/start-task` | Any coding task | Loads your standards, shows checklist, implements with verification |
+| `/add-feature` | Planning a complex feature | Asks 12 questions, generates a PRD document |
+| `/generate-tasks` | Breaking down a PRD | Converts PRD into actionable task list |
+| `/process-tasks` | Executing a task list | Works through tasks sequentially with standards |
 
-| Command | Purpose |
-|---------|---------|
-| `/standards` | Enforce standards on current work |
-| `/add-standard` | Add a custom standard |
-| `/analyze-standards` | Analyze codebase to discover patterns |
-| `/update-framework` | Pull framework updates from source |
+**Typical flow:** `/add-feature` → `/generate-tasks` → `/process-tasks`
 
-### Utilities
+**Quick tasks:** Just use `/start-task` directly.
 
-| Command | Purpose |
-|---------|---------|
-| `/learn` | Explain concepts in your stack's context |
-| `/verify` | Check code against standards |
-| `/contribute-to-opensource` | Guide for contributing to open source |
+---
+
+### Project Management Commands
+
+Use these when setting up or maintaining projects.
+
+| Command | When to Use | What It Does |
+|---------|-------------|--------------|
+| `/init-project` | Starting a brand new project | Creates stack-config, design system, project docs |
+| `/research-stack` | Need standards for your tech | Researches docs, generates coding standards |
+| `/sync-stack` | Dependencies changed | Detects tech drift, updates stack-config.yaml |
+| `/generate-project-specs` | Need comprehensive specs | Creates PRDs, architecture docs, roadmap |
+| `/update-framework` | Monthly maintenance | Pulls framework updates from source repo |
+
+**New project flow:** `/init-project` → `/research-stack` → start building
+
+**Existing project:** `/sync-stack` → `/research-stack` (if standards missing)
+
+---
+
+### Standards Commands
+
+Use these when managing coding standards and auditing code.
+
+| Command | When to Use | What It Does |
+|---------|-------------|--------------|
+| `/add-standard` | Need a custom standard | Creates a new standards file from your input |
+| `/analyze-standards` | Discover patterns from code/docs | Scans codebase or imports from documentation |
+| `/verify` | Before commits or releases | Audits code against all active standards |
+
+**Before committing:** Run `/verify` to check for violations.
+
+**Joining a team:** Run `/analyze-standards codebase` to discover existing patterns.
+
+---
+
+### Utility Commands
+
+| Command | When to Use | What It Does |
+|---------|-------------|--------------|
+| `/learn` | Need something explained | Explains concepts adapted to your stack |
 
 ---
 
 ## How It Works
 
-1. **You define your stack** in `your-stack/stack-config.yaml`
-2. **You generate standards** via `/research-stack` (AI researches your stack's best practices)
-3. **Claude reads standards before every task** and shows you a standards check
-4. **Quality is enforced** - standards can't be skipped
+1. **Skills detect intent** - When you describe what you want, skills route to the right command
+2. **Commands load standards** - Each command reads `stack-config.yaml` and relevant standards files
+3. **Standards are enforced** - Claude shows you a checklist before implementing
+4. **Quality is verified** - Format, lint, type-check, build, and test before completion
 
-### Adding Your Own Commands
+### The Standards Check
 
-Create a `.md` file in the appropriate command category:
+Every coding task shows you exactly what standards will be applied:
 
 ```
-.claude/commands/utilities/my-command.md
+STANDARDS CHECK
+Stack: Next.js 14 + TypeScript + Tailwind
+Standards: nextjs-standards.md, typescript-standards.md, tailwind-standards.md
+
+Key patterns:
+- App Router with Server Components
+- Strict TypeScript (no any)
+- Tailwind utilities only (no custom CSS)
+
+Proceed? (yes/no/explain)
 ```
 
-The file content becomes the command prompt. Claude Code will recognize it as `/my-command`.
+You must approve before implementation begins.
+
+---
+
+## Adding Custom Commands
+
+Create a `.md` file in any directory under `commands/`:
+
+```
+.claude/commands/deployment/deploy-staging.md
+```
+
+The file content becomes the command prompt. The `custom-commands` skill will automatically detect it and route users to it.
+
+**File format:**
+
+```markdown
+# /deploy-staging
+
+Deploy current branch to staging environment.
+
+## Steps
+
+1. Run tests
+2. Build application
+3. Deploy to staging
+...
+```
 
 ---
 
@@ -156,10 +239,10 @@ The file content becomes the command prompt. Claude Code will recognize it as `/
 
 Everything in `your-stack/` is yours to customize:
 
-- **`stack-config.yaml`** - Define your technologies
+- **`stack-config.yaml`** - Define your technologies and active standards
 - **`coding-standards/`** - Your coding patterns and conventions
 - **`architecture/`** - Your project structure and patterns
-- **`design-standards/`** - Your design system standards
+- **`design-system/`** - Your design tokens and component standards
 - **`documentation-standards/`** - Your documentation requirements
 
 Framework updates never touch `your-stack/`.
@@ -172,21 +255,19 @@ Framework updates never touch `your-stack/`.
 /update-framework
 ```
 
-This pulls the latest commands and config from the framework source while preserving your customizations in `your-stack/`.
+This pulls the latest commands, skills, and config from the framework source while preserving your customizations in `your-stack/`.
 
 ---
 
-## What Changed in v2.0
+## What Changed in v2.1
 
-v2.0 is a structural simplification:
+v2.1 adds the skills system and reorganizes commands:
 
-- **Organized commands into categories** (coding-framework, standards-management, utilities)
-- **Removed `.claude/tools/`** - Claude Code has native tool integration
-- **Removed `.claude/workflows/`** - Redundant with command files
-- **Removed `.claude/templates/`** - `/research-stack` generates standards dynamically
-- **Moved config out of templates** - `config/` is now a top-level directory
-- **Added `framework-source.txt`** - Enables `/update-framework` to find the source repo
-- **Removed install/uninstall scripts** - Fork-based setup is simpler and how people actually use it
+- **Skills system** - Auto-routing based on user intent
+- **Commands reorganized** - development/, project-management/, standards/, utilities/
+- **Commands trimmed** - 76% smaller for faster loading
+- **`/standards` removed** - Redundant with `/verify`
+- **`/contribute-to-opensource`** - Now a skill with expanded capabilities
 
 See [CHANGELOG.md](CHANGELOG.md) for full details.
 

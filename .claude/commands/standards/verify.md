@@ -1,74 +1,29 @@
 # /verify - Comprehensive Standards Check
 
-**Verify existing code follows your standards, regardless of your tech stack.**
-
-Use this to audit code quality before commits or when reviewing existing work.
+Verify existing code follows your standards, regardless of tech stack. Use before commits or when reviewing existing work.
 
 ---
 
 ## STEP 1: Load Stack Configuration
 
-**First, understand what stack we're verifying:**
+Read `.claude/your-stack/stack-config.yaml` using the Read tool.
 
-Use `project_knowledge_search`:
-```
-Query: "stack-config.yaml configuration"
-```
+Extract: framework/library name and version, language, styling solution, testing framework, active standards files, project-specific settings.
 
-**Extract:**
-- Framework/library name and version
-- Language (TypeScript/JavaScript/etc.)
-- Styling solution
-- Testing framework
-- Active standards files
-- Project-specific settings
-
-**If not found:**
-```
-⚠️  Stack configuration missing!
-
-Run /research-stack to set up your stack first.
-```
+If not found, tell the user to run `/research-stack` first.
 
 ---
 
 ## STEP 2: Load Applicable Standards
 
-Based on stack-config.yaml, use `project_knowledge_search` to load:
+Based on stack-config.yaml, read applicable standards files from `.claude/your-stack/`:
 
-**Core Standards (always check):**
-```
-Query: "CLAUDE.md core instructions"
-Query: "file structure organization"
-Query: "version control standards"
-Query: "code comments documentation"
-```
-
-**Framework Standards:**
-```
-Query: "[framework] coding standards"
-Query: "component patterns [framework]"
-```
-
-**Language Standards:**
-```
-Query: "[language] standards rules"
-```
-
-**Styling Standards:**
-```
-Query: "[styling solution] standards"
-```
-
-**Testing Standards:**
-```
-Query: "testing standards requirements"
-```
-
-**Company Standards (if imported):**
-```
-Query: "company conventions"
-```
+- **Core** (always): `.claude/CLAUDE.md`, `.claude/config/version-control.md`
+- **Framework**: Files listed in `standards_active` from stack-config.yaml (in `coding-standards/` and `architecture/`)
+- **Language**: Language-specific standards
+- **Styling**: Styling solution standards
+- **Testing**: Testing standards
+- **Company** (if imported): Company conventions
 
 ---
 
@@ -328,97 +283,20 @@ Query: "company conventions"
 
 ## VERIFICATION REPORT
 
-**For EACH violation found:**
-
-```
-❌ VIOLATION: [Title]
-
-**Standard Violated:**
-File: [standards file]
-Section: [section name]
-Rule: [specific rule]
-
-**Current Code:**
-[Show problematic code snippet]
-
-**Should Be:**
-[Show correct implementation]
-
-**How to Fix:**
-1. [Step 1]
-2. [Step 2]
-3. [Step 3]
-
-**Why It Matters:**
-[Explain impact - maintainability, performance, accessibility, etc.]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
+For each violation found, report:
+- The standard violated (file, section, specific rule)
+- The current problematic code snippet
+- The correct implementation
+- Steps to fix
+- Impact (maintainability, performance, accessibility, etc.)
 
 ---
 
 ## FINAL STATUS
 
-### If ALL ✅:
+**If all checks pass:** Report the stack, list all standards verified against, total checks passed, and confirm ready for commit/deployment.
 
-```
-✅ **ALL STANDARDS VERIFIED**
-
-**Stack:** [Framework + Language + Styling]
-
-**Verified Against:**
-✓ CLAUDE.md - Core workflow
-✓ [Framework]-standards.md - Framework patterns
-✓ [Language]-standards.md - Language rules
-✓ [Styling]-standards.md - Styling approach
-✓ testing-standards.md - Test requirements
-✓ architecture standards - File organization
-✓ documentation standards - Code documentation
-✓ version-control.md - Git readiness
-[✓ company-conventions.md - if imported]
-
-**Quality Checklist:** All items ✓
-
-**Summary:**
-- Total checks: [count]
-- Passed: [count]
-- Failed: 0
-
-Code follows all standards for your [stack] project.
-Ready for commit/deployment.
-```
-
-### If ANY ❌:
-
-```
-❌ **STANDARDS VIOLATIONS FOUND**
-
-**Stack:** [Framework + Language + Styling]
-
-**Violations by Category:**
-- Core Compliance: [count] issues
-- [Framework] Standards: [count] issues
-- [Language] Standards: [count] issues
-- [Styling] Standards: [count] issues
-- Testing: [count] issues
-- Documentation: [count] issues
-- Architecture: [count] issues
-- Version Control: [count] issues
-
-**Total Violations:** [count]
-
-**Action Required:**
-1. Review detailed report above
-2. Fix each violation
-3. Run /verify again
-4. Repeat until all ✅
-
-Do NOT commit until all violations are fixed.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-See detailed violations above for specific fixes.
-```
+**If violations found:** Report the stack, violations broken down by category with counts, total violation count. Instruct the user to fix all violations and run `/verify` again. Do NOT approve for commit until all violations are fixed.
 
 ---
 
@@ -428,87 +306,8 @@ Per CLAUDE.md:
 
 - Violations found = code is NOT done
 - Must fix ALL violations before proceeding
-- Quality Checklist must be ALL ✅
 - This is NON-NEGOTIABLE
 
-**Workflow:**
-```
-Code → /verify → Violations found → Fix → /verify → All ✅ → Commit
-```
+Workflow: Code -> /verify -> Fix violations -> /verify -> All pass -> Commit
 
----
-
-## Stack-Specific Examples
-
-### Example 1: React + TypeScript + Tailwind
-
-```
-/verify
-
-🔧 Loading: React 18 + TypeScript + Tailwind stack
-
-✓ Core compliance
-✓ React standards (functional components, named exports)
-✓ TypeScript standards (strict mode, no any)
-✓ Tailwind standards (utility classes, semantic colors)
-✓ Testing standards (React Testing Library)
-✓ Architecture (proper file organization)
-
-✅ All standards verified for React stack
-```
-
-### Example 2: Vue + JavaScript + CSS Modules
-
-```
-/verify
-
-🔧 Loading: Vue 3 + JavaScript + CSS Modules stack
-
-✓ Core compliance
-✓ Vue standards (Composition API, script setup)
-✓ JavaScript standards (ES6+, JSDoc)
-✓ CSS Modules standards (scoped, camelCase)
-✓ Testing standards (Vue Test Utils)
-✓ Architecture (SFC organization)
-
-✅ All standards verified for Vue stack
-```
-
-### Example 3: Svelte + TypeScript
-
-```
-/verify
-
-🔧 Loading: SvelteKit + TypeScript stack
-
-✓ Core compliance
-✓ Svelte standards (reactive declarations, stores)
-✓ TypeScript standards (strict mode, explicit types)
-✓ Testing standards (Svelte Testing Library)
-✓ Architecture (proper file structure)
-✓ SvelteKit patterns (load functions, form actions)
-
-✅ All standards verified for SvelteKit stack
-```
-
----
-
-## Tips for Using /verify
-
-### DO:
-✅ Run before every commit
-✅ Run after major refactoring
-✅ Run when reviewing code
-✅ Fix violations immediately
-✅ Re-run after fixes
-
-### DON'T:
-❌ Skip verification
-❌ Commit with violations
-❌ Ignore "minor" issues
-❌ Assume code is correct
-❌ Rush through fixes
-
----
-
-**This command adapts to YOUR stack and enforces YOUR standards. Run it regularly to maintain code quality.**
+Run before every commit and after major refactoring. Do not commit with violations. Do not ignore minor issues.
