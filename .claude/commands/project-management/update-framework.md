@@ -29,18 +29,17 @@ Fully interactive, LLM-driven command:
 
 **First, find where this framework came from:**
 
-Use the `Bash` tool to check git remote:
+Use the `Bash` tool to read the framework source file:
 
 ```bash
-cd .claude
-git remote -v 2>/dev/null || echo "No git remote"
+cat .claude/framework-source.txt 2>/dev/null || echo "No source file"
 ```
 
 **Parse the output:**
 
-- **If git remote exists:** Extract repo URL (e.g., `https://github.com/LuisLadino/claude-dev-framework.git`)
-- **If no git remote:** Check if `.claude/framework-source.txt` exists
-- **If neither:** Ask user for the source repo URL
+- **If `.claude/framework-source.txt` exists:** Use the URL from this file (this is the authoritative source)
+- **If no source file:** Check git remote as fallback (`git remote -v`)
+- **If neither:** Ask user for the source repo URL and save it to `.claude/framework-source.txt`
 
 **Store the framework source URL for this session.**
 
@@ -263,9 +262,9 @@ rm -rf "$temp_dir"
 
 ## Configuration
 
-After first update, store the source URL in `.claude/framework-source.txt` so future updates skip detection.
+The framework source URL is stored in `.claude/framework-source.txt`. This file is the authoritative source for updates and should always be checked first.
 
-**For forked frameworks:** Detect user's fork vs original repo. Updates come from the user's fork. Offer to also check the original for updates the user might want to merge.
+**For forked frameworks:** Updates come from the URL in `framework-source.txt`. If you fork the framework, update this file to point to your fork.
 
 ---
 
