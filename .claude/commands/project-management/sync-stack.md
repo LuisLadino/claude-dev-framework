@@ -3,26 +3,21 @@
 **Command:** `/sync-stack`
 **Purpose:** Detect technology drift in existing projects and sync stack-config.yaml with reality
 
-**Use this when:** You have an existing codebase and want to auto-detect its stack.
+**Use this when:** You have an existing codebase and want to auto-detect its stack and patterns.
 
-**After this:**
-- `/research-stack` - Generate standards from official docs
-- `/analyze-standards codebase` - Discover patterns from actual code (better for established projects)
-
-**Don't use this when:**
-- Starting a brand new project → use `/init-project` instead
+**Don't use this when:** Starting a brand new project → use `/init-project` instead
 
 ---
 
 ## What This Does
 
-1. Detect actual technologies being used (framework, database, styling, etc.)
-2. Compare against stack-config.yaml (if it exists)
-3. Identify drift and mismatches between config and reality
-4. Auto-update or suggest fixes to keep config synchronized
-5. Discover orphaned standards (files in `.claude/your-stack/` not listed in config)
+1. Detect technologies from config files and dependencies
+2. Compare against stack-config.yaml
+3. Update config to match reality
+4. Analyze code patterns and generate/update standards
+5. Clean up orphaned standards files
 
-**Use when:** Dependencies changed without config update, switched frameworks/tools, inherited a project without config, or want to verify config accuracy.
+**Use when:** Dependencies changed, inherited a project, or want to sync everything.
 
 ---
 
@@ -91,37 +86,42 @@ Then ask the user to choose:
 
 **If user chooses "Auto-fix":**
 
-1. Update stack-config.yaml with all detected values (framework, versions, language, styling, database, ORM, testing, e2e, package manager).
+1. Update stack-config.yaml with all detected values.
 2. List orphaned standards files and ask if user wants to delete them.
-3. For each NEW technology detected that has no standards file, ask: "Create standards for [tech]? (yes/no)"
-4. If yes, run `/research-stack [tech]` to generate the standards file.
 
 ---
 
-### Phase 5: Handle Manual Review
+### Phase 5: Generate/Update Standards
+
+For each detected technology:
+
+1. **If no standards file exists:** Ask "Create standards for [tech]? (yes/no)"
+   - If yes: Research official docs + scan codebase for patterns → generate standards file
+
+2. **If standards file exists:** Scan codebase to check if patterns match
+   - If mismatch found: Show what standard says vs what code does
+   - Ask: "Update standard to match code? (yes/no/skip)"
+
+**Pattern detection:** Scan actual code for naming conventions, file structure, component patterns, import styles, error handling, etc. Use these discovered patterns when generating or updating standards.
+
+---
+
+### Phase 6: Handle Manual Review
 
 **If user chooses "Manual review":**
 
-Go through each drift item one by one. For each, show:
-- Current config value vs detected value
-- Analysis (what was found, severity)
-- Recommendation
-
-Offer choices: update config, change project, skip item, or stop review. Apply all accepted changes at the end.
+Go through each drift item one by one. Show current vs detected, offer to update or skip.
 
 ---
 
-### Phase 6: Create New Config (If Missing)
+### Phase 7: Create New Config (If Missing)
 
 **If stack-config.yaml doesn't exist:**
 
 1. Show detected technologies
-2. Ask additional questions:
-   - Project name (auto-detect from package.json)
-   - Project type (web-app-interactive, web-app-marketing, mobile-app, desktop-app, browser-extension, library, cli-tool)
-   - Design system theme (technical-dev-focused, modern-saas, creative-agency, minimal-elegant, or skip)
-3. Create stack-config.yaml and optional design system files
-4. Suggest running `/research-stack` next
+2. Ask for project name (auto-detect from package.json if possible)
+3. Create stack-config.yaml
+4. Proceed to Phase 5 (generate standards)
 
 ---
 
@@ -151,9 +151,9 @@ Read version from package.json dependencies/devDependencies, stripping `^` or `~
 
 ## Integration with Other Commands
 
-**Workflow:** `/sync-stack` (detect drift, update config) -> `/research-stack` (generate/update standards) -> `/start-task` (develop with correct standards).
+**Workflow:** `/sync-stack` (detect stack + generate standards) -> `/start-task` (develop)
 
-**Don't use when:** Starting a new project (use `/init-project` instead) or config is known to be correct.
+**Don't use when:** Starting a brand new project with no code (use `/init-project` instead).
 
 ---
 
