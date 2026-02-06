@@ -153,6 +153,6 @@ Suggest: `/learn` to understand the code, `/verify` for deeper check, or `/start
 ## Troubleshooting
 
 - **Can't find stack-config.yaml** - Run `/init-project` to create stack configuration
-- **Specs don't match code** - Review `.claude/specs/`, update specs files, verify `specs_active` list in stack-config.yaml
+- **Specs don't match code** - Review `.claude/specs/`, update specs files, verify `specs:` list in stack-config.yaml
 - **Verification failing** - Fix the specific error shown; update configuration if rules don't match needs
 - **Wrong framework patterns** - Verify framework name/version in stack-config.yaml, run `/sync-stack` to regenerate if needed
