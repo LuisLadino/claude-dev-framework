@@ -15,7 +15,26 @@ The goal: Every `/start-task` loads your specs and follows YOUR patterns.
 
 ---
 
-## STEP 1: Detect Stack
+## STEP 1: Read Existing Specs
+
+First, read all existing spec files to understand current configuration.
+
+```bash
+# Find all spec files
+find .claude/specs -name "*.md" -o -name "*.yaml" 2>/dev/null
+```
+
+**Read each file found.** This gives you:
+- Current stack configuration (stack-config.yaml)
+- Existing coding patterns (coding/*.md)
+- Config settings (config/*.md)
+- Any custom specs (architecture/, design/, documentation/, custom/)
+
+**Note what exists** so you can update rather than overwrite, and preserve user customizations.
+
+---
+
+## STEP 2: Detect Stack
 
 Check for config files to detect the tech stack:
 
@@ -67,7 +86,7 @@ Confirm? (yes / modify)
 
 ---
 
-## STEP 2: Research Each Technology
+## STEP 3: Research Each Technology
 
 For each confirmed technology, research official patterns.
 
@@ -95,7 +114,7 @@ If context7 doesn't have docs, use WebSearch:
 
 ---
 
-## STEP 3: Scan Existing Code
+## STEP 4: Scan Existing Code
 
 If the project has existing code, scan for patterns to preserve.
 
@@ -128,7 +147,7 @@ find . -name "*.test.*" -o -name "*.spec.*" | head -10
 
 ---
 
-## STEP 4: Update Config Specs
+## STEP 5: Update Config Specs
 
 Read and update the config template files based on detected project settings.
 
@@ -205,7 +224,7 @@ Update the template with:
 
 ---
 
-## STEP 5: Generate Coding Specs
+## STEP 6: Generate Coding Specs
 
 For each technology, ask before generating:
 
@@ -266,7 +285,7 @@ Source: [context7/official docs URL]
 
 ---
 
-## STEP 6: Update stack-config.yaml
+## STEP 7: Update stack-config.yaml
 
 Update `.claude/specs/stack-config.yaml` with:
 
@@ -299,7 +318,7 @@ specs:
 
 ---
 
-## STEP 7: Summary
+## STEP 8: Summary
 
 Show what was created/updated:
 
