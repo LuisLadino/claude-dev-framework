@@ -4,9 +4,13 @@
 
 Read `.claude/specs/stack-config.yaml`. If missing, ask user to run `/init-project` or `/sync-stack` first.
 
-**Extract:** Framework/version, language, styling, testing framework, package manager, active specs.
+**Extract:**
+- Stack: framework, language, styling, testing, package_manager
+- Specs: list of active spec files to load
+- Project settings: import_alias, components_dir, tests_dir (use these when creating files)
+- Quality gates: which checks to run
 
-If `.claude/specs/init/project-guidelines.md` exists, read it for quality/testing/accessibility requirements.
+If `.claude/specs/project-guidelines.md` exists, read it for quality/testing/accessibility requirements.
 
 ### Check for New Dependencies
 
@@ -84,12 +88,19 @@ Once approved, implement following loaded specs:
 
 ## STEP 6: Verification Phase
 
-Run all quality checks before marking complete:
-- Format (`npm run format` or equivalent)
-- Lint (`npm run lint` or equivalent)
-- Type check (`npx tsc --noEmit` for TypeScript)
-- Build (`npm run build`)
-- Tests (`npm test`)
+Run quality checks listed in `stack-config.yaml` under `quality:`.
+
+For each enabled gate, detect the correct command from package.json scripts or project config:
+
+| Gate | How to detect command |
+|------|----------------------|
+| format | Check for `format` script in package.json |
+| lint | Check for `lint` script in package.json |
+| type_check | If TypeScript, run `npx tsc --noEmit` |
+| test | Check for `test` script in package.json |
+| build | Check for `build` script in package.json |
+
+**Only run gates that are enabled in stack-config.yaml.** Skip commented-out gates.
 
 Report pass/fail results to user.
 

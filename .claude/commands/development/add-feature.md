@@ -62,7 +62,7 @@ Generate a markdown PRD file with:
 7. **Location** - Where it lives, files to create
 8. **Implementation Notes** - Suggested approach, components needed
 
-Save to `.claude/tasks/NNNN-prd-[feature-slug].md`. Auto-increment NNNN.
+Create `.claude/tasks/` directory if it doesn't exist. Save to `.claude/tasks/NNNN-prd-[feature-slug].md`. Auto-increment NNNN.
 
 ---
 

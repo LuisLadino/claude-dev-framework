@@ -10,10 +10,14 @@ For simple projects, skip this and run `/sync-stack` directly.
 
 ## What This Creates
 
-- `specs/init/product-brief.md` - What you're building and why
-- `specs/init/project-guidelines.md` - Quality requirements
-- `specs/design/design-tokens.json` - Colors, spacing, typography
-- `README.md` - Project overview
+Creates directories as needed:
+
+- `.claude/specs/project-brief.md` - What you're building and why
+- `.claude/specs/project-guidelines.md` - Quality requirements
+- `README.md` - Project overview (if doesn't exist)
+
+Optional (if design foundation chosen):
+- `.claude/specs/design/design-tokens.json` - Colors, spacing, typography
 
 ---
 
