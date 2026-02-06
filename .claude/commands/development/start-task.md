@@ -149,7 +149,7 @@ Suggest next steps: `/learn`, `/verify`, or `/start-task` for another task.
 
 ## Troubleshooting
 
-- **Can't find stack-config.yaml** - Run `/research-stack` to create stack configuration
+- **Can't find stack-config.yaml** - Run `/init-project` to create stack configuration
 - **Standards don't match code** - Review `.claude/your-stack/`, update standards files, verify `standards_active` list in stack-config.yaml
 - **Verification failing** - Fix the specific error shown; update configuration if rules don't match needs
 - **Wrong framework patterns** - Verify framework name/version in stack-config.yaml, run `/research-stack` to regenerate if needed

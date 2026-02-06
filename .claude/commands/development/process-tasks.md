@@ -46,7 +46,7 @@ When ALL subtasks in a parent task are done:
 
 1. Show completed parent task with all subtasks checked off
 2. Run full test suite, report results
-3. Show files to commit and suggested commit message (following version-control.md format)
+3. Show files to commit and suggested commit message (following `.claude/your-stack/config/version-control.md` format)
 4. Ask "Ready to commit? (yes/no/edit)"
 5. **WAIT FOR APPROVAL**
 6. If approved, stage and commit

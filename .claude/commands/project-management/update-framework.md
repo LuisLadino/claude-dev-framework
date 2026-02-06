@@ -124,12 +124,8 @@ Compare important files:
 # Check if CLAUDE.md changed
 diff -q .claude/CLAUDE.md "$temp_dir/.claude/CLAUDE.md" || echo "CLAUDE.md updated"
 
-# Check workflows
-diff -qr .claude/workflows "$temp_dir/.claude/workflows" 2>/dev/null || echo "workflows updated"
-
-# Check tools
-diff -qr .claude/tools "$temp_dir/.claude/tools" 2>/dev/null || echo "tools updated"
-
+# Check skills
+diff -qr .claude/skills "$temp_dir/.claude/skills" 2>/dev/null || echo "skills updated"
 ```
 
 ### Check Company/Team Standards (Your Stack)

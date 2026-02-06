@@ -175,6 +175,11 @@ When you start coding, AI reads these files to understand:
 │   ├── aria-patterns.md
 │   └── [create more as needed]
 │
+├── config/                           # Project-specific configuration
+│   ├── version-control.md            # Commit format, branch naming
+│   ├── deployment.md                 # Deployment patterns
+│   └── environment.md                # Environment setup
+│
 └── [any-custom-directory]/           # Auto-discovered by /sync-stack --review
     └── [your domain-specific standards]
 ```
@@ -221,7 +226,7 @@ When you use `/start-task`, AI:
 4. Shows you what standards it found (including project requirements)
 5. Waits for approval
 6. Codes following your patterns
-7. Enforces project requirements (if constitution exists)
+7. Enforces project requirements (if project-guidelines.md exists)
 
 ### 4. Quality Gates Enforce Standards
 
@@ -235,9 +240,9 @@ quality_gates:
 ```
 
 **If project-guidelines.md exists and quality approach is "Quality First":**
-- Accessibility validation (WCAG level from constitution)
-- Performance benchmarks (targets from constitution)
-- Test coverage measurement (minimum from constitution)
+- Accessibility validation (WCAG level from project-guidelines.md)
+- Performance benchmarks (targets from project-guidelines.md)
+- Test coverage measurement (minimum from project-guidelines.md)
 
 ---
 
@@ -410,7 +415,7 @@ Copy `stack-config.yaml` to each project and customize.
 
 ### Switching Projects
 
-1. If project has constitution: AI automatically loads it
+1. If project has project-guidelines.md: AI automatically loads it
 2. Update `stack-config.yaml` for the new project's stack
 3. Activate different standards files
 4. AI adapts to new patterns + project requirements
