@@ -6,7 +6,13 @@
 
 ## Purpose
 
-First command for a new project. Establishes what you're building (product), how (tech stack), and design foundation.
+First command for a **brand new project** that doesn't exist yet. Establishes what you're building (product), how (tech stack), and design foundation.
+
+**Use this when:** Starting from scratch, no code exists yet.
+
+**Don't use this when:**
+- Project already exists with code → use `/sync-stack` instead
+- Just need coding standards for a known stack → use `/research-stack` instead
 
 **After this:** Run `/research-stack` to generate coding standards
 
@@ -15,8 +21,8 @@ First command for a new project. Establishes what you're building (product), how
 ## What This Creates
 
 - `.claude/your-stack/stack-config.yaml` - Tech stack configuration
-- `.claude/your-stack/design-system/design-tokens.json` - Colors, spacing, typography
-- `.claude/your-stack/design-system/design-system-standards.md` - Design patterns and usage
+- `.claude/your-stack/design-standards/design-tokens.json` - Colors, spacing, typography
+- `.claude/your-stack/design-standards/design-system.md` - Design patterns and usage
 - `.claude/your-stack/init/product-brief.md` - What you're building and why
 - `.claude/your-stack/init/project-guidelines.md` - Quality standards and requirements
 - `README.md` - Project overview
@@ -165,7 +171,7 @@ Ask: What's the primary feel/tone?
 5. Technical & Dev-focused
 
 ### Step 2: Generate Design Tokens
-Based on the chosen tone, generate `design-tokens.json` with appropriate values for:
+Based on the chosen tone, generate `.claude/your-stack/design-standards/design-tokens.json` with appropriate values for:
 - Colors (primary, secondary, background, text, accent/status)
 - Spacing scale (xs through 2xl)
 - Typography (font families, sizes, weights, line heights)
@@ -173,7 +179,7 @@ Based on the chosen tone, generate `design-tokens.json` with appropriate values 
 - Shadow scale
 
 ### Step 3: Generate Design Standards
-Generate `design-system-standards.md` covering:
+Generate `.claude/your-stack/design-standards/design-system.md` covering:
 - Color usage guidelines (when to use each color, accessibility notes)
 - Typography rules (which fonts/sizes/weights for which purposes)
 - Spacing conventions (internal padding vs external margins vs section spacing)
@@ -198,10 +204,10 @@ Create the directory structure and write all files listed in "What This Creates"
 ### 1. stack-config.yaml
 Contains: project name, version, description, project_type, initialization_date, full stack config (framework, language, styling, database, testing, package manager, build tool), empty standards_active list (populated by /research-stack), project_specifics (import alias, directories), and design_system references.
 
-### 2. design-tokens.json
+### 2. design-standards/design-tokens.json
 JSON file with all design tokens generated in Part 4.
 
-### 3. design-system-standards.md
+### 3. design-standards/design-system.md
 Markdown file with design patterns generated in Part 4.
 
 ### 4. product-brief.md

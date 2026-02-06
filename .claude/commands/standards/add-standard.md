@@ -10,11 +10,13 @@ Add a new custom standard to your project. Creates the file in the correct locat
 
 Ask the user which type of standard to add:
 
-1. **Coding Standard** - Goes in `.claude/your-stack/coding-standards/`, registered in `stack-config.yaml > standards_active`
-2. **Architecture Pattern** - Goes in `.claude/your-stack/architecture/`, registered in `stack-config.yaml > architecture_patterns`
-3. **Documentation Standard** - Goes in `.claude/your-stack/documentation-standards/`, registered in `stack-config.yaml > documentation_standards`
+1. **Coding Standard** - Goes in `.claude/your-stack/coding-standards/`
+2. **Architecture Pattern** - Goes in `.claude/your-stack/architecture/`
+3. **Documentation Standard** - Goes in `.claude/your-stack/documentation-standards/`
+4. **Design Standard** - Goes in `.claude/your-stack/design-standards/`
+5. **Config** - Goes in `.claude/your-stack/config/`
 
-If the user provided a name as an argument (e.g., `/add-standard design-standards`), skip to Step 2.
+If the user provided a name as an argument (e.g., `/add-standard api-standards`), skip to Step 2.
 
 ### Step 2: Standard Name
 
@@ -57,11 +59,13 @@ Inform the user the standard was added successfully. Mention they can review the
 
 ## File Locations
 
-| Type | Directory | Config Key |
-|------|-----------|------------|
-| Coding Standard | `.claude/your-stack/coding-standards/` | `standards_active` |
-| Architecture Pattern | `.claude/your-stack/architecture/` | `architecture_patterns` |
-| Documentation Standard | `.claude/your-stack/documentation-standards/` | `documentation_standards` |
+| Type | Directory |
+|------|-----------|
+| Coding Standard | `.claude/your-stack/coding-standards/` |
+| Architecture Pattern | `.claude/your-stack/architecture/` |
+| Documentation Standard | `.claude/your-stack/documentation-standards/` |
+| Design Standard | `.claude/your-stack/design-standards/` |
+| Config | `.claude/your-stack/config/` |
 
 
 ---

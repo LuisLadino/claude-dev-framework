@@ -22,67 +22,44 @@ Wait for user's initial description.
 
 ---
 
-## STEP 3: The 12 Questions
+## STEP 3: Gather Requirements
 
-Ask these questions one at a time or in logical groups. Wait for answers before proceeding.
+Ask these questions (skip any the user already answered):
 
-### Question 1: Problem & Goal
-What problem does this solve? What's the main goal?
+### 1. Goal
+What should this feature do? What problem does it solve?
 
-### Question 2: Main Goal Type
-What type of goal? Options: A) Visual/UI, B) Functional, C) Content, D) Integration, E) Fix/Improve, F) Interactive, G) Responsive, H) Performance, I) Accessibility
+### 2. User Actions
+What will users do with this feature? (main interactions)
 
-### Question 3: Primary User
-Who will use this? Options: A) Potential Employers, B) Clients, C) Developers, D) General Visitors, E) Specific Persona (describe)
+### 3. Success Criteria
+How will you know it's done? What must be true?
 
-### Question 4: Key Actions
-What actions will users take? List main interactions.
+### 4. Non-Goals (optional)
+Anything explicitly out of scope?
 
-### Question 5: User Stories
-Write 2-3 stories: "As a [user], I want [action], so that [benefit]"
+### 5. Location
+Where does this live? (page, component, section, etc.)
 
-### Question 6: Success Criteria
-What must be true when it's done? Measurable outcomes.
-
-### Question 7: Non-Goals
-What is explicitly OUT of scope?
-
-### Question 8: Design Preferences
-Any design preferences or requirements?
-
-### Question 9: Technical Requirements
-Show user their stack from config. If project-guidelines.md exists, show already-included requirements (accessibility, performance, testing, integrations). Ask for ADDITIONAL technical needs from: form validation, API integration, database/storage, state management, authentication, real-time updates, file uploads, animations, accessibility, SEO, performance, browser compatibility, other.
-
-### Question 10: Feature Location
-Where will this feature live? (page, component, section, modal, etc.)
-
-### Question 11: Open Questions
-Any uncertainties or decisions needed?
-
-### Question 12: Additional Details
-Anything else to consider?
+### 6. Technical Needs (optional)
+Any specific requirements? (API, database, auth, etc.)
+Show stack from config. Ask only for ADDITIONAL needs beyond what's already configured.
 
 ---
 
 ## STEP 4: Generate PRD
 
-Generate a markdown PRD file with these sections (populated from question answers and stack config):
+Generate a markdown PRD file with:
 
-1. **Header** - PRD number, date, stack, status (Draft)
-2. **Overview** - Problem (Q1), Goal (Q1), Goal Type (Q2), Primary User (Q3)
-3. **User Stories** - From Q5
-4. **Key Actions** - From Q4 as checklist
-5. **Success Criteria** - From Q6, all must be met
-6. **Non-Goals** - From Q7
-7. **Technical Stack** - From stack-config.yaml + project-guidelines.md if exists (quality approach, accessibility, performance, testing, integrations) + additional tech from Q9
-8. **Design Considerations** - From Q8 + design principles (existing patterns, consistency, responsive, accessible)
-9. **Feature Location** - From Q10 + file structure based on architecture standards
-10. **Open Questions & Decisions** - From Q11 + recommendations based on stack
-11. **Implementation Notes** - Architecture suggestion, estimated components, files to create, testing strategy
-12. **Additional Context** - From Q12
-13. **Standards to Follow** - Active standards from stack-config.yaml + key patterns
-14. **Next Steps** - Review PRD, run `/generate-tasks`, review tasks, run `/process-tasks`
-15. **Revision History** - v1.0 with date
+1. **Header** - Feature name, date, stack, status (Draft)
+2. **Goal** - What it does, problem it solves
+3. **User Actions** - What users will do
+4. **Success Criteria** - How to know it's done
+5. **Non-Goals** - What's out of scope (if specified)
+6. **Technical Stack** - From stack-config.yaml
+7. **Location** - Where it lives, files to create
+8. **Implementation Notes** - Suggested approach, components needed
+9. **Next Steps** - Run `/generate-tasks` to break into subtasks
 
 ---
 

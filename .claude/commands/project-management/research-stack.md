@@ -6,22 +6,25 @@
 
 ## Purpose
 
-Research unfamiliar technology stacks and generate accurate, current coding standards based on official documentation and community best practices.
+Generate coding standards for a known tech stack. Researches official docs and best practices.
 
-**Use when:**
-- Starting a project with a new stack
-- Joining a team using unfamiliar technologies
-- Updating standards for new framework versions
+**Use this when:** You already know your stack (or ran /init-project or /sync-stack) and need coding standards generated.
+
+**Don't use this when:**
+- Starting a brand new project → use `/init-project` first
+- Need to detect stack from existing code → use `/sync-stack` first
+
+**Typical flow:**
+1. `/init-project` (new project) OR `/sync-stack` (existing project)
+2. `/research-stack` (this command) - generates standards
 
 ---
 
-## Prerequisites
+## Tools Used
 
-- **context7 MCP server** (recommended) - Fetches official documentation directly. Without it, research falls back to web search with limited accuracy.
-- **github MCP** (optional) - Find real-world examples
-- **filesystem MCP** (optional) - Analyze existing codebase patterns
-
-**Tools used:** context7, web_search, web_fetch, and optionally github/filesystem.
+- **WebSearch** - Find official documentation and best practices
+- **WebFetch** - Read documentation pages
+- **Read/Grep** - Analyze existing codebase patterns
 
 ---
 
@@ -36,16 +39,11 @@ Research unfamiliar technology stacks and generate accurate, current coding stan
 
 ## Interactive Flow
 
-### Step 0: Prerequisites Check
-
-Check for available MCP tools (context7, web_search, web_fetch).
-
-- If context7 is missing, warn about limited research quality and offer options: continue with web search only, cancel to set up context7, or use /analyze-standards instead.
-- If context7 is available, confirm full capabilities and proceed.
-
 ### Step 1: Stack Discovery
 
-Ask the user for their technology stack: framework/library (with version), database/ORM, styling solution, testing framework, and other key technologies.
+**If stack-config.yaml exists:** Load it and confirm the stack with user. Ask if they want to research all technologies or specific ones.
+
+**If stack-config.yaml doesn't exist:** Ask user for their stack.
 
 ### Step 2: Knowledge Gap Assessment
 

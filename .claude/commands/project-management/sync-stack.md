@@ -3,6 +3,12 @@
 **Command:** `/sync-stack`
 **Purpose:** Detect technology drift in existing projects and sync stack-config.yaml with reality
 
+**Use this when:** You have an existing codebase and want to auto-detect its stack from package.json, config files, etc.
+
+**Don't use this when:**
+- Starting a brand new project → use `/init-project` instead
+- Config is correct, just need coding standards → use `/research-stack` instead
+
 ---
 
 ## What This Does
@@ -71,9 +77,9 @@ Then ask the user to choose:
 
 **If user chooses "Auto-fix":**
 
-1. Update stack-config.yaml with all detected values (framework, versions, language, styling, database, ORM, testing, e2e, package manager, deployment). Add `last_synced` timestamp and set `sync_status: "clean"`.
-2. Archive orphaned standards files to `.claude/your-stack/.archived/` with `.bak` extension.
-3. Confirm changes applied and list next steps: run `/research-stack` for new technologies, review custom standards.
+1. Update stack-config.yaml with all detected values (framework, versions, language, styling, database, ORM, testing, e2e, package manager).
+2. List orphaned standards files and ask if user wants to delete them.
+3. Confirm changes applied. Suggest running `/research-stack` if new technologies were added.
 
 ---
 
@@ -136,10 +142,6 @@ Read version from package.json dependencies/devDependencies, stripping `^` or `~
 
 ---
 
-## Output Files
+## Output
 
-### Updated stack-config.yaml
-Updated with detected values for all stack fields, standards_active list, last_synced timestamp, and sync_status.
-
-### Sync Report
-Saved to `.claude/your-stack/.sync-reports/`. Contains: summary counts (matched, mismatches, added, removed, archived), detailed changes with severity, and recommendations for next steps.
+Updates `stack-config.yaml` with detected values.

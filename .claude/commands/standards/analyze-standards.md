@@ -24,13 +24,10 @@ Analyze your codebase or documentation to discover and create coding standards.
 
 ### Step 1: Source Selection
 
-Ask where company standards are located:
-1. Google Drive (via MCP)
-2. Confluence (via MCP)
-3. Notion (via MCP)
-4. Local files (markdown, text)
-5. Upload files (PDF, Word, etc.)
-6. Multiple sources
+Ask where standards documentation is located:
+1. Local files (markdown, text in the repo)
+2. External URL (will use WebFetch)
+3. Paste content directly
 
 ### Step 2: Finding Documents
 
@@ -133,32 +130,14 @@ Run `/verify` against the codebase to confirm standards match. Report summary: f
 
 ## Option 1 Full Workflow (From Documentation)
 
-### Sources Supported
-
-- **Google Drive** (via MCP) - Google Docs, PDFs, text files
-- **Confluence** (via MCP) - Pages and attachments
-- **Notion** (via MCP) - Pages, databases, nested pages
-- **Local files** - Markdown, text, PDF, Word from disk
-- **File upload** - PDF, Word, Markdown, HTML, Text
-
 ### Import Process
 
-1. Find documents from chosen source
-2. Read and parse content
-3. Extract standards (coding, architecture, testing, etc.)
-4. Resolve conflicts with existing standards (if any)
-5. Convert to framework format (markdown)
-6. Create standards files in `.claude/your-stack/`
-7. Register in stack-config.yaml
-8. Verify everything works
-
-### Conflict Resolution
-
-When imported docs conflict with existing standards, present options:
-1. Use imported value
-2. Keep existing value
-3. Merge both (explain when each applies)
-4. Skip for now
+1. Read document content
+2. Extract standards (coding, architecture, testing, etc.)
+3. Resolve conflicts with existing standards (if any)
+4. Convert to framework format (markdown)
+5. Create standards files in `.claude/your-stack/`
+6. Register in stack-config.yaml
 
 ---
 

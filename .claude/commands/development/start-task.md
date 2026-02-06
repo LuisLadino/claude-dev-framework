@@ -99,31 +99,24 @@ Show error details, analyze the issue, apply fix, re-run all checks. Only procee
 
 ---
 
-## STEP 7: Commit Changes
-
-**First**, use `Read` to load `.claude/your-stack/config/version-control.md`. Extract commit format, allowed types, and pre-commit checklist.
+## STEP 7: Completion
 
 Show the user:
-- List of changed files
-- Suggested commit message following version-control.md format
+- What was built
+- Files created/modified
+- Verification results (format, lint, type-check, build, tests)
 
-**WAIT FOR APPROVAL**
+Ask: "Want to commit these changes? (yes/no)"
 
-If approved, stage and commit changes.
+**If yes:** Read `.claude/your-stack/config/version-control.md`, generate commit message, stage and commit.
+
+**If no:** Done. User can commit later.
 
 ---
 
-## STEP 8: Completion Report
+## STEP 8: Next Steps
 
-Summarize to the user:
-- What was built
-- Stack used
-- Standards followed (list each standard file and key patterns applied)
-- Files created/modified
-- Quality verification results (format, lint, type-check, build, tests)
-- Commit hash and message
-
-Suggest next steps: `/learn`, `/verify`, or `/start-task` for another task.
+Suggest: `/learn` to understand the code, `/verify` for deeper check, or `/start-task` for another task.
 
 ---
 
