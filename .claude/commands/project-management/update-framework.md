@@ -187,9 +187,9 @@ Show the user a report with:
 - **New commands** available (from framework-managed directories only)
 - **Updated files** (CLAUDE.md changes, updated commands, tools)
 - **Company/team specs updates** (if source repo includes specs/)
-- **Preserved customizations** (tasks, specs if local-only, skills, custom command dirs)
+- **Preserved customizations** (tasks, specs if local-only, custom command dirs)
 
-Clarify which directories are framework-managed (development/, project-management/, specs/, utilities/) and which are never touched. Note: if source repo includes specs/, those are managed specs that can be updated.
+Clarify which directories are framework-managed (commands/development/, commands/project-management/, commands/specs/, commands/utilities/, skills/) and which are never touched (specs/ user config). Note: if source repo includes specs/, those are managed specs that can be updated.
 
 Ask user to choose:
 1. **Show me details** - See specific changes in each file
@@ -273,7 +273,7 @@ tree .claude -L 2 2>/dev/null || find .claude -maxdepth 2 -type d
 
 Show a completion summary:
 - List of new commands added, updated files, and updated specs
-- What was preserved (tasks, local specs, skills, custom command dirs)
+- What was preserved (tasks, local specs, custom command dirs)
 - Brief description of notable new features
 - Next steps: try new commands, review updated files
 - Revert instructions: `git checkout .claude/` to undo changes
