@@ -16,12 +16,12 @@ Check the framework repository (yours or a fork) for updates and selectively app
 
 Fully interactive, LLM-driven command:
 
-1. Detect framework source (from git remote or config)
+1. Detect framework source (from framework-source.txt)
 2. Fetch latest version from GitHub
 3. Compare with current installation
 4. Show what's new or changed
 5. User chooses what to update
-6. Apply updates with backups
+6. Apply updates
 
 ---
 
@@ -179,7 +179,7 @@ Ask user to choose:
 For each changed file, use `Bash` to show diff. Present changes in readable format with what changed and impact assessment. After showing details, return to choice menu.
 
 ### If "Update all"
-Show confirmation listing: backup location, what will be updated, what will be preserved. Wait for "yes" before proceeding to STEP 6.
+Show confirmation listing what will be updated and what will be preserved. Wait for "yes" before proceeding to STEP 6.
 
 ### If "Choose what to update"
 Show selectable list of new commands, updated commands, core files, and company/team standards. Mark recommended items. Note that custom command directories are never listed. Wait for user selections, then proceed to STEP 6 with selected items.
@@ -191,25 +191,13 @@ Inform user no changes were made. Clean up temp directory and exit.
 
 ## STEP 6: Apply Updates
 
-**Create backup first:**
-
-```bash
-timestamp=$(date +%Y%m%d-%H%M%S)
-cp -r .claude ".claude-backup-$timestamp"
-```
-
 For each selected item, copy from `$temp_dir` to `.claude/`:
 
 - **New commands:** Copy `.md` files from update directories (development, project-management, standards, utilities) only
-- **Updated files:** Backup old version with timestamp suffix, then copy new version
-- **Updated directories:** Backup directory, remove old, copy new
+- **Updated files:** Copy new version, overwriting old
 - **Company/team standards:** Copy updated/new standards from `$temp_dir/.claude/your-stack/` if source includes managed standards
 
-### Preserve Custom Modifications
-
-- If `your-stack/` came from source: it's company-managed, update it
-- If `your-stack/` is local only (not in source): restore from backup after update
-- Always restore `.claude/tasks/` from backup (always local)
+**Note:** Git handles rollback. If something goes wrong, use `git checkout .claude/` to revert.
 
 ---
 
@@ -234,10 +222,9 @@ tree .claude -L 2 2>/dev/null || find .claude -maxdepth 2 -type d
 Show a completion summary:
 - List of new commands added, updated files, and updated standards
 - What was preserved (tasks, local your-stack, skills, custom command dirs)
-- Backup location
 - Brief description of notable new features
 - Next steps: try new commands, review updated files
-- Revert instructions: `rm -rf .claude && cp -r .claude-backup-[timestamp] .claude`
+- Revert instructions: `git checkout .claude/` to undo changes
 - Reminder to run again in 30 days
 
 ---
