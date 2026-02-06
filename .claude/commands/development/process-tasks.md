@@ -28,12 +28,14 @@ Read the selected task list file. Show user: stack info, PRD reference, progress
 
 ## STEP 4: Execute Subtasks
 
+Task lists use markdown checkboxes: `- [ ]` (pending) and `- [x]` (complete).
+
 For each subtask:
 
 1. **Show what's next** - Subtask name, what it does, files to create/modify
 2. **Execute** - Follow framework patterns from specs
-3. **Verify** - Run format, lint, type-check, build, tests
-4. **Mark complete** - Update task list with [x]
+3. **Verify** - Run quality gates from stack-config.yaml
+4. **Mark complete** - Change `- [ ]` to `- [x]` in task list file
 5. **Show progress** - "Completed X/Y subtasks"
 
 **Continue automatically** unless verification fails. If failure, stop, show error, fix, and ask to continue.

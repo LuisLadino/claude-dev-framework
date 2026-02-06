@@ -14,12 +14,9 @@ If not found, tell the user to run `/init-project` or `/sync-stack` first.
 
 ## STEP 2: Load Specs
 
-Read all applicable specs from `.claude/specs/` based on `specs_active` in stack-config.yaml:
+Read all specs listed in `specs:` section of stack-config.yaml.
 
-- `coding/` - Framework and language patterns
-- `architecture/` - File structure and component patterns
-- `documentation/` - Comment and doc patterns
-- `config/version-control.md` - Commit and git patterns
+For each directory listed (coding, config, etc.), read all files under that directory.
 
 **Only check against specs that actually exist.** Don't assume patterns - read them from the files.
 
@@ -27,24 +24,16 @@ Read all applicable specs from `.claude/specs/` based on `specs_active` in stack
 
 ## STEP 3: Run Tooling Checks
 
-Run available quality checks:
+Run quality gates listed in `quality:` section of stack-config.yaml.
 
-```bash
-# Format (if configured)
-npm run format --check 2>/dev/null || pnpm format --check 2>/dev/null
+For each enabled gate, detect the command from package.json scripts:
+- format → look for `format` or `format:check` script
+- lint → look for `lint` script
+- type_check → if TypeScript project, run `npx tsc --noEmit`
+- test → look for `test` script
+- build → look for `build` script
 
-# Lint
-npm run lint 2>/dev/null || pnpm lint 2>/dev/null
-
-# Type check (if TypeScript)
-npx tsc --noEmit 2>/dev/null
-
-# Build
-npm run build 2>/dev/null || pnpm build 2>/dev/null
-
-# Tests
-npm test 2>/dev/null || pnpm test 2>/dev/null
-```
+**Only run gates that are enabled.** Skip commented-out gates.
 
 Report pass/fail for each.
 
