@@ -27,7 +27,7 @@ project-specs/
 ## How It Works
 
 1. Load stack from `stack-config.yaml`
-2. Load product brief from `specs/init/` if exists
+2. Load product brief from `.claude/specs/project-brief.md` if exists
 3. Ask clarifying questions about scope
 4. Research architecture patterns for your stack
 5. Generate docs using Mermaid for diagrams

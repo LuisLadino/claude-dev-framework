@@ -35,7 +35,16 @@ Create the spec file with a template: Overview, Patterns (with examples), Best P
 
 ### Step 5: Update stack-config.yaml
 
-Add to the appropriate list in `stack-config.yaml`.
+Add the spec filename (without .md) to the appropriate list in `stack-config.yaml`:
+
+```yaml
+specs:
+  coding:
+    - new-spec-name    # Add here for coding specs
+  config:
+    - version-control
+  # Create new section if needed for custom directories
+```
 
 ### Step 6: Generate Content (Optional)
 
