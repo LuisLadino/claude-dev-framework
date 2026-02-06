@@ -1,4 +1,4 @@
-# /verify - Standards Check
+# /verify - Specs Check
 
 Verify code follows your specs. Use before commits or when reviewing work.
 
@@ -12,7 +12,7 @@ If not found, tell the user to run `/init-project` or `/sync-stack` first.
 
 ---
 
-## STEP 2: Load Standards
+## STEP 2: Load Specs
 
 Read all applicable specs from `.claude/specs/` based on `specs_active` in stack-config.yaml:
 
@@ -50,7 +50,7 @@ Report pass/fail for each.
 
 ---
 
-## STEP 4: Code Review Against Standards
+## STEP 4: Code Review Against Specs
 
 For each specs file loaded in STEP 2, check the codebase:
 
@@ -70,7 +70,7 @@ For each specs file loaded in STEP 2, check the codebase:
 VERIFICATION PASSED
 
 Stack: [framework] + [language]
-Standards checked: [list files]
+Specs checked: [list files]
 Tooling: format ✓, lint ✓, types ✓, build ✓, tests ✓
 
 Ready for commit.
@@ -83,7 +83,7 @@ VERIFICATION FAILED
 [X] violations found:
 
 1. [file:line] - [what's wrong]
-   Standard: [which file, which rule]
+   Spec: [which file, which rule]
    Fix: [how to fix]
 
 ...

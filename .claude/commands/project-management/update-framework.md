@@ -162,7 +162,7 @@ diff -q .claude/CLAUDE.md "$temp_dir/.claude/CLAUDE.md" || echo "CLAUDE.md updat
 diff -qr .claude/skills "$temp_dir/.claude/skills" 2>/dev/null || echo "skills updated"
 ```
 
-### Check Company/Team Standards (Your Stack)
+### Check Company/Team Specs
 
 If the source repo includes `specs/` (company fork), compare coding, architecture, documentation, and stack-config.yaml using `diff -q`/`diff -qr`. Track new and changed files.
 
@@ -175,7 +175,7 @@ Create lists:
 - `updated_commands[]` - Commands that changed
 - `updated_files[]` - Other files that changed
 - `new_files[]` - New files/directories
-- `updated_specs[]` - Standards files that changed (specs/)
+- `updated_specs[]` - Specs files that changed (specs/)
 - `new_specs[]` - New specs files (specs/)
 
 ---

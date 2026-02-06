@@ -30,9 +30,9 @@ Ask clarifying questions about what the user wants:
 
 ---
 
-## STEP 3: Determine Scope & Read Standards
+## STEP 3: Determine Scope & Read Specs
 
-### Find and Load Standards
+### Find and Load Specs
 
 Use `Read` or `Grep` to find applicable specs from stack-config.yaml `specs` field.
 
@@ -58,7 +58,7 @@ Use `Read` or `Grep` to find applicable specs from stack-config.yaml `specs` fie
 
 ---
 
-## STEP 4: Show Complete Standards Check
+## STEP 4: Show Complete Specs Check
 
 **PAUSE FOR REVIEW** - Show the user a complete checklist covering:
 - Stack details (framework, language, styling, testing, package manager)
@@ -80,7 +80,7 @@ Explain the specific item, then re-show the checklist.
 
 ---
 
-## STEP 5: Execute Task Following Standards
+## STEP 5: Execute Task Following Specs
 
 Once approved, implement following loaded specs:
 
@@ -135,7 +135,7 @@ Suggest: `/learn` to understand the code, `/verify` for deeper check, or `/start
 **CRITICAL RULES:**
 
 1. **Always load stack-config.yaml first** - Cannot proceed without knowing the stack
-2. **Must show Standards Check** - Show complete checklist, wait for user approval, never skip
+2. **Must show Specs Check** - Show complete checklist, wait for user approval, never skip
 3. **Cannot modify approach without approval** - If "no", revise and re-show checklist; only proceed on explicit "yes"
 4. **All verification must pass** - Format, lint, type-check, build, test; fix failures and re-run
 5. **Quality checklist before "done"** - Run all verification checks, no shortcuts
@@ -153,6 +153,6 @@ Suggest: `/learn` to understand the code, `/verify` for deeper check, or `/start
 ## Troubleshooting
 
 - **Can't find stack-config.yaml** - Run `/init-project` to create stack configuration
-- **Standards don't match code** - Review `.claude/specs/`, update specs files, verify `specs_active` list in stack-config.yaml
+- **Specs don't match code** - Review `.claude/specs/`, update specs files, verify `specs_active` list in stack-config.yaml
 - **Verification failing** - Fix the specific error shown; update configuration if rules don't match needs
 - **Wrong framework patterns** - Verify framework name/version in stack-config.yaml, run `/sync-stack` to regenerate if needed
