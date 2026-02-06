@@ -18,7 +18,7 @@ If not found, tell the user to run `/research-stack` first.
 
 Based on stack-config.yaml, read applicable standards files from `.claude/your-stack/`:
 
-- **Core** (always): `.claude/CLAUDE.md`, `.claude/config/version-control.md`
+- **Core** (always): `.claude/CLAUDE.md`, `.claude/your-stack/config/version-control.md`
 - **Framework**: Files listed in `standards_active` from stack-config.yaml (in `coding-standards/` and `architecture/`)
 - **Language**: Language-specific standards
 - **Styling**: Styling solution standards

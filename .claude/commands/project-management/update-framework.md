@@ -130,8 +130,6 @@ diff -qr .claude/workflows "$temp_dir/.claude/workflows" 2>/dev/null || echo "wo
 # Check tools
 diff -qr .claude/tools "$temp_dir/.claude/tools" 2>/dev/null || echo "tools updated"
 
-# Check config templates
-diff -qr .claude/config "$temp_dir/.claude/config" 2>/dev/null || echo "config updated"
 ```
 
 ### Check Company/Team Standards (Your Stack)

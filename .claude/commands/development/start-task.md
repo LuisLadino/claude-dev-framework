@@ -31,7 +31,7 @@ Use `Read` or `Grep` to find applicable standards from stack-config.yaml `standa
 - Language standards (from standards.coding-standards)
 - Documentation standards (from standards.documentation-standards)
 - Architecture patterns (from standards.architecture)
-- Version control standards (if committing - from .claude/config/)
+- Version control standards (if committing - from .claude/your-stack/config/)
 
 **Conditionally read based on task keywords:**
 - Styling standards (if UI work)
@@ -101,7 +101,7 @@ Show error details, analyze the issue, apply fix, re-run all checks. Only procee
 
 ## STEP 7: Commit Changes
 
-**First**, use `Read` to load `.claude/config/version-control.md`. Extract commit format, allowed types, and pre-commit checklist.
+**First**, use `Read` to load `.claude/your-stack/config/version-control.md`. Extract commit format, allowed types, and pre-commit checklist.
 
 Show the user:
 - List of changed files

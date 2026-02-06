@@ -117,7 +117,7 @@ If found, extract:
 - Review process
 - Any CLA or sign-off requirements
 
-Update `.claude/config/version-control.md` with their specific conventions.
+Update `.claude/your-stack/config/version-control.md` with their specific conventions.
 
 If no contribution docs found, note this and use standard open source best practices.
 
