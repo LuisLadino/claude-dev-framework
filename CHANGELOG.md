@@ -7,6 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.3.0] - 2026-02-06
+
+### Changed
+
+- **`/sync-stack` completely rewritten** with proper step-by-step instructions
+  - STEP 1: Read all existing spec files first
+  - STEP 2: Detect stack (expanded to 17 technologies)
+  - STEP 3: Research using context7 MCP + WebSearch
+  - STEP 4: Scan existing code for patterns
+  - STEP 5: Update config template files based on project
+  - STEP 6: Generate coding specs
+  - STEP 7: Update stack-config.yaml
+  - STEP 8: Summary
+- **Quality gates now read from stack-config.yaml** instead of hardcoded commands
+  - `/start-task`, `/verify`, `/process-tasks` all detect commands from package.json
+- **Project settings in stack-config.yaml now used** (import_alias, components_dir, tests_dir)
+- **README.md rewritten** with "When to Use What" section and clearer guidance
+
+### Fixed
+
+- **`/init-project`** - Fixed file paths, design tokens now optional
+- **`/add-feature`** - Creates `.claude/tasks/` directory if needed
+- **`/add-spec`** - Added yaml format example for stack-config.yaml updates
+- **All commands** - Fixed stale `specs/init/` paths to `specs/`
+- **All commands** - Fixed `specs_active` references to `specs:`
+- **`/generate-project-specs`** - Fixed stale path reference
+
+### Removed
+
+- **Empty placeholder directories** (architecture/, coding/, design/, documentation/)
+  - Now created dynamically by `/sync-stack` as needed
+  - Only `config/` included by default (has useful templates)
+
+---
+
 ## [2.2.0] - 2026-02-05
 
 ### Changed
@@ -150,6 +185,7 @@ The Claude Development Framework v1.0.0 with:
 
 ---
 
+[2.3.0]: https://github.com/LuisLadino/claude-dev-framework/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/LuisLadino/claude-dev-framework/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/LuisLadino/claude-dev-framework/compare/v2.0.1...v2.1.0
 [2.0.1]: https://github.com/LuisLadino/claude-dev-framework/compare/v2.0.0...v2.0.1
