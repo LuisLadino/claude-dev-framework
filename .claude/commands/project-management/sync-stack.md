@@ -72,7 +72,7 @@ Display a drift report showing:
 - **Mismatches** table (config value vs actual value)
 - **Missing in config** (found in project but not listed)
 - **Extra in config** (listed but not found)
-- **Orphaned standards files** in `.claude/your-stack/` that don't match detected stack
+- **Orphaned standards files** in `.claude/specs/` that don't match detected stack
 
 Then ask the user to choose:
 1. **Auto-fix** - Update stack-config.yaml to match project reality
@@ -134,7 +134,7 @@ Go through each drift item one by one. Show current vs detected, offer to update
 - **Low:** Other fields
 
 ### Orphaned File Detection
-Scan all `.md` files in `.claude/your-stack/` (excluding `.archived/`). A file is orphaned if its name doesn't match any detected technology. Generic files (file-structure, code-comments, version-control) are always considered relevant.
+Scan all `.md` files in `.claude/specs/` (excluding `.archived/`). A file is orphaned if its name doesn't match any detected technology. Generic files (file-structure, code-comments, version-control) are always considered relevant.
 
 ### Version Extraction
 Read version from package.json dependencies/devDependencies, stripping `^` or `~` prefix. For Prisma database provider, parse `prisma/schema.prisma` for the `provider = "..."` value in the datasource block.

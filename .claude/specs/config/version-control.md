@@ -3,7 +3,7 @@
 **Template Version:** 1.0.0  
 **Last Updated:** 2025-01-09
 
-> **Note:** This is a template file. Running `/research-stack` generates a customized version in `.claude/your-stack/`.
+> **Note:** This is a template file. Running `/research-stack` generates a customized version in `.claude/specs/`.
 
 ---
 
@@ -101,7 +101,7 @@ coverage/
 temp/
 
 # Framework customizations (not committed to framework repo)
-.claude/your-stack/
+.claude/specs/
 ```
 
 ---

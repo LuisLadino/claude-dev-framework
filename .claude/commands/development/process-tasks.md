@@ -6,11 +6,11 @@ Use after `/generate-tasks` to implement a feature one subtask at a time. Execut
 
 ## STEP 1: Load Stack Configuration
 
-Read `.claude/your-stack/stack-config.yaml`. If missing, ask user to run `/init-project` or `/sync-stack` first.
+Read `.claude/specs/stack-config.yaml`. If missing, ask user to run `/init-project` or `/sync-stack` first.
 
 **Extract:** Framework/version, language, styling, testing framework, package manager, active standards.
 
-If `.claude/your-stack/init/project-guidelines.md` exists, read it for quality/testing/accessibility requirements.
+If `.claude/specs/init/project-guidelines.md` exists, read it for quality/testing/accessibility requirements.
 
 ---
 
@@ -49,7 +49,7 @@ When all subtasks in a parent task are done:
 1. Show completed parent task
 2. Run full test suite
 3. Ask "Commit this parent task? (yes/no)"
-4. If yes, commit using `.claude/your-stack/config/version-control.md` format
+4. If yes, commit using `.claude/specs/config/version-control.md` format
 5. Continue to next parent task
 
 ---

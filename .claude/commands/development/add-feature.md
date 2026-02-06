@@ -6,11 +6,11 @@ Use for features needing planning (multiple components, complex interactions, de
 
 ## STEP 1: Load Stack Context
 
-Read `.claude/your-stack/stack-config.yaml`. If missing, ask user to run `/init-project` or `/sync-stack` first.
+Read `.claude/specs/stack-config.yaml`. If missing, ask user to run `/init-project` or `/sync-stack` first.
 
 **Extract:** Framework, language, styling, testing framework, key technologies.
 
-If `.claude/your-stack/init/project-guidelines.md` exists, read it for quality/testing/accessibility requirements. These will be incorporated into PRD generation.
+If `.claude/specs/init/project-guidelines.md` exists, read it for quality/testing/accessibility requirements. These will be incorporated into PRD generation.
 
 ---
 

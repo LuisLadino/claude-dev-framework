@@ -117,7 +117,7 @@ If found, extract:
 - Review process
 - Any CLA or sign-off requirements
 
-Update `.claude/your-stack/config/version-control.md` with their specific conventions.
+Update `.claude/specs/config/version-control.md` with their specific conventions.
 
 If no contribution docs found, note this and use standard open source best practices.
 
@@ -178,4 +178,4 @@ This skill orchestrates multiple commands in sequence:
 
 Each step can also be run individually for more control.
 
-When targeting a subdirectory (option 2), all analysis is scoped to that directory. The generated standards and config still live in your project's `.claude/your-stack/` but reflect the target project's patterns.
+When targeting a subdirectory (option 2), all analysis is scoped to that directory. The generated standards and config still live in your project's `.claude/specs/` but reflect the target project's patterns.

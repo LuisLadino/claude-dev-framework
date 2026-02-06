@@ -11,7 +11,7 @@
 
 A portable framework that lives in your project's `.claude/` directory and gives Claude Code:
 
-- **Your coding standards** - enforced on every task
+- **Your coding specs** - enforced on every task
 - **Smart routing** - skills auto-detect what you need and route to the right command
 - **Stack awareness** - adapts to any technology via `/research-stack`
 - **Self-updating** - pull framework improvements with `/update-framework`
@@ -68,7 +68,7 @@ your-project/.claude/
 ├── skills/                      # Auto-routing (Claude invokes these)
 │   ├── dev-workflow/            # Routes to development commands
 │   ├── project-sync/            # Routes to project management commands
-│   ├── standards-sync/          # Routes to standards commands
+│   ├── specs-sync/          # Routes to standards commands
 │   ├── contribute-to-opensource/# Open source contribution setup
 │   └── custom-commands/         # Routes to your custom commands
 ├── commands/
@@ -83,12 +83,12 @@ your-project/.claude/
 │   │   ├── sync-stack.md
 │   │   ├── generate-project-specs.md
 │   │   └── update-framework.md
-│   ├── standards/               # Quality and patterns
-│   │   ├── add-standard.md
+│   ├── specs/                   # Quality and patterns
+│   │   ├── add-spec.md
 │   │   └── verify.md
 │   └── utilities/               # General tools
 │       └── learn.md
-└── your-stack/                  # YOUR customizations
+└── specs/                  # YOUR customizations
     ├── stack-config.yaml        # Your stack definition
     ├── coding-standards/        # Your coding patterns
     ├── architecture/            # Your architecture docs
@@ -106,7 +106,7 @@ Skills auto-detect what you're trying to do and route to the right command. You 
 |-------|-----------------|-----------|
 | **dev-workflow** | Building, fixing, implementing features | start-task, add-feature, generate-tasks, process-tasks |
 | **project-sync** | Setting up projects, managing stack | init-project, research-stack, sync-stack, generate-project-specs, update-framework |
-| **standards-sync** | Adding or checking standards | add-standard, verify |
+| **specs-sync** | Adding or checking standards | add-spec, verify |
 | **contribute-to-opensource** | Contributing to open source projects | Multi-step workflow |
 | **custom-commands** | Project-specific commands | Your custom commands |
 
@@ -140,7 +140,7 @@ Use these when setting up or maintaining projects.
 | Command | When to Use | What It Does |
 |---------|-------------|--------------|
 | `/init-project` | Starting a brand new project | Creates stack-config, design system, project docs |
-| `/research-stack` | Need standards for your tech | Researches docs, generates coding standards |
+| `/research-stack` | Need standards for your tech | Researches docs, generates coding specs |
 | `/sync-stack` | Existing project or deps changed | Detects stack, analyzes code patterns, generates standards |
 | `/generate-project-specs` | Need comprehensive specs | Creates PRDs, architecture docs, roadmap |
 | `/update-framework` | Monthly maintenance | Pulls framework updates from source repo |
@@ -151,13 +151,13 @@ Use these when setting up or maintaining projects.
 
 ---
 
-### Standards Commands
+### Specs Commands
 
-Use these when managing coding standards and auditing code.
+Use these when managing coding specs and auditing code.
 
 | Command | When to Use | What It Does |
 |---------|-------------|--------------|
-| `/add-standard` | Need a custom standard | Creates a new standards file from your input |
+| `/add-spec` | Need a custom standard | Creates a new standards file from your input |
 | `/verify` | Before commits or releases | Audits code against all active standards |
 
 **Before committing:** Run `/verify` to check for violations.
@@ -231,7 +231,7 @@ Deploy current branch to staging environment.
 
 ## Customization
 
-Everything in `your-stack/` is yours to customize:
+Everything in `specs/` is yours to customize:
 
 - **`stack-config.yaml`** - Define your technologies and active standards
 - **`coding-standards/`** - Your coding patterns and conventions
@@ -239,7 +239,7 @@ Everything in `your-stack/` is yours to customize:
 - **`design-system/`** - Your design tokens and component standards
 - **`documentation-standards/`** - Your documentation requirements
 
-Framework updates never touch `your-stack/`.
+Framework updates never touch `specs/`.
 
 ---
 
@@ -249,7 +249,7 @@ Framework updates never touch `your-stack/`.
 /update-framework
 ```
 
-This pulls the latest commands, skills, and config from the framework source while preserving your customizations in `your-stack/`.
+This pulls the latest commands, skills, and config from the framework source while preserving your customizations in `specs/`.
 
 ---
 

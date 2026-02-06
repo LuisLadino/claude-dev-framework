@@ -6,11 +6,11 @@ Use after `/add-feature` to break down complex features into manageable steps.
 
 ## STEP 1: Load Stack Configuration
 
-Read `.claude/your-stack/stack-config.yaml`. If missing, ask user to run `/init-project` or `/sync-stack` first.
+Read `.claude/specs/stack-config.yaml`. If missing, ask user to run `/init-project` or `/sync-stack` first.
 
 **Extract:** Framework/version, language, styling, testing framework, file organization patterns, active standards.
 
-If `.claude/your-stack/init/project-guidelines.md` exists, read it for quality/testing/accessibility requirements. These affect testing task scope, accessibility subtasks, performance optimization subtasks, and verification rigor.
+If `.claude/specs/init/project-guidelines.md` exists, read it for quality/testing/accessibility requirements. These affect testing task scope, accessibility subtasks, performance optimization subtasks, and verification rigor.
 
 ---
 
@@ -74,7 +74,7 @@ List all files to be created or modified, organized by type: components, tests, 
 
 Include in the task list file:
 
-**Standards references:** List all applicable standards from `.claude/your-stack/` with key patterns for each (framework, language, styling, testing, architecture, documentation). If project-guidelines.md exists, include project requirements (quality approach, coverage, accessibility, performance, integrations).
+**Standards references:** List all applicable standards from `.claude/specs/` with key patterns for each (framework, language, styling, testing, architecture, documentation). If project-guidelines.md exists, include project requirements (quality approach, coverage, accessibility, performance, integrations).
 
 **Framework-specific notes:** Add notes specific to the detected framework (component patterns, props typing, state management, test utilities). Adapt based on stack-config.yaml.
 

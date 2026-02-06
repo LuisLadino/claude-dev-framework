@@ -49,7 +49,7 @@ A `project-specs/` directory with 25+ specification documents across these areas
 
 ### Step 1: Verify Prerequisites
 
-Check for `.claude/your-stack/stack-config.yaml`. If missing, error with instructions to run `/init-project` first. Load the tech stack from config.
+Check for `.claude/specs/stack-config.yaml`. If missing, error with instructions to run `/init-project` first. Load the tech stack from config.
 
 ### Step 2: Agent Initialization
 
@@ -147,7 +147,7 @@ project-specs/
 **When this command is invoked:**
 
 1. Check for stack-config.yaml (error if missing, tell user to run /init-project)
-2. Load tech stack from `.claude/your-stack/stack-config.yaml`
+2. Load tech stack from `.claude/specs/stack-config.yaml`
 3. Extract opportunity name and optional research report path
 4. If research report provided, read and extract context
 5. Use loaded tech stack for all technical specifications

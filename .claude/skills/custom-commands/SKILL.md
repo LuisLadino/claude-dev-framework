@@ -29,7 +29,7 @@ Use `Glob` to find all command files:
 Standard directories (skip these - they have dedicated routing skills):
 - `development/`
 - `project-management/`
-- `standards/`
+- `specs/`
 - `utilities/`
 
 Any other directory contains custom project-specific commands.

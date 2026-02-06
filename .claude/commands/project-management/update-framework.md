@@ -23,15 +23,15 @@ Check the framework repository (yours or a fork) for updates and selectively app
 ├── commands/                    # Slash commands (framework-managed)
 │   ├── development/             # /start-task, /add-feature, /generate-tasks, /process-tasks
 │   ├── project-management/      # /init-project, /research-stack, /sync-stack, /generate-project-specs, /update-framework
-│   ├── standards/               # /add-standard, /verify
+│   ├── specs/                   # /add-spec, /verify
 │   └── utilities/               # /learn
 ├── skills/                      # Auto-routing skills (framework-managed)
 │   ├── dev-workflow/
 │   ├── project-sync/
-│   ├── standards-sync/
+│   ├── specs-sync/
 │   ├── custom-commands/
 │   └── contribute-to-opensource/
-└── your-stack/                  # Project-specific (user-managed, DO NOT overwrite)
+└── specs/                  # Project-specific (user-managed, DO NOT overwrite)
     ├── stack-config.yaml
     ├── README.md
     ├── coding-standards/
@@ -42,7 +42,7 @@ Check the framework repository (yours or a fork) for updates and selectively app
 ```
 
 **Framework-managed:** CLAUDE.md, commands/, skills/
-**User-managed (never overwrite):** your-stack/, tasks/, any custom command directories
+**User-managed (never overwrite):** specs/, tasks/, any custom command directories
 
 ---
 
@@ -114,7 +114,7 @@ If successful, you should see framework structure.
 **Only check these command directories:**
 - `development/`
 - `project-management/`
-- `standards/`
+- `specs/`
 - `utilities/`
 
 **Skip these directories** (project-specific, added by user):
@@ -124,7 +124,7 @@ Use `Bash` to compare:
 
 ```bash
 # Directories to update
-update_dirs="development project-management standards utilities"
+update_dirs="development project-management specs utilities"
 
 # List new commands (only in update directories)
 for dir in $update_dirs; do
@@ -164,9 +164,9 @@ diff -qr .claude/skills "$temp_dir/.claude/skills" 2>/dev/null || echo "skills u
 
 ### Check Company/Team Standards (Your Stack)
 
-If the source repo includes `your-stack/` (company fork), compare coding-standards, architecture, documentation-standards, and stack-config.yaml using `diff -q`/`diff -qr`. Track new and changed files.
+If the source repo includes `specs/` (company fork), compare coding-standards, architecture, documentation-standards, and stack-config.yaml using `diff -q`/`diff -qr`. Track new and changed files.
 
-For individuals (no `your-stack/` in source), this step is skipped.
+For individuals (no `specs/` in source), this step is skipped.
 
 ### Store Results
 
@@ -175,8 +175,8 @@ Create lists:
 - `updated_commands[]` - Commands that changed
 - `updated_files[]` - Other files that changed
 - `new_files[]` - New files/directories
-- `updated_standards[]` - Standards files that changed (your-stack/)
-- `new_standards[]` - New standards files (your-stack/)
+- `updated_standards[]` - Standards files that changed (specs/)
+- `new_standards[]` - New standards files (specs/)
 
 ---
 
@@ -186,10 +186,10 @@ Show the user a report with:
 - **Source URL and version comparison** (your version age vs latest)
 - **New commands** available (from framework-managed directories only)
 - **Updated files** (CLAUDE.md changes, updated commands, tools)
-- **Company/team standards updates** (if source repo includes your-stack/)
-- **Preserved customizations** (tasks, your-stack if local-only, skills, custom command dirs)
+- **Company/team standards updates** (if source repo includes specs/)
+- **Preserved customizations** (tasks, specs if local-only, skills, custom command dirs)
 
-Clarify which directories are framework-managed (development/, project-management/, standards/, utilities/) and which are never touched. Note: if source repo includes your-stack/, those are managed standards that can be updated.
+Clarify which directories are framework-managed (development/, project-management/, specs/, utilities/) and which are never touched. Note: if source repo includes specs/, those are managed standards that can be updated.
 
 Ask user to choose:
 1. **Show me details** - See specific changes in each file
@@ -228,12 +228,12 @@ For each selected item, copy from `$temp_dir` to `.claude/` using these exact pa
 | `$temp_dir/.claude/CLAUDE.md` | `.claude/CLAUDE.md` |
 | `$temp_dir/.claude/commands/development/*.md` | `.claude/commands/development/` |
 | `$temp_dir/.claude/commands/project-management/*.md` | `.claude/commands/project-management/` |
-| `$temp_dir/.claude/commands/standards/*.md` | `.claude/commands/standards/` |
+| `$temp_dir/.claude/commands/specs/*.md` | `.claude/commands/specs/` |
 | `$temp_dir/.claude/commands/utilities/*.md` | `.claude/commands/utilities/` |
 | `$temp_dir/.claude/skills/*/SKILL.md` | `.claude/skills/[same-folder]/SKILL.md` |
 
 **NEVER touch these directories:**
-- `.claude/your-stack/` (user's project config)
+- `.claude/specs/` (user's project config)
 - `.claude/tasks/` (user's task lists)
 - Any directory not listed in the Framework Directory Structure above
 
@@ -261,7 +261,7 @@ cp "$temp_dir/.claude/skills/dev-workflow/SKILL.md" ".claude/skills/dev-workflow
 # Check critical files exist
 ls -la .claude/CLAUDE.md
 ls -la .claude/commands/
-ls -la .claude/your-stack/ 2>/dev/null || echo "No your-stack (OK if new install)"
+ls -la .claude/specs/ 2>/dev/null || echo "No specs (OK if new install)"
 
 # Show directory structure
 tree .claude -L 2 2>/dev/null || find .claude -maxdepth 2 -type d
@@ -273,7 +273,7 @@ tree .claude -L 2 2>/dev/null || find .claude -maxdepth 2 -type d
 
 Show a completion summary:
 - List of new commands added, updated files, and updated standards
-- What was preserved (tasks, local your-stack, skills, custom command dirs)
+- What was preserved (tasks, local specs, skills, custom command dirs)
 - Brief description of notable new features
 - Next steps: try new commands, review updated files
 - Revert instructions: `git checkout .claude/` to undo changes

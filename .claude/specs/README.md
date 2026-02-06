@@ -6,7 +6,7 @@
 
 ## What Is This?
 
-The `your-stack/` directory contains:
+The `specs/` directory contains:
 
 1. **`init/`** (Optional) - Project foundation for enterprise teams
    - `product-brief.md` - What you're building and why
@@ -54,8 +54,8 @@ When you start coding, AI reads these files to understand:
    - Timeline and constraints
 
 3. **Outputs created:**
-   - `.claude/your-stack/init/product-brief.md` - Product context
-   - `.claude/your-stack/init/project-guidelines.md` - Project requirements
+   - `.claude/specs/init/product-brief.md` - Product context
+   - `.claude/specs/init/project-guidelines.md` - Project requirements
    - `README.md` - Project documentation
    - `PROJECT-STATE.md` - Cross-session progress tracking
 
@@ -80,7 +80,7 @@ When you start coding, AI reads these files to understand:
 
    Copy the template:
    ```bash
-   cp .claude/your-stack/stack-config.template.yaml .claude/your-stack/stack-config.yaml
+   cp .claude/specs/stack-config.template.yaml .claude/specs/stack-config.yaml
    ```
 
    Fill in your stack:
@@ -92,7 +92,7 @@ When you start coding, AI reads these files to understand:
 
    Activate relevant standards:
    ```yaml
-   standards_active:
+   specs_active:
      - react-standards        # If using React
      - typescript-standards   # If using TypeScript
      - styling-standards      # Your CSS approach
@@ -114,7 +114,7 @@ When you start coding, AI reads these files to understand:
 ## Directory Structure
 
 ```
-.claude/your-stack/
+.claude/specs/
 ├── init/                             # Project foundation (optional)
 │   ├── product-brief.md              # Created by /init-project
 │   ├── project-guidelines.md         # Created by /init-project
@@ -254,7 +254,7 @@ Many frameworks have standard patterns. Create a new file:
 
 ```bash
 # Example: Create Vue standards
-touch .claude/your-stack/coding-standards/vue-standards.md
+touch .claude/specs/coding-standards/vue-standards.md
 ```
 
 Then add Vue-specific patterns (composition API, script setup, etc.)
@@ -300,7 +300,7 @@ stack:
   language: "TypeScript"
   styling: "Tailwind CSS"
 
-standards_active:
+specs_active:
   - react-standards
   - typescript-standards
   - styling-standards
@@ -322,7 +322,7 @@ stack:
   styling: "Tailwind CSS"
   component_library: "shadcn/ui"
 
-standards_active:
+specs_active:
   - react-standards       # Next.js uses React
   - typescript-standards
   - styling-standards
@@ -339,7 +339,7 @@ stack:
   styling: "Tailwind CSS"
   component_library: "daisyUI"
 
-standards_active:
+specs_active:
   - astro-standards
   - react-standards      # If using React islands
   - typescript-standards
@@ -380,7 +380,7 @@ Track changes in git. When best practices evolve, update files.
 
 ### 5. Share Across Projects
 
-Keep this `your-stack/` directory in a central location or share across projects.
+Keep this `specs/` directory in a central location or share across projects.
 Copy `stack-config.yaml` to each project and customize.
 
 ---
@@ -424,7 +424,7 @@ Copy `stack-config.yaml` to each project and customize.
 
 1. Create `coding-standards/framework-name-standards.md`
 2. Document framework patterns
-3. Add to `standards_active` in stack-config
+3. Add to `specs_active` in stack-config
 4. AI reads and applies
 
 ---
@@ -432,8 +432,8 @@ Copy `stack-config.yaml` to each project and customize.
 ## Troubleshooting
 
 **"AI isn't following my standards"**
-→ Check `stack-config.yaml` - is the standard file listed in `standards_active`?
-→ Check the file exists: `ls .claude/your-stack/coding-standards/`
+→ Check `stack-config.yaml` - is the standard file listed in `specs_active`?
+→ Check the file exists: `ls .claude/specs/coding-standards/`
 
 **"Where do I put X standard?"**
 → Framework/language patterns → `coding-standards/`
@@ -449,9 +449,9 @@ Copy `stack-config.yaml` to each project and customize.
 
 ## Integration with Claude Development Framework
 
-This `your-stack/` directory is part of the Claude Development Framework:
+This `specs/` directory is part of the Claude Development Framework:
 
-- **Your Stack** (`.claude/your-stack/`) - How to write code for this project
+- **Your Stack** (`.claude/specs/`) - How to write code for this project
 - **Commands** (`.claude/commands/`) - Workflows like /start-task, /verify
 - **Skills** (`.claude/skills/`) - Auto-routing for intelligent command selection
 

@@ -32,7 +32,7 @@ If it sounds like LinkedIn or corporate speak, rewrite it.
 
 ## Git
 
-**Before committing:** Check `.claude/your-stack/config/version-control.md` for commit format and conventions.
+**Before committing:** Check `.claude/specs/config/version-control.md` for commit format and conventions.
 
 **Never:**
 - Force push to main/master without permission

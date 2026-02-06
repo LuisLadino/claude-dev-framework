@@ -4,7 +4,7 @@
 # 1. Copy this file to your project: cp stack-config.template.yaml stack-config.yaml
 # 2. Fill in your project details
 # 3. Customize stack and standards for your specific project
-# 4. Save in .claude/your-stack/ directory of your project
+# 4. Save in .claude/specs/ directory of your project
 #
 # The AI assistant reads this file to understand your project and apply the
 # correct coding standards when building features.
@@ -77,7 +77,7 @@ stack:
 # Active Standards
 # ==============================================================================
 #
-# Standards are automatically discovered from .claude/your-stack/ directories.
+# Standards are automatically discovered from .claude/specs/ directories.
 # Use /sync-stack --review to scan and update this section.
 #
 # Standards are organized by directory for clarity, but AI intelligently loads
@@ -168,7 +168,7 @@ standards:
 
 # Standards discovery configuration
 standards_discovery:
-  # Auto-discover all .md files in .claude/your-stack/ subdirectories
+  # Auto-discover all .md files in .claude/specs/ subdirectories
   auto_discover: true
 
   # Last time standards were scanned (updated by /sync-stack --review)

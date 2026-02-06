@@ -6,7 +6,7 @@ Verify code follows your standards. Use before commits or when reviewing work.
 
 ## STEP 1: Load Configuration
 
-Read `.claude/your-stack/stack-config.yaml`.
+Read `.claude/specs/stack-config.yaml`.
 
 If not found, tell the user to run `/init-project` or `/sync-stack` first.
 
@@ -14,7 +14,7 @@ If not found, tell the user to run `/init-project` or `/sync-stack` first.
 
 ## STEP 2: Load Standards
 
-Read all applicable standards from `.claude/your-stack/` based on `standards_active` in stack-config.yaml:
+Read all applicable standards from `.claude/specs/` based on `specs_active` in stack-config.yaml:
 
 - `coding-standards/` - Framework and language patterns
 - `architecture/` - File structure and component patterns
@@ -97,4 +97,4 @@ Fix violations and run /verify again.
 
 - This command reads YOUR standards, not a hardcoded checklist
 - If your standards are empty, there's nothing to verify beyond tooling
-- Add standards with `/add-standard` or `/research-stack`
+- Add standards with `/add-spec` or `/research-stack`

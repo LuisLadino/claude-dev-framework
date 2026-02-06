@@ -2,15 +2,15 @@
 
 ## STEP 1: Load Stack Configuration
 
-Read `.claude/your-stack/stack-config.yaml`. If missing, ask user to run `/init-project` or `/sync-stack` first.
+Read `.claude/specs/stack-config.yaml`. If missing, ask user to run `/init-project` or `/sync-stack` first.
 
 **Extract:** Framework/version, language, styling, testing framework, package manager, active standards.
 
-If `.claude/your-stack/init/project-guidelines.md` exists, read it for quality/testing/accessibility requirements.
+If `.claude/specs/init/project-guidelines.md` exists, read it for quality/testing/accessibility requirements.
 
 ### Check for New Dependencies
 
-Scan dependencies (package.json or equivalent). Compare against standards files in `.claude/your-stack/coding-standards/`.
+Scan dependencies (package.json or equivalent). Compare against standards files in `.claude/specs/coding-standards/`.
 
 If a major dependency has no standards file (e.g., added Prisma but no `prisma-standards.md`), ask:
 
@@ -41,7 +41,7 @@ Use `Read` or `Grep` to find applicable standards from stack-config.yaml `standa
 - Language standards (from standards.coding-standards)
 - Documentation standards (from standards.documentation-standards)
 - Architecture patterns (from standards.architecture)
-- Version control standards (if committing - from .claude/your-stack/config/)
+- Version control standards (if committing - from .claude/specs/config/)
 
 **Conditionally read based on task keywords:**
 - Styling standards (if UI work)
@@ -118,7 +118,7 @@ Show the user:
 
 Ask: "Want to commit these changes? (yes/no)"
 
-**If yes:** Read `.claude/your-stack/config/version-control.md`, generate commit message, stage and commit.
+**If yes:** Read `.claude/specs/config/version-control.md`, generate commit message, stage and commit.
 
 **If no:** Done. User can commit later.
 
@@ -153,6 +153,6 @@ Suggest: `/learn` to understand the code, `/verify` for deeper check, or `/start
 ## Troubleshooting
 
 - **Can't find stack-config.yaml** - Run `/init-project` to create stack configuration
-- **Standards don't match code** - Review `.claude/your-stack/`, update standards files, verify `standards_active` list in stack-config.yaml
+- **Standards don't match code** - Review `.claude/specs/`, update standards files, verify `specs_active` list in stack-config.yaml
 - **Verification failing** - Fix the specific error shown; update configuration if rules don't match needs
 - **Wrong framework patterns** - Verify framework name/version in stack-config.yaml, run `/research-stack` to regenerate if needed

@@ -59,7 +59,7 @@ Research each technology using available tools. Show progress updates. Cover:
 
 ### Step 4: Standards Generation
 
-Create standards files in `.claude/your-stack/`:
+Create standards files in `.claude/specs/`:
 - `coding-standards/` - One file per technology
 - `architecture/` - Folder structure, component patterns
 - `testing-standards.md`
@@ -78,16 +78,16 @@ Show summary of generated standards and key findings. Offer to:
 ## Generated Files
 
 ### 1. stack-config.yaml
-`.claude/your-stack/stack-config.yaml` - Project name, research date, full stack config, standards_active list, MCP tool settings, project_specifics (directories, aliases).
+`.claude/specs/stack-config.yaml` - Project name, research date, full stack config, specs_active list, MCP tool settings, project_specifics (directories, aliases).
 
 ### 2. Coding Standards Files
-`.claude/your-stack/coding-standards/` - One file per technology (e.g., nextjs-standards.md, typescript-standards.md). Each includes official best practices, community conventions, examples, common gotchas, and integration notes.
+`.claude/specs/coding-standards/` - One file per technology (e.g., nextjs-standards.md, typescript-standards.md). Each includes official best practices, community conventions, examples, common gotchas, and integration notes.
 
 ### 3. Architecture Files
-`.claude/your-stack/architecture/` - folder-structure.md, component-patterns.md, data-fetching.md, api-structure.md.
+`.claude/specs/architecture/` - folder-structure.md, component-patterns.md, data-fetching.md, api-structure.md.
 
 ### 4. Testing Standards
-`.claude/your-stack/testing-standards.md` - Test file organization, testing patterns, coverage requirements, example tests.
+`.claude/specs/testing-standards.md` - Test file organization, testing patterns, coverage requirements, example tests.
 
 ---
 
@@ -101,7 +101,7 @@ For each technology, research: official documentation, current version, best pra
 
 ## Customization
 
-Edit any file in `.claude/your-stack/coding-standards/` to add team-specific patterns. Framework commands will use your customized version.
+Edit any file in `.claude/specs/coding-standards/` to add team-specific patterns. Framework commands will use your customized version.
 
 **To update for new versions:** Run `/research-stack` with the new version. Claude will compare old vs new, show changes, and ask whether to update or merge.
 
@@ -132,14 +132,14 @@ Edit any file in `.claude/your-stack/coding-standards/` to add team-specific pat
 
 - **Can't find information:** Technology may be new, uncommon, or proprietary. Provide more context or share doc links.
 - **Standards seem outdated:** Verify version numbers in stack-config.yaml. Re-run with explicit versions or `--force-refresh`.
-- **Patterns don't match needs:** Edit files in `.claude/your-stack/` to customize. Framework respects your customizations.
+- **Patterns don't match needs:** Edit files in `.claude/specs/` to customize. Framework respects your customizations.
 - **Too much/too little info:** Use `--quick` or `--deep` flags.
 
 ---
 
 ## After Research
 
-1. Review all generated files in `.claude/your-stack/`
+1. Review all generated files in `.claude/specs/`
 2. Customize any standards that don't match your needs
 3. Commit to version control
 4. Start building with `/start-task`
@@ -151,4 +151,4 @@ Edit any file in `.claude/your-stack/coding-standards/` to add team-specific pat
 ## Related
 
 - `/sync-stack` - Detect stack and discover patterns from code
-- `/add-standard` - Add custom standards manually
+- `/add-spec` - Add custom standards manually
