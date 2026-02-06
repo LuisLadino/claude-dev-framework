@@ -309,6 +309,5 @@ The framework source URL is stored in `.claude/framework-source.txt`. This file 
 
 ## Related Commands
 
-- `/sync-stack` - Generate specs for specific dependencies
-- `/sync-stack` - Detect stack and discover patterns from code
+- `/sync-stack` - Detect stack, research docs, generate specs
 - `/verify` - Check code against specs
