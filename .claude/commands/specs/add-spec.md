@@ -10,10 +10,10 @@ Add a new spec to your project. Creates the file in the correct location and reg
 
 Ask the user which type of spec to add:
 
-1. **Coding Spec** - Goes in `.claude/specs/coding-standards/`
+1. **Coding Spec** - Goes in `.claude/specs/coding/`
 2. **Architecture Spec** - Goes in `.claude/specs/architecture/`
-3. **Documentation Spec** - Goes in `.claude/specs/documentation-standards/`
-4. **Design Spec** - Goes in `.claude/specs/design-standards/`
+3. **Documentation Spec** - Goes in `.claude/specs/documentation/`
+4. **Design Spec** - Goes in `.claude/specs/design/`
 5. **Config** - Goes in `.claude/specs/config/`
 
 If the user provided a name as an argument (e.g., `/add-spec api`), skip to Step 2.
@@ -50,16 +50,16 @@ Confirm the spec was created. Suggest reviewing the file and testing with `/star
 
 | Type | Directory |
 |------|-----------|
-| Coding | `.claude/specs/coding-standards/` |
+| Coding | `.claude/specs/coding/` |
 | Architecture | `.claude/specs/architecture/` |
-| Documentation | `.claude/specs/documentation-standards/` |
-| Design | `.claude/specs/design-standards/` |
+| Documentation | `.claude/specs/documentation/` |
+| Design | `.claude/specs/design/` |
 | Config | `.claude/specs/config/` |
 
 ---
 
 ## Related Commands
 
-- `/research-stack` - Generate spec content from docs
+- `/sync-stack` - Generate spec content from docs
 - `/sync-stack` - Discover patterns from existing code
 - `/verify` - Check code against specs

@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.2.0] - 2026-02-05
+
+### Changed
+
+- **Terminology: "standards" → "specs"** throughout the framework
+  - `commands/standards/` → `commands/specs/`
+  - `skills/standards-sync/` → `skills/specs-sync/`
+  - `/add-standard` → `/add-spec`
+  - All file content updated to use "specs" terminology
+- **Directory names simplified:**
+  - `specs/coding-standards/` → `specs/coding/`
+  - `specs/documentation-standards/` → `specs/documentation/`
+  - `specs/design-standards/` → `specs/design/`
+- **`/sync-stack` is now THE main command** for stack setup (research + detection + spec generation in one)
+- **Config specs enabled by default** in stack-config.yaml template
+- **Files trimmed significantly:**
+  - Config files: 2,315 → 252 lines (89% reduction)
+  - README.md: 289 → 119 lines
+  - specs/README.md: 486 → 56 lines
+  - stack-config.yaml: 381 → 50 lines
+
+### Added
+
+- **`specs/config/testing.md`** for test framework configuration
+
+### Removed
+
+- **`/research-stack` command** (merged into `/sync-stack`)
+- **`/generate-tasks` command** (merged into `/add-feature`)
+- **`/analyze-standards` command** (redundant)
+
+---
+
 ## [2.1.0] - 2026-02-05
 
 ### Added
@@ -117,6 +150,7 @@ The Claude Development Framework v1.0.0 with:
 
 ---
 
+[2.2.0]: https://github.com/LuisLadino/claude-dev-framework/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/LuisLadino/claude-dev-framework/compare/v2.0.1...v2.1.0
 [2.0.1]: https://github.com/LuisLadino/claude-dev-framework/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/LuisLadino/claude-dev-framework/compare/v1.0.0...v2.0.0

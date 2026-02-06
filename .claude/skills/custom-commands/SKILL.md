@@ -11,7 +11,7 @@ You are a routing skill for project-specific custom commands.
 
 ## When This Triggers
 
-- User mentions a command not in the standard set (development, project-management, standards, utilities)
+- User mentions a command not in the standard set (development, project-management, specs, utilities)
 - User asks "what commands are available" or similar
 - User wants to do something project-specific that doesn't fit standard workflows
 

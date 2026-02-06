@@ -1,6 +1,6 @@
 # /verify - Standards Check
 
-Verify code follows your standards. Use before commits or when reviewing work.
+Verify code follows your specs. Use before commits or when reviewing work.
 
 ---
 
@@ -14,14 +14,14 @@ If not found, tell the user to run `/init-project` or `/sync-stack` first.
 
 ## STEP 2: Load Standards
 
-Read all applicable standards from `.claude/specs/` based on `specs_active` in stack-config.yaml:
+Read all applicable specs from `.claude/specs/` based on `specs_active` in stack-config.yaml:
 
-- `coding-standards/` - Framework and language patterns
+- `coding/` - Framework and language patterns
 - `architecture/` - File structure and component patterns
-- `documentation-standards/` - Comment and doc patterns
+- `documentation/` - Comment and doc patterns
 - `config/version-control.md` - Commit and git patterns
 
-**Only check against standards that actually exist.** Don't assume patterns - read them from the files.
+**Only check against specs that actually exist.** Don't assume patterns - read them from the files.
 
 ---
 
@@ -52,14 +52,14 @@ Report pass/fail for each.
 
 ## STEP 4: Code Review Against Standards
 
-For each standards file loaded in STEP 2, check the codebase:
+For each specs file loaded in STEP 2, check the codebase:
 
-1. **Read the standard** - Extract the specific rules/patterns
+1. **Read the spec** - Extract the specific rules/patterns
 2. **Search the code** - Use Grep/Read to find relevant code
 3. **Compare** - Does the code follow the documented pattern?
-4. **Report** - List violations with file:line, what's wrong, what the standard says
+4. **Report** - List violations with file:line, what's wrong, what the spec says
 
-**Important:** Only check rules that are explicitly in the user's standards files. Don't invent rules.
+**Important:** Only check rules that are explicitly in the user's specs files. Don't invent rules.
 
 ---
 
@@ -95,6 +95,6 @@ Fix violations and run /verify again.
 
 ## Notes
 
-- This command reads YOUR standards, not a hardcoded checklist
-- If your standards are empty, there's nothing to verify beyond tooling
-- Add standards with `/add-spec` or `/research-stack`
+- This command reads YOUR specs, not a hardcoded checklist
+- If your specs are empty, there's nothing to verify beyond tooling
+- Add specs with `/add-spec` or `/sync-stack`

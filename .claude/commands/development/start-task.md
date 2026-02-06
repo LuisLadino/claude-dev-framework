@@ -4,19 +4,19 @@
 
 Read `.claude/specs/stack-config.yaml`. If missing, ask user to run `/init-project` or `/sync-stack` first.
 
-**Extract:** Framework/version, language, styling, testing framework, package manager, active standards.
+**Extract:** Framework/version, language, styling, testing framework, package manager, active specs.
 
 If `.claude/specs/init/project-guidelines.md` exists, read it for quality/testing/accessibility requirements.
 
 ### Check for New Dependencies
 
-Scan dependencies (package.json or equivalent). Compare against standards files in `.claude/specs/coding-standards/`.
+Scan dependencies (package.json or equivalent). Compare against specs files in `.claude/specs/coding/`.
 
-If a major dependency has no standards file (e.g., added Prisma but no `prisma-standards.md`), ask:
+If a major dependency has no specs file (e.g., added Prisma but no `prisma-specs.md`), ask:
 
-"[dependency] doesn't have a standards file. Create one? (yes/no/later)"
+"[dependency] doesn't have a specs file. Create one? (yes/no/later)"
 
-If yes, generate standards for that dependency before continuing.
+If yes, generate specs for that dependency before continuing.
 
 ---
 
@@ -34,27 +34,27 @@ Ask clarifying questions about what the user wants:
 
 ### Find and Load Standards
 
-Use `Read` or `Grep` to find applicable standards from stack-config.yaml `standards` field.
+Use `Read` or `Grep` to find applicable specs from stack-config.yaml `specs` field.
 
 **Always read:**
-- Framework standards (from standards.coding-standards)
-- Language standards (from standards.coding-standards)
-- Documentation standards (from standards.documentation-standards)
-- Architecture patterns (from standards.architecture)
-- Version control standards (if committing - from .claude/specs/config/)
+- Framework specs (from specs.coding)
+- Language specs (from specs.coding)
+- Documentation specs (from specs.documentation)
+- Architecture patterns (from specs.architecture)
+- Version control specs (if committing - from .claude/specs/config/)
 
 **Conditionally read based on task keywords:**
-- Styling standards (if UI work)
-- Testing standards (if tests needed)
-- Design system standards (if component/design/brand work)
-- API standards (if backend/api/endpoint work)
-- Database standards (if data layer/schema/query work)
-- Security standards (if auth/security work)
-- Performance standards (if optimization work)
-- Accessibility standards (if a11y/UI work)
-- Any custom directories (from standards.[custom-directory])
+- Styling specs (if UI work)
+- Testing specs (if tests needed)
+- Design system specs (if component/design/brand work)
+- API specs (if backend/api/endpoint work)
+- Database specs (if data layer/schema/query work)
+- Security specs (if auth/security work)
+- Performance specs (if optimization work)
+- Accessibility specs (if a11y/UI work)
+- Any custom directories (from specs.[custom-directory])
 
-**Smart detection:** Analyze task description for keywords, check stack-config.yaml `standards` section for matching directories, only load relevant standards.
+**Smart detection:** Analyze task description for keywords, check stack-config.yaml `specs` section for matching directories, only load relevant specs.
 
 ---
 
@@ -63,8 +63,8 @@ Use `Read` or `Grep` to find applicable standards from stack-config.yaml `standa
 **PAUSE FOR REVIEW** - Show the user a complete checklist covering:
 - Stack details (framework, language, styling, testing, package manager)
 - Task summary and approach
-- All loaded standards files (coding, documentation, architecture, quality, operational)
-- Key patterns being applied from each standard
+- All loaded specs files (coding, documentation, architecture, quality, operational)
+- Key patterns being applied from each spec
 - Files to create/modify
 - Quality checks that will run (format, lint, type-check, build, test)
 
@@ -82,14 +82,14 @@ Explain the specific item, then re-show the checklist.
 
 ## STEP 5: Execute Task Following Standards
 
-Once approved, implement following loaded standards:
+Once approved, implement following loaded specs:
 
-1. **Framework patterns** - Use patterns from `[framework]-standards.md`, match existing code style
-2. **Language rules** - Follow `[language]-standards.md` strictly, avoid listed anti-patterns
-3. **Styling** - Follow `[styling]-standards.md`, match existing component styles
+1. **Framework patterns** - Use patterns from `[framework]-specs.md`, match existing code style
+2. **Language rules** - Follow `[language]-specs.md` strictly, avoid listed anti-patterns
+3. **Styling** - Follow `[styling]-specs.md`, match existing component styles
 4. **Organization** - Follow `file-structure.md` for placement and naming
 5. **Documentation** - Add comments per `code-comments.md`, document public APIs per `component-docs.md`
-6. **Testing** - Write tests per `testing-standards.md` using configured test framework
+6. **Testing** - Write tests per `testing-specs.md` using configured test framework
 
 ---
 
@@ -144,7 +144,7 @@ Suggest: `/learn` to understand the code, `/verify` for deeper check, or `/start
 
 ## Tool Usage
 
-**Use Read or Grep for:** Loading stack-config.yaml, finding custom standards, locating framework-specific patterns, checking architectural decisions, finding existing similar code.
+**Use Read or Grep for:** Loading stack-config.yaml, finding custom specs, locating framework-specific patterns, checking architectural decisions, finding existing similar code.
 
 **Use web_search for:** Verifying current best practices, checking framework documentation, finding recent patterns.
 
@@ -153,6 +153,6 @@ Suggest: `/learn` to understand the code, `/verify` for deeper check, or `/start
 ## Troubleshooting
 
 - **Can't find stack-config.yaml** - Run `/init-project` to create stack configuration
-- **Standards don't match code** - Review `.claude/specs/`, update standards files, verify `specs_active` list in stack-config.yaml
+- **Standards don't match code** - Review `.claude/specs/`, update specs files, verify `specs_active` list in stack-config.yaml
 - **Verification failing** - Fix the specific error shown; update configuration if rules don't match needs
-- **Wrong framework patterns** - Verify framework name/version in stack-config.yaml, run `/research-stack` to regenerate if needed
+- **Wrong framework patterns** - Verify framework name/version in stack-config.yaml, run `/sync-stack` to regenerate if needed

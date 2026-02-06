@@ -12,8 +12,7 @@ You are a routing skill. Based on what the user is doing, invoke the correct com
 | User intent | Command |
 |---|---|
 | Build, fix, implement, or start any dev work | /start-task |
-| Planning a complex feature, needs a PRD | /add-feature |
-| Has a PRD, needs it broken into subtasks | /generate-tasks |
+| Planning a complex feature (creates PRD + tasks) | /add-feature |
 | Has a task list, needs to execute it | /process-tasks |
 
 Pick ONE command. Invoke it using the Skill tool. Do not combine or improvise.

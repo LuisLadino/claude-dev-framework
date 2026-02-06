@@ -1,6 +1,8 @@
-# /add-feature - Create Product Requirements Document
+# /add-feature - Plan a Complex Feature
 
-Use for features needing planning (multiple components, complex interactions, design decisions). For simple/single tasks, use `/start-task` instead.
+Use for features needing planning (multiple components, complex interactions, design decisions). Creates PRD and generates task breakdown in one flow.
+
+For simple/single tasks, use `/start-task` instead.
 
 ---
 
@@ -10,7 +12,7 @@ Read `.claude/specs/stack-config.yaml`. If missing, ask user to run `/init-proje
 
 **Extract:** Framework, language, styling, testing framework, key technologies.
 
-If `.claude/specs/init/project-guidelines.md` exists, read it for quality/testing/accessibility requirements. These will be incorporated into PRD generation.
+If `.claude/specs/init/project-guidelines.md` exists, read it for quality/testing/accessibility requirements.
 
 ---
 
@@ -59,27 +61,82 @@ Generate a markdown PRD file with:
 6. **Technical Stack** - From stack-config.yaml
 7. **Location** - Where it lives, files to create
 8. **Implementation Notes** - Suggested approach, components needed
-9. **Next Steps** - Run `/generate-tasks` to break into subtasks
+
+Save to `.claude/tasks/NNNN-prd-[feature-slug].md`. Auto-increment NNNN.
 
 ---
 
-## STEP 5: Save PRD
+## STEP 5: Review PRD
 
-Save to `.claude/tasks/NNNN-prd-[feature-slug].md`. Auto-increment NNNN by checking existing PRD files. Feature slug is kebab-case from feature name.
+Show summary: feature name, goal, success criteria, location.
 
----
+Ask: "Proceed with task breakdown?" Options:
+1. **Yes** - Continue to task generation
+2. **Edit** - Let user modify PRD first
 
-## STEP 6: Review & Confirm
-
-Show the user a summary: file path, feature name, goal type, primary user, estimated component/file counts.
-
-Offer options:
-1. Proceed - run `/generate-tasks` to create task breakdown
-2. Need changes - edit the file manually or re-answer questions
-3. Start over - run `/add-feature` again
+**Default: Yes**
 
 ---
 
-## After Creating PRD
+## STEP 6: Check Codebase
 
-**Next steps:** Review PRD -> `/generate-tasks` -> Review task breakdown -> `/process-tasks` -> `/verify` -> `/learn`
+Use `Read` or `Grep` to find: similar existing components, current architecture patterns, reusable utilities, testing patterns. Note anything that can be referenced or reused.
+
+---
+
+## STEP 7: Generate Parent Tasks
+
+Create high-level parent tasks based on PRD requirements and framework patterns:
+
+- 1.0 Set up feature structure (directories, base files)
+- 2.0 Create core components
+- 3.0 Implement logic/functionality
+- 4.0 Add styling
+- 5.0 Write tests
+- 6.0 Integration & polish
+
+Show breakdown and ask: "Go" to generate subtasks, "adjust [number]" to modify, "add task" to add.
+
+**WAIT FOR USER APPROVAL**
+
+---
+
+## STEP 8: Generate Subtasks
+
+Break down each parent task into actionable subtasks using patterns from specs files.
+
+### Task List Format
+
+Generate markdown with:
+- Header: feature name, PRD filename, stack, date
+- Checkbox list: `- [ ] 1.0`, `- [ ] 1.1`, etc.
+- Subtask details: what it creates, purpose, applicable specs
+
+---
+
+## STEP 9: Add Implementation Notes
+
+Include in task list:
+
+**Specs references:** List applicable specs from `.claude/specs/` with key patterns.
+
+**Framework-specific notes:** Component patterns, state management, test utilities based on stack-config.yaml.
+
+**Files to create/modify:** Organized by type (components, tests, utilities, pages, styles, types).
+
+---
+
+## STEP 10: Save Task List
+
+Save to `.claude/tasks/tasks-NNNN-prd-[feature-slug].md` (matching PRD filename).
+
+Show summary: PRD location, task list location, parent task count, subtask count.
+
+---
+
+## STEP 11: Next Steps
+
+Suggest:
+1. Review task list file
+2. Run `/process-tasks` to start implementation
+3. Or edit task list if adjustments needed

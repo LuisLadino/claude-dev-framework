@@ -21,8 +21,8 @@ Check the framework repository (yours or a fork) for updates and selectively app
 ├── CLAUDE.md                    # Core instructions (framework-managed)
 ├── framework-source.txt         # Source URL for updates
 ├── commands/                    # Slash commands (framework-managed)
-│   ├── development/             # /start-task, /add-feature, /generate-tasks, /process-tasks
-│   ├── project-management/      # /init-project, /research-stack, /sync-stack, /generate-project-specs, /update-framework
+│   ├── development/             # /start-task, /add-feature, /process-tasks
+│   ├── project-management/      # /init-project, /sync-stack, /generate-project-specs, /update-framework
 │   ├── specs/                   # /add-spec, /verify
 │   └── utilities/               # /learn
 ├── skills/                      # Auto-routing skills (framework-managed)
@@ -34,11 +34,11 @@ Check the framework repository (yours or a fork) for updates and selectively app
 └── specs/                  # Project-specific (user-managed, DO NOT overwrite)
     ├── stack-config.yaml
     ├── README.md
-    ├── coding-standards/
+    ├── coding/
     ├── architecture/
-    ├── documentation-standards/
-    ├── design-standards/
-    └── config/                  # version-control.md, deployment.md, environment.md
+    ├── documentation/
+    ├── design/
+    └── config/                  # version-control.md, deployment.md, environment.md, testing.md
 ```
 
 **Framework-managed:** CLAUDE.md, commands/, skills/
@@ -164,7 +164,7 @@ diff -qr .claude/skills "$temp_dir/.claude/skills" 2>/dev/null || echo "skills u
 
 ### Check Company/Team Standards (Your Stack)
 
-If the source repo includes `specs/` (company fork), compare coding-standards, architecture, documentation-standards, and stack-config.yaml using `diff -q`/`diff -qr`. Track new and changed files.
+If the source repo includes `specs/` (company fork), compare coding, architecture, documentation, and stack-config.yaml using `diff -q`/`diff -qr`. Track new and changed files.
 
 For individuals (no `specs/` in source), this step is skipped.
 
@@ -175,8 +175,8 @@ Create lists:
 - `updated_commands[]` - Commands that changed
 - `updated_files[]` - Other files that changed
 - `new_files[]` - New files/directories
-- `updated_standards[]` - Standards files that changed (specs/)
-- `new_standards[]` - New standards files (specs/)
+- `updated_specs[]` - Standards files that changed (specs/)
+- `new_specs[]` - New specs files (specs/)
 
 ---
 
@@ -186,10 +186,10 @@ Show the user a report with:
 - **Source URL and version comparison** (your version age vs latest)
 - **New commands** available (from framework-managed directories only)
 - **Updated files** (CLAUDE.md changes, updated commands, tools)
-- **Company/team standards updates** (if source repo includes specs/)
+- **Company/team specs updates** (if source repo includes specs/)
 - **Preserved customizations** (tasks, specs if local-only, skills, custom command dirs)
 
-Clarify which directories are framework-managed (development/, project-management/, specs/, utilities/) and which are never touched. Note: if source repo includes specs/, those are managed standards that can be updated.
+Clarify which directories are framework-managed (development/, project-management/, specs/, utilities/) and which are never touched. Note: if source repo includes specs/, those are managed specs that can be updated.
 
 Ask user to choose:
 1. **Show me details** - See specific changes in each file
@@ -210,7 +210,7 @@ For each changed file, use `Bash` to show diff. Present changes in readable form
 Show confirmation listing what will be updated and what will be preserved. Wait for "yes" before proceeding to STEP 6.
 
 ### If "Choose what to update"
-Show selectable list of new commands, updated commands, core files, and company/team standards. Mark recommended items. Note that custom command directories are never listed. Wait for user selections, then proceed to STEP 6 with selected items.
+Show selectable list of new commands, updated commands, core files, and company/team specs. Mark recommended items. Note that custom command directories are never listed. Wait for user selections, then proceed to STEP 6 with selected items.
 
 ### If "Cancel"
 Inform user no changes were made. Clean up temp directory and exit.
@@ -272,7 +272,7 @@ tree .claude -L 2 2>/dev/null || find .claude -maxdepth 2 -type d
 ## STEP 8: Summary
 
 Show a completion summary:
-- List of new commands added, updated files, and updated standards
+- List of new commands added, updated files, and updated specs
 - What was preserved (tasks, local specs, skills, custom command dirs)
 - Brief description of notable new features
 - Next steps: try new commands, review updated files
@@ -309,6 +309,6 @@ The framework source URL is stored in `.claude/framework-source.txt`. This file 
 
 ## Related Commands
 
-- `/research-stack` - Generate standards for specific dependencies
+- `/sync-stack` - Generate specs for specific dependencies
 - `/sync-stack` - Detect stack and discover patterns from code
-- `/verify` - Check code against standards
+- `/verify` - Check code against specs

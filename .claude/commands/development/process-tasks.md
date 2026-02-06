@@ -1,6 +1,6 @@
 # /process-tasks - Execute Task List
 
-Use after `/generate-tasks` to implement a feature one subtask at a time. Executes ONE subtask at a time, runs `/start-task` workflow for each, verifies after each, waits for approval, commits after each parent task, and can pause/resume anytime.
+Use after `/add-feature` to implement a feature one subtask at a time. Executes ONE subtask at a time, runs `/start-task` workflow for each, verifies after each, waits for approval, commits after each parent task, and can pause/resume anytime.
 
 ---
 
@@ -8,7 +8,7 @@ Use after `/generate-tasks` to implement a feature one subtask at a time. Execut
 
 Read `.claude/specs/stack-config.yaml`. If missing, ask user to run `/init-project` or `/sync-stack` first.
 
-**Extract:** Framework/version, language, styling, testing framework, package manager, active standards.
+**Extract:** Framework/version, language, styling, testing framework, package manager, active specs.
 
 If `.claude/specs/init/project-guidelines.md` exists, read it for quality/testing/accessibility requirements.
 
@@ -31,7 +31,7 @@ Read the selected task list file. Show user: stack info, PRD reference, progress
 For each subtask:
 
 1. **Show what's next** - Subtask name, what it does, files to create/modify
-2. **Execute** - Follow framework patterns from standards
+2. **Execute** - Follow framework patterns from specs
 3. **Verify** - Run format, lint, type-check, build, tests
 4. **Mark complete** - Update task list with [x]
 5. **Show progress** - "Completed X/Y subtasks"

@@ -21,7 +21,7 @@ Configure your coding framework to match an open source project's tech stack, co
 - You want to contribute to an open source project
 - You've cloned a repo and want to understand their codebase
 - You have an open source dependency in your project and want to contribute back to it
-- You need to match their coding standards before submitting a PR
+- You need to match their coding specs before submitting a PR
 
 ---
 
@@ -93,7 +93,7 @@ Run `/sync-stack` to analyze the project.
 
 - Detect stack from config files
 - Scan code for patterns (structure, naming, imports, state, testing)
-- Create standards files matching their patterns
+- Create specs files matching their patterns
 
 Display discovered patterns.
 
@@ -123,17 +123,7 @@ If no contribution docs found, note this and use standard open source best pract
 
 ---
 
-## Step 6: Generate Framework Standards
-
-Run `/research-stack` to generate best practices for their specific tech stack.
-
-- Research each technology they use
-- Generate comprehensive standards
-- Align generated standards with the patterns discovered in Step 4
-
----
-
-## Step 7: Create Contribution Tracker
+## Step 6: Create Contribution Tracker
 
 Create `PROJECT-STATE.md` with:
 
@@ -146,10 +136,10 @@ Create `PROJECT-STATE.md` with:
 
 ---
 
-## Step 8: Completion Summary
+## Step 7: Completion Summary
 
 Show:
-- What was configured (tech stack, patterns, guidelines, standards)
+- What was configured (tech stack, patterns, guidelines, specs)
 - Where files were saved
 - Next steps for making a contribution
 - Reminder that the framework will now use THEIR patterns
@@ -164,18 +154,18 @@ Show what was detected and what's missing. Offer to continue with partial detect
 ### If no patterns found
 Note the limitation. Use framework defaults. The framework will still work but may not match their exact style.
 
-### If research-stack fails
-List what succeeded and what failed. Suggest running `/research-stack` manually later to retry.
+### If sync-stack fails
+List what succeeded and what failed. Suggest running `/sync-stack` manually later to retry.
 
 ---
 
 ## Notes
 
 This skill orchestrates multiple commands in sequence:
-1. `/sync-stack` (detect tech + find patterns + generate standards)
+1. `/sync-stack` (detect tech + find patterns + generate specs)
 2. Contribution docs extraction
 3. PROJECT-STATE.md creation
 
 Each step can also be run individually for more control.
 
-When targeting a subdirectory (option 2), all analysis is scoped to that directory. The generated standards and config still live in your project's `.claude/specs/` but reflect the target project's patterns.
+When targeting a subdirectory (option 2), all analysis is scoped to that directory. The generated specs and config still live in your project's `.claude/specs/` but reflect the target project's patterns.

@@ -1,381 +1,49 @@
-# Stack Configuration Template
-#
-# USAGE:
-# 1. Copy this file to your project: cp stack-config.template.yaml stack-config.yaml
-# 2. Fill in your project details
-# 3. Customize stack and standards for your specific project
-# 4. Save in .claude/specs/ directory of your project
-#
-# The AI assistant reads this file to understand your project and apply the
-# correct coding standards when building features.
+# Stack Configuration
+# Run /sync-stack to auto-detect and populate
 
-# ==============================================================================
-# Project Information
-# ==============================================================================
+name: ""
+version: "1.0.0"
+description: ""
 
-name: "YOUR_PROJECT_NAME"           # e.g., "E-commerce Platform", "Portfolio Site"
-version: "1.0.0"                    # Semantic versioning
-description: "Brief project description"  # 1-2 sentences about what this is
-
-# ==============================================================================
-# Tech Stack Definition
-# ==============================================================================
-
+# Tech Stack
 stack:
-  # Primary framework
-  framework: "CHOOSE_ONE"
-  # Options: React, Next.js, Vue, Nuxt, Svelte, SvelteKit, Astro, Angular,
-  #          Remix, Solid, Qwik, etc.
+  framework: ""           # React, Next.js, Vue, Astro, etc.
+  framework_version: ""
+  language: ""            # TypeScript, JavaScript, Python, etc.
+  styling: ""             # Tailwind, CSS Modules, etc.
+  testing: ""             # Vitest, Jest, Playwright, etc.
+  package_manager: ""     # npm, pnpm, yarn, bun
 
-  framework_version: "X.Y"           # e.g., "18.3", "14.0", "5.0"
-
-  # Primary language
-  language: "CHOOSE_ONE"
-  # Options: TypeScript, JavaScript, Python, Go, Rust, etc.
-
-  language_mode: "strict"            # For TypeScript: "strict", "standard", "loose"
-
-  # Styling approach
-  styling: "CHOOSE_ONE"
-  # Options: "Tailwind CSS", "CSS Modules", "Styled Components", "Emotion",
-  #          "vanilla-extract", "Sass", "PostCSS", "CSS-in-JS", "Panda CSS"
-
-  styling_version: "X"               # e.g., "4", "3", "latest"
-
-  # UI component library (optional)
-  component_library: null            # or "daisyUI", "shadcn/ui", "MUI", "Chakra",
-                                     # "Ant Design", "Radix UI", "Mantine", etc.
-  component_library_version: null    # e.g., "5", "0.4", "latest"
-
-  # Testing framework
-  testing: "CHOOSE_ONE"
-  # Options: Vitest, Jest, Cypress, Playwright, Testing Library, etc.
-  testing_version: "latest"
-
-  # Package manager
-  package_manager: "CHOOSE_ONE"      # npm, yarn, pnpm, bun
-
-  # Build tool
-  build_tool: "CHOOSE_ONE"
-  # Options: Vite, Webpack, Turbopack, esbuild, Rollup, Parcel, etc.
-
-  # Additional technologies (all optional - remove or set to null if not used)
-  additional:
-    state_management: null           # Zustand, Redux, MobX, Pinia, Nanostores, Jotai, Recoil
-    animation: null                  # GSAP, Framer Motion, React Spring, Motion One
-    forms: null                      # React Hook Form, Formik, Zod, Yup
-    data_fetching: null              # TanStack Query, SWR, Apollo, tRPC, RTK Query
-    routing: null                    # React Router, TanStack Router (if not framework-provided)
-    i18n: null                       # react-intl, next-i18next, vue-i18n
-    cms: null                        # Contentful, Sanity, Strapi, Payload
-    backend: null                    # Express, Fastify, Hono, tRPC, GraphQL
-    database: null                   # PostgreSQL, MongoDB, SQLite, Prisma, Drizzle
-    auth: null                       # NextAuth, Clerk, Auth0, Supabase Auth
-    deployment: null                 # Vercel, Netlify, Cloudflare, Railway, Fly.io
-
-# ==============================================================================
-# Active Standards
-# ==============================================================================
-#
-# Standards are automatically discovered from .claude/specs/ directories.
-# Use /sync-stack --review to scan and update this section.
-#
-# Standards are organized by directory for clarity, but AI intelligently loads
-# only relevant standards based on the task (e.g., design-system/ files only
-# load when doing design/component/brand work).
-#
-# ==============================================================================
-
-standards:
-  # Coding standards (framework/language/styling patterns)
-  coding-standards:
-    # - react-standards
-    # - vue-standards
-    # - svelte-standards
-    # - angular-standards
-    # - typescript-standards
-    # - javascript-standards
-    # - styling-standards        # Tailwind/CSS Modules/etc patterns
-    # - component-library-standards  # Your UI library patterns
-    # - testing-standards
-
-  # Architecture patterns (file organization, component structure)
+# Active Specs
+# Listed specs are loaded by /start-task before coding
+# /sync-stack auto-discovers and populates this list
+specs:
+  coding:
+    # - typescript-specs
+    # - react-specs
+    # - tailwind-specs
   architecture:
-    # - file-structure           # Where files go
-    # - component-patterns       # How to structure components
-    # - state-management-patterns
-    # - api-patterns
-    # - design-systems-architecture
-    # - testing-architecture
-
-  # Documentation requirements (how to document code)
-  documentation-standards:
+    # - file-structure
+  design:
+    # - design-tokens
+  documentation:
     # - code-comments
-    # - component-docs
-    # - api-docs
-    # - architecture-docs        # ADRs (Architecture Decision Records)
+  config:
+    - version-control
+    - deployment
+    - environment
+    - testing
 
-  # Design system standards (brand, visual identity, components)
-  # Loaded when: working on UI, components, colors, typography, spacing, brand
-  design-system:
-    # - component-patterns       # Component specs and variations
-    # - brand-identity           # Brand guidelines, visual identity
-    # - design-tokens            # Colors, spacing, typography values
-    # - component-library        # Library-specific patterns
+# Project Settings
+project:
+  import_alias: "@/"
+  components_dir: "src/components"
+  tests_dir: "tests"
 
-  # API standards (REST, GraphQL, backend patterns)
-  # Loaded when: building APIs, endpoints, routes, server-side logic
-  api-standards:
-    # - rest-api                 # REST endpoint patterns
-    # - graphql-api              # GraphQL schema and resolver patterns
-    # - api-security             # Authentication, authorization
-    # - api-versioning           # Version management
-
-  # Database standards (schema, queries, migrations)
-  # Loaded when: working with databases, models, queries, migrations
-  database-standards:
-    # - schema-design            # Database schema patterns
-    # - query-patterns           # Query optimization
-    # - migration-standards      # How to write migrations
-    # - orm-patterns             # Prisma/Drizzle/etc patterns
-
-  # Security standards (auth, permissions, data protection)
-  # Loaded when: implementing auth, security features, handling sensitive data
-  security-standards:
-    # - authentication           # Login, signup, session management
-    # - authorization            # Permissions, roles, access control
-    # - data-protection          # Encryption, PII handling
-    # - security-best-practices  # OWASP, security headers
-
-  # Performance standards (optimization, caching, monitoring)
-  # Loaded when: optimizing performance, bundle size, load times
-  performance-standards:
-    # - optimization-patterns    # Code splitting, lazy loading
-    # - caching-strategies       # Cache management
-    # - monitoring               # Performance tracking
-    # - bundle-optimization      # Build optimization
-
-  # Accessibility standards (WCAG, inclusive design)
-  # Loaded when: building UI, forms, navigation, interactive elements
-  accessibility-standards:
-    # - wcag-compliance          # WCAG 2.1 AA/AAA requirements
-    # - aria-patterns            # ARIA attributes and roles
-    # - keyboard-navigation      # Keyboard accessibility
-    # - screen-reader-support    # Screen reader optimization
-
-  # Add any custom domain-specific standards directories here
-  # They will be auto-discovered by /sync-stack --review
-
-# Standards discovery configuration
-standards_discovery:
-  # Auto-discover all .md files in .claude/specs/ subdirectories
-  auto_discover: true
-
-  # Last time standards were scanned (updated by /sync-stack --review)
-  last_scan: null
-
-  # Patterns to exclude from discovery
-  exclude_patterns:
-    - "*.json"        # JSON files (design tokens, etc.) are read separately
-    - "README.md"     # Documentation files
-    - ".DS_Store"     # System files
-    - "*.template.*"  # Template files
-
-  # Patterns to include (if auto_discover is false, only these are scanned)
-  include_patterns:
-    - "**/*.md"       # All markdown files in subdirectories
-
-# ==============================================================================
-# Project-Specific Settings
-# ==============================================================================
-
-project_specifics:
-  # Import alias (from tsconfig.json, vite.config.ts, etc.)
-  import_alias: "@/"               # or "~/" or null
-
-  # Key directories (relative to project root)
-  components_dir: "src/components"  # Adjust to your structure
-  pages_dir: "src/pages"           # or "app", "routes", "views"
-  utils_dir: "src/lib"             # or "src/utils", "src/helpers"
-  tests_dir: "tests"               # or "__tests__", "src/**/*.test.*"
-  types_dir: "src/types"           # or "types", "@types"
-
-  # File naming conventions
-  component_naming: "PascalCase"   # PascalCase, kebab-case, camelCase
-  utility_naming: "camelCase"      # camelCase, kebab-case
-  type_naming: "PascalCase"        # PascalCase, SCREAMING_SNAKE_CASE
-
-  # Export patterns
-  prefer_named_exports: true       # true = export { Foo }, false = export default
-  use_barrel_exports: false        # true = use index.ts files for re-exports
-
-  # Testing requirements
-  test_coverage_required: false    # Require tests for new code?
-  test_coverage_minimum: 80        # percentage (if required)
-
-  # Code formatting
-  formatter: "Prettier"            # Prettier, Biome, dprint, none
-  formatter_config: ".prettierrc"  # Config file path
-
-  # Linting
-  linter: "ESLint"                 # ESLint, Biome, oxlint, none
-  linter_config: ".eslintrc.json"  # Config file path
-
-# ==============================================================================
-# Quality Gates
-# ==============================================================================
-
-quality_gates:
-  # What must pass before committing (AI checks these before git commit)
-  pre_commit:
-    - format                # Run formatter (Prettier/Biome)
-    - lint                  # Run linter (ESLint/Biome)
-    - type_check            # TypeScript check (if using TS)
-    # - build               # Verify build succeeds (optional - can be slow)
-    # - test                # Run tests (optional - can be slow)
-
-  # What must pass in CI/CD
-  ci_requirements:
-    - all_tests_pass
-    - coverage_threshold_met
-    - no_type_errors
-    - build_succeeds
-    - no_security_vulnerabilities  # npm audit, etc.
-
-# ==============================================================================
-# Workflow Preferences
-# ==============================================================================
-
-workflows:
-  # How detailed should standards checks be?
-  standards_check_verbosity: "detailed"  # "minimal", "standard", "detailed"
-
-  # Should AI wait for approval before coding?
-  require_approval: true               # Recommended: true
-
-  # Should AI explain decisions?
-  explain_decisions: true              # Why certain patterns were chosen
-
-  # How much should /learn command explain?
-  learning_mode: "thorough"            # "brief", "standard", "thorough"
-
-  # Git commit message format
-  commit_format: "conventional"        # "conventional", "simple", "detailed"
-  # conventional = feat: add feature / fix: bug fix / docs: update docs
-
-  # Should AI suggest improvements?
-  suggest_improvements: true           # Proactive optimization suggestions
-
-# ==============================================================================
-# Tool Configuration
-# ==============================================================================
-
-tools:
-  # MCP servers (AI tool integrations)
-  mcp_servers:
-    - name: "context7"
-      enabled: true
-      description: "Access external documentation"
-
-    - name: "web_search"
-      enabled: true
-      description: "Research best practices"
-
-    - name: "filesystem"
-      enabled: true
-      description: "Read and write project files"
-
-  # Web search preferences
-  web_search:
-    enabled: true
-    prefer_official_docs: true         # Prefer official docs over blog posts
-    cite_sources: true                 # Always cite where info came from
-
-# ==============================================================================
-# Company-Specific Settings (Optional)
-# ==============================================================================
-
-company:
-  # If this is a company project with existing standards
-  has_company_standards: false
-
-  # Where company standards were imported from
-  standards_source: null
-  # Example: "company-handbook.pdf", "https://wiki.company.com/standards"
-
-  # Company-specific conventions
-  conventions:
-    # Examples (customize or remove):
-    # feature_branch_prefix: "feature/"
-    # pr_template: ".github/pull_request_template.md"
-    # jira_integration: true
-    # code_review_required: true
-    # deployment_approval_required: true
-
-# ==============================================================================
-# Notes & Context
-# ==============================================================================
-
-# Additional context for AI (free-form text)
-notes: |
-  Add any additional context here that helps AI understand your project:
-
-  - Specific architectural decisions and why they were made
-  - Known issues, workarounds, or technical debt
-  - Domain-specific terminology or business logic
-  - Team preferences or coding culture
-  - Links to important documentation
-  - Anything that provides helpful context
-
-  This is free-form text - write whatever helps the AI understand your project.
-
-# ==============================================================================
-# Configuration Version
-# ==============================================================================
-
-# Don't edit this - tracks config file format version
-config_version: "1.0"
-
-# ==============================================================================
-# QUICK START EXAMPLES
-# ==============================================================================
-#
-# Copy one of these examples and customize:
-#
-# --- Next.js App ---
-# framework: "Next.js"
-# framework_version: "14.0"
-# language: "TypeScript"
-# styling: "Tailwind CSS"
-# component_library: "shadcn/ui"
-# package_manager: "pnpm"
-# build_tool: "Turbopack"
-#
-# --- React SPA ---
-# framework: "React"
-# framework_version: "18.3"
-# language: "TypeScript"
-# styling: "CSS Modules"
-# component_library: "MUI"
-# package_manager: "npm"
-# build_tool: "Vite"
-#
-# --- Vue App ---
-# framework: "Vue"
-# framework_version: "3.4"
-# language: "TypeScript"
-# styling: "Tailwind CSS"
-# component_library: null
-# package_manager: "pnpm"
-# build_tool: "Vite"
-#
-# --- Astro Site ---
-# framework: "Astro"
-# framework_version: "5.0"
-# language: "TypeScript"
-# styling: "Tailwind CSS"
-# component_library: "daisyUI"
-# package_manager: "pnpm"
-# build_tool: "Vite"
-#
-# ==============================================================================
+# Quality Gates (run before commit)
+quality:
+  - format
+  - lint
+  - type_check
+  # - test
+  # - build
