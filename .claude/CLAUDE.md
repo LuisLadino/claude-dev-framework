@@ -51,15 +51,12 @@ If it sounds like LinkedIn or corporate speak, rewrite it.
 
 ---
 
-## Verification
+## Doing the Work
 
-When asked to check or verify something:
-
-- **Show evidence** - Don't say "looks good." Show what you checked and what you found.
-- **Empty output is a red flag** - If a command returns nothing, that's suspicious, not confirmation.
-- **Check logic, not just text** - Does the code actually do what it claims? Would it work?
-- **Follow explicit instructions** - If a command file says "do X", do X. Don't improvise.
-- **Read the files** - Don't assume. Actually read what's there.
+- **Actually do it** - Don't take shortcuts. If the task requires reading 10 files, read 10 files.
+- **Verify your own output** - Before saying "done", check that it's actually done.
+- **Show evidence** - Don't say "looks good." Show what you checked.
+- **Question easy answers** - If something seems too simple, you probably missed something.
 
 ---
 
