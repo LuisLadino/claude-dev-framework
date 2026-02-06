@@ -10,7 +10,7 @@ Read `.claude/specs/stack-config.yaml`. If missing, ask user to run `/init-proje
 
 **Extract:** Framework/version, language, styling, testing framework, package manager, active specs.
 
-If `.claude/specs/init/project-guidelines.md` exists, read it for quality/testing/accessibility requirements.
+If `.claude/specs/project-guidelines.md` exists, read it for quality/testing/accessibility requirements.
 
 ---
 

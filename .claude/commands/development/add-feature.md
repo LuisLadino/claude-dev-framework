@@ -12,7 +12,7 @@ Read `.claude/specs/stack-config.yaml`. If missing, ask user to run `/init-proje
 
 **Extract:** Framework, language, styling, testing framework, key technologies.
 
-If `.claude/specs/init/project-guidelines.md` exists, read it for quality/testing/accessibility requirements.
+If `.claude/specs/project-guidelines.md` exists, read it for quality/testing/accessibility requirements.
 
 ---
 
