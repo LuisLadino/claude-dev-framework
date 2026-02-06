@@ -56,6 +56,7 @@ If it sounds like LinkedIn or corporate speak, rewrite it.
 - **Actually do it** - Don't take shortcuts. If the task requires reading 10 files, read 10 files.
 - **Verify your own output** - Before saying "done", check that it's actually done.
 - **Show evidence** - Don't say "looks good." Show what you checked.
+- **Don't make assumptions** - Verify. Read the file. Run the command.
 - **Question easy answers** - If something seems too simple, you probably missed something.
 
 ---
