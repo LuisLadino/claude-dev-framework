@@ -128,7 +128,84 @@ find . -name "*.test.*" -o -name "*.spec.*" | head -10
 
 ---
 
-## STEP 4: Generate Specs
+## STEP 4: Update Config Specs
+
+Read and update the config template files based on detected project settings.
+
+### Read existing templates
+
+```bash
+ls .claude/specs/config/
+```
+
+Read each file: version-control.md, deployment.md, environment.md, testing.md
+
+### Update version-control.md
+
+Detect from project:
+```bash
+# Check recent commits for format
+git log --oneline -10
+
+# Check branch naming
+git branch -a | head -10
+
+# Check for hooks
+ls .husky 2>/dev/null || ls .git/hooks 2>/dev/null
+```
+
+Update the template with:
+- Actual commit message format used
+- Branch naming convention
+- Any pre-commit hooks configured
+
+### Update testing.md
+
+Detect from project:
+```bash
+# Check package.json for test scripts
+grep -A5 '"scripts"' package.json | grep test
+
+# Check test directory structure
+find . -name "*.test.*" -o -name "*.spec.*" | head -5
+
+# Check test config
+ls vitest.config.* jest.config.* 2>/dev/null
+```
+
+Update the template with:
+- Actual test framework and version
+- Test file location pattern
+- Test commands
+
+### Update deployment.md
+
+Detect from project:
+```bash
+# Check for deployment configs
+ls vercel.json netlify.toml fly.toml render.yaml Dockerfile docker-compose.yml 2>/dev/null
+```
+
+Update the template with:
+- Detected deployment platform
+- Build commands from config
+- Environment setup
+
+### Update environment.md
+
+Detect from project:
+```bash
+# Check for env examples
+cat .env.example 2>/dev/null || cat .env.sample 2>/dev/null
+```
+
+Update the template with:
+- Required environment variables
+- Variable naming conventions
+
+---
+
+## STEP 5: Generate Coding Specs
 
 For each technology, ask before generating:
 
@@ -189,7 +266,7 @@ Source: [context7/official docs URL]
 
 ---
 
-## STEP 5: Update stack-config.yaml
+## STEP 6: Update stack-config.yaml
 
 Update `.claude/specs/stack-config.yaml` with:
 
@@ -222,16 +299,22 @@ specs:
 
 ---
 
-## STEP 6: Summary
+## STEP 7: Summary
 
-Show what was created:
+Show what was created/updated:
 
 ```
 SYNC COMPLETE
 
 Stack: Next.js 14 + TypeScript + Tailwind + Vitest
 
-Created specs:
+Updated config specs:
+- config/version-control.md (commit format: conventional commits)
+- config/testing.md (vitest, tests in __tests__/)
+- config/deployment.md (Vercel detected)
+- config/environment.md (12 env vars from .env.example)
+
+Created coding specs:
 - coding/nextjs-specs.md (from Next.js docs)
 - coding/typescript-specs.md (from TS handbook)
 - coding/tailwind-specs.md (from Tailwind docs)
@@ -240,7 +323,7 @@ Created specs:
 Updated: stack-config.yaml
 
 Next steps:
-- Review generated specs in .claude/specs/coding/
+- Review specs in .claude/specs/
 - Edit any patterns that don't match your preferences
 - Run /start-task to build with these specs enforced
 ```
