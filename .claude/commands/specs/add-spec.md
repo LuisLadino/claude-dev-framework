@@ -60,6 +60,5 @@ Confirm the spec was created. Suggest reviewing the file and testing with `/star
 
 ## Related Commands
 
-- `/sync-stack` - Generate spec content from docs
-- `/sync-stack` - Discover patterns from existing code
+- `/sync-stack` - Detect stack, research docs, generate specs
 - `/verify` - Check code against specs
