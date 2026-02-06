@@ -12,6 +12,40 @@ Check the framework repository (yours or a fork) for updates and selectively app
 
 ---
 
+## Framework Directory Structure
+
+**This is the exact structure. Files MUST go in these locations:**
+
+```
+.claude/
+├── CLAUDE.md                    # Core instructions (framework-managed)
+├── framework-source.txt         # Source URL for updates
+├── commands/                    # Slash commands (framework-managed)
+│   ├── development/             # /start-task, /add-feature, /generate-tasks, /process-tasks
+│   ├── project-management/      # /init-project, /research-stack, /sync-stack, /generate-project-specs, /update-framework
+│   ├── standards/               # /add-standard, /analyze-standards, /verify
+│   └── utilities/               # /learn
+├── skills/                      # Auto-routing skills (framework-managed)
+│   ├── dev-workflow/
+│   ├── project-sync/
+│   ├── standards-sync/
+│   ├── custom-commands/
+│   └── contribute-to-opensource/
+└── your-stack/                  # Project-specific (user-managed, DO NOT overwrite)
+    ├── stack-config.yaml
+    ├── README.md
+    ├── coding-standards/
+    ├── architecture/
+    ├── documentation-standards/
+    ├── design-standards/
+    └── config/                  # version-control.md, deployment.md, environment.md
+```
+
+**Framework-managed:** CLAUDE.md, commands/, skills/
+**User-managed (never overwrite):** your-stack/, tasks/, any custom command directories
+
+---
+
 ## How It Works
 
 Fully interactive, LLM-driven command:
@@ -185,11 +219,35 @@ Inform user no changes were made. Clean up temp directory and exit.
 
 ## STEP 6: Apply Updates
 
-For each selected item, copy from `$temp_dir` to `.claude/`:
+**CRITICAL: Follow exact paths. Do not create new directories or put files in wrong locations.**
 
-- **New commands:** Copy `.md` files from update directories (development, project-management, standards, utilities) only
-- **Updated files:** Copy new version, overwriting old
-- **Company/team standards:** Copy updated/new standards from `$temp_dir/.claude/your-stack/` if source includes managed standards
+For each selected item, copy from `$temp_dir` to `.claude/` using these exact paths:
+
+| Source | Destination |
+|--------|-------------|
+| `$temp_dir/.claude/CLAUDE.md` | `.claude/CLAUDE.md` |
+| `$temp_dir/.claude/commands/development/*.md` | `.claude/commands/development/` |
+| `$temp_dir/.claude/commands/project-management/*.md` | `.claude/commands/project-management/` |
+| `$temp_dir/.claude/commands/standards/*.md` | `.claude/commands/standards/` |
+| `$temp_dir/.claude/commands/utilities/*.md` | `.claude/commands/utilities/` |
+| `$temp_dir/.claude/skills/*/SKILL.md` | `.claude/skills/[same-folder]/SKILL.md` |
+
+**NEVER touch these directories:**
+- `.claude/your-stack/` (user's project config)
+- `.claude/tasks/` (user's task lists)
+- Any directory not listed in the Framework Directory Structure above
+
+**Example copy commands:**
+```bash
+# Update a command
+cp "$temp_dir/.claude/commands/development/start-task.md" ".claude/commands/development/start-task.md"
+
+# Update CLAUDE.md
+cp "$temp_dir/.claude/CLAUDE.md" ".claude/CLAUDE.md"
+
+# Update a skill
+cp "$temp_dir/.claude/skills/dev-workflow/SKILL.md" ".claude/skills/dev-workflow/SKILL.md"
+```
 
 **Note:** Git handles rollback. If something goes wrong, use `git checkout .claude/` to revert.
 
