@@ -34,11 +34,8 @@ Check the framework repository (yours or a fork) for updates and selectively app
 └── specs/                  # Project-specific (user-managed, DO NOT overwrite)
     ├── stack-config.yaml
     ├── README.md
-    ├── coding/
-    ├── architecture/
-    ├── documentation/
-    ├── design/
-    └── config/                  # version-control.md, deployment.md, environment.md, testing.md
+    ├── config/                  # version-control.md, deployment.md, environment.md, testing.md
+    └── coding/                  # Created by /sync-stack (other dirs created as needed)
 ```
 
 **Framework-managed:** CLAUDE.md, commands/, skills/
@@ -164,7 +161,7 @@ diff -qr .claude/skills "$temp_dir/.claude/skills" 2>/dev/null || echo "skills u
 
 ### Check Company/Team Specs
 
-If the source repo includes `specs/` (company fork), compare coding, architecture, documentation, and stack-config.yaml using `diff -q`/`diff -qr`. Track new and changed files.
+If the source repo includes `specs/` (company fork), compare all specs directories and stack-config.yaml using `diff -q`/`diff -qr`. Track new and changed files.
 
 For individuals (no `specs/` in source), this step is skipped.
 

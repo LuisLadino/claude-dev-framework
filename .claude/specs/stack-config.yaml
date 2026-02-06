@@ -16,18 +16,11 @@ stack:
 
 # Active Specs
 # Listed specs are loaded by /start-task before coding
-# /sync-stack auto-discovers and populates this list
+# /sync-stack populates this based on your stack
 specs:
-  coding:
+  coding: []
     # - typescript-specs
     # - react-specs
-    # - tailwind-specs
-  architecture:
-    # - file-structure
-  design:
-    # - design-tokens
-  documentation:
-    # - code-comments
   config:
     - version-control
     - deployment

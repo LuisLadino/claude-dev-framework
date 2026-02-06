@@ -88,12 +88,11 @@ https://github.com/YOUR-USERNAME/claude-dev-framework
 ├── skills/                # Auto-routing
 └── specs/                 # YOUR customizations
     ├── stack-config.yaml  # Your stack
-    ├── coding/            # Coding patterns
-    ├── architecture/      # Project structure
-    ├── design/            # Design tokens
-    ├── documentation/     # Doc requirements
-    └── config/            # Git, deploy, env, testing
+    ├── config/            # Git, deploy, env, testing
+    └── coding/            # Created by /sync-stack
 ```
+
+Other directories (architecture, design, documentation) created as needed.
 
 ---
 

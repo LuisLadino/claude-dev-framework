@@ -15,6 +15,9 @@ Ask the user which type of spec to add:
 3. **Documentation Spec** - Goes in `.claude/specs/documentation/`
 4. **Design Spec** - Goes in `.claude/specs/design/`
 5. **Config** - Goes in `.claude/specs/config/`
+6. **Custom** - User specifies directory name
+
+Directories are created if they don't exist.
 
 If the user provided a name as an argument (e.g., `/add-spec api`), skip to Step 2.
 

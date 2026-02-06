@@ -34,27 +34,16 @@ Ask clarifying questions about what the user wants:
 
 ### Find and Load Specs
 
-Use `Read` or `Grep` to find applicable specs from stack-config.yaml `specs` field.
+Read all specs listed in stack-config.yaml `specs` field.
 
-**Always read:**
-- Framework specs (from specs.coding)
-- Language specs (from specs.coding)
-- Documentation specs (from specs.documentation)
-- Architecture patterns (from specs.architecture)
-- Version control specs (if committing - from .claude/specs/config/)
+**Load everything listed:**
+- All files under `specs.coding` (framework, language patterns)
+- All files under `specs.config` (version-control, testing, etc.)
+- Any other directories listed (architecture, design, documentation, custom)
 
-**Conditionally read based on task keywords:**
-- Styling specs (if UI work)
-- Testing specs (if tests needed)
-- Design system specs (if component/design/brand work)
-- API specs (if backend/api/endpoint work)
-- Database specs (if data layer/schema/query work)
-- Security specs (if auth/security work)
-- Performance specs (if optimization work)
-- Accessibility specs (if a11y/UI work)
-- Any custom directories (from specs.[custom-directory])
+**Only load what exists.** If a directory isn't in stack-config.yaml, skip it.
 
-**Smart detection:** Analyze task description for keywords, check stack-config.yaml `specs` section for matching directories, only load relevant specs.
+**For task-specific specs:** If task involves UI, check for design specs. If task involves tests, check for testing specs. Load relevant specs based on task keywords.
 
 ---
 
@@ -63,7 +52,7 @@ Use `Read` or `Grep` to find applicable specs from stack-config.yaml `specs` fie
 **PAUSE FOR REVIEW** - Show the user a complete checklist covering:
 - Stack details (framework, language, styling, testing, package manager)
 - Task summary and approach
-- All loaded specs files (coding, documentation, architecture, quality, operational)
+- All loaded specs files (from stack-config.yaml)
 - Key patterns being applied from each spec
 - Files to create/modify
 - Quality checks that will run (format, lint, type-check, build, test)

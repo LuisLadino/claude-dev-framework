@@ -8,13 +8,12 @@ Your project's coding specs. Claude reads these before every task.
 
 ```
 specs/
-├── stack-config.yaml    # Your tech stack
-├── coding/              # Framework/language patterns
-├── architecture/        # File structure, patterns
-├── design/              # Design tokens
-├── documentation/       # Doc requirements
-└── config/              # Git, deploy, environment, testing
+├── stack-config.yaml    # Your tech stack + active specs list
+├── config/              # Git, deploy, environment, testing (included)
+└── coding/              # Created by /sync-stack based on your stack
 ```
+
+Other directories (`architecture/`, `design/`, `documentation/`) are created as needed.
 
 ---
 
@@ -30,10 +29,11 @@ specs/
 ## How It Works
 
 1. `/sync-stack` detects your tech and researches best practices
-2. Specs are saved here in `coding/`, `architecture/`, etc.
-3. `/start-task` loads relevant specs before implementing
-4. Claude shows you what patterns will be applied
-5. You approve, Claude builds following your specs
+2. Creates spec files in `coding/` (or other directories as needed)
+3. Updates `stack-config.yaml` with active specs
+4. `/start-task` loads specs listed in config
+5. Claude shows you what patterns will be applied
+6. You approve, Claude builds following your specs
 
 ---
 
@@ -42,15 +42,3 @@ specs/
 Edit any file to match your team's patterns. Add new specs with `/add-spec`.
 
 Framework updates never touch this directory.
-
----
-
-## Files
-
-| Directory | Purpose |
-|-----------|---------|
-| `coding/` | Language and framework patterns (e.g., `typescript-specs.md`) |
-| `architecture/` | File structure, component patterns |
-| `design/` | Design tokens, design system |
-| `documentation/` | Comment style, doc requirements |
-| `config/` | Git, deploy, environment, testing |
