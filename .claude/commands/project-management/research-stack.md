@@ -130,7 +130,7 @@ Edit any file in `.claude/your-stack/coding-standards/` to add team-specific pat
 
 ## Troubleshooting
 
-- **Can't find information:** Technology may be new, uncommon, or proprietary. Provide more context, share doc links, or use /analyze-standards for proprietary tools.
+- **Can't find information:** Technology may be new, uncommon, or proprietary. Provide more context or share doc links.
 - **Standards seem outdated:** Verify version numbers in stack-config.yaml. Re-run with explicit versions or `--force-refresh`.
 - **Patterns don't match needs:** Edit files in `.claude/your-stack/` to customize. Framework respects your customizations.
 - **Too much/too little info:** Use `--quick` or `--deep` flags.
@@ -150,6 +150,5 @@ Edit any file in `.claude/your-stack/coding-standards/` to add team-specific pat
 
 ## Related
 
-- `/analyze-standards` - Discover patterns from existing code or docs
-- `/sync-stack` - Detect tech drift and sync configuration
+- `/sync-stack` - Detect stack and discover patterns from code
 - `/add-standard` - Add custom standards manually

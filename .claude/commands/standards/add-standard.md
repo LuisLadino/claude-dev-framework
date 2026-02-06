@@ -89,6 +89,6 @@ Inform the user the standard was added successfully. Mention they can review the
 ## Related Commands
 
 - `/research-stack` - Generate/update standard content
-- `/analyze-standards` - Discover patterns from existing code or docs
+- `/sync-stack` - Discover patterns from existing code
 - `/verify` - Check code against all standards
 - `/start-task` - Build with standards enforcement

@@ -23,7 +23,7 @@ Check the framework repository (yours or a fork) for updates and selectively app
 ├── commands/                    # Slash commands (framework-managed)
 │   ├── development/             # /start-task, /add-feature, /generate-tasks, /process-tasks
 │   ├── project-management/      # /init-project, /research-stack, /sync-stack, /generate-project-specs, /update-framework
-│   ├── standards/               # /add-standard, /analyze-standards, /verify
+│   ├── standards/               # /add-standard, /verify
 │   └── utilities/               # /learn
 ├── skills/                      # Auto-routing skills (framework-managed)
 │   ├── dev-workflow/
@@ -309,6 +309,6 @@ The framework source URL is stored in `.claude/framework-source.txt`. This file 
 
 ## Related Commands
 
-- `/research-stack` - Generate new standards for a different stack
-- `/analyze-standards` - Discover patterns from existing code or docs
-- `/verify` - Verify framework installation
+- `/research-stack` - Generate standards for specific dependencies
+- `/sync-stack` - Detect stack and discover patterns from code
+- `/verify` - Check code against standards

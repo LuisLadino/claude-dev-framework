@@ -12,8 +12,7 @@ You are a routing skill. Based on what the user is doing, invoke the correct com
 | User intent | Command |
 |---|---|
 | Add a new custom coding standard | /add-standard |
-| Import standards from external docs (wiki, handbook) | /analyze-standards |
-| Discover patterns from actual code | /sync-stack |
+| Discover patterns from code, sync config | /sync-stack |
 | Audit code quality before commit or release | /verify |
 
 Pick ONE command. Invoke it using the Skill tool. Do not combine or improvise.

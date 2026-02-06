@@ -89,10 +89,10 @@ Display what was detected.
 
 ## Step 4: Analyze Codebase Patterns
 
-Run `/analyze-standards` in codebase mode, targeting the project directory.
+Run `/sync-stack` to analyze the project.
 
-- Scan component/module files
-- Discover patterns (structure, naming, imports, state, testing)
+- Detect stack from config files
+- Scan code for patterns (structure, naming, imports, state, testing)
 - Create standards files matching their patterns
 
 Display discovered patterns.
@@ -172,11 +172,9 @@ List what succeeded and what failed. Suggest running `/research-stack` manually 
 ## Notes
 
 This skill orchestrates multiple commands in sequence:
-1. `/sync-stack` (detect tech)
-2. `/analyze-standards` (find patterns)
-3. Contribution docs extraction
-4. `/research-stack` (generate standards)
-5. PROJECT-STATE.md creation
+1. `/sync-stack` (detect tech + find patterns + generate standards)
+2. Contribution docs extraction
+3. PROJECT-STATE.md creation
 
 Each step can also be run individually for more control.
 

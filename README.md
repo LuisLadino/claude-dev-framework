@@ -85,14 +85,9 @@ your-project/.claude/
 │   │   └── update-framework.md
 │   ├── standards/               # Quality and patterns
 │   │   ├── add-standard.md
-│   │   ├── analyze-standards.md
 │   │   └── verify.md
 │   └── utilities/               # General tools
 │       └── learn.md
-├── config/
-│   ├── version-control.md       # Git workflow standards
-│   ├── deployment.md            # Deployment process
-│   └── environment.md           # Dev environment setup
 └── your-stack/                  # YOUR customizations
     ├── stack-config.yaml        # Your stack definition
     ├── coding-standards/        # Your coding patterns
@@ -111,7 +106,7 @@ Skills auto-detect what you're trying to do and route to the right command. You 
 |-------|-----------------|-----------|
 | **dev-workflow** | Building, fixing, implementing features | start-task, add-feature, generate-tasks, process-tasks |
 | **project-sync** | Setting up projects, managing stack | init-project, research-stack, sync-stack, generate-project-specs, update-framework |
-| **standards-sync** | Adding or checking standards | add-standard, analyze-standards, verify |
+| **standards-sync** | Adding or checking standards | add-standard, verify |
 | **contribute-to-opensource** | Contributing to open source projects | Multi-step workflow |
 | **custom-commands** | Project-specific commands | Your custom commands |
 
@@ -128,7 +123,7 @@ Use these when building features and writing code.
 | Command | When to Use | What It Does |
 |---------|-------------|--------------|
 | `/start-task` | Any coding task | Loads your standards, shows checklist, implements with verification |
-| `/add-feature` | Planning a complex feature | Asks 12 questions, generates a PRD document |
+| `/add-feature` | Planning a complex feature | Asks key questions, generates a PRD document |
 | `/generate-tasks` | Breaking down a PRD | Converts PRD into actionable task list |
 | `/process-tasks` | Executing a task list | Works through tasks sequentially with standards |
 
@@ -146,13 +141,13 @@ Use these when setting up or maintaining projects.
 |---------|-------------|--------------|
 | `/init-project` | Starting a brand new project | Creates stack-config, design system, project docs |
 | `/research-stack` | Need standards for your tech | Researches docs, generates coding standards |
-| `/sync-stack` | Dependencies changed | Detects tech drift, updates stack-config.yaml |
+| `/sync-stack` | Existing project or deps changed | Detects stack, analyzes code patterns, generates standards |
 | `/generate-project-specs` | Need comprehensive specs | Creates PRDs, architecture docs, roadmap |
 | `/update-framework` | Monthly maintenance | Pulls framework updates from source repo |
 
 **New project flow:** `/init-project` → `/research-stack` → start building
 
-**Existing project:** `/sync-stack` → `/research-stack` (if standards missing)
+**Existing project:** `/sync-stack` (does everything: detect stack + analyze patterns + generate standards)
 
 ---
 
@@ -163,12 +158,11 @@ Use these when managing coding standards and auditing code.
 | Command | When to Use | What It Does |
 |---------|-------------|--------------|
 | `/add-standard` | Need a custom standard | Creates a new standards file from your input |
-| `/analyze-standards` | Discover patterns from code/docs | Scans codebase or imports from documentation |
 | `/verify` | Before commits or releases | Audits code against all active standards |
 
 **Before committing:** Run `/verify` to check for violations.
 
-**Joining a team:** Run `/analyze-standards codebase` to discover existing patterns.
+**Joining a team:** Run `/sync-stack` to detect patterns from the codebase.
 
 ---
 
@@ -176,7 +170,7 @@ Use these when managing coding standards and auditing code.
 
 | Command | When to Use | What It Does |
 |---------|-------------|--------------|
-| `/learn` | Need something explained | Explains concepts adapted to your stack |
+| `/learn` | Need something explained | Explains anything in plain English |
 
 ---
 
