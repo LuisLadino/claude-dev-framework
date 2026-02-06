@@ -90,6 +90,7 @@ That's it. Claude now follows your patterns.
 | `/start-task` | Any coding task. Loads your specs, implements, runs quality gates. |
 | `/add-feature` | Planning something complex. Creates PRD and task list. |
 | `/process-tasks` | You have a task list from /add-feature. Executes them sequentially. |
+| `/commit` | Commit changes following your version-control specs. |
 
 ### Project Setup
 
