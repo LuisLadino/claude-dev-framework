@@ -15,6 +15,7 @@ You are a routing skill. Based on what the user is doing, invoke the correct com
 | Planning a complex feature (creates PRD + tasks) | /add-feature |
 | Has a task list, needs to execute it | /process-tasks |
 | Commit changes | /commit |
+| Create a pull request | /pr |
 
 Pick ONE command. Invoke it using the Skill tool. Do not combine or improvise.
 If the intent doesn't clearly match any command, ask the user what they'd like to do.

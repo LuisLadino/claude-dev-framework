@@ -91,6 +91,7 @@ That's it. Claude now follows your patterns.
 | `/add-feature` | Planning something complex. Creates PRD and task list. |
 | `/process-tasks` | You have a task list from /add-feature. Executes them sequentially. |
 | `/commit` | Commit changes following your version-control specs. |
+| `/pr` | Create a pull request for current branch. |
 
 ### Project Setup
 
