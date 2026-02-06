@@ -4,9 +4,19 @@
 
 Read `.claude/your-stack/stack-config.yaml`. If missing, ask user to run `/init-project` or `/sync-stack` first.
 
-**Extract:** Framework/version, language, styling, testing framework, package manager, active standards, project-specific settings. Store for entire workflow.
+**Extract:** Framework/version, language, styling, testing framework, package manager, active standards.
 
 If `.claude/your-stack/init/project-guidelines.md` exists, read it for quality/testing/accessibility requirements.
+
+### Check for New Dependencies
+
+Scan dependencies (package.json or equivalent). Compare against standards files in `.claude/your-stack/coding-standards/`.
+
+If a major dependency has no standards file (e.g., added Prisma but no `prisma-standards.md`), ask:
+
+"[dependency] doesn't have a standards file. Create one? (yes/no/later)"
+
+If yes, generate standards for that dependency before continuing.
 
 ---
 

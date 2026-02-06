@@ -31,8 +31,9 @@ Generate coding standards for a known tech stack. Researches official docs and b
 ## Usage
 
 ```
-/research-stack                              # Interactive - asks questions
-/research-stack Next.js 14 with Prisma and tRPC  # Skip initial questions
+/research-stack                    # Generate standards for entire stack
+/research-stack prisma             # Generate standards for one dependency
+/research-stack tailwind zustand   # Generate standards for specific dependencies
 ```
 
 ---

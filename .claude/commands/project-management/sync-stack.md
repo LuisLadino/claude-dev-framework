@@ -3,11 +3,14 @@
 **Command:** `/sync-stack`
 **Purpose:** Detect technology drift in existing projects and sync stack-config.yaml with reality
 
-**Use this when:** You have an existing codebase and want to auto-detect its stack from package.json, config files, etc.
+**Use this when:** You have an existing codebase and want to auto-detect its stack.
+
+**After this:**
+- `/research-stack` - Generate standards from official docs
+- `/analyze-standards codebase` - Discover patterns from actual code (better for established projects)
 
 **Don't use this when:**
 - Starting a brand new project → use `/init-project` instead
-- Config is correct, just need coding standards → use `/research-stack` instead
 
 ---
 
@@ -27,13 +30,24 @@
 
 ### Phase 1: Scan Project
 
-**Scan these locations for technology detection:**
+**Detect project type first:**
 
-**Package managers:** package.json, lock files (pnpm/npm/yarn), requirements.txt, Gemfile, go.mod, Cargo.toml
+| File | Project Type |
+|------|--------------|
+| package.json | Node.js / JavaScript |
+| requirements.txt, pyproject.toml, setup.py | Python |
+| go.mod | Go |
+| Cargo.toml | Rust |
+| Gemfile | Ruby |
+| composer.json | PHP |
+| pom.xml, build.gradle | Java |
+| *.csproj, *.sln | .NET |
 
-**Configuration files:** next.config.js/mjs, vite.config.ts/js, astro.config.mjs, nuxt.config.ts, svelte.config.js, tailwind.config.js/ts, tsconfig.json/jsconfig.json, vitest.config.ts/jest.config.js, playwright.config.ts/cypress.config.js, prisma/schema.prisma, drizzle.config.ts
+**Then scan for frameworks and tools based on project type.**
 
-**Framework indicators:** app/ directory (Next.js App Router), pages/ (Pages Router or Astro), src/routes/ (SvelteKit), .astro/.vue/.svelte files
+For Node.js projects, check: next.config, vite.config, astro.config, nuxt.config, svelte.config, tailwind.config, tsconfig.json, vitest/jest/playwright configs, prisma/drizzle schemas.
+
+For other project types, detect the equivalent framework configs and dependencies.
 
 **Detection logic (what to scan for):**
 
@@ -79,7 +93,8 @@ Then ask the user to choose:
 
 1. Update stack-config.yaml with all detected values (framework, versions, language, styling, database, ORM, testing, e2e, package manager).
 2. List orphaned standards files and ask if user wants to delete them.
-3. Confirm changes applied. Suggest running `/research-stack` if new technologies were added.
+3. For each NEW technology detected that has no standards file, ask: "Create standards for [tech]? (yes/no)"
+4. If yes, run `/research-stack [tech]` to generate the standards file.
 
 ---
 
