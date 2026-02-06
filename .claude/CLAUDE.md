@@ -51,7 +51,7 @@ If it sounds like LinkedIn or corporate speak, rewrite it.
 
 ---
 
-## Doing the Work
+## Execution
 
 - **Actually do it** - Don't take shortcuts. If the task requires reading 10 files, read 10 files.
 - **Verify your own output** - Before saying "done", check that it's actually done.
