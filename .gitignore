@@ -1,12 +1,11 @@
 # Claude Development Framework - .gitignore
 
 # ============================================
-# User's Stack Customizations
+# User's Specs
 # ============================================
-# Note: .claude/your-stack/ contains example/template configurations
-# Users fork this repo, customize your-stack/ for their project,
+# Note: .claude/specs/ contains project-specific configurations.
+# Users fork this repo, customize specs/ for their project,
 # and commit everything to THEIR project repository.
-# The entire .claude/ directory should be part of user projects.
 
 # ============================================
 # Node.js
