@@ -9,9 +9,25 @@ The goal: Every `/start-task` loads your specs and follows YOUR patterns.
 ## Usage
 
 ```
-/sync-stack              # Full setup
+/sync-stack              # Full setup (all spec types)
 /sync-stack prisma       # Add specs for a specific dependency
 ```
+
+---
+
+## What Gets Generated
+
+`/sync-stack` researches your stack via context7/web and generates specs with **real patterns from official docs**. Not empty templates.
+
+| Category | What it contains | Source |
+|----------|------------------|--------|
+| `coding/` | Language and library patterns | Official docs (React, TS, etc.) |
+| `architecture/` | File structure, project organization | Framework docs (Next.js, etc.) |
+| `design/` | Design tokens, component styling | Styling framework + your config |
+| `documentation/` | Code comments, docstrings | Language conventions (TSDoc, etc.) |
+| `config/` | Git, testing, deployment, env | Detected from project files |
+
+Only creates categories relevant to your stack. Skips categories with no detectable conventions.
 
 ---
 
@@ -104,13 +120,28 @@ If context7 doesn't have docs, use WebSearch:
 - "[technology] official documentation patterns"
 - "[technology] + [other tech in stack] integration"
 
-### Extract from research:
-- File/folder conventions
+### Extract from research (categorized by spec type):
+
+**For coding specs:**
 - Component/function patterns
 - Import style
 - Error handling patterns
-- Testing patterns
 - Common gotchas to avoid
+
+**For architecture specs:**
+- File/folder conventions
+- Project structure requirements
+- Module organization
+
+**For design specs:**
+- Design token patterns (if using Tailwind, styled-components, etc.)
+- Component styling conventions
+- Theme structure
+
+**For documentation specs:**
+- Code comment conventions
+- Docstring formats
+- README patterns
 
 ---
 
@@ -224,64 +255,186 @@ Update the template with:
 
 ---
 
-## STEP 6: Generate Coding Specs
+## STEP 6: Generate All Specs
 
-For each technology, ask before generating:
+**Use the research from Step 3 to fill in actual content.** Don't create empty templates. Every spec should contain real patterns from official docs.
+
+### 6a: Ask which categories to generate
 
 ```
-Generate specs for [technology]? (yes/skip)
+SPEC CATEGORIES
+
+Based on your stack, these specs can be generated:
+
+[x] coding/        - React, TypeScript, Vitest patterns
+[x] architecture/  - Next.js file structure conventions
+[x] design/        - Tailwind design tokens
+[ ] documentation/ - No specific conventions detected
+
+Generate all? (yes / customize)
 ```
 
-### Create directory if needed
+### 6b: Generate coding specs
 
-Specs go in `.claude/specs/coding/` for most technologies.
-
-```bash
-mkdir -p .claude/specs/coding
-```
-
-### Spec file template
-
-Create `[technology]-specs.md`:
+For each technology with code patterns, create `[technology]-specs.md` with **actual patterns from research**:
 
 ```markdown
-# [Technology] Specs
+# React Specs
 
-Source: [context7/official docs URL]
+Source: https://react.dev/learn
 
 ## Patterns
 
-### [Pattern Name]
-[Description]
+### Component Declaration
+Use function components with TypeScript.
 
-```[language]
-// Example code
+```tsx
+interface ButtonProps {
+  label: string;
+  onClick: () => void;
+}
+
+export function Button({ label, onClick }: ButtonProps) {
+  return <button onClick={onClick}>{label}</button>;
+}
 ```
 
-### [Pattern Name]
-...
+### Hooks
+- Call hooks at the top level, not inside conditions
+- Custom hooks must start with "use"
 
 ## Anti-Patterns
 
-- [What NOT to do] - [Why]
-- ...
+- Don't use `any` type - use proper TypeScript types
+- Don't mutate state directly - use setState
 
 ## Project-Specific
 
-[Any patterns discovered from existing code that differ from defaults]
+[Patterns found in existing code that differ from defaults]
 ```
 
-### What goes where:
+### 6c: Generate architecture specs
 
-| Type | Directory | Examples |
-|------|-----------|----------|
-| Framework/language patterns | `coding/` | react-specs.md, typescript-specs.md |
-| File structure rules | `architecture/` | file-structure.md |
-| Design system/tokens | `design/` | design-tokens.md |
-| Doc conventions | `documentation/` | code-comments.md |
-| Operational | `config/` | Already exists (version-control, deployment, etc.) |
+If framework has file structure conventions, create `file-structure.md` with **actual conventions from docs**:
 
-**Only create directories that are needed.** Don't create empty directories.
+```markdown
+# File Structure
+
+Source: https://nextjs.org/docs/app/building-your-application/routing
+
+## Directory Layout
+
+```
+app/
+├── layout.tsx          # Root layout (required)
+├── page.tsx            # Home page
+├── globals.css         # Global styles
+├── api/                # API routes
+│   └── route.ts
+└── [slug]/             # Dynamic routes
+    └── page.tsx
+```
+
+## Conventions
+
+### Page files
+- `page.tsx` - Publicly accessible page
+- `layout.tsx` - Shared UI for segment and children
+- `loading.tsx` - Loading UI
+- `error.tsx` - Error UI
+
+### Component organization
+- Colocate components with their routes when route-specific
+- Shared components go in `components/` at project root
+
+## Anti-Patterns
+
+- Don't put API logic in page components - use route handlers
+- Don't import server components into client components
+```
+
+### 6d: Generate design specs
+
+If using a styling framework, create `design-system.md` with **actual tokens from config + docs**:
+
+```markdown
+# Design System
+
+Source: tailwind.config.ts + https://tailwindcss.com/docs
+
+## Tokens
+
+### Colors (from tailwind.config)
+- `primary` - #3b82f6 (blue-500)
+- `secondary` - #6b7280 (gray-500)
+- `destructive` - #ef4444 (red-500)
+
+### Spacing
+Use Tailwind's default scale: 1 = 0.25rem
+
+### Typography
+- Headings: font-bold
+- Body: font-normal text-gray-900
+
+## Component Styling
+
+Use Tailwind classes directly. Avoid @apply except for base styles.
+
+```tsx
+// Good
+<button className="px-4 py-2 bg-primary text-white rounded-md">
+
+// Avoid
+<button className={styles.button}>
+```
+
+## Anti-Patterns
+
+- Don't use inline styles - use Tailwind classes
+- Don't create custom CSS when Tailwind has a utility
+```
+
+### 6e: Generate documentation specs
+
+If language/framework has doc conventions, create `code-comments.md` with **actual conventions**:
+
+```markdown
+# Code Comments
+
+Source: https://tsdoc.org/
+
+## When to Comment
+
+- Public API functions - always
+- Complex algorithms - explain the why
+- Workarounds - link to issue/reason
+
+## Docstring Format
+
+Use TSDoc for TypeScript:
+
+```tsx
+/**
+ * Fetches user data from the API.
+ * @param userId - The unique identifier for the user
+ * @returns The user object or null if not found
+ * @throws {ApiError} When the API request fails
+ */
+export async function getUser(userId: string): Promise<User | null> {
+```
+
+## Anti-Patterns
+
+- Don't comment obvious code (`// increment i` above `i++`)
+- Don't leave TODO comments without issue links
+```
+
+### Only create what's needed
+
+- Skip `architecture/` if no framework-specific structure (vanilla JS/TS)
+- Skip `design/` if no styling framework (just plain CSS)
+- Skip `documentation/` if no specific conventions found in docs
+- **Never create empty templates** - only create specs with real content from research
 
 ---
 
@@ -290,7 +443,7 @@ Source: [context7/official docs URL]
 Update `.claude/specs/stack-config.yaml` with:
 
 1. **Stack details** - framework, language, styling, testing, package_manager
-2. **Specs list** - all generated spec files
+2. **Specs list** - all generated spec files across all categories
 
 Example update:
 
@@ -309,12 +462,20 @@ specs:
     - typescript-specs
     - tailwind-specs
     - vitest-specs
+  architecture:
+    - file-structure
+  design:
+    - design-system
+  documentation:
+    - code-comments
   config:
     - version-control
     - deployment
     - environment
     - testing
 ```
+
+Only include categories that have specs. Don't add empty categories.
 
 ---
 
@@ -327,17 +488,23 @@ SYNC COMPLETE
 
 Stack: Next.js 14 + TypeScript + Tailwind + Vitest
 
-Updated config specs:
-- config/version-control.md (commit format: conventional commits)
+Config specs (updated):
+- config/version-control.md (conventional commits)
 - config/testing.md (vitest, tests in __tests__/)
-- config/deployment.md (Vercel detected)
-- config/environment.md (12 env vars from .env.example)
+- config/deployment.md (Vercel)
+- config/environment.md (12 env vars)
 
-Created coding specs:
-- coding/nextjs-specs.md (from Next.js docs)
-- coding/typescript-specs.md (from TS handbook)
-- coding/tailwind-specs.md (from Tailwind docs)
-- coding/vitest-specs.md (from Vitest docs)
+Coding specs (created):
+- coding/nextjs-specs.md
+- coding/typescript-specs.md
+- coding/tailwind-specs.md
+- coding/vitest-specs.md
+
+Architecture specs (created):
+- architecture/file-structure.md (Next.js App Router conventions)
+
+Design specs (created):
+- design/design-system.md (Tailwind tokens)
 
 Updated: stack-config.yaml
 
@@ -372,8 +539,11 @@ When run as `/sync-stack [dependency]`:
 1. Skip full stack detection
 2. Research just that dependency
 3. Check for existing patterns using it
-4. Generate/update just that spec file
-5. Add to stack-config.yaml specs list
+4. Generate/update the coding spec for that dependency
+5. If the dependency has architecture implications (e.g., Prisma schema location), update architecture specs too
+6. Add to stack-config.yaml specs list
+
+**Note:** Single dependency mode focuses on coding specs. Run full `/sync-stack` to regenerate architecture/design/documentation specs.
 
 ---
 

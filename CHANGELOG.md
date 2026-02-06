@@ -16,15 +16,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **`/sync-stack` completely rewritten** with proper step-by-step instructions
+- **`/sync-stack` now generates ALL spec types** - Not just coding + config, but also architecture, design, and documentation specs based on your stack
   - STEP 1: Read all existing spec files first
   - STEP 2: Detect stack (expanded to 17 technologies)
-  - STEP 3: Research using context7 MCP + WebSearch
+  - STEP 3: Research using context7 MCP + WebSearch (categorized by spec type)
   - STEP 4: Scan existing code for patterns
   - STEP 5: Update config template files based on project
-  - STEP 6: Generate coding specs
-  - STEP 7: Update stack-config.yaml
+  - STEP 6: Generate ALL specs (coding, architecture, design, documentation) with real content from research
+  - STEP 7: Update stack-config.yaml with all categories
   - STEP 8: Summary
+- **`/add-spec` clarified** - Now specifically for custom project-specific rules (API conventions, security, accessibility)
+  - Research option generates from general best practices (REST guidelines, OWASP, WCAG)
+  - Library-specific patterns should use `/sync-stack` instead
+- **Clear distinction between commands:**
+  - `/sync-stack` = auto-generate from library/framework docs
+  - `/add-spec` = custom internal rules + general best practices
 - **Quality gates now read from stack-config.yaml** instead of hardcoded commands
   - `/start-task`, `/verify`, `/process-tasks` all detect commands from package.json
 - **Project settings in stack-config.yaml now used** (import_alias, components_dir, tests_dir)
