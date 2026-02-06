@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.3.0] - 2026-02-06
 
+### Added
+
+- **`/commit` command** - Commits all changes following your version-control specs. Checks status, updates documentation if needed, stages everything, generates commit message from diff, and commits. No questions asked.
+- **`/pr` command** - Creates a pull request for the current branch. Shows commits and files changed, generates PR title and description, creates via GitHub CLI.
+
 ### Changed
 
 - **`/sync-stack` completely rewritten** with proper step-by-step instructions

@@ -66,6 +66,13 @@ That's it. Claude now follows your patterns.
 /sync-stack prisma       # Generate specs for just that dependency
 ```
 
+### Committing and PRs
+
+```
+/commit                  # Commit with proper message format
+/pr                      # Create pull request
+```
+
 ### Checking Code Quality
 
 ```
@@ -85,31 +92,31 @@ That's it. Claude now follows your patterns.
 
 ### Development
 
-| Command | When to Use |
+| Command | Description |
 |---------|-------------|
-| `/start-task` | Any coding task. Loads your specs, implements, runs quality gates. |
-| `/add-feature` | Planning something complex. Creates PRD and task list. |
-| `/process-tasks` | You have a task list from /add-feature. Executes them sequentially. |
-| `/commit` | Commit changes following your version-control specs. |
-| `/pr` | Create a pull request for current branch. |
+| `/start-task` | The main command for any coding work. Give it a task description, it loads your specs, asks clarifying questions, shows you what patterns will be enforced, waits for approval, implements the code, then runs all quality gates (format, lint, type-check, test) before marking complete. Use this for building features, fixing bugs, refactoring, or any code changes. |
+| `/add-feature` | For complex features that need planning before coding. Asks you questions about what you're building, creates a PRD (product requirements doc), then breaks it down into a numbered task list. Use when you have a big feature that needs multiple steps. After this, run `/process-tasks` to execute the list. |
+| `/process-tasks` | Executes a task list created by `/add-feature`. Goes through each task one by one, runs `/start-task` for each, verifies after each one, and commits after completing each parent task. You can pause anytime and resume later. |
+| `/commit` | Commits all changes following your version-control spec. Checks status, updates any documentation that needs it (README, CHANGELOG, CONTRIBUTING), stages everything, generates a commit message from the diff, and commits. No questions asked. |
+| `/pr` | Creates a pull request for your current branch. Shows commits and files changed, generates a PR title and description, then creates it via GitHub CLI. Use after you've committed and want to merge into main. |
 
 ### Project Setup
 
-| Command | When to Use |
+| Command | Description |
 |---------|-------------|
-| `/sync-stack` | **Start here.** Detects your stack, researches docs, generates specs. |
-| `/sync-stack [dep]` | Add specs for a specific dependency (e.g., `/sync-stack prisma`). |
-| `/init-project` | Optional. Define product requirements before any code exists. |
-| `/generate-project-specs` | Optional. Enterprise docs (PRD, architecture, API specs). |
-| `/update-framework` | Monthly. Pull framework updates from your fork. |
+| `/sync-stack` | **Start here for any project.** Reads all your existing spec files, detects your tech stack from config files (package.json, tsconfig, etc.), researches official documentation using context7 or web search, scans your existing code for patterns, then generates spec files that combine best practices with YOUR patterns. Also updates the config templates (version-control, testing, deployment, environment) based on your actual project setup. Run this first on any project, new or existing. |
+| `/sync-stack [dep]` | Same as above but focused on a single dependency. Use when you add something new to your project (e.g., `/sync-stack prisma` after installing Prisma). Generates specs just for that dependency. |
+| `/init-project` | Optional. For when you want to define product requirements before any code exists. Asks what you're building, who it's for, success criteria, etc. Creates a product brief and project guidelines. Most people skip this and just run `/sync-stack`. |
+| `/generate-project-specs` | Optional. For enterprise projects that need formal documentation. Creates PRD, user stories, architecture docs, API specs, database schema docs. Overkill for solo projects or MVPs. |
+| `/update-framework` | Checks your fork of this framework for updates. Shows what's new or changed, lets you pick what to apply. Run monthly or when you know there are updates. Won't touch your specs/ directory. |
 
 ### Quality
 
-| Command | When to Use |
+| Command | Description |
 |---------|-------------|
-| `/add-spec` | Create a custom spec file for patterns not covered by /sync-stack. |
-| `/verify` | Before commits. Audits code against your specs. |
-| `/learn` | Understand code or concepts. Works on anything. |
+| `/add-spec` | Creates a new spec file for patterns not covered by `/sync-stack`. Asks what type (coding, architecture, design, documentation, config, or custom), names it, creates a template, and registers it in stack-config.yaml. Use when you have project-specific patterns you want enforced. |
+| `/verify` | Audits your code against your specs without making changes. Runs all quality gates, then checks your code against each spec file looking for violations. Reports what passed and what didn't. Use before commits or to check if code follows your patterns. |
+| `/learn` | Explains anything in plain English. Give it a topic, code snippet, or concept and it breaks it down simply. Use when you want to understand something without jargon. Works on anything, not just your codebase. |
 
 ---
 
@@ -138,9 +145,9 @@ You approve → Claude implements → Runs quality gates → Done
 
 ```
 .claude/
-├── CLAUDE.md              # Core instructions
+├── CLAUDE.md              # Core instructions for Claude
 ├── commands/              # Slash commands
-│   ├── development/       # start-task, add-feature, process-tasks
+│   ├── development/       # start-task, add-feature, process-tasks, commit, pr
 │   ├── project-management/# sync-stack, init-project, update-framework
 │   ├── specs/             # add-spec, verify
 │   └── utilities/         # learn

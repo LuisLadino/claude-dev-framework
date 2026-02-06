@@ -26,7 +26,7 @@ Open an issue with:
 ### Improve Commands
 
 Commands live in `.claude/commands/` organized by category:
-- `development/` - start-task, add-feature, process-tasks
+- `development/` - start-task, add-feature, process-tasks, commit, pr
 - `project-management/` - init-project, sync-stack, generate-project-specs, update-framework
 - `specs/` - add-spec, verify
 - `utilities/` - learn

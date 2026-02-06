@@ -1,14 +1,14 @@
 # /commit
 
-Commit changes following your version-control specs.
+Commit all changes following your version-control specs.
 
 ---
 
 ## STEP 1: Load Specs
 
-Read `.claude/specs/config/version-control.md` for commit format and conventions.
+Read `.claude/specs/config/version-control.md` for commit format.
 
-If not found, use conventional commits format: `type(scope): description`
+If not found, use conventional commits: `type(scope): description`
 
 ---
 
@@ -20,64 +20,31 @@ git diff --staged
 git diff
 ```
 
-Show user:
-- Staged changes
-- Unstaged changes
-- Untracked files
-
 If nothing to commit, say so and stop.
 
 ---
 
-## STEP 3: Stage Files
+## STEP 3: Documentation Check
 
-If there are unstaged changes, ask:
+Before committing, check if documentation needs updating:
 
-```
-Stage all changes? (yes / select / cancel)
-```
+| If you changed... | Consider updating... |
+|-------------------|----------------------|
+| Commands (`.claude/commands/`) | README.md, CONTRIBUTING.md, CHANGELOG.md |
+| Skills (`.claude/skills/`) | README.md, CHANGELOG.md |
+| Specs structure (`.claude/specs/`) | README.md, CHANGELOG.md |
+| Any new feature | CHANGELOG.md |
+| Any bug fix | CHANGELOG.md |
 
-- **yes** - Stage all modified and new files
-- **select** - Let user specify which files
-- **cancel** - Stop
-
----
-
-## STEP 4: Generate Message
-
-Based on the diff, generate a commit message following the spec format.
-
-Show the message and ask:
-
-```
-Commit message:
-[generated message]
-
-Proceed? (yes / edit / cancel)
-```
-
-- **yes** - Commit with this message
-- **edit** - Let user modify the message
-- **cancel** - Stop (changes stay staged)
+If docs need updating, update them now before committing.
 
 ---
 
-## STEP 5: Commit
+## STEP 4: Stage and Commit
 
 ```bash
-git commit -m "message"
+git add -A
+git commit -m "generated message"
 ```
 
-Show result. Ask if user wants to push.
-
----
-
-## STEP 6: Push (Optional)
-
-If user wants to push:
-
-```bash
-git push
-```
-
-If no upstream, ask before setting one.
+Show result.
