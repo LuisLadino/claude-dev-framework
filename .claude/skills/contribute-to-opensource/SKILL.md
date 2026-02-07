@@ -2,10 +2,23 @@
 name: contribute-to-opensource
 description: >
   Set up the framework to contribute to an open source project.
-  Use when the user wants to contribute to an open source project, is working
-  with open source code they might contribute to, or wants to match an external
-  project's coding patterns and contribution guidelines.
+  Use when the user wants to: contribute to open source, work on an OSS project,
+  submit a PR to an external repo, match another project's patterns, understand
+  contribution guidelines, clone and contribute, fork a project, or match external
+  coding conventions.
+user-invocable: false
 ---
+
+## Trigger Phrases
+
+Invoke this skill when you hear:
+- "open source", "OSS", "contribute", "contribution"
+- "external project", "their repo", "their codebase"
+- "match their patterns", "follow their conventions"
+- "submit a PR to [external project]"
+- "fork", "clone and contribute"
+- "contribution guidelines", "their coding style"
+- "I want to contribute to [project name]"
 
 # /contribute-to-opensource
 

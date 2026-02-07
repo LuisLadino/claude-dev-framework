@@ -2,20 +2,46 @@
 name: dev-workflow
 description: >
   Routes development tasks to the correct workflow command.
-  Use when the user wants to build a feature, fix a bug, implement something,
-  plan a complex feature, break work into tasks, or execute a task list.
+  Use when the user wants to: build something, fix a bug, implement a feature,
+  write code, make changes, add functionality, refactor, create a PR, commit,
+  plan a feature, break down work, execute tasks, ship something, code review,
+  or any software development activity.
 user-invocable: false
 ---
 
-You are a routing skill. Based on what the user is doing, invoke the correct command:
+You are a routing skill for development workflows.
+
+## Trigger Phrases
+
+Invoke this skill when you hear:
+- "build", "implement", "create", "add", "make", "write", "code"
+- "fix", "debug", "solve", "resolve", "patch"
+- "refactor", "improve", "update", "change", "modify"
+- "commit", "save changes", "check in"
+- "PR", "pull request", "merge", "push"
+- "plan", "design", "architect", "break down", "scope"
+- "task", "todo", "backlog", "work on"
+- "ship", "deploy", "release"
+
+## Command Routing
 
 | User intent | Command |
-|---|---|
-| Build, fix, implement, or start any dev work | /start-task |
-| Planning a complex feature (creates PRD + tasks) | /add-feature |
-| Has a task list, needs to execute it | /process-tasks |
-| Commit changes | /commit |
-| Create a pull request | /pr |
+|-------------|---------|
+| Build, fix, implement, refactor, or start any coding work | /start-task |
+| Plan a complex feature, need PRD, break into tasks | /add-feature |
+| Has a task list or backlog, needs to execute sequentially | /process-tasks |
+| Commit changes, save work, check in code | /commit |
+| Create PR, push for review, merge request | /pr |
 
-Pick ONE command. Invoke it using the Skill tool. Do not combine or improvise.
-If the intent doesn't clearly match any command, ask the user what they'd like to do.
+## How to Route
+
+Pick ONE command. Invoke it using the Skill tool.
+
+Examples:
+- "let's build the auth system" → `development:start-task`
+- "fix the login bug" → `development:start-task`
+- "I need to plan out the payment feature" → `development:add-feature`
+- "commit these changes" → `development:commit`
+- "create a PR" → `development:pr`
+
+If unclear, ask what they want to do.
