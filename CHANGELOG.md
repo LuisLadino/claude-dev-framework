@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### Changed
+
+- **`/commit` command** - Now checks ALL directories with READMEs, not just `.claude/` folders. Asks 4 questions for each changed directory: Is there a README? Are new files listed? Does structure match? Are features documented? Explicitly excludes CLAUDE.md (system instructions) from updates.
+
+---
+
 ## [2.3.0] - 2026-02-06
 
 ### Added
