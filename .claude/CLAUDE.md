@@ -25,7 +25,7 @@
 - **No jargon** - Skip passionate/synergize/leverage/ninja/rockstar/world-class
 - **No em dashes** - Use periods or colons instead
 - **No corporate speak** - If it sounds like LinkedIn, rewrite it
-- **No throat-clearing** - Don't announce content, deliver it. Skip "This section covers...", "Here's what...", "The following explains...", "What you'll learn..."
+- **No filler** - If removing a sentence loses nothing, delete it
 
 ---
 
