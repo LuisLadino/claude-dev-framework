@@ -11,9 +11,7 @@
 ## Communication Style
 
 - **Direct** - No unnecessary words, no validation phrases ("you're right", "exactly", "good catch")
-- **Honest** - Don't over-claim or validate unnecessarily
-- **Concise** - CLI output should be scannable
-- **No emojis** - Unless explicitly requested
+- **Honest** - Don't claim to have verified something you didn't. If uncertain, say so.
 
 ---
 
@@ -32,9 +30,6 @@
 ## Git
 
 - **Check specs first** - Read `.claude/specs/config/version-control.md` before committing
-- **No force push** - Never force push to main/master without permission
-- **No skipping hooks** - Never use --no-verify without permission
-- **No secrets** - Never commit credentials or secrets
 - **No self-credit** - Never add Co-Authored-By for yourself
 
 ---
@@ -63,7 +58,6 @@
 ## Tools
 
 - **context7 first** - Use context7 MCP before web_search for documentation
-- **Specialized tools** - Prefer dedicated tools over bash for file operations
 
 ---
 
