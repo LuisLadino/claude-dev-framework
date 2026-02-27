@@ -41,14 +41,20 @@ For each directory or file you changed, ask:
 
 | If you changed... | Check/update... |
 |-------------------|-----------------|
-| Any directory with a README | That directory's README.md |
-| `.claude/commands/` | README.md, CONTRIBUTING.md |
-| `.claude/skills/` | README.md |
-| `.claude/specs/` | README.md |
-| Source code | Relevant docs/, README files |
-| Configuration | README or docs explaining config |
-| New feature | CHANGELOG.md (if exists) |
-| Bug fix | CHANGELOG.md (if exists) |
+| `.claude/commands/` | `./README.md` (commands section), routing skills in `.claude/skills/*/SKILL.md` |
+| `.claude/skills/` | `./README.md`, the changed skill's SKILL.md |
+| `.claude/specs/` | `.claude/specs/README.md` |
+| Source code | Relevant `docs/`, README files near the code |
+| Configuration | README or docs explaining that config |
+| New feature | `CHANGELOG.md` (if exists) |
+| Bug fix | `CHANGELOG.md` (if exists) |
+
+### If You Added a New Command
+
+1. Is it listed in `./README.md` commands table?
+2. Is it in the "When to Use What" section if applicable?
+3. Is it in the directory structure diagram?
+4. Does a routing skill need updating? Check `.claude/skills/*/SKILL.md` for routing tables that cover this command's domain (e.g., `specs-sync` routes to `/verify`, `/audit`, `/add-spec`).
 
 ### What NOT to Update
 
