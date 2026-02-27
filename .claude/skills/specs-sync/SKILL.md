@@ -26,7 +26,8 @@ Invoke this skill when you hear:
 |-------------|---------|
 | Add a new custom coding spec, define a standard | /add-spec |
 | Discover patterns from code, sync config | /sync-stack |
-| Audit code quality, verify before commit/release | /verify |
+| Check code against specs, verify before commit | /verify |
+| Deep review (security, performance, tests) with Agent Teams | /audit |
 
 ## How to Route
 
@@ -38,5 +39,8 @@ Examples:
 - "verify the code before I commit" → `specs:verify`
 - "check code quality" → `specs:verify`
 - "create a standard for API responses" → `specs:add-spec`
+- "deep code review" → `specs:audit`
+- "security audit" → `specs:audit`
+- "review for performance issues" → `specs:audit`
 
 If unclear, ask what they want to do.

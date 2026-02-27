@@ -76,7 +76,8 @@ That's it. Claude now follows your patterns.
 ### Checking Code Quality
 
 ```
-/verify                  # Audit code against your specs
+/verify                  # Check code against your specs
+/audit                   # Deep parallel review (security, performance, tests)
 ```
 
 ### Understanding Code
@@ -115,7 +116,8 @@ That's it. Claude now follows your patterns.
 | Command | Description |
 |---------|-------------|
 | `/add-spec` | Creates a new spec file for patterns not covered by `/sync-stack`. Asks what type (coding, architecture, design, documentation, config, or custom), names it, creates a template, and registers it in stack-config.yaml. Use when you have project-specific patterns you want enforced. |
-| `/verify` | Audits your code against your specs without making changes. Runs all quality gates, then checks your code against each spec file looking for violations. Reports what passed and what didn't. Use before commits or to check if code follows your patterns. |
+| `/verify` | Checks your code against your specs without making changes. Runs all quality gates, then checks your code against each spec file looking for violations. Reports what passed and what didn't. Use before commits or to check if code follows your patterns. |
+| `/audit` | Deep parallel code review using Agent Teams (experimental). Spawns 3 reviewers: security, performance, and test coverage. Each reviews independently, then findings are synthesized into a prioritized report. Uses ~3x tokens but catches issues a single reviewer might miss. |
 | `/learn` | Explains anything in plain English. Give it a topic, code snippet, or concept and it breaks it down simply. Use when you want to understand something without jargon. Works on anything, not just your codebase. |
 
 ---
@@ -149,7 +151,7 @@ You approve → Claude implements → Runs quality gates → Done
 ├── commands/              # Slash commands
 │   ├── development/       # start-task, add-feature, process-tasks, commit, pr
 │   ├── project-management/# sync-stack, init-project, update-framework
-│   ├── specs/             # add-spec, verify
+│   ├── specs/             # add-spec, verify, audit
 │   └── utilities/         # learn
 ├── skills/                # Auto-routing (you don't call these directly)
 └── specs/                 # YOUR project's specs
