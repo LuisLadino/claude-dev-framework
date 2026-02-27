@@ -24,6 +24,47 @@ Wait for user's initial description.
 
 ---
 
+## STEP 2.5: Parallel Research (Optional)
+
+For complex features, offer Agent Teams research.
+
+**Ask:** "This seems complex. Research in parallel with Agent Teams? (yes/no/skip)"
+
+- **yes** - Spawn research team
+- **no** - Continue with standard flow (STEP 3)
+- **skip** - Don't ask again this session
+
+### If yes:
+
+Spawn 3 teammates with specific roles:
+
+**Teammate 1 - UX Researcher:**
+"Research UX patterns for [feature]. Find: similar implementations in this codebase,
+common UI patterns for this type of feature, potential user flows, edge cases to handle.
+Report findings in bullet points."
+
+**Teammate 2 - Technical Analyst:**
+"Analyze technical requirements for [feature]. Find: architectural implications,
+dependencies needed, integration points with existing code, potential risks or blockers.
+Report findings in bullet points."
+
+**Teammate 3 - Edge Case Finder:**
+"Play devil's advocate for [feature]. Find: what could go wrong, missing requirements,
+security considerations, accessibility needs, performance concerns.
+Report findings in bullet points."
+
+### Wait for all teammates, then:
+
+1. Synthesize findings into a research summary
+2. Show user: "Research complete. Key findings: [summary]. Continue to requirements?"
+3. Use findings to inform STEP 3 questions (skip questions already answered by research)
+
+### Token note:
+
+Parallel research uses ~3x tokens. Worth it for features touching multiple systems. Overkill for simple CRUD or single-component features.
+
+---
+
 ## STEP 3: Gather Requirements
 
 Ask these questions (skip any the user already answered):
