@@ -2,9 +2,9 @@
 name: specs-sync
 description: >
   Routes specs management tasks to the correct command.
-  Use when the user wants to: add a coding spec, create a standard, define patterns,
+  Use when the user wants to: add a coding spec, define patterns,
   verify code quality, check for issues, audit code, lint, validate, discover patterns,
-  or any code quality and standards activity.
+  or any code quality and specs activity.
 user-invocable: false
 ---
 
@@ -24,7 +24,7 @@ Invoke this skill when you hear:
 
 | User intent | Command |
 |-------------|---------|
-| Add a new custom coding spec, define a standard | /add-spec |
+| Add a new custom coding spec, define a spec | /add-spec |
 | Discover patterns from code, sync config | /sync-stack |
 | Check code against specs, verify before commit | /verify |
 | Deep review (security, performance, tests) with Agent Teams | /audit |
@@ -38,7 +38,7 @@ Examples:
 - "what patterns does this codebase use" → `project-management:sync-stack`
 - "verify the code before I commit" → `specs:verify`
 - "check code quality" → `specs:verify`
-- "create a standard for API responses" → `specs:add-spec`
+- "create a spec for API responses" → `specs:add-spec`
 - "deep code review" → `specs:audit`
 - "security audit" → `specs:audit`
 - "review for performance issues" → `specs:audit`

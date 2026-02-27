@@ -11,9 +11,9 @@
 Use `/add-spec` for rules that are specific to your project or organization:
 
 - **Internal API conventions** - Your REST/GraphQL patterns, not a library's
-- **Company naming standards** - Variable naming, file naming conventions
+- **Company naming specs** - Variable naming, file naming conventions
 - **Security requirements** - Auth rules, data handling, input validation
-- **Accessibility standards** - Your a11y requirements
+- **Accessibility specs** - Your a11y requirements
 - **Business logic rules** - Domain-specific patterns
 - **Custom categories** - Anything unique to your project
 
@@ -36,9 +36,9 @@ Use `/add-spec` for rules that are specific to your project or organization:
 
 Ask the user which type of spec to add:
 
-1. **Coding** - Internal coding standards (`.claude/specs/coding/`)
+1. **Coding** - Internal coding specs (`.claude/specs/coding/`)
 2. **Architecture** - System design rules (`.claude/specs/architecture/`)
-3. **Documentation** - Doc standards (`.claude/specs/documentation/`)
+3. **Documentation** - Doc specs (`.claude/specs/documentation/`)
 4. **Design** - Design rules (`.claude/specs/design/`)
 5. **Config** - Operational rules (`.claude/specs/config/`)
 6. **Custom** - User specifies directory name
