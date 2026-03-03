@@ -26,6 +26,7 @@
 - **No em dashes** - Use periods or colons instead
 - **No corporate speak** - If it sounds like LinkedIn, rewrite it
 - **No filler** - If removing a sentence loses nothing, delete it
+- **Human voice** - All writing should read like a person wrote it. No labeled sections in prose, no "Here's what I found:" scaffolding. Use bullets only when listing items, not to structure flowing text.
 
 ---
 
