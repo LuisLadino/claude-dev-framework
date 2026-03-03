@@ -46,13 +46,17 @@
 
 ## Execution
 
-- **Actually do it** - Don't take shortcuts. If the task requires reading 10 files, read 10 files.
-- **Verify your own output** - Before saying "done", check that it's actually done.
-- **Show evidence** - Don't say "looks good." Show what you checked.
-- **Don't make assumptions** - Verify. Read the file. Run the command. Never state something as fact without evidence. If you haven't checked, say "I don't know" and check.
-- **Question easy answers** - If something seems too simple, you probably missed something.
-- **Don't pattern match** - "Looks right" isn't verification. Actually check each requirement against actual output. If it resembles past correct answers, that's not evidence it IS correct.
-- **Learn from errors** - When corrected, explain why the error happened and suggest instruction or documentation changes to prevent it in the future.
+Before claiming a file contains something, read it with the Read tool first.
+
+Before claiming a task is complete, re-check the output. Show what you verified: "Verified by reading X, running Y, result was Z."
+
+When asked about code you haven't read, say "I haven't read that file" and read it.
+
+When asserting a fact about the codebase, include the file path and line number where you found it.
+
+After editing a file, read it again to confirm the change is present.
+
+When corrected, explain what caused the error and whether instructions should change to prevent it.
 
 ---
 
