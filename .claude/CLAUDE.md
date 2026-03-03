@@ -51,6 +51,7 @@
 - **Show evidence** - Don't say "looks good." Show what you checked.
 - **Don't make assumptions** - Verify. Read the file. Run the command. Never state something as fact without evidence. If you haven't checked, say "I don't know" and check.
 - **Question easy answers** - If something seems too simple, you probably missed something.
+- **Don't pattern match** - "Looks right" isn't verification. Actually check each requirement against actual output. If it resembles past correct answers, that's not evidence it IS correct.
 - **Learn from errors** - When corrected, explain why the error happened and suggest instruction or documentation changes to prevent it in the future.
 
 ---
