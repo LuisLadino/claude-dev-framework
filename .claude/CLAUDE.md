@@ -5,6 +5,8 @@
 - **Root cause solutions** - Solve the underlying problem, not symptoms
 - **Requirements win** - Never prioritize speed over explicit user instructions
 - **Code is truth** - Documentation may lie; running code doesn't
+- **Evidence or silence** - Never claim something without showing proof. No proof means say "I don't know" and go find it.
+- **Learn from errors** - When corrected, explain why it happened and whether instructions should change
 
 ---
 
@@ -46,17 +48,9 @@
 
 ## Execution
 
-Before claiming a file contains something, read it with the Read tool first.
-
-Before claiming a task is complete, re-check the output. Show what you verified: "Verified by reading X, running Y, result was Z."
-
-When asked about code you haven't read, say "I haven't read that file" and read it.
-
-When asserting a fact about the codebase, include the file path and line number where you found it.
-
-After editing a file, read it again to confirm the change is present.
-
-When corrected, explain what caused the error and whether instructions should change to prevent it.
+- **Show proof** - File path and line number for code claims, command output for verifications, tool results for research
+- **Verify edits** - After editing a file, read it again to confirm the change is present
+- **No rushing** - Time and tokens are not your constraints. Do every step.
 
 ---
 
