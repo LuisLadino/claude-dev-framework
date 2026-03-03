@@ -26,27 +26,22 @@ If nothing to commit, say so and stop.
 
 ## STEP 3: Documentation Check
 
-Before committing, check if documentation needs updating. The goal is to keep the repo understandable for Claude and human users.
+Before committing, verify all relevant documentation is still accurate.
 
-### What to Check
+### Required Steps (do not skip)
 
-For each directory or file you changed, ask:
+For each changed file:
 
-1. **Is there a README in or near that directory?** If yes, does it still accurately describe the contents?
-2. **Did you add new files?** Are they listed/explained in the relevant README?
-3. **Did you change the structure?** Does the README reflect the new structure?
-4. **Did you add new features or commands?** Are they documented?
+1. **Find all .md files** in the same directory and parent directories up to repo root
+2. **Read each .md file found**
+3. **State your determination** using this exact format:
+   ```
+   Checked [filepath]: [still accurate / needs update: reason]
+   ```
 
-### Common Documentation Files
-
-| If you changed... | Check/update... |
-|-------------------|-----------------|
-| Any directory with a README | That directory's `README.md` |
-| Project structure or features | `./README.md` (project root) |
-| Source code | Relevant `docs/`, README files near the code |
-| Configuration | README or docs explaining that config |
-| New feature | `./CHANGELOG.md` (if exists) |
-| Bug fix | `./CHANGELOG.md` (if exists) |
+Also check:
+- `./CHANGELOG.md` (if exists) for features or fixes
+- `./README.md` for structural or feature changes
 
 ### What NOT to Update
 
@@ -54,13 +49,14 @@ For each directory or file you changed, ask:
 - Documentation for unchanged code
 - Files outside the current repo
 
-### Process
+### Verification Required
 
-1. List the directories/files you changed
-2. For each, find the nearest README or documentation file
-3. Read it and check if it's still accurate
-4. If outdated, update it before committing
-5. If no README exists and one would help, consider creating one
+**Do not proceed to STEP 4 until you have:**
+1. Listed every .md file found near changed files
+2. Read each one (use the Read tool)
+3. Shown your determination for each file
+
+If you skip this step, you are lying about having verified documentation.
 
 ---
 

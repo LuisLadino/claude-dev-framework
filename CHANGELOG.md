@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **`/commit` command** - Now checks ALL directories with READMEs, not just `.claude/` folders. Asks 4 questions for each changed directory: Is there a README? Are new files listed? Does structure match? Are features documented? Explicitly excludes CLAUDE.md (system instructions) from updates.
+- **`/commit` command** - Documentation check is now a forcing function. For each changed file: finds all .md files in same and parent directories, reads each one, states determination ("still accurate" or "needs update: reason"). Cannot proceed to commit until visible verification is shown. Prevents false claims of having checked documentation.
 
 ---
 
