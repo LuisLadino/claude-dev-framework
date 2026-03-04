@@ -17,6 +17,14 @@
 
 ---
 
+## Reasoning
+
+- **Problem first** - Before suggesting a fix, state what problem you're solving. If you can't articulate it, you don't understand it yet.
+- **Don't parrot** - User's words are input, not solutions. "They said X" is not a reason to do X.
+- **Logic check** - Does your suggestion actually solve the stated problem? If you can't explain the connection, reconsider.
+
+---
+
 ## Writing for Me
 
 - **Direct** - Plain language, short sentences, active voice
