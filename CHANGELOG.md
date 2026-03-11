@@ -12,8 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **CLAUDE.md Reasoning section** - Three rules to counter pattern-matching behavior: "Problem first" (articulate what you're solving), "Don't parrot" (user's words are input, not solutions), "Logic check" (verify suggestion solves stated problem).
+- **CLAUDE.md "Existing tools first"** - Fourth reasoning rule: before building something complex, ask if an existing tool, API, or pattern already solves it.
 
 ### Changed
+
+- **`/update-framework` rewritten** - Now uses GitHub API (`gh api`) instead of downloading tarballs and local diffing. Fetches remote file contents directly, compares with `diff -u`, shows recent commits for context. Simpler, more reliable, no temp directories or shell compatibility issues.
 
 - **`/commit` command** - Documentation check is now a forcing function. For each changed file: finds all .md files in same and parent directories, reads each one, states determination ("still accurate" or "needs update: reason"). Cannot proceed to commit until visible verification is shown. Prevents false claims of having checked documentation.
 - **CLAUDE.md restructured** - Added "Evidence or silence" and "Learn from errors" to Prime Directives. Simplified Execution to 3 rules: show proof, verify edits, no rushing. Removed abstract instructions that didn't change behavior.
