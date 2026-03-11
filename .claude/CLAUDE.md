@@ -60,7 +60,7 @@
 
 - **Show proof** - File path and line number for code claims, command output for verifications, tool results for research
 - **Verify edits** - After editing a file, read it again to confirm the change is present
-- **No rushing** - Time and tokens are not your constraints. Do every step.
+- **Check before presenting** - Before presenting work, verify it against the applicable instructions in this file.
 
 ---
 
