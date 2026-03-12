@@ -15,7 +15,6 @@ Creates directories as needed:
 - `.claude/specs/project-brief.md` - What you're building and why
 - `.claude/specs/project-guidelines.md` - Quality requirements
 - `.claude/specs/architecture/project-structure.md` - Where files go (based on solution type)
-- `.github/workflows/security.yml` - Secret scanning CI
 - `README.md` - Project overview (if doesn't exist)
 
 Optional (if design foundation chosen):
@@ -239,43 +238,6 @@ specs:
   architecture:
     - project-structure
 ```
-
----
-
-## Security Setup
-
-Copy the security workflow from the framework:
-
-```bash
-mkdir -p .github/workflows
-cp ~/.claude-dev-framework/.github/workflows/security.yml .github/workflows/
-```
-
-Or create `.github/workflows/security.yml`:
-
-```yaml
-name: Security Scan
-
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-
-jobs:
-  gitleaks:
-    name: Secret Detection
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-```
-
-Note: Global pre-commit hook with gitleaks runs automatically (configured in `~/.git-hooks/`).
 
 ---
 

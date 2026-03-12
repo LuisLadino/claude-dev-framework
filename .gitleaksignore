@@ -1,6 +1,0 @@
-# Gitleaks ignore file
-# False positives from example/template code
-
-# Example API keys in documentation
-3fa6982dd4e38bdf79bc6afaa608efaffa887917:.claude/config/deployment.md:generic-api-key:710
-3fa6982dd4e38bdf79bc6afaa608efaffa887917:.claude/templates/config/_deployment.md:generic-api-key:710
