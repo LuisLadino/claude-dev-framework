@@ -72,17 +72,21 @@
 
 ## Antigravity
 
-At session start, you receive the active session UUID and brain path. Use these directly.
+At session start, you receive:
+- **Current workspace** - Your working directory
+- **Session UUID** - For brain path
+- **Workspace context** - From previous sessions in this project
 
 **Brain structure** (`~/.gemini/antigravity/brain/{uuid}/`):
-- `session_state.json` - Session context (read at start, write before compaction)
-- `artifacts/` - Documentation, plans, analyses you create
-- `tasks.json` - Work progress tracking
+- `session_state.json` - Session context with workspace field for per-project persistence
+- Artifacts, plans, analyses
 
-**Knowledge** (`~/.gemini/antigravity/knowledge/`):
-- Persistent patterns and learnings across sessions
-- Search with `ag_knowledge_search` before planning
+**Context flow**:
+1. SessionStart reads session_state.json matching current workspace (not just most recent UUID)
+2. You work with full project context
+3. PreCompact prompts you to write session_state.json with workspace field
+4. Next session in same project loads that context
 
 **Direct file access**: Read and write brain files directly. No MCP required.
 
-**Gemini handoffs**: Use `ag_browser_agent` or `ag_generate_image` only for browser/image tasks that require Gemini's cloud capabilities.
+**Gemini handoffs**: Use `ag_browser_agent` or `ag_generate_image` only for browser/image tasks.
