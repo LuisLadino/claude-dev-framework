@@ -72,6 +72,17 @@
 
 ## Antigravity
 
-Gemini watches your terminal and creates context (artifacts, tasks, knowledge) from observation. You execute; Gemini captures.
+At session start, you receive the active session UUID and brain path. Use these directly.
 
-For browser interaction or image generation, use `ag_browser_agent` or `ag_generate_image` to hand off to Gemini.
+**Brain structure** (`~/.gemini/antigravity/brain/{uuid}/`):
+- `session_state.json` - Session context (read at start, write before compaction)
+- `artifacts/` - Documentation, plans, analyses you create
+- `tasks.json` - Work progress tracking
+
+**Knowledge** (`~/.gemini/antigravity/knowledge/`):
+- Persistent patterns and learnings across sessions
+- Search with `ag_knowledge_search` before planning
+
+**Direct file access**: Read and write brain files directly. No MCP required.
+
+**Gemini handoffs**: Use `ag_browser_agent` or `ag_generate_image` only for browser/image tasks that require Gemini's cloud capabilities.
