@@ -72,4 +72,6 @@
 
 ## Antigravity
 
-Call `ag_get_session_info()` at session start. Follow the patterns it returns.
+Gemini watches your terminal and creates context (artifacts, tasks, knowledge) from observation. You execute; Gemini captures.
+
+For browser interaction or image generation, use `ag_browser_agent` or `ag_generate_image` to hand off to Gemini.

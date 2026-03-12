@@ -13,11 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **CLAUDE.md Reasoning section** - Three rules to counter pattern-matching behavior: "Problem first" (articulate what you're solving), "Don't parrot" (user's words are input, not solutions), "Logic check" (verify suggestion solves stated problem).
 - **CLAUDE.md "Existing tools first"** - Fourth reasoning rule: before building something complex, ask if an existing tool, API, or pattern already solves it.
-- **MCP bridge for Antigravity** - Claude can now call Antigravity tools directly via MCP (`ag_get_session_info`, `ag_browser_agent`, `ag_generate_image`, `ag_create_task`, `ag_knowledge_search`, `ag_publish_artifact`). Daemon watcher handles local operations, Gemini handles cloud operations. Identity context parsed from `my-brain/CLAUDE.md` at session start.
+- **MCP bridge for Antigravity** - Claude can call `ag_get_session_info` for context, `ag_browser_agent` and `ag_generate_image` for handoffs to Gemini. Identity context parsed from `my-brain/CLAUDE.md` at session start.
 
 ### Changed
 
-- **CLAUDE.md Antigravity section** - Replaced 80-line manual handoff instructions with 2-line MCP pattern: "Call `ag_get_session_info()` at session start. Follow the patterns it returns."
+- **Antigravity architecture** - Gemini is the observer. It watches Claude's terminal and creates context (artifacts, tasks, knowledge) from observation. Claude executes; Gemini captures. Handoffs only for browser/image capabilities Claude lacks.
+- **CLAUDE.md Antigravity section** - Simplified to explain observer model: Gemini watches and creates context, Claude uses handoffs for browser/image.
 
 ### Removed
 
