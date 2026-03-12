@@ -1,37 +1,57 @@
 ---
-description: Detect tech stack and generate coding specs. Creates stack-config.yaml and spec files so /start-task follows your patterns.
+description: Wire project together, verify setup, generate coding specs. Handles the HOW after /init-project defines the WHAT.
 ---
 
 # /sync-stack
 
-**Set up your project's specs so Claude enforces your patterns.**
+**Wire your project together and generate specs for HOW to build it.**
 
-The goal: Every `/start-task` loads your specs and follows YOUR patterns.
+/init-project defines WHAT you're building. /sync-stack handles HOW:
+- Installs dependencies and wires configs together
+- Verifies everything is connected properly
+- Generates coding specs from official docs
+- Creates a wiring diagram showing how pieces connect
 
 ---
 
 ## Usage
 
 ```
-/sync-stack              # Full setup (all spec types)
-/sync-stack prisma       # Add specs for a specific dependency
+/sync-stack              # Full setup (install, wire, verify, generate specs)
+/sync-stack prisma       # Add a specific dependency and update wiring
+/sync-stack --verify     # Just verify wiring, don't regenerate specs
 ```
 
 ---
 
-## What Gets Generated
+## What This Does
 
-`/sync-stack` researches your stack via context7/web and generates specs with **real patterns from official docs**. Not empty templates.
+### 1. Project Setup
+- Detects package manager (npm, yarn, pnpm, bun)
+- Installs dependencies if lock file missing
+- Creates config files that reference each other correctly
+
+### 2. Wiring Verification
+- Checks configs are connected (tsconfig paths, tailwind content, vite plugins)
+- Validates peer dependencies are satisfied
+- Ensures build pipeline will work
+
+### 3. Spec Generation
+Researches your stack via context7 and generates specs with **real patterns from official docs**.
 
 | Category | What it contains | Source |
 |----------|------------------|--------|
 | `coding/` | Language and library patterns | Official docs (React, TS, etc.) |
-| `architecture/` | File structure, project organization | Framework docs (Next.js, etc.) |
-| `design/` | Design tokens, component styling | Styling framework + your config |
+| `architecture/` | File structure, wiring diagram | Framework docs + detected config |
+| `design/` | Implementation patterns for design system | Styling framework docs |
 | `documentation/` | Code comments, docstrings | Language conventions (TSDoc, etc.) |
 | `config/` | Git, testing, deployment, env | Detected from project files |
 
-Only creates categories relevant to your stack. Skips categories with no detectable conventions.
+### 4. Wiring Diagram
+Generates `.claude/specs/architecture/wiring.md` with mermaid diagram showing:
+- Dependencies and their relationships
+- Config file connections
+- Build pipeline flow
 
 ---
 
@@ -54,7 +74,87 @@ find .claude/specs -name "*.md" -o -name "*.yaml" 2>/dev/null
 
 ---
 
-## STEP 2: Detect Stack
+## STEP 2: Check Design System (UI Projects)
+
+**Before generating specs, verify design decisions are established for UI projects.**
+
+Determine if project has UI:
+- Solution type is website, web app, mobile app, or desktop app
+- Has component files (.tsx, .vue, .svelte, etc.)
+- Has styling config (tailwind.config.*, styles/, css files)
+
+If UI project, check for design system:
+
+```bash
+# Check for design system spec
+ls .claude/specs/design/design-system.md 2>/dev/null
+```
+
+**If design system doesn't exist:**
+
+```
+DESIGN SYSTEM REQUIRED
+
+This project has a UI but no design system is defined.
+
+Design decisions (colors, typography, component patterns) must be established
+before generating technical specs. Otherwise, specs can't enforce visual consistency.
+
+Options:
+1. Run /init-project to define design system now
+2. Create .claude/specs/design/design-system.md manually
+3. Skip design specs (not recommended for production UI)
+
+How do you want to proceed?
+```
+
+**WAIT FOR USER RESPONSE** before continuing.
+
+If user chooses option 1, run /init-project's design section only, then continue.
+
+---
+
+## STEP 3: Project Setup (New Projects)
+
+**If this is a new project without dependencies installed, set it up.**
+
+### Check if setup needed
+
+```bash
+# Check for lock files
+ls package-lock.json yarn.lock pnpm-lock.yaml bun.lockb 2>/dev/null
+```
+
+**If no lock file exists but package.json exists:**
+
+```
+PROJECT NOT INSTALLED
+
+Dependencies are defined but not installed. This project needs setup.
+
+Detected package manager: [npm/yarn/pnpm/bun based on config or preference]
+
+Install dependencies and wire configs? (yes/no)
+```
+
+**WAIT FOR USER RESPONSE**
+
+### If user confirms, run setup:
+
+1. Install dependencies:
+```bash
+[npm install / yarn / pnpm install / bun install]
+```
+
+2. Check for missing peer dependencies and install if needed
+
+3. Verify lock file was created
+
+**If lock file exists:** Skip to Step 4.
+
+---
+
+## STEP 4: Detect Stack
 
 Check for config files to detect the tech stack:
 
@@ -106,7 +206,7 @@ Confirm? (yes / modify)
 
 ---
 
-## STEP 3: Research Each Technology
+## STEP 5: Research Each Technology
 
 For each confirmed technology, research official patterns.
 
@@ -172,7 +272,7 @@ Never use general WebSearch for framework patterns.
 
 ---
 
-## STEP 4: Scan Existing Code
+## STEP 6: Scan Existing Code
 
 If the project has existing code, scan for patterns to preserve.
 
@@ -205,7 +305,7 @@ find . -name "*.test.*" -o -name "*.spec.*" | head -10
 
 ---
 
-## STEP 5: Update Config Specs
+## STEP 7: Update Config Specs
 
 Read and update the config template files based on detected project settings.
 
@@ -282,11 +382,11 @@ Update the template with:
 
 ---
 
-## STEP 6: Generate All Specs
+## STEP 8: Generate All Specs
 
 **Use the research from Step 3 to fill in actual content.** Don't create empty templates. Every spec should contain real patterns from official docs.
 
-### 6a: Ask which categories to generate
+### 8a: Ask which categories to generate
 
 ```
 SPEC CATEGORIES
@@ -301,7 +401,7 @@ Based on your stack, these specs can be generated:
 Generate all? (yes / customize)
 ```
 
-### 6b: Generate coding specs
+### 8b: Generate coding specs
 
 For each technology with code patterns, create `[technology]-specs.md` with **actual patterns from research**:
 
@@ -340,7 +440,7 @@ export function Button({ label, onClick }: ButtonProps) {
 [Patterns found in existing code that differ from defaults]
 ```
 
-### 6c: Generate architecture specs
+### 8c: Generate architecture specs
 
 If framework has file structure conventions, create or update `architecture/project-structure.md` with **actual conventions from docs**:
 
@@ -383,48 +483,57 @@ app/
 - Don't import server components into client components
 ```
 
-### 6d: Generate design specs
+### 8d: Generate design implementation specs
 
-If using a styling framework, create `design-system.md` with **actual tokens from config + docs**:
+**The design system (colors, typography, component styles) should already exist from /init-project.**
+
+This step generates technical specs for IMPLEMENTING that design system using the detected styling framework.
+
+Read the existing design system:
+```bash
+cat .claude/specs/design/design-system.md
+```
+
+Then create `design/[framework]-implementation.md` with patterns for applying the design system:
 
 ```markdown
-# Design System
+# [Styling Framework] Implementation
 
-Source: tailwind.config.ts + https://tailwindcss.com/docs
+Source: [framework docs] + .claude/specs/design/design-system.md
 
-## Tokens
+## How to Apply Design Tokens
 
-### Colors (from tailwind.config)
-- `primary` - #3b82f6 (blue-500)
-- `secondary` - #6b7280 (gray-500)
-- `destructive` - #ef4444 (red-500)
-
-### Spacing
-Use Tailwind's default scale: 1 = 0.25rem
+### Colors
+[How to reference design system colors in this framework]
+- Tailwind: Use custom theme colors defined in tailwind.config
+- CSS Modules: Import from design tokens CSS file
+- styled-components: Use theme provider values
 
 ### Typography
-- Headings: font-bold
-- Body: font-normal text-gray-900
+[How to apply typography decisions in this framework]
 
-## Component Styling
+### Spacing
+[How to apply spacing rhythm in this framework]
 
-Use Tailwind classes directly. Avoid @apply except for base styles.
+## Component Patterns
 
-```tsx
-// Good
-<button className="px-4 py-2 bg-primary text-white rounded-md">
+[Framework-specific patterns for implementing the component styles defined in design-system.md]
 
-// Avoid
-<button className={styles.button}>
-```
+### Buttons
+```[code example showing how to build a button matching design system]```
+
+### Cards
+```[code example showing how to build a card matching design system]```
 
 ## Anti-Patterns
 
-- Don't use inline styles - use Tailwind classes
-- Don't create custom CSS when Tailwind has a utility
+- [Framework-specific things to avoid]
+- Always reference design system tokens, never hardcode values
 ```
 
-### 6e: Generate documentation specs
+**If design-system.md doesn't exist:** STEP 2 should have caught this. If somehow skipped, prompt user to define design system before generating implementation specs.
+
+### 8e: Generate documentation specs
 
 If language/framework has doc conventions, create `code-comments.md` with **actual conventions**:
 
@@ -468,7 +577,146 @@ export async function getUser(userId: string): Promise<User | null> {
 
 ---
 
-## STEP 7: Update stack-config.yaml
+## STEP 9: Generate Wiring Diagram
+
+Generate `.claude/specs/architecture/wiring.md` with a mermaid diagram showing how the project is wired together.
+
+### What to include
+
+1. **Dependencies** - Key packages and their relationships
+2. **Config connections** - What config files reference each other
+3. **Build pipeline** - How source becomes output
+4. **Data flow** - How data moves through the app (if applicable)
+
+### Generate the diagram
+
+```markdown
+# Project Wiring
+
+## Overview Diagram
+
+```mermaid
+graph TB
+    subgraph "Source"
+        src[src/]
+        components[components/]
+        pages[pages/]
+    end
+
+    subgraph "Config"
+        pkg[package.json]
+        ts[tsconfig.json]
+        vite[vite.config.ts]
+        tw[tailwind.config.ts]
+    end
+
+    subgraph "Build"
+        bundler[Vite]
+        tsc[TypeScript]
+        postcss[PostCSS]
+    end
+
+    subgraph "Output"
+        dist[dist/]
+    end
+
+    pkg --> bundler
+    ts --> tsc
+    tw --> postcss
+    src --> tsc
+    tsc --> bundler
+    postcss --> bundler
+    bundler --> dist
+
+    ts -.-> |paths| src
+    tw -.-> |content| components
+    tw -.-> |content| pages
+    vite -.-> |plugins| ts
+    vite -.-> |plugins| postcss
+```
+
+## Config Dependencies
+
+| Config File | Depends On | Referenced By |
+|-------------|------------|---------------|
+| tsconfig.json | - | vite.config.ts |
+| tailwind.config.ts | - | postcss.config.js |
+| vite.config.ts | tsconfig.json, tailwind | package.json scripts |
+
+## Key Connections
+
+- **TypeScript paths** → Must match actual directory structure
+- **Tailwind content** → Must include all files with classes
+- **Vite plugins** → Must be installed and configured in order
+```
+
+### Adapt to actual stack
+
+The above is an example. Generate a diagram that reflects THIS project's actual:
+- Framework (Next.js, Astro, Vite, etc.)
+- Language (TypeScript, JavaScript, etc.)
+- Styling (Tailwind, CSS Modules, etc.)
+- Build tools
+- Config files present
+
+---
+
+## STEP 10: Verify Wiring
+
+**Check that all configs are actually connected properly.**
+
+### 10a: TypeScript paths
+
+```bash
+# Check tsconfig paths exist
+cat tsconfig.json | jq '.compilerOptions.paths'
+# Verify those paths resolve to actual directories
+```
+
+### 10b: Tailwind content
+
+```bash
+# Check tailwind content array
+cat tailwind.config.* | grep -A5 "content"
+# Verify patterns match actual file locations
+```
+
+### 10c: Build script
+
+```bash
+# Try a build
+npm run build 2>&1 | head -20
+```
+
+### 10d: Peer dependencies
+
+```bash
+# Check for peer dep warnings
+npm ls 2>&1 | grep -i "peer"
+```
+
+### Report issues
+
+If any verification fails:
+
+```
+WIRING ISSUES DETECTED
+
+1. [Issue description]
+   - Expected: [what should be]
+   - Found: [what is]
+   - Fix: [how to fix]
+
+2. [Next issue...]
+
+Fix these issues? (yes/no)
+```
+
+**WAIT FOR USER RESPONSE** before making fixes.
+
+---
+
+## STEP 11: Update stack-config.yaml
 
 Update `.claude/specs/stack-config.yaml` with:
 
@@ -509,7 +757,7 @@ Only include categories that have specs. Don't add empty categories.
 
 ---
 
-## STEP 8: Summary
+## STEP 12: Summary
 
 Show what was created/updated:
 
@@ -517,32 +765,58 @@ Show what was created/updated:
 SYNC COMPLETE
 
 Stack: Next.js 14 + TypeScript + Tailwind + Vitest
+Package manager: pnpm
+Lock file: pnpm-lock.yaml ✓
 
-Config specs (updated):
-- config/version-control.md (conventional commits)
-- config/testing.md (vitest, tests in __tests__/)
-- config/deployment.md (Vercel)
-- config/environment.md (12 env vars)
+Setup:
+- Dependencies installed (147 packages)
+- No peer dependency issues
 
-Coding specs (created):
+Wiring verification:
+- TypeScript paths ✓
+- Tailwind content ✓
+- Build script ✓
+- All configs connected properly
+
+Specs generated:
+- config/version-control.md
+- config/testing.md
+- config/deployment.md
+- config/environment.md
 - coding/nextjs-specs.md
 - coding/typescript-specs.md
 - coding/tailwind-specs.md
 - coding/vitest-specs.md
-
-Architecture specs (created):
-- architecture/project-structure.md (Next.js App Router conventions)
-
-Design specs (created):
-- design/design-system.md (Tailwind tokens)
+- architecture/project-structure.md
+- architecture/wiring.md (with mermaid diagram)
+- design/tailwind-implementation.md
 
 Updated: stack-config.yaml
 
 Next steps:
+- Review wiring diagram in architecture/wiring.md
 - Review specs in .claude/specs/
-- Edit any patterns that don't match your preferences
 - Run /start-task to build with these specs enforced
 ```
+
+### Save state for pivot detection
+
+After successful sync, save a hash of key files for detecting future changes:
+
+```bash
+# Create .claude/specs/.sync-state.json
+{
+  "lastSync": "2024-01-15T10:30:00Z",
+  "hashes": {
+    "package.json": "[md5 hash]",
+    "package-lock.json": "[md5 hash]",
+    "tsconfig.json": "[md5 hash]",
+    "tailwind.config.ts": "[md5 hash]"
+  }
+}
+```
+
+This allows future `/sync-stack` runs to detect what changed and prompt for updates.
 
 ---
 

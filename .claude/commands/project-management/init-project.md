@@ -1,68 +1,134 @@
 ---
-description: Define product requirements before coding. Creates project-brief, guidelines, structure. For complex projects needing upfront planning.
+description: Define product requirements before coding. Creates project-brief, architecture decisions, design system. For complex projects needing upfront planning.
 ---
 
 # /init-project
 
-**Define what you're building before you build it.**
+**Define WHAT you're building before you build it.**
 
-Optional. Use for complex projects where you need to document the product before coding.
-
-For simple projects, skip this and run `/sync-stack` directly.
+This command establishes the product vision, architecture decisions, and design system. Run `/sync-stack` after to handle the technical wiring (HOW).
 
 ---
 
 ## What This Creates
 
-Creates directories as needed:
+```
+.claude/specs/
+├── project-brief.md              # What you're building and why
+├── architecture/
+│   ├── decisions.md              # Key technical choices (ADRs)
+│   └── project-structure.md      # Where files go
+└── design/
+    └── design-system.md          # Visual decisions (UI projects only)
+```
 
-- `.claude/specs/project-brief.md` - What you're building and why
-- `.claude/specs/project-guidelines.md` - Quality requirements
-- `.claude/specs/architecture/project-structure.md` - Where files go (based on solution type)
-- `README.md` - Project overview (if doesn't exist)
-
-Optional (if design foundation chosen):
-- `.claude/specs/design/design-tokens.json` - Colors, spacing, typography
+Also creates `README.md` if it doesn't exist.
 
 ---
 
-## Questions
+## STEP 1: Product Definition
 
-### 1. What problem are you solving?
+### 1.1 Problem Statement
 
-### 2. Who is this for?
+Ask and document:
+- What problem are you solving?
+- Who experiences this problem?
+- What happens if it's not solved?
+
+### 1.2 Target Users
+
 - General public
-- Specific professional group
-- Internal tool
-- Other
+- Specific professional group (which?)
+- Internal tool (for whom?)
+- Developers (library/API consumers)
 
-### 3. What type of solution?
+### 1.3 Solution Type
+
 - Website / web app
 - Mobile app
 - Desktop app
 - CLI tool
 - API / backend service
-- Library
+- Library / SDK
 
-### 4. What's the main thing users will do?
+### 1.4 Core User Journey
 
-### 5. How will you know it's successful?
+What's the ONE main thing users will do? Describe the happy path:
+1. User arrives/opens...
+2. User does...
+3. User achieves...
 
-### 6. Project name?
+### 1.5 Success Criteria
+
+How will you know it's working?
+- Metrics (if applicable)
+- User outcomes
+- Technical requirements (performance, scale)
+
+### 1.6 Project Name
 
 ---
 
-## Quality Approach
+## STEP 2: Architecture Decisions
+
+**Document key technical choices upfront.** These become the source of truth.
+
+### 2.1 Tech Stack Direction
+
+Ask about preferences or constraints:
+- Language preference? (TypeScript, Python, Go, etc.)
+- Framework preference? (React, Vue, Astro, etc.)
+- Any required integrations? (specific APIs, databases, services)
+- Deployment target? (Vercel, AWS, self-hosted, etc.)
+
+**Don't finalize exact versions yet** - /sync-stack handles that. Just capture intent.
+
+### 2.2 Architecture Pattern
+
+Based on solution type, propose and confirm:
+- **Web app**: SSR, SSG, SPA, or hybrid?
+- **API**: REST, GraphQL, or RPC?
+- **CLI**: Single command or subcommands?
+- **Library**: Sync, async, or both?
+
+### 2.3 Key Decisions
+
+For each significant choice, document:
+
+```markdown
+## Decision: [Title]
+
+**Context:** Why this decision matters
+**Options considered:** What alternatives exist
+**Decision:** What we chose
+**Rationale:** Why this option
+**Consequences:** What this enables/limits
+```
+
+Common decisions to capture:
+- State management approach
+- Authentication strategy
+- Data fetching pattern
+- Error handling strategy
+- Testing approach
+
+---
+
+## STEP 3: Quality Approach
 
 Choose one:
 
-1. **Speed First** - MVP, prototype. Basic testing.
-2. **Balanced** - Production app. Good test coverage, WCAG AA.
-3. **Quality First** - Enterprise/regulated. High coverage, WCAG AAA.
+1. **Speed First** - MVP, prototype. Basic testing, manual QA.
+2. **Balanced** - Production app. Good test coverage, WCAG AA, CI/CD.
+3. **Quality First** - Enterprise/regulated. High coverage, WCAG AAA, security audits.
 
 ---
 
-## Design Foundation
+## STEP 4: Design System (Required for UI Projects)
+
+**If solution type is Website/Web App, Mobile App, or Desktop App, design system must be defined before building.**
+
+### Visual Direction
 
 What's the primary feel?
 1. Professional & Corporate
@@ -70,8 +136,104 @@ What's the primary feel?
 3. Minimal & Modern
 4. Warm & Friendly
 5. Technical
+6. Other (describe)
 
-Generates design tokens and basic design system file.
+### Color Palette
+
+Ask for or propose based on visual direction:
+- **Primary** - Main brand/action color
+- **Secondary** - Supporting color
+- **Accent** - Highlights, calls to action
+- **Neutrals** - Background, text, borders (typically a gray scale)
+- **Semantic** - Success, warning, error states
+
+### Typography
+
+- **Headings** - Font family, weights
+- **Body** - Font family, base size
+- **Code/Mono** - If applicable
+
+### Component Patterns
+
+Establish baseline decisions:
+- **Buttons** - Rounded, square, pill? Solid, outline, ghost?
+- **Cards** - Border, shadow, padding rhythm?
+- **Spacing** - Tight, comfortable, spacious?
+- **Borders** - Sharp, slightly rounded, very rounded?
+
+### Motion (if applicable)
+
+- Transitions: subtle, moderate, expressive?
+- Page transitions: none, fade, slide?
+
+---
+
+## Design System Output
+
+Generate `.claude/specs/design/design-system.md`:
+
+```markdown
+# Design System
+
+## Visual Direction
+[Selected feel + any additional context]
+
+## Colors
+
+### Brand
+- Primary: [hex] - [usage]
+- Secondary: [hex] - [usage]
+- Accent: [hex] - [usage]
+
+### Neutrals
+- Background: [hex]
+- Surface: [hex]
+- Border: [hex]
+- Text: [hex]
+- Text Muted: [hex]
+
+### Semantic
+- Success: [hex]
+- Warning: [hex]
+- Error: [hex]
+
+## Typography
+
+### Fonts
+- Headings: [font family]
+- Body: [font family]
+- Mono: [font family]
+
+### Scale
+- Use [tight/default/relaxed] line heights
+- Base size: [px/rem]
+
+## Components
+
+### Buttons
+[Describe button style: rounded corners, padding, hover states]
+
+### Cards
+[Describe card style: borders, shadows, padding]
+
+### Spacing
+[Describe spacing rhythm: tight/comfortable/spacious, base unit]
+
+### Borders
+[Describe border style: radius values, border widths]
+
+## Motion
+
+[Describe transition approach]
+```
+
+Update stack-config.yaml:
+
+```yaml
+specs:
+  design:
+    - design-system
+```
 
 ---
 
@@ -233,18 +395,81 @@ tests/              # Test files
 
 ---
 
-## After Generating
+## STEP 5: Generate Outputs
 
-Update `stack-config.yaml` to register the new spec:
+### 5.1 Project Brief
+
+Generate `.claude/specs/project-brief.md`:
+
+```markdown
+# [Project Name]
+
+## Problem
+[From 1.1]
+
+## Users
+[From 1.2]
+
+## Solution
+[Solution type + core journey from 1.3-1.4]
+
+## Success Criteria
+[From 1.5]
+
+## Quality Approach
+[From Step 3]
+```
+
+### 5.2 Architecture Decisions
+
+Generate `.claude/specs/architecture/decisions.md`:
+
+```markdown
+# Architecture Decisions
+
+## Tech Stack Direction
+- Language: [preference]
+- Framework: [preference]
+- Deployment: [target]
+
+## Architecture Pattern
+[From 2.2]
+
+## Key Decisions
+
+### Decision 1: [Title]
+**Context:** ...
+**Decision:** ...
+**Rationale:** ...
+
+[Continue for each decision from 2.3]
+```
+
+### 5.3 Project Structure
+
+Generate `.claude/specs/architecture/project-structure.md` based on solution type (use templates below).
+
+### 5.4 Design System (UI projects)
+
+Generate `.claude/specs/design/design-system.md` (see Step 4 output format).
+
+### 5.5 Update stack-config.yaml
 
 ```yaml
 specs:
   architecture:
+    - decisions
     - project-structure
+  design:        # Only if UI project
+    - design-system
 ```
 
 ---
 
 ## After This
 
-Run `/sync-stack` to set up your tech stack and coding specs.
+Run `/sync-stack` to:
+1. Install dependencies based on your tech direction
+2. Wire configs together properly
+3. Generate coding specs from official docs
+4. Create wiring diagram showing how everything connects

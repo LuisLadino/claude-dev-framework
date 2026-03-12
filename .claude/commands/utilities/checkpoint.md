@@ -19,11 +19,24 @@ Save session context to the Antigravity brain for future sessions.
    - **Brain path** (look for "Brain:")
    - **Current workspace** (look for "Current workspace:")
 
-2. Review what was accomplished this session:
-   - Run `git status` and `git diff --stat` to see changes
-   - Review conversation for tasks completed, decisions made, issues found
+2. Load session tracking data:
+   ```bash
+   cat .claude/session-changes.json
+   ```
 
-3. Write the following files to the brain path:
+   This file (maintained by hooks) contains:
+   - `filesModified` - exact list of files edited
+   - `filesCreated` - new files created
+   - `commands` - bash commands run
+   - `operations` - timestamped log of all changes
+
+   **Use this data instead of guessing from git or conversation.**
+
+3. Supplement with conversation review:
+   - Tasks completed, decisions made, issues found
+   - Patterns learned, blockers encountered
+
+4. Write the following files to the brain path:
 
 ### task.md (append)
 
@@ -79,8 +92,37 @@ Save session context to the Antigravity brain for future sessions.
 - ...
 ```
 
-4. Confirm all files were written
+4. Update persistent learnings (if applicable)
+
+If there were mistakes, corrections, or insights this session, append to the persistent learnings file:
+
+**Path:** `~/.gemini/antigravity/brain/learnings.md`
+
+### What to capture:
+
+**Mistakes made:**
+- What went wrong? Not surface level - the real reason.
+- Example: "Pattern-matched to expected answer instead of verifying"
+
+**Corrections received:**
+- What did Luis correct? What does it reveal about the gap?
+
+**Patterns noticed:**
+- About Claude's behavior, Luis's preferences, the work
+
+**Format:**
+```markdown
+### [Date: YYYY-MM-DD]
+- [Mistake/correction/insight]
+- Root cause: [actual reason, not surface]
+```
+
+Append to the Session Log section at the bottom of the file.
+
+5. Confirm all files were written
 
 ## Why This Matters
 
 These files are read at the next session start. Richer artifacts = better context = more effective Claude.
+
+The learnings file is PERSISTENT across all sessions. It's how Claude actually improves over time instead of just saying "I'll do better."

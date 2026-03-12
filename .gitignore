@@ -143,6 +143,15 @@ sandbox/
 /CLAUDE.md
 
 # ============================================
+# Claude Session Files (not committed)
+# ============================================
+# Session-specific tracking (reset each session)
+.claude/session-changes.json
+
+# Sync state (machine-specific)
+.claude/specs/.sync-state.json
+
+# ============================================
 # Documentation Build
 # ============================================
 # If using static site generators for docs

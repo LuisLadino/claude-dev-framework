@@ -14,6 +14,7 @@ A portable framework that lives in your project's `.claude/` directory. It gives
 - **Your coding specs** - Enforced on every task
 - **Stack awareness** - Adapts to any technology
 - **Quality gates** - Format, lint, type-check, test before completion
+- **Hooks** - Safety, tracking, and context injection automation
 - **Self-updating** - Pull improvements from your fork
 
 Works with any stack: React, Vue, Svelte, Next.js, Python, Rust, Go, etc.
@@ -152,7 +153,12 @@ You approve → Claude implements → Runs quality gates → Done
 │   ├── development/       # start-task, add-feature, process-tasks, commit, pr
 │   ├── project-management/# sync-stack, init-project, update-framework
 │   ├── specs/             # add-spec, verify, audit
-│   └── utilities/         # learn
+│   └── utilities/         # learn, checkpoint
+├── hooks/                 # Automation hooks
+│   ├── safety/            # Block dangerous commands
+│   ├── tracking/          # Log file changes, commands, detect pivots
+│   ├── quality/           # Verify before stop
+│   └── context/           # Session init, command routing, voice injection
 ├── skills/                # Auto-routing (you don't call these directly)
 └── specs/                 # YOUR project's specs
     ├── stack-config.yaml  # Stack + active specs list + quality gates

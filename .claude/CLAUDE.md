@@ -4,7 +4,16 @@
 
 1. **Stack config** - `.claude/specs/stack-config.yaml` defines this project's patterns. Run /sync-stack to generate it.
 2. **Commands** - `.claude/commands/` contains workflows. Check frontmatter for when to use each.
-3. **Specs** - Loaded by /start-task based on stack-config.yaml.
+3. **Specs** - Define how the project should be built and managed. Loaded by /start-task based on stack-config.yaml.
+4. **Hooks** - `.claude/hooks/` automates safety, tracking, and context injection. See Hooks section below.
+
+**Specs cover all decisions:**
+- **coding/** - Language and library patterns
+- **architecture/** - File structure, project organization
+- **design/** - Visual design system (colors, typography, components). Required for UI projects.
+- **config/** - Version control, testing, deployment, environment
+
+For UI projects: design system must be defined before building. Run /init-project to establish design decisions, then /sync-stack to generate technical specs for implementing them.
 
 ---
 
@@ -57,17 +66,37 @@
 
 ---
 
-## Antigravity
+## Hooks
 
-**SessionStart hook provides:**
+### Global Hooks (in ~/.claude/settings.json)
 
-- Identity, current task, previous session context, reference artifacts, brain path
+**SessionStart:** Loads identity, current task, previous session, learnings from `~/.gemini/antigravity/brain/`
 
-**PreCompact hook writes:**
+**PreCompact:** Writes task.md and session_state.json to brain. Detects corrections and prompts for learnings capture.
 
-- `task.md` and `session_state.json` to brain path
+### Project Hooks (in .claude/hooks/)
 
-**MCP tools (in ~/.mcp.json):**
+**PreToolUse (Bash):** `block-dangerous.js` blocks rm -rf, force push, credential exposure
+
+**PostToolUse (Edit|Write):** `track-changes.js` logs modifications to `.claude/session-changes.json`
+
+**PostToolUse (Bash):** `command-log.js` logs commands. `detect-pivot.js` prompts for /sync-stack on dep changes.
+
+**UserPromptSubmit:** `inject-context.js` does three things:
+1. Suggests slash commands based on natural language patterns
+2. Injects reasoning checkpoints when no command matches
+3. Loads voice profile from brain when writing content
+
+**Stop:** `verify-before-stop.js` checks for debug statements in modified files
+
+### Brain Files (global, in ~/.gemini/antigravity/brain/)
+
+- `learnings.md` - Persistent learnings loaded at SessionStart
+- `voice-profile.md` - Voice rules injected when writing content
+- `{session-uuid}/task.md` - Per-workspace task history
+- `{session-uuid}/session_state.json` - Per-workspace session state
+
+### MCP Tools (in ~/.mcp.json)
 
 - `ag_browser_agent`, `ag_generate_image` → handoff.md for Gemini
-- `ag_knowledge_search` → searches brain files directly
+- `ag_knowledge_search` → searches brain files
