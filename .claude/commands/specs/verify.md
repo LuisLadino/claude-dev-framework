@@ -1,3 +1,7 @@
+---
+description: Check code against project specs before committing. Quick validation that code follows established patterns.
+---
+
 # /verify - Specs Check
 
 Verify code follows your specs. Use before commits or when reviewing work.

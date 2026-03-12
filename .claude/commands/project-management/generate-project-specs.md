@@ -1,3 +1,7 @@
+---
+description: Generate comprehensive project docs (PRD, architecture, API specs). For enterprise/team projects needing full documentation.
+---
+
 # /generate-project-specs
 
 **Generate detailed project documentation.**

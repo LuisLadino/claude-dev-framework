@@ -1,3 +1,7 @@
+---
+description: Deep code review using parallel agents. Security, performance, tests, architecture reviewed simultaneously.
+---
+
 # /audit - Deep Parallel Code Review
 
 Run a thorough code review with multiple perspectives using Agent Teams. Each reviewer focuses on a distinct domain so nothing gets overlooked.

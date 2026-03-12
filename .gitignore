@@ -136,6 +136,13 @@ example-output/
 sandbox/
 
 # ============================================
+# Project Context (not part of template)
+# ============================================
+# Root CLAUDE.md describes THIS repo, not part of framework
+# Each project should create their own
+/CLAUDE.md
+
+# ============================================
 # Documentation Build
 # ============================================
 # If using static site generators for docs

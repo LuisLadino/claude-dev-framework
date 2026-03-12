@@ -1,3 +1,7 @@
+---
+description: Execute a task list one at a time. Use after /add-feature to implement each subtask with verification and commits.
+---
+
 # /process-tasks - Execute Task List
 
 Use after `/add-feature` to implement a feature one subtask at a time. Executes ONE subtask at a time, runs `/start-task` workflow for each, verifies after each, waits for approval, commits after each parent task, and can pause/resume anytime.

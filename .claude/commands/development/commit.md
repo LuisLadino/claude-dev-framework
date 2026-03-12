@@ -1,3 +1,7 @@
+---
+description: Commit changes using project specs. Loads version-control.md, checks docs are accurate, then commits.
+---
+
 # /commit
 
 Commit all changes following your version-control specs.

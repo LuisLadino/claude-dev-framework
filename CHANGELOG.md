@@ -11,6 +11,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Command frontmatter descriptions** - All 14 commands now have YAML frontmatter with descriptions explaining when to use each command.
+- **CLAUDE.md "Look it up" directive** - Added with emphasis: "IMPORTANT: Look it up - When unsure, use WebSearch or context7 to verify. Don't guess."
+- **Root CLAUDE.md for project context** - Each project should have a root CLAUDE.md describing what the project IS (gitignored in framework since it's project-specific).
+
+### Changed
+
+- **CLAUDE.md Prime Directives rewritten** - Clearer wording throughout: "Code is truth" → "Trust code over docs", "Requirements win" → "Follow instructions exactly", "Prove it or say you don't know" → "No guessing", "Simple over clever" → "Keep it simple", "Don't parrot" → "Think independently".
+- **version-control.md** - Added "No Co-Authored-By for Claude. Never add yourself as a contributor."
+
+### Removed
+
+- **Routing skills deleted** - dev-workflow, project-sync, specs-sync, custom-commands. These weren't activating and commands are already exposed directly in the Skill tool. contribute-to-opensource skill remains.
+
+### Previous Unreleased
+
 - **CLAUDE.md Reasoning section** - Three rules to counter pattern-matching behavior: "Problem first" (articulate what you're solving), "Don't parrot" (user's words are input, not solutions), "Logic check" (verify suggestion solves stated problem).
 - **CLAUDE.md "Existing tools first"** - Fourth reasoning rule: before building something complex, ask if an existing tool, API, or pattern already solves it.
 - **MCP bridge for Antigravity** - Claude can call `ag_get_session_info` for context, `ag_browser_agent` and `ag_generate_image` for handoffs to Gemini. Identity context parsed from `my-brain/CLAUDE.md` at session start.

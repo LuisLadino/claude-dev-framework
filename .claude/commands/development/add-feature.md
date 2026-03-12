@@ -1,3 +1,7 @@
+---
+description: Plan a complex feature before building. Creates PRD, breaks into tasks. Use when feature needs multiple components or design decisions.
+---
+
 # /add-feature - Plan a Complex Feature
 
 Use for features needing planning (multiple components, complex interactions, design decisions). Creates PRD and generates task breakdown in one flow.

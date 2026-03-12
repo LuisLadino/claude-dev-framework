@@ -1,3 +1,7 @@
+---
+description: Add a custom coding rule specific to this project. Use for internal conventions not covered by library docs.
+---
+
 # /add-spec
 
 **Add custom project-specific rules that aren't covered by library documentation.**

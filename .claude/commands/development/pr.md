@@ -1,3 +1,7 @@
+---
+description: Create a pull request. Checks branch status, generates summary from commits, creates PR with gh cli.
+---
+
 # /pr
 
 Create a pull request for the current branch.

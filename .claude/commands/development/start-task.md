@@ -1,3 +1,7 @@
+---
+description: Start any coding task. Loads stack config and specs, gathers requirements interactively, then executes.
+---
+
 # /start-task - Interactive Task Builder
 
 ## STEP 1: Load Stack Configuration

@@ -23,6 +23,8 @@ type: description
 Types: feat, fix, docs, style, refactor, test, chore
 ```
 
+**No Co-Authored-By for Claude.** Never add yourself as a contributor.
+
 Examples:
 - `feat: add user authentication`
 - `fix: resolve login redirect issue`

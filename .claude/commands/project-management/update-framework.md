@@ -1,3 +1,7 @@
+---
+description: Pull latest framework changes from source repo. Compares files, shows diffs, lets you selectively apply updates.
+---
+
 # /update-framework
 
 **Check for and apply updates from your framework source**

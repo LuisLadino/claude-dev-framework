@@ -1,3 +1,7 @@
+---
+description: Explain any topic using ELI5 style. Analogies, foundations first, no jargon. Use for ALL explanations.
+---
+
 # /learn - Explain Like I'm 5
 
 Teach me anything. Code, science, history, philosophy, how engines work, why the sky is blue. Any topic.

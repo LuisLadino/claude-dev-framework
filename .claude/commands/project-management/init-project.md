@@ -1,3 +1,7 @@
+---
+description: Define product requirements before coding. Creates project-brief, guidelines, structure. For complex projects needing upfront planning.
+---
+
 # /init-project
 
 **Define what you're building before you build it.**

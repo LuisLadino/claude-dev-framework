@@ -1,91 +1,72 @@
 # Claude Code Project Instructions
 
-## Prime Directives
+## How This Framework Works
 
-- **Root cause solutions** - Solve the underlying problem, not symptoms
-- **Requirements win** - Never prioritize speed over explicit user instructions
-- **Code is truth** - Documentation may lie; running code doesn't
-- **Evidence or silence** - Never claim something without showing proof. No proof means say "I don't know" and go find it.
-- **Learn from errors** - When corrected, explain why it happened and whether instructions should change
+1. **Stack config** - `.claude/specs/stack-config.yaml` defines this project's patterns. Run /sync-stack to generate it.
+2. **Commands** - `.claude/commands/` contains workflows. Check frontmatter for when to use each.
+3. **Specs** - Loaded by /start-task based on stack-config.yaml.
 
 ---
 
-## Communication Style
+## Prime Directives
+
+- **Root cause solutions** - Solve the underlying problem, not symptoms
+- **Follow instructions exactly** - Don't skip or shortcut what I explicitly asked for.
+- **Trust code over docs** - Documentation can be outdated. When in doubt, read the implementation.
+- **No guessing** - Don't claim something without proof. If unsure, say so and investigate.
+- **Learn from errors** - When corrected, explain why and whether instructions should change
+- **Use slash commands** - Before acting, check if a command exists for this task. They define the workflow.
+- **Keep it simple** - Easy to read, predictable patterns, easy to modify. Comments explain WHY, code shows WHAT.
+- **IMPORTANT: Look it up** - When unsure, use WebSearch or context7 to verify. Don't guess.
+- **Verify before presenting** - Before showing work, check that it actually does what you claim.
+
+---
+
+## Communication
 
 - **Direct** - No unnecessary words, no validation phrases ("you're right", "exactly", "good catch")
-- **Honest** - Don't claim to have verified something you didn't. If uncertain, say so.
+- **Honest** - If uncertain, say so. Don't claim to have verified something you didn't.
 
 ---
 
 ## Reasoning
 
-- **Problem first** - Before suggesting a fix, state what problem you're solving. If you can't articulate it, you don't understand it yet.
-- **Don't parrot** - User's words are input, not solutions. "They said X" is not a reason to do X.
-- **Logic check** - Does your suggestion actually solve the stated problem? If you can't explain the connection, reconsider.
-- **Existing tools first** - Before building or executing something complex, ask if an existing tool, API, or pattern already solves it. Reimplementing what exists is a red flag.
+- **Problem first** - State what problem you're solving before suggesting a fix
+- **Think independently** - User's words are input, not answers.
+- **Logic check** - Does your suggestion actually solve the stated problem?
+- **Existing tools first** - Check if a tool, API, or pattern already solves it before building
 
 ---
 
-## Writing for Me
+## Writing (output for me)
 
-- **Direct** - Plain language, short sentences, active voice
-- **Specific** - Real examples and numbers ("12 user interviews" not "extensive research")
-- **Honest** - No superlatives without evidence
+- **Plain language** - Short sentences, active voice, specific examples
 - **No jargon** - Skip passionate/synergize/leverage/ninja/rockstar/world-class
-- **No em dashes** - Use periods or colons instead
 - **No corporate speak** - If it sounds like LinkedIn, rewrite it
+- **No em dashes** - Use periods or colons
 - **No filler** - If removing a sentence loses nothing, delete it
-- **Human voice** - All writing should read like a person wrote it. No labeled sections in prose, no "Here's what I found:" scaffolding. Use bullets only when listing items, not to structure flowing text.
-
----
-
-## Git
-
-- **Check specs first** - Read `.claude/specs/config/version-control.md` before committing
-- **No self-credit** - Never add Co-Authored-By for yourself
-
----
-
-## Quality Standards
-
-- **Clear** - Easy to understand at a glance
-- **Consistent** - Follows predictable patterns
-- **Maintainable** - Simple to modify without breaking things
-- **Well-Documented** - Comments explain WHY (code shows WHAT)
-- **Pragmatic** - Solves real problems simply
+- **Human voice** - No "Here's what I found:" scaffolding
 
 ---
 
 ## Execution
 
-- **Show proof** - File path and line number for code claims, command output for verifications, tool results for research
-- **Verify edits** - After editing a file, read it again to confirm the change is present
-- **Check before presenting** - Before presenting work, verify it against the applicable instructions in this file.
-
----
-
-## Tools
-
-- **context7 first** - Use context7 MCP before web_search for documentation
+- **Show proof** - File path and line number for claims, command output for verifications
+- **Verify edits** - Read the file after editing to confirm the change
 
 ---
 
 ## Antigravity
 
-**What you receive at session start** (via SessionStart hook):
-- Identity: who Luis is, how he thinks, how to work with him
-- Current task: most recent task.md entry
-- Previous session: accomplished, open issues, patterns
-- Reference artifacts: list of brain files (read when needed)
-- Brain path: where to write artifacts
+**SessionStart hook provides:**
 
-**What you write** (via PreCompact hook or /checkpoint):
-- `task.md` - Append task entry with status and summary
-- `session_state.json` - Workspace, accomplished, open_issues, patterns
+- Identity, current task, previous session context, reference artifacts, brain path
 
-**MCP tools** (registered globally in ~/.mcp.json):
-- `ag_browser_agent` - Writes to handoff.md for Gemini to execute
-- `ag_generate_image` - Writes to handoff.md for Gemini to execute
-- `ag_knowledge_search` - Searches brain files directly
+**PreCompact hook writes:**
 
-**The hooks enforce behavior. Instructions in this file do not.**
+- `task.md` and `session_state.json` to brain path
+
+**MCP tools (in ~/.mcp.json):**
+
+- `ag_browser_agent`, `ag_generate_image` → handoff.md for Gemini
+- `ag_knowledge_search` → searches brain files directly

@@ -1,3 +1,7 @@
+---
+description: Detect tech stack and generate coding specs. Creates stack-config.yaml and spec files so /start-task follows your patterns.
+---
+
 # /sync-stack
 
 **Set up your project's specs so Claude enforces your patterns.**

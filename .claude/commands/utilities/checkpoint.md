@@ -1,3 +1,7 @@
+---
+description: Save session context to brain files. Use before ending work or context compaction to preserve what was accomplished.
+---
+
 # /checkpoint - Create Context Checkpoint
 
 Save session context to the Antigravity brain for future sessions.
