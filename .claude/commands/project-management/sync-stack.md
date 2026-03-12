@@ -106,19 +106,42 @@ Confirm? (yes / modify)
 
 For each confirmed technology, research official patterns.
 
-### Use context7 MCP first
+### REQUIRED: Use context7 MCP
 
 ```
 Use the context7 MCP tool to fetch documentation for [technology].
 Look for: project structure, naming conventions, common patterns, anti-patterns.
 ```
 
-### Fallback to WebSearch
+### If context7 fails
 
-If context7 doesn't have docs, use WebSearch:
-- "[technology] best practices 2024"
-- "[technology] official documentation patterns"
-- "[technology] + [other tech in stack] integration"
+**STOP and notify the user.** Do not silently fall back to web search.
+
+```
+CONTEXT7 UNAVAILABLE
+
+context7 returned an error for [technology]:
+[error message]
+
+Options:
+1. Retry context7
+2. Skip this technology for now
+3. Use WebFetch on official docs (e.g., react.dev, docs.astro.build)
+
+Note: Web search is NOT acceptable for core framework patterns.
+Official documentation only.
+```
+
+**WAIT FOR USER RESPONSE** before proceeding.
+
+### WebFetch (only with user approval)
+
+If user approves, use WebFetch on official documentation sites only:
+- react.dev (not random blogs)
+- docs.astro.build (not tutorials)
+- tailwindcss.com/docs (not Medium articles)
+
+Never use general WebSearch for framework patterns.
 
 ### Extract from research (categorized by spec type):
 
@@ -521,8 +544,11 @@ Next steps:
 
 ## Error Handling
 
+### context7 fails (network error, timeout)
+STOP. Notify user. Do not proceed with web search. Ask user how to proceed.
+
 ### context7 has no docs for [tech]
-Use WebSearch. Note in spec file that source is web research.
+Use WebFetch on official docs site only (with user approval). Note source in spec file.
 
 ### Can't detect stack
 Ask user directly: "What framework/language are you using?"
