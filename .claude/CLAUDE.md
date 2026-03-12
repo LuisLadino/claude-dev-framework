@@ -35,6 +35,7 @@
 - **Think independently** - User's words are input, not answers.
 - **Logic check** - Does your suggestion actually solve the stated problem?
 - **Existing tools first** - Check if a tool, API, or pattern already solves it before building
+- **Explain your reasoning** - When making decisions, share why and how it compares to best practices
 
 ---
 
