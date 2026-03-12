@@ -13,8 +13,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **CLAUDE.md Reasoning section** - Three rules to counter pattern-matching behavior: "Problem first" (articulate what you're solving), "Don't parrot" (user's words are input, not solutions), "Logic check" (verify suggestion solves stated problem).
 - **CLAUDE.md "Existing tools first"** - Fourth reasoning rule: before building something complex, ask if an existing tool, API, or pattern already solves it.
+- **MCP bridge for Antigravity** - Claude can now call Antigravity tools directly via MCP (`ag_get_session_info`, `ag_browser_agent`, `ag_generate_image`, `ag_create_task`, `ag_knowledge_search`, `ag_publish_artifact`). Daemon watcher handles local operations, Gemini handles cloud operations. Identity context parsed from `my-brain/CLAUDE.md` at session start.
 
 ### Changed
+
+- **CLAUDE.md Antigravity section** - Replaced 80-line manual handoff instructions with 2-line MCP pattern: "Call `ag_get_session_info()` at session start. Follow the patterns it returns."
+
+### Removed
+
+- **GEMINI.md** - Moved to global `~/.gemini/GEMINI.md`. Project-specific Gemini instructions no longer needed since MCP bridge handles coordination.
 
 - **`/update-framework` rewritten** - Now uses GitHub API (`gh api`) instead of downloading tarballs and local diffing. Fetches remote file contents directly, compares with `diff -u`, shows recent commits for context. Simpler, more reliable, no temp directories or shell compatibility issues.
 - **CLAUDE.md Execution section** - Replaced "No rushing" (abstract) with "Check before presenting" (actionable): verify work against applicable instructions before presenting it.
