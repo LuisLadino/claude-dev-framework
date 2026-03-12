@@ -315,10 +315,13 @@ export function Button({ label, onClick }: ButtonProps) {
 
 ### 6c: Generate architecture specs
 
-If framework has file structure conventions, create `file-structure.md` with **actual conventions from docs**:
+If framework has file structure conventions, create or update `architecture/project-structure.md` with **actual conventions from docs**:
+
+- If file exists (from /init-project): add framework-specific section
+- If file doesn't exist: create it with framework conventions
 
 ```markdown
-# File Structure
+# Project Structure
 
 Source: https://nextjs.org/docs/app/building-your-application/routing
 
@@ -463,7 +466,7 @@ specs:
     - tailwind-specs
     - vitest-specs
   architecture:
-    - file-structure
+    - project-structure
   design:
     - design-system
   documentation:
@@ -501,7 +504,7 @@ Coding specs (created):
 - coding/vitest-specs.md
 
 Architecture specs (created):
-- architecture/file-structure.md (Next.js App Router conventions)
+- architecture/project-structure.md (Next.js App Router conventions)
 
 Design specs (created):
 - design/design-system.md (Tailwind tokens)

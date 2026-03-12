@@ -21,6 +21,8 @@ specs:
   coding: []
     # - typescript-specs
     # - react-specs
+  architecture: []
+    # - project-structure  # Created by /init-project or /sync-stack
   config:
     - version-control
     - deployment
