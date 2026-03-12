@@ -72,21 +72,27 @@
 
 ## Antigravity
 
-At session start, you receive:
-- **Current workspace** - Your working directory
-- **Session UUID** - For brain path
-- **Workspace context** - From previous sessions in this project
+At session start, you receive the brain path and existing artifacts. Create and maintain artifacts the same way Gemini does.
 
-**Brain structure** (`~/.gemini/antigravity/brain/{uuid}/`):
-- `session_state.json` - Session context with workspace field for per-project persistence
-- Artifacts, plans, analyses
+**Brain path**: `~/.gemini/antigravity/brain/{uuid}/` (provided at session start)
 
-**Context flow**:
-1. SessionStart reads session_state.json matching current workspace (not just most recent UUID)
-2. You work with full project context
-3. PreCompact prompts you to write session_state.json with workspace field
-4. Next session in same project loads that context
+**Artifacts to create/update**:
 
-**Direct file access**: Read and write brain files directly. No MCP required.
+| File | When | Format |
+|------|------|--------|
+| `task.md` | When starting/completing tasks | `## Task: Name\n- Status: ...\n- Summary: ...\n- Updated: ISO timestamp` |
+| `implementation_plan.md` | When planning non-trivial work | Markdown with architecture, steps, rationale |
+| `{topic}_research.md` | When doing research | Findings, sources, conclusions |
+| `{feature}_summary.md` | When completing features | What was built, decisions made |
+| `session_state.json` | Before context compaction | JSON with workspace, accomplished, open_issues, patterns |
+
+**Artifact rules**:
+- Append to `task.md` (running log), replace others
+- Use descriptive filenames: `auth_implementation_plan.md` not just `plan.md`
+- Include timestamps
+- Write as you work, not just at end
+
+**On session start**: Read existing artifacts for context
+**Before compaction**: Write `session_state.json` with workspace path for next session
 
 **Gemini handoffs**: Use `ag_browser_agent` or `ag_generate_image` only for browser/image tasks.
