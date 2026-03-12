@@ -72,27 +72,20 @@
 
 ## Antigravity
 
-At session start, you receive the brain path and existing artifacts. Create and maintain artifacts the same way Gemini does.
+**What you receive at session start** (via SessionStart hook):
+- Identity: who Luis is, how he thinks, how to work with him
+- Current task: most recent task.md entry
+- Previous session: accomplished, open issues, patterns
+- Reference artifacts: list of brain files (read when needed)
+- Brain path: where to write artifacts
 
-**Brain path**: `~/.gemini/antigravity/brain/{uuid}/` (provided at session start)
+**What you write** (via PreCompact hook or /checkpoint):
+- `task.md` - Append task entry with status and summary
+- `session_state.json` - Workspace, accomplished, open_issues, patterns
 
-**Artifacts to create/update**:
+**MCP tools** (registered globally in ~/.mcp.json):
+- `ag_browser_agent` - Writes to handoff.md for Gemini to execute
+- `ag_generate_image` - Writes to handoff.md for Gemini to execute
+- `ag_knowledge_search` - Searches brain files directly
 
-| File | When | Format |
-|------|------|--------|
-| `task.md` | When starting/completing tasks | `## Task: Name\n- Status: ...\n- Summary: ...\n- Updated: ISO timestamp` |
-| `implementation_plan.md` | When planning non-trivial work | Markdown with architecture, steps, rationale |
-| `{topic}_research.md` | When doing research | Findings, sources, conclusions |
-| `{feature}_summary.md` | When completing features | What was built, decisions made |
-| `session_state.json` | Before context compaction | JSON with workspace, accomplished, open_issues, patterns |
-
-**Artifact rules**:
-- Append to `task.md` (running log), replace others
-- Use descriptive filenames: `auth_implementation_plan.md` not just `plan.md`
-- Include timestamps
-- Write as you work, not just at end
-
-**On session start**: Read existing artifacts for context
-**Before compaction**: Write `session_state.json` with workspace path for next session
-
-**Gemini handoffs**: Use `ag_browser_agent` or `ag_generate_image` only for browser/image tasks.
+**The hooks enforce behavior. Instructions in this file do not.**
