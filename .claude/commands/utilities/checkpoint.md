@@ -19,16 +19,20 @@ Save session context to the Antigravity brain for future sessions.
    - **Brain path** (look for "Brain:")
    - **Current workspace** (look for "Current workspace:")
 
-2. Load session tracking data:
+2. Load session tracking data from the brain:
    ```bash
-   cat .claude/session-changes.json
+   # Find the most recent session file for this workspace
+   ls -t ~/.gemini/antigravity/brain/*/sessions/*.json 2>/dev/null | head -5
+   # Read the most recent one (or the one matching your session start time)
+   cat [path-to-session-file]
    ```
 
-   This file (maintained by hooks) contains:
+   Session tracking files (maintained by hooks) contain:
    - `filesModified` - exact list of files edited
    - `filesCreated` - new files created
    - `commands` - bash commands run
    - `operations` - timestamped log of all changes
+   - `sessionStart` - when this session started
 
    **Use this data instead of guessing from git or conversation.**
 

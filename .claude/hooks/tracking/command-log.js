@@ -6,39 +6,19 @@
  * Event: PostToolUse (Bash)
  * Purpose: Logs all bash commands executed during session
  *
- * This data is used by:
- * - Learning review (what commands were run)
- * - Debugging (what happened in this session)
- * - /checkpoint for session summaries
+ * Stores tracking in brain:
+ * ~/.gemini/antigravity/brain/{workspace-uuid}/sessions/{session-id}.json
  */
 
 const fs = require('fs');
 const path = require('path');
 
-const SESSION_CHANGES_FILE = '.claude/session-changes.json';
-
-function loadSessionChanges() {
-  try {
-    const content = fs.readFileSync(SESSION_CHANGES_FILE, 'utf8');
-    return JSON.parse(content);
-  } catch {
-    return {
-      sessionStart: new Date().toISOString(),
-      filesModified: [],
-      filesCreated: [],
-      operations: [],
-      commands: []
-    };
-  }
-}
-
-function saveSessionChanges(data) {
-  const dir = path.dirname(SESSION_CHANGES_FILE);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-  fs.writeFileSync(SESSION_CHANGES_FILE, JSON.stringify(data, null, 2));
-}
+const {
+  findWorkspaceBrain,
+  getSessionId,
+  loadSessionTracking,
+  saveSessionTracking
+} = require('../lib/session-utils.js');
 
 // Read hook input from stdin
 let input = '';
@@ -61,24 +41,30 @@ function handleHook(data) {
     process.exit(0);
   }
 
-  // Load current session changes
-  const changes = loadSessionChanges();
+  const cwd = process.cwd();
+
+  // Find brain folder and session
+  const brainPath = findWorkspaceBrain(cwd);
+  const sessionId = getSessionId(brainPath);
+
+  // Load current session tracking
+  const tracking = loadSessionTracking(brainPath, sessionId);
 
   // Initialize commands array if needed
-  if (!changes.commands) {
-    changes.commands = [];
+  if (!tracking.commands) {
+    tracking.commands = [];
   }
 
   // Log the command
-  changes.commands.push({
+  tracking.commands.push({
     timestamp: new Date().toISOString(),
     command: command,
     exitCode: tool_response?.exitCode ?? null,
     success: tool_response?.exitCode === 0
   });
 
-  // Save updated changes
-  saveSessionChanges(changes);
+  // Save updated tracking
+  saveSessionTracking(brainPath, sessionId, tracking);
 
   process.exit(0);
 }

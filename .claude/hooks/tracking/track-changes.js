@@ -6,38 +6,19 @@
  * Event: PostToolUse (Edit|Write)
  * Purpose: Maintains a session log of all files modified
  *
- * This data is used by:
- * - /checkpoint for accurate session summaries
- * - /commit for knowing which files to stage
- * - Session state for brain artifacts
+ * Stores tracking in brain:
+ * ~/.gemini/antigravity/brain/{workspace-uuid}/sessions/{session-id}.json
  */
 
 const fs = require('fs');
 const path = require('path');
 
-const SESSION_CHANGES_FILE = '.claude/session-changes.json';
-
-function loadSessionChanges() {
-  try {
-    const content = fs.readFileSync(SESSION_CHANGES_FILE, 'utf8');
-    return JSON.parse(content);
-  } catch {
-    return {
-      sessionStart: new Date().toISOString(),
-      filesModified: [],
-      filesCreated: [],
-      operations: []
-    };
-  }
-}
-
-function saveSessionChanges(data) {
-  const dir = path.dirname(SESSION_CHANGES_FILE);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-  fs.writeFileSync(SESSION_CHANGES_FILE, JSON.stringify(data, null, 2));
-}
+const {
+  findWorkspaceBrain,
+  getSessionId,
+  loadSessionTracking,
+  saveSessionTracking
+} = require('../lib/session-utils.js');
 
 function fileExisted(filePath) {
   // Check git to see if file existed before
@@ -72,34 +53,40 @@ function handleHook(data) {
     process.exit(0);
   }
 
-  // Load current session changes
-  const changes = loadSessionChanges();
+  const cwd = process.cwd();
+
+  // Find brain folder and session
+  const brainPath = findWorkspaceBrain(cwd);
+  const sessionId = getSessionId(brainPath);
+
+  // Load current session tracking
+  const tracking = loadSessionTracking(brainPath, sessionId);
 
   // Determine if this is a create or modify
   const isCreate = tool_name === 'Write' && !fileExisted(filePath);
-  const relativePath = path.relative(process.cwd(), filePath);
+  const relativePath = path.relative(cwd, filePath);
 
   // Add to appropriate list (deduplicated)
   if (isCreate) {
-    if (!changes.filesCreated.includes(relativePath)) {
-      changes.filesCreated.push(relativePath);
+    if (!tracking.filesCreated.includes(relativePath)) {
+      tracking.filesCreated.push(relativePath);
     }
   } else {
-    if (!changes.filesModified.includes(relativePath)) {
-      changes.filesModified.push(relativePath);
+    if (!tracking.filesModified.includes(relativePath)) {
+      tracking.filesModified.push(relativePath);
     }
   }
 
   // Log the operation with timestamp
-  changes.operations.push({
+  tracking.operations.push({
     timestamp: new Date().toISOString(),
     tool: tool_name,
     file: relativePath,
     type: isCreate ? 'create' : 'modify'
   });
 
-  // Save updated changes
-  saveSessionChanges(changes);
+  // Save updated tracking
+  saveSessionTracking(brainPath, sessionId, tracking);
 
   process.exit(0);
 }

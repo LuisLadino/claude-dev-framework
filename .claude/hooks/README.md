@@ -132,10 +132,13 @@ Blocks:
 **Event:** PostToolUse (Edit|Write)
 **Purpose:** Logs all file modifications during session
 
-Creates/updates `.claude/session-changes.json`:
+Writes to brain: `~/.gemini/antigravity/brain/{workspace-uuid}/sessions/{session-id}.json`
+
 ```json
 {
+  "sessionId": "1710123456789-abc123",
   "sessionStart": "2024-01-15T10:00:00Z",
+  "workspace": "/Users/.../project",
   "filesModified": ["src/app.ts", "README.md"],
   "filesCreated": ["src/new-feature.ts"],
   "operations": [
@@ -146,14 +149,15 @@ Creates/updates `.claude/session-changes.json`:
 
 Used by:
 - /checkpoint for accurate summaries
-- /commit for knowing which files to stage
 - Brain artifacts for session history
+
+**Concurrency:** Each Claude session gets its own tracking file (unique session ID), so multiple sessions in the same workspace don't conflict.
 
 #### command-log.js
 **Event:** PostToolUse (Bash)
 **Purpose:** Logs all bash commands executed
 
-Adds to session-changes.json:
+Adds to the session tracking file in brain:
 ```json
 {
   "commands": [
@@ -256,13 +260,26 @@ Also loads relevant specs:
 - "commit", "git" → loads version-control.md
 - "what changed" → loads session-changes.json
 
-## Session Changes File
+## Session Tracking in Brain
 
-The central tracking file at `.claude/session-changes.json`:
+Session tracking is stored in the brain, not in project directories:
 
+```
+~/.gemini/antigravity/brain/
+├── {workspace-uuid}/
+│   └── sessions/
+│       ├── .active-session          # Current session ID
+│       ├── 1710123456789-abc123.json  # Session 1
+│       ├── 1710123456790-def456.json  # Session 2
+│       └── ...
+```
+
+Each session file contains:
 ```json
 {
+  "sessionId": "1710123456789-abc123",
   "sessionStart": "2024-01-15T10:00:00Z",
+  "workspace": "/Users/.../project",
   "filesModified": ["src/app.ts"],
   "filesCreated": ["src/new.ts"],
   "operations": [
@@ -274,26 +291,17 @@ The central tracking file at `.claude/session-changes.json`:
 }
 ```
 
-This file is:
-- Reset on SessionStart (new session)
-- Updated by track-changes.js and command-log.js
-- Read by /checkpoint, inject-context.js, and other tools
-- Added to .gitignore (session-specific, not committed)
-
-## Adding to .gitignore
-
-Add these to your .gitignore:
-
-```
-# Session-specific (not committed)
-.claude/session-changes.json
-```
+**Why brain instead of project?**
+- Multiple concurrent sessions don't conflict (each gets unique session ID)
+- No project files to manage or gitignore
+- All session data in one place
+- Sessions older than 7 days auto-cleanup
 
 ## How Hooks Work Together
 
-1. **Session starts** → session-init.js resets tracking, checks for project changes
-2. **You type a prompt** → inject-context.js adds relevant specs
-3. **Claude runs bash** → block-dangerous.js validates, command-log.js logs, detect-pivot.js checks for installs
-4. **Claude edits files** → track-changes.js logs modifications
-5. **Task completes** → checkpoint-on-complete.js saves to brain
-6. **Claude stops** → verify-before-stop.js checks for debug statements
+1. **Session starts** → session-init.js creates session tracking file in brain, checks for project changes
+2. **You type a prompt** → inject-context.js suggests commands, adds reasoning checkpoints, injects voice profile
+3. **Claude runs bash** → block-dangerous.js validates, command-log.js logs to brain, detect-pivot.js checks for installs
+4. **Claude edits files** → track-changes.js logs modifications to brain
+5. **Claude stops** → verify-before-stop.js checks for debug statements
+6. **Context compacts** → pre-compact.js writes persistent state, detects corrections

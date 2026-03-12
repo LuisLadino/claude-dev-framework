@@ -4,19 +4,24 @@
  * Session Init Hook
  *
  * Event: SessionStart
- * Purpose: Initialize session tracking and check for changes
+ * Purpose: Initialize session tracking in brain and check for changes
  *
  * Does:
- * - Resets session-changes.json for new session
- * - Checks sync state (calls check-sync-state logic)
- * - Loads project context
+ * - Creates session tracking file in brain
+ * - Checks sync state for project changes
+ * - Cleans up old session files
  */
 
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-const SESSION_CHANGES_FILE = '.claude/session-changes.json';
+const {
+  findWorkspaceBrain,
+  initSession,
+  cleanupOldSessions
+} = require('../lib/session-utils.js');
+
 const SYNC_STATE_PATH = '.claude/specs/.sync-state.json';
 
 const WATCHED_FILES = [
@@ -36,23 +41,6 @@ const WATCHED_FILES = [
   'astro.config.mjs',
   'astro.config.ts'
 ];
-
-function initSessionChanges() {
-  const data = {
-    sessionStart: new Date().toISOString(),
-    filesModified: [],
-    filesCreated: [],
-    operations: [],
-    commands: []
-  };
-
-  const dir = path.dirname(SESSION_CHANGES_FILE);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-
-  fs.writeFileSync(SESSION_CHANGES_FILE, JSON.stringify(data, null, 2));
-}
 
 function getFileHash(filePath) {
   try {
@@ -121,7 +109,6 @@ function loadProjectContext() {
   const briefPath = '.claude/specs/project-brief.md';
   if (fs.existsSync(briefPath)) {
     const brief = fs.readFileSync(briefPath, 'utf8');
-    // Just get first few lines
     const summary = brief.split('\n').slice(0, 10).join('\n');
     context.push(`Project: ${summary.substring(0, 200)}...`);
   }
@@ -149,17 +136,27 @@ process.stdin.on('end', () => {
     handleHook(data);
   } catch (e) {
     // Still try to init even if parsing fails
-    initSessionChanges();
+    try {
+      const brainPath = findWorkspaceBrain(process.cwd());
+      initSession(brainPath);
+    } catch (e2) {}
     process.exit(0);
   }
 });
 
 function handleHook(data) {
   const { source } = data;
+  const cwd = process.cwd();
 
-  // Initialize session changes tracking
+  // Find brain folder for this workspace
+  const brainPath = findWorkspaceBrain(cwd);
+
+  // Initialize session tracking in brain
   if (source === 'startup' || source === 'clear') {
-    initSessionChanges();
+    const sessionId = initSession(brainPath);
+
+    // Clean up old sessions (7+ days old)
+    cleanupOldSessions(brainPath);
   }
 
   // Check for project changes
