@@ -12,12 +12,25 @@ Save session context to the Antigravity brain for future sessions.
 ## Steps
 
 1. Get from your session start context:
-   - **Session UUID** (look for "Session UUID:")
+   - **Brain path** (look for "Brain:")
    - **Current workspace** (look for "Current workspace:")
 
-2. Review what was accomplished (git status, conversation, tool calls)
+2. Review what was accomplished this session:
+   - Run `git status` and `git diff --stat` to see changes
+   - Review conversation for tasks completed, decisions made, issues found
 
-3. Write directly to `~/.gemini/antigravity/brain/{uuid}/session_state.json`:
+3. Write the following files to the brain path:
+
+### task.md (append)
+
+```markdown
+## Task: [Main task this session]
+- Status: [In Progress / Complete / Blocked]
+- Summary: [What was done, key outcomes]
+- Updated: [ISO timestamp]
+```
+
+### session_state.json (replace)
 
 ```json
 {
@@ -44,13 +57,26 @@ Save session context to the Antigravity brain for future sessions.
 }
 ```
 
-4. Confirm the file was written
+### Optional: {topic}_summary.md (if significant work completed)
 
-## How It Works
+```markdown
+# [Feature/Topic] Summary
 
-- Write the JSON file directly using the Write tool
-- The `workspace` field must match the project directory path
-- Future Claude sessions scan all brain folders for matching workspace
-- The most recent checkpoint for each workspace is loaded at session start
+## What was built
+- ...
 
-No MCP tools needed. Context persists per-workspace across Antigravity sessions.
+## Key decisions
+- ...
+
+## Files changed
+- ...
+
+## Next steps
+- ...
+```
+
+4. Confirm all files were written
+
+## Why This Matters
+
+These files are read at the next session start. Richer artifacts = better context = more effective Claude.
