@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Append-only knowledge files** - `/checkpoint` now writes to `decisions.md`, `patterns.md`, `research/` in brain for persistent knowledge accumulation
 - **Hooks system** - `.claude/hooks/` with safety, tracking, quality, and context injection hooks
   - `safety/block-dangerous.js` - Blocks rm -rf, force push, credential exposure
   - `tracking/track-changes.js` - Logs file modifications to session-changes.json
@@ -31,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **`/init-project` rewritten** - Now focuses on WHAT: product definition, architecture decisions (ADRs), design system (required for UI projects). Creates project-brief.md, decisions.md, design-system.md.
 - **`/sync-stack` rewritten** - Now focuses on HOW: project setup, wiring verification, spec generation, mermaid wiring diagram. Installs deps if needed, verifies configs are connected, detects design system requirement for UI projects.
-- **`/checkpoint` updated** - Now reads session-changes.json for accurate tracking, includes learnings capture step
+- **`/checkpoint` updated** - Now reads session-changes.json for accurate tracking, includes learnings capture step, writes to append-only knowledge files (decisions.md, patterns.md, research/)
 - **CLAUDE.md restructured** - Added Hooks section documenting global and project hooks, brain files, MCP tools. Specs section expanded to cover all decision types.
 - **Root CLAUDE.md updated** - Documents hooks system with global/project hook details, brain files, session tracking
 - **CLAUDE.md Prime Directives rewritten** - Clearer wording throughout: "Code is truth" → "Trust code over docs", "Requirements win" → "Follow instructions exactly", "Prove it or say you don't know" → "No guessing", "Simple over clever" → "Keep it simple", "Don't parrot" → "Think independently".

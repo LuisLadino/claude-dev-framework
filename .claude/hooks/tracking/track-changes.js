@@ -45,7 +45,7 @@ process.stdin.on('end', () => {
 });
 
 function handleHook(data) {
-  const { tool_name, tool_input, tool_response } = data;
+  const { tool_name, tool_input, tool_response, session_id } = data;
 
   // Get file path from tool input
   const filePath = tool_input?.file_path;
@@ -56,8 +56,9 @@ function handleHook(data) {
   const cwd = process.cwd();
 
   // Find brain folder and session
+  // Use Claude Code's session_id to eliminate fragmentation
   const brainPath = findWorkspaceBrain(cwd);
-  const sessionId = getSessionId(brainPath);
+  const sessionId = getSessionId(brainPath, session_id);
 
   // Load current session tracking
   const tracking = loadSessionTracking(brainPath, sessionId);

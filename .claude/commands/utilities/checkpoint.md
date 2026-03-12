@@ -21,112 +21,129 @@ Save session context to the Antigravity brain for future sessions.
 
 2. Load session tracking data from the brain:
    ```bash
-   # Find the most recent session file for this workspace
    ls -t ~/.gemini/antigravity/brain/*/sessions/*.json 2>/dev/null | head -5
-   # Read the most recent one (or the one matching your session start time)
    cat [path-to-session-file]
    ```
 
-   Session tracking files (maintained by hooks) contain:
-   - `filesModified` - exact list of files edited
-   - `filesCreated` - new files created
-   - `commands` - bash commands run
-   - `operations` - timestamped log of all changes
-   - `sessionStart` - when this session started
+   Session tracking files contain:
+   - `filesModified` - files edited
+   - `filesCreated` - new files
+   - `commands` - bash commands with stdout
+   - `operations` - timestamped log
 
-   **Use this data instead of guessing from git or conversation.**
+3. Review conversation for:
+   - Tasks completed
+   - Decisions made (with rationale)
+   - Patterns discovered
+   - Research findings
+   - Open issues
 
-3. Supplement with conversation review:
-   - Tasks completed, decisions made, issues found
-   - Patterns learned, blockers encountered
+4. Write to brain path:
 
-4. Write the following files to the brain path:
-
-### task.md (append)
+### task.md (APPEND)
 
 ```markdown
-## Task: [Main task this session]
+## Task: [Main task]
 - Status: [In Progress / Complete / Blocked]
-- Summary: [What was done, key outcomes]
+- Summary: [What was done]
 - Updated: [ISO timestamp]
 ```
 
-### session_state.json (replace)
+### decisions.md (APPEND)
+
+```markdown
+## [Date]: [Decision title]
+
+**Context:** [What problem or choice prompted this]
+
+**Decision:** [What was decided]
+
+**Rationale:** [Why this choice]
+
+---
+```
+
+### patterns.md (APPEND)
+
+```markdown
+## [Category]
+
+### [Pattern name]
+- [Description]
+- Discovered: [Date]
+
+---
+```
+
+### research/ directory (CREATE as needed)
+
+For ecosystem knowledge, tool research, architecture explorations:
+
+```markdown
+# [Topic] Research
+
+*Researched: [Date]*
+
+## What It Is
+...
+
+## How It Works
+...
+
+## Key Insights
+...
+
+## Sources
+- [links]
+```
+
+**IMPORTANT:** If you researched something this session, create an artifact. Don't just note "research not persisted" and move on.
+
+### session_state.json (REPLACE - current state only)
+
+This is for resuming work, not history. Keep it focused:
 
 ```json
 {
   "type": "context-checkpoint",
-  "timestamp": "2024-01-15T10:30:00Z",
-  "workspace": "/Users/.../project",
-  "accomplished": [
-    "Implemented feature X",
-    "Fixed bug Y"
-  ],
-  "files_modified": [
-    "src/component.ts",
-    "tests/component.test.ts"
-  ],
-  "decisions": [
-    {"decision": "Used pattern Z", "rationale": "Better maintainability"}
-  ],
-  "open_issues": [
-    "Need to add error handling"
-  ],
-  "patterns": [
-    "Always use X pattern for Y situation"
-  ]
+  "timestamp": "...",
+  "workspace": "...",
+  "current_task": "...",
+  "open_issues": ["..."],
+  "next_steps": ["..."]
 }
 ```
 
-### Optional: {topic}_summary.md (if significant work completed)
-
-```markdown
-# [Feature/Topic] Summary
-
-## What was built
-- ...
-
-## Key decisions
-- ...
-
-## Files changed
-- ...
-
-## Next steps
-- ...
-```
-
-4. Update persistent learnings (if applicable)
-
-If there were mistakes, corrections, or insights this session, append to the persistent learnings file:
+### learnings.md (APPEND - global file)
 
 **Path:** `~/.gemini/antigravity/brain/learnings.md`
 
-### What to capture:
+For mistakes, corrections, behavioral insights:
 
-**Mistakes made:**
-- What went wrong? Not surface level - the real reason.
-- Example: "Pattern-matched to expected answer instead of verifying"
-
-**Corrections received:**
-- What did Luis correct? What does it reveal about the gap?
-
-**Patterns noticed:**
-- About Claude's behavior, Luis's preferences, the work
-
-**Format:**
 ```markdown
 ### [Date: YYYY-MM-DD]
-- [Mistake/correction/insight]
-- Root cause: [actual reason, not surface]
+- [What went wrong / what was learned]
+- Root cause: [actual reason]
 ```
 
-Append to the Session Log section at the bottom of the file.
+5. Trigger daemon to update overview:
+   ```bash
+   node ~/.gemini/antigravity/scripts/daemon.js --synthesize
+   ```
 
-5. Confirm all files were written
+6. Confirm all files were written
+
+## What Goes Where
+
+| Type | File | Action |
+|------|------|--------|
+| Task progress | task.md | Append |
+| Design decisions | decisions.md | Append |
+| Technical patterns | patterns.md | Append |
+| Research/ecosystem | research/*.md | Create |
+| Mistakes/corrections | learnings.md | Append |
+| Resume state | session_state.json | Replace |
 
 ## Why This Matters
 
-These files are read at the next session start. Richer artifacts = better context = more effective Claude.
-
-The learnings file is PERSISTENT across all sessions. It's how Claude actually improves over time instead of just saying "I'll do better."
+Knowledge should accumulate, not reset. Each checkpoint adds to the persistent record. Next session starts with everything you've learned.

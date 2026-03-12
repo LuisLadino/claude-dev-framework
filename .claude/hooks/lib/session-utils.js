@@ -68,24 +68,33 @@ function generateSessionId() {
 }
 
 /**
- * Get or create session ID for current process
- * Stored in brain so all hooks in same session share it
+ * Get session ID - prefer Claude Code's session_id from hook input
+ * Falls back to generating our own if not provided
+ *
+ * @param {string} brainPath - Path to the brain folder
+ * @param {string} [claudeSessionId] - Claude Code's session_id from hook input
  */
-function getSessionId(brainPath) {
-  const activeSessionFile = path.join(brainPath, 'sessions', '.active-session');
+function getSessionId(brainPath, claudeSessionId) {
   const sessionsDir = path.join(brainPath, 'sessions');
 
   if (!fs.existsSync(sessionsDir)) {
     fs.mkdirSync(sessionsDir, { recursive: true });
   }
 
-  // Check if we have an active session (created within last 30 seconds = same startup)
+  // Use Claude Code's session_id if provided (preferred - eliminates fragmentation)
+  if (claudeSessionId) {
+    return claudeSessionId;
+  }
+
+  // Fallback: use our own session ID with timeout logic
+  const activeSessionFile = path.join(sessionsDir, '.active-session');
+
   if (fs.existsSync(activeSessionFile)) {
     try {
       const data = JSON.parse(fs.readFileSync(activeSessionFile, 'utf8'));
       const age = Date.now() - data.createdAt;
-      // If less than 30 seconds old, same session startup
-      if (age < 30000) {
+      // If less than 5 minutes old, same session (increased from 30s)
+      if (age < 300000) {
         return data.sessionId;
       }
     } catch (e) {}

@@ -151,7 +151,7 @@ Used by:
 - /checkpoint for accurate summaries
 - Brain artifacts for session history
 
-**Concurrency:** Each Claude session gets its own tracking file (unique session ID), so multiple sessions in the same workspace don't conflict.
+**Concurrency:** Each Claude Code session gets its own tracking file using Claude Code's native `session_id`, so multiple concurrent sessions in the same workspace don't conflict.
 
 #### command-log.js
 **Event:** PostToolUse (Bash)
@@ -161,10 +161,19 @@ Adds to the session tracking file in brain:
 ```json
 {
   "commands": [
-    {"timestamp": "...", "command": "npm test", "exitCode": 0, "success": true}
+    {
+      "timestamp": "...",
+      "command": "npm test",
+      "exitCode": 0,
+      "success": true,
+      "stdout": "All tests passed",
+      "interrupted": false
+    }
   ]
 }
 ```
+
+Note: PostToolUse only fires for successful commands. Failed commands don't trigger the hook.
 
 #### detect-pivot.js
 **Event:** PostToolUse (Bash)
@@ -277,7 +286,7 @@ Session tracking is stored in the brain, not in project directories:
 Each session file contains:
 ```json
 {
-  "sessionId": "1710123456789-abc123",
+  "sessionId": "305e3325-275a-4a94-8a72-65a4d14a1d40",
   "sessionStart": "2024-01-15T10:00:00Z",
   "workspace": "/Users/.../project",
   "filesModified": ["src/app.ts"],
@@ -286,10 +295,12 @@ Each session file contains:
     {"timestamp": "...", "tool": "Edit", "file": "src/app.ts", "type": "modify"}
   ],
   "commands": [
-    {"timestamp": "...", "command": "npm test", "exitCode": 0, "success": true}
+    {"timestamp": "...", "command": "npm test", "exitCode": 0, "success": true, "stdout": "...", "interrupted": false}
   ]
 }
 ```
+
+**Session ID:** Uses Claude Code's native `session_id` from hook input. One file per Claude Code session, no fragmentation.
 
 **Why brain instead of project?**
 - Multiple concurrent sessions don't conflict (each gets unique session ID)

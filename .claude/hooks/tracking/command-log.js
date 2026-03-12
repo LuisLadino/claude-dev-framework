@@ -34,7 +34,7 @@ process.stdin.on('end', () => {
 });
 
 function handleHook(data) {
-  const { tool_input, tool_response } = data;
+  const { tool_input, tool_response, session_id } = data;
 
   const command = tool_input?.command;
   if (!command) {
@@ -44,8 +44,9 @@ function handleHook(data) {
   const cwd = process.cwd();
 
   // Find brain folder and session
+  // Use Claude Code's session_id to eliminate fragmentation
   const brainPath = findWorkspaceBrain(cwd);
-  const sessionId = getSessionId(brainPath);
+  const sessionId = getSessionId(brainPath, session_id);
 
   // Load current session tracking
   const tracking = loadSessionTracking(brainPath, sessionId);
@@ -56,11 +57,15 @@ function handleHook(data) {
   }
 
   // Log the command
+  // PostToolUse only fires for successful commands (exit code 0)
+  // Failed commands don't trigger PostToolUse at all
   tracking.commands.push({
     timestamp: new Date().toISOString(),
     command: command,
-    exitCode: tool_response?.exitCode ?? null,
-    success: tool_response?.exitCode === 0
+    exitCode: 0,  // PostToolUse = success
+    success: true,
+    stdout: tool_response?.stdout?.slice(0, 500) || '',  // Capture first 500 chars
+    interrupted: tool_response?.interrupted || false
   });
 
   // Save updated tracking
