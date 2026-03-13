@@ -57,6 +57,7 @@ When reporting what we're working on (for PreCompact to capture), frame as **out
 - **Bad:** "Updated pre-compact.js" (activity, not verifiable)
 
 Format for PreCompact extraction:
+
 ```
 ## Task: [Outcome statement]
 - Status: [In progress / Complete]
@@ -64,7 +65,7 @@ Format for PreCompact extraction:
 ```
 
 Outcomes should be:
+
 - Verifiable: Can we check if this is true?
 - Strategic: Does it connect to Luis's goals?
 - Measurable: What would prove success?
-
