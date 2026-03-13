@@ -832,9 +832,9 @@ Full profile: ~/.gemini/antigravity/brain/voice-profile.md`);
   // ALWAYS inject methodology reminder
   // This fires every input to reinforce the operating system
   const complianceReminder = `[METHODOLOGY]
-**Why:** Luis is building fluency for AI product roles. Internalization, not memorization. Think in these frameworks.
+**Why:** Luis is building fluency for AI product roles. Internalization, not memorization.
 
-**Teach:** Name the concept. Explain HOW it works. Give discipline framing (PM/UX/AI). Don't just do the work.
+**Teach:** Name the concept. Explain HOW it works. Frame in UX, PM, AI/ML, or CPMAI (AI project management) terms.
 
 **Mindset:** Systematize it. Impact over output. Research first. Say "I don't know" when true.
 
