@@ -160,6 +160,24 @@ const COMMAND_ROUTES = [
     ],
     command: '/checkpoint',
     reason: 'Saving context? /checkpoint writes session state to brain files.'
+  },
+  {
+    patterns: [
+      // Analysis/improvement phrases
+      /\b(analyze|review) (the |my )?(sessions?|patterns?|learnings?)\b/i,
+      /\bwhat (have I|have we|did I|did we) learn\b/i,
+      /\bwhat patterns\b/i,
+      /\bimprove (the |my )?system\b/i,
+      /\bevaluate (how|what|the)\b/i,
+      /\bwhat'?s (working|not working)\b/i,
+      /\bwhat should (I |we )?(change|update|improve)\b/i,
+      /\breflect\b/i,
+      /\bclean ?up (the |my )?(learnings?|patterns?|brain|context)\b/i,
+      /\bconsolidate\b/i,
+      /\b(are|is) (the |my )?(learnings?|brain|context) (too big|large|bloated)\b/i
+    ],
+    command: '/reflect',
+    reason: 'Analysis time? /reflect reads session data and identifies improvements.'
   }
 ];
 
@@ -249,11 +267,43 @@ const CONTENT_WRITING_PATTERNS = [
 const HOME = process.env.HOME || process.env.USERPROFILE;
 const VOICE_PROFILE_PATH = path.join(HOME, '.gemini/antigravity/brain/voice-profile.md');
 
+const {
+  findWorkspaceBrain,
+  getSessionId,
+  loadSessionTracking,
+  saveSessionTracking
+} = require('../lib/session-utils.js');
+
 function loadVoiceProfile() {
   try {
     return fs.readFileSync(VOICE_PROFILE_PATH, 'utf8');
   } catch {
     return null;
+  }
+}
+
+/**
+ * Log what inject-context.js does for observability
+ * This lets us verify the system is actually working
+ */
+function logInjection(sessionId, actions) {
+  try {
+    const cwd = process.cwd();
+    const brainPath = findWorkspaceBrain(cwd);
+    const tracking = loadSessionTracking(brainPath, sessionId);
+
+    if (!tracking.injections) {
+      tracking.injections = [];
+    }
+
+    tracking.injections.push({
+      timestamp: new Date().toISOString(),
+      ...actions
+    });
+
+    saveSessionTracking(brainPath, sessionId, tracking);
+  } catch (e) {
+    // Don't fail the hook if logging fails
   }
 }
 
@@ -341,14 +391,17 @@ process.stdin.on('end', () => {
 });
 
 function handleHook(data) {
-  const { prompt } = data;
+  const { prompt, session_id } = data;
 
   if (!prompt) {
     process.exit(0);
   }
 
   const contextParts = [];
-  let commandSuggested = false;
+  let commandSuggested = null;
+  let reasoningCheckpoints = [];
+  let voiceProfileLoaded = false;
+  let specsLoaded = [];
 
   // Check for command routing first
   for (const route of COMMAND_ROUTES) {
@@ -356,7 +409,7 @@ function handleHook(data) {
 
     if (matches) {
       contextParts.push(`[SUGGESTED COMMAND: ${route.command}]\n${route.reason}\n\nConsider using ${route.command} for this task. If the user wants to proceed differently, follow their lead.`);
-      commandSuggested = true;
+      commandSuggested = route.command;
       break; // Only suggest one command
     }
   }
@@ -372,9 +425,9 @@ function handleHook(data) {
       }
     }
     // Dedupe and limit to 2 reminders max (avoid noise)
-    const uniqueReminders = [...new Set(reminders)].slice(0, 2);
-    if (uniqueReminders.length > 0) {
-      contextParts.push(`[REASONING CHECKPOINT]\n${uniqueReminders.join('\n')}`);
+    reasoningCheckpoints = [...new Set(reminders)].slice(0, 2);
+    if (reasoningCheckpoints.length > 0) {
+      contextParts.push(`[REASONING CHECKPOINT]\n${reasoningCheckpoints.join('\n')}`);
     }
   }
 
@@ -383,9 +436,11 @@ function handleHook(data) {
   if (isContentWriting) {
     const voiceProfile = loadVoiceProfile();
     if (voiceProfile) {
+      voiceProfileLoaded = true;
       contextParts.push(`[VOICE PROFILE - WRITE AS LUIS]\n\nYou are writing content that will be published as Luis's voice. Follow this profile EXACTLY:\n\n${voiceProfile}`);
     } else {
       // Fallback if file not found - inject key rules
+      voiceProfileLoaded = 'fallback';
       contextParts.push(`[VOICE PROFILE - WRITE AS LUIS]\n
 You are writing content that will be published as Luis's voice.
 
@@ -410,9 +465,24 @@ Would Luis actually say this? If not, rewrite.`);
     if (matches) {
       const content = readSpecFile(trigger.specFile, trigger.isJson);
       if (content) {
+        specsLoaded.push(trigger.label);
         contextParts.push(`[Auto-loaded: ${trigger.label}]\n${content}`);
       }
     }
+  }
+
+  // Log what we did for observability
+  // Only log if we actually did something
+  if (contextParts.length > 0) {
+    const actions = {
+      promptSnippet: prompt.slice(0, 80) + (prompt.length > 80 ? '...' : '')
+    };
+    if (commandSuggested) actions.commandSuggested = commandSuggested;
+    if (reasoningCheckpoints.length > 0) actions.reasoningCheckpoints = reasoningCheckpoints.length;
+    if (voiceProfileLoaded) actions.voiceProfileLoaded = voiceProfileLoaded;
+    if (specsLoaded.length > 0) actions.specsLoaded = specsLoaded;
+
+    logInjection(session_id, actions);
   }
 
   // If we have context to inject, output it

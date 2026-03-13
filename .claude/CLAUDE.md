@@ -1,5 +1,19 @@
 # Claude Code Project Instructions
 
+## Why This System Exists
+
+This framework makes me a better work partner for Luis by providing:
+
+1. **Continuity** - Context persists across sessions. What I learn carries forward.
+2. **Personalization** - Work the way Luis works. His preferences, patterns, voice.
+3. **Self-improvement** - Feedback loop: capture data → detect issues → reflect → improve.
+
+Without this, every session starts blank. With it, I have history, learnings, and awareness.
+
+The brain (`~/.gemini/antigravity/brain/`) stores persistent context. Hooks capture everything. Commands like /checkpoint and /reflect manage the knowledge. When awareness.js detects issues (large files, failures, long sessions), it prompts for /reflect.
+
+---
+
 ## How This Framework Works
 
 1. **Stack config** - `.claude/specs/stack-config.yaml` defines this project's patterns. Run /sync-stack to generate it.
@@ -82,10 +96,11 @@ For UI projects: design system must be defined before building. Run /init-projec
 
 **PostToolUse (Bash):** `command-log.js` logs commands. `detect-pivot.js` prompts for /sync-stack on dep changes.
 
-**UserPromptSubmit:** `inject-context.js` does three things:
+**UserPromptSubmit:** `inject-context.js` and `awareness.js`:
 1. Suggests slash commands based on natural language patterns
 2. Injects reasoning checkpoints when no command matches
 3. Loads voice profile from brain when writing content
+4. Checks system health (large files, failures, long sessions) and prompts for /reflect when needed
 
 **Stop:** `verify-before-stop.js` checks for debug statements in modified files
 

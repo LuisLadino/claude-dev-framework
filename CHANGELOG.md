@@ -11,6 +11,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`/reflect` command** - Analyzes session data, patterns, and learnings to identify improvements. Reads tracking data, generates report with suggested changes, user approves before writing to brain files.
+- **Awareness hook (`awareness.js`)** - Detects conditions warranting /reflect: large files (learnings.md >200 lines), failures accumulating (5+), long sessions without checkpoint (60+ min). Prompts gently with 30min cooldown per warning type.
+- **Universal tracking hooks** - New observability layer:
+  - `tool-tracker.js` - Logs ALL tool calls (Skills, MCP, Read, Edit, etc.)
+  - `tool-failure.js` - Logs failed tool calls for debugging
+  - `session-end.js` - Writes session summary and updates session_state.json
+  - `subagent-tracker.js` - Tracks subagent spawn/finish with duration
+- **Feedback loop** - System now has: Capture (tracking hooks) → Detect (awareness.js) → Decide (/reflect) → Act (write to brain)
+- **SYSTEM-AUDIT.md** - Comprehensive audit of system components and their status
+- **Architecture documentation** - Root CLAUDE.md now includes Purpose, Architecture Overview, Data Flow diagram, Feedback Loop diagram, Brain Structure
+
+### Changed
+
+- **`.claude/CLAUDE.md`** - Added "Why This System Exists" section explaining continuity, personalization, and self-improvement
+- **`inject-context.js`** - Added /reflect to command routing patterns
+- **`~/.gemini/GEMINI.md`** (global) - Updated with full Claude integration details: session lifecycle, tracking structure, feedback loop
+
+### Removed
+
+- **`checkpoint-on-complete.js`** - Deleted (TaskCompleted hook doesn't exist in Claude Code)
+
+### Previous
+
 - **Append-only knowledge files** - `/checkpoint` now writes to `decisions.md`, `patterns.md`, `research/` in brain for persistent knowledge accumulation
 - **Hooks system** - `.claude/hooks/` with safety, tracking, quality, and context injection hooks
   - `safety/block-dangerous.js` - Blocks rm -rf, force push, credential exposure

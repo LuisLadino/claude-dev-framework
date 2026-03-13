@@ -120,6 +120,8 @@ That's it. Claude now follows your patterns.
 | `/verify` | Checks your code against your specs without making changes. Runs all quality gates, then checks your code against each spec file looking for violations. Reports what passed and what didn't. Use before commits or to check if code follows your patterns. |
 | `/audit` | Deep parallel code review using Agent Teams (experimental). Spawns 3 reviewers: security, performance, and test coverage. Each reviews independently, then findings are synthesized into a prioritized report. Uses ~3x tokens but catches issues a single reviewer might miss. |
 | `/learn` | Explains anything in plain English. Give it a topic, code snippet, or concept and it breaks it down simply. Use when you want to understand something without jargon. Works on anything, not just your codebase. |
+| `/reflect` | Analyzes session data, patterns, and learnings to identify improvements. Reads tracking data from brain files, generates a report with suggested changes. User approves before anything is written. Use periodically or when prompted by the awareness hook. |
+| `/checkpoint` | Saves session context to brain files. Use before ending work or context compaction to preserve what was accomplished. Writes to task.md, decisions.md, patterns.md, research/. |
 
 ---
 
@@ -156,7 +158,7 @@ You approve → Claude implements → Runs quality gates → Done
 │   └── utilities/         # learn, checkpoint
 ├── hooks/                 # Automation hooks
 │   ├── safety/            # Block dangerous commands
-│   ├── tracking/          # Log file changes, commands, detect pivots
+│   ├── tracking/          # Log file changes, commands, detect pivots, awareness
 │   ├── quality/           # Verify before stop
 │   └── context/           # Session init, command routing, voice injection
 ├── skills/                # Auto-routing (you don't call these directly)
