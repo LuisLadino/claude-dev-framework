@@ -238,6 +238,15 @@ const REASONING_CHECKPOINTS = [
       /can you show me how/i
     ],
     reminder: 'CHECK DOCS: Use context7 to get current documentation and examples. Patterns change between versions.'
+  },
+  {
+    patterns: [
+      /context7/i,
+      /look up.*(docs|documentation)/i,
+      /check.*(docs|documentation)/i,
+      /\/(astro|react|next|tailwind|typescript)/i
+    ],
+    reminder: 'CONTEXT7: Use direct library IDs instead of resolve-library-id. Common IDs: /withastro/astro, /facebook/react, /vercel/next.js, /tailwindlabs/tailwindcss, /microsoft/typescript, /motiondivision/motion'
   }
 ];
 
