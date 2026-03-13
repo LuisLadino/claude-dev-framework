@@ -145,36 +145,42 @@ That's it. Claude now follows your patterns.
 
 ## Commands
 
+Descriptions match command frontmatter (source of truth in `.claude/commands/`).
+
 ### Development
 
 | Command | Description |
 |---------|-------------|
-| `/start-task` | The main command for any coding work. Give it a task description, it loads your specs, asks clarifying questions, shows you what patterns will be enforced, waits for approval, implements the code, then runs all quality gates (format, lint, type-check, test) before marking complete. Use this for building features, fixing bugs, refactoring, or any code changes. |
-| `/add-feature` | For complex features that need planning before coding. Asks you questions about what you're building, creates a PRD (product requirements doc), then breaks it down into a numbered task list. Use when you have a big feature that needs multiple steps. After this, run `/process-tasks` to execute the list. |
-| `/process-tasks` | Executes a task list created by `/add-feature`. Goes through each task one by one, runs `/start-task` for each, verifies after each one, and commits after completing each parent task. You can pause anytime and resume later. |
-| `/commit` | Commits all changes following your version-control spec. Checks status, updates any documentation that needs it (README, CHANGELOG, CONTRIBUTING), stages everything, generates a commit message from the diff, and commits. No questions asked. |
-| `/pr` | Creates a pull request for your current branch. Shows commits and files changed, generates a PR title and description, then creates it via GitHub CLI. Use after you've committed and want to merge into main. |
+| `/start-task` | Start any coding task. Loads stack config and specs, gathers requirements interactively, then executes. |
+| `/add-feature` | Plan a complex feature before building. Creates PRD, breaks into tasks. Use when feature needs multiple components or design decisions. |
+| `/process-tasks` | Execute a task list one at a time. Use after /add-feature to implement each subtask with verification and commits. |
+| `/commit` | Commit changes using project specs. Loads version-control.md, updates docs to reflect changes, then commits. |
+| `/pr` | Create a pull request. Checks branch status, generates summary from commits, creates PR with gh cli. |
 
 ### Project Setup
 
 | Command | Description |
 |---------|-------------|
-| `/sync-stack` | **Start here for any project.** Reads all your existing spec files, detects your tech stack from config files (package.json, tsconfig, etc.), researches official documentation using context7 or web search, scans your existing code for patterns, then generates spec files that combine best practices with YOUR patterns. Also updates the config templates (version-control, testing, deployment, environment) based on your actual project setup. Run this first on any project, new or existing. |
-| `/sync-stack [dep]` | Same as above but focused on a single dependency. Use when you add something new to your project (e.g., `/sync-stack prisma` after installing Prisma). Generates specs just for that dependency. |
-| `/init-project` | Optional. For when you want to define product requirements before any code exists. Asks what you're building, who it's for, success criteria, etc. Creates a product brief and project guidelines. Most people skip this and just run `/sync-stack`. |
-| `/generate-project-specs` | Optional. For enterprise projects that need formal documentation. Creates PRD, user stories, architecture docs, API specs, database schema docs. Overkill for solo projects or MVPs. |
-| `/update-framework` | Checks your fork of this framework for updates. Shows what's new or changed, lets you pick what to apply. Run monthly or when you know there are updates. Won't touch your specs/ directory. |
+| `/sync-stack` | Wire project together, verify setup, generate coding specs. Handles the HOW after /init-project defines the WHAT. |
+| `/init-project` | Define product requirements before coding. Creates project-brief, architecture decisions, design system. For complex projects needing upfront planning. |
+| `/generate-project-specs` | Generate comprehensive project docs (PRD, architecture, API specs). For enterprise/team projects needing full documentation. |
+| `/update-framework` | Pull latest framework changes from source repo. Compares files, shows diffs, lets you selectively apply updates. |
 
 ### Quality
 
 | Command | Description |
 |---------|-------------|
-| `/add-spec` | Creates a new spec file for patterns not covered by `/sync-stack`. Asks what type (coding, architecture, design, documentation, config, or custom), names it, creates a template, and registers it in stack-config.yaml. Use when you have project-specific patterns you want enforced. |
-| `/verify` | Checks your code against your specs without making changes. Runs all quality gates, then checks your code against each spec file looking for violations. Reports what passed and what didn't. Use before commits or to check if code follows your patterns. |
-| `/audit` | Deep parallel code review using Agent Teams (experimental). Spawns 3 reviewers: security, performance, and test coverage. Each reviews independently, then findings are synthesized into a prioritized report. Uses ~3x tokens but catches issues a single reviewer might miss. |
-| `/learn` | Explains anything in plain English. Give it a topic, code snippet, or concept and it breaks it down simply. Use when you want to understand something without jargon. Works on anything, not just your codebase. |
-| `/reflect` | Analyzes session data, patterns, and learnings to identify improvements. Reads tracking data from brain files, generates a report with suggested changes. User approves before anything is written. Use periodically or when prompted by the awareness hook. |
-| `/checkpoint` | Saves session context to brain files. Use before ending work or context compaction to preserve what was accomplished. Writes to task.md, decisions.md, patterns.md, research/. |
+| `/add-spec` | Add a custom coding rule specific to this project. Use for internal conventions not covered by library docs. |
+| `/verify` | Check code against project specs before committing. Quick validation that code follows established patterns. |
+| `/audit` | Deep code review using parallel agents. Security, performance, tests, architecture reviewed simultaneously. |
+
+### Utilities
+
+| Command | Description |
+|---------|-------------|
+| `/learn` | Explain any topic using ELI5 style. Analogies, foundations first, no jargon. Use for ALL explanations. |
+| `/reflect` | Analyze session data, patterns, and learnings to identify improvements. Use periodically or when prompted by awareness hooks. |
+| `/checkpoint` | Save session context to brain files. Use before ending work or context compaction to preserve what was accomplished. |
 
 ---
 
