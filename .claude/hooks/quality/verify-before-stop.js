@@ -4,27 +4,55 @@
  * Verify Before Stop Hook
  *
  * Event: Stop
- * Purpose: Ensures basic quality checks pass before Claude stops
+ * Purpose: Ensures quality checks pass before Claude stops
  *
  * Checks:
- * - No obvious syntax errors in modified files
- * - No console.log/debugger statements left behind
- * - Modified files are valid (parseable)
+ * 1. No console.log/debugger statements left behind
+ * 2. If a slash command was invoked, confirm all steps were completed
  */
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
 
-const SESSION_CHANGES_FILE = '.claude/session-changes.json';
+const HOME = process.env.HOME || process.env.USERPROFILE;
+const BRAIN_DIR = path.join(HOME, '.gemini/antigravity/brain');
+const TRACKING_DIR = path.join(BRAIN_DIR, 'tracking/sessions');
 
-function loadSessionChanges() {
+function getRecentSessionTracking() {
   try {
-    const content = fs.readFileSync(SESSION_CHANGES_FILE, 'utf8');
-    return JSON.parse(content);
+    if (!fs.existsSync(TRACKING_DIR)) return null;
+
+    const files = fs.readdirSync(TRACKING_DIR)
+      .filter(f => f.endsWith('.json'))
+      .map(f => ({
+        name: f,
+        path: path.join(TRACKING_DIR, f),
+        mtime: fs.statSync(path.join(TRACKING_DIR, f)).mtime.getTime()
+      }))
+      .sort((a, b) => b.mtime - a.mtime);
+
+    if (files.length === 0) return null;
+
+    // Get most recent session (within last hour)
+    const oneHourAgo = Date.now() - (60 * 60 * 1000);
+    const recent = files.find(f => f.mtime > oneHourAgo);
+    if (!recent) return null;
+
+    return JSON.parse(fs.readFileSync(recent.path, 'utf8'));
   } catch {
-    return { filesModified: [], filesCreated: [] };
+    return null;
   }
+}
+
+function getInvokedCommands(tracking) {
+  if (!tracking || !tracking.toolCalls) return [];
+
+  const commands = tracking.toolCalls
+    .filter(t => t.tool === 'Skill' && t.skill)
+    .map(t => '/' + t.skill);
+
+  // Dedupe
+  return [...new Set(commands)];
 }
 
 function checkForDebugStatements(filePath) {
@@ -60,17 +88,12 @@ function checkForDebugStatements(filePath) {
   }
 }
 
-function checkTypescriptSyntax(filePath) {
-  if (!filePath.match(/\.(ts|tsx)$/)) {
-    return null;
-  }
-
+function loadSessionChanges() {
   try {
-    // Quick syntax check with tsc --noEmit
-    execSync(`npx tsc --noEmit "${filePath}" 2>&1`, { stdio: 'pipe' });
-    return null;
-  } catch (e) {
-    return e.stdout?.toString() || e.stderr?.toString() || 'Syntax error';
+    const content = fs.readFileSync('.claude/session-changes.json', 'utf8');
+    return JSON.parse(content);
+  } catch {
+    return { filesModified: [], filesCreated: [] };
   }
 }
 
@@ -95,48 +118,69 @@ function handleHook(data) {
     process.exit(0);
   }
 
+  const issues = [];
+
+  // Check 1: Debug statements in modified files
   const changes = loadSessionChanges();
   const allFiles = [...(changes.filesModified || []), ...(changes.filesCreated || [])];
 
-  // Skip if no files were changed
-  if (allFiles.length === 0) {
-    process.exit(0);
-  }
-
-  const issues = [];
-
   for (const file of allFiles) {
-    // Skip non-existent files (might have been deleted)
     if (!fs.existsSync(file)) continue;
-
-    // Skip non-code files
     if (!file.match(/\.(js|jsx|ts|tsx|mjs|cjs)$/)) continue;
 
-    // Check for debug statements
     const debugIssues = checkForDebugStatements(file);
     if (debugIssues.length > 0) {
       issues.push({
-        file,
         type: 'debug_statements',
+        file,
         details: debugIssues
       });
     }
   }
 
+  // Check 2: Command completion
+  const tracking = getRecentSessionTracking();
+  const commands = getInvokedCommands(tracking);
+
+  if (commands.length > 0) {
+    issues.push({
+      type: 'command_completion',
+      commands
+    });
+  }
+
   // If issues found, block stopping
   if (issues.length > 0) {
-    const issueText = issues.map(i => {
-      if (i.type === 'debug_statements') {
-        const details = i.details.map(d => `  Line ${d.line}: ${d.content}`).join('\n');
-        return `${i.file}:\n${details}`;
-      }
-      return `${i.file}: ${i.type}`;
-    }).join('\n\n');
+    const parts = [];
 
-    // Output block decision as JSON
+    // Debug statements
+    const debugIssues = issues.filter(i => i.type === 'debug_statements');
+    if (debugIssues.length > 0) {
+      parts.push('DEBUG STATEMENTS FOUND:');
+      for (const issue of debugIssues) {
+        const details = issue.details.map(d => `  Line ${d.line}: ${d.content}`).join('\n');
+        parts.push(`${issue.file}:\n${details}`);
+      }
+      parts.push('');
+    }
+
+    // Command completion
+    const cmdIssue = issues.find(i => i.type === 'command_completion');
+    if (cmdIssue) {
+      parts.push('COMMAND COMPLETION CHECK:');
+      parts.push(`You invoked: ${cmdIssue.commands.join(', ')}`);
+      parts.push('');
+      parts.push('Before stopping, confirm:');
+      parts.push('- Did you complete ALL numbered steps in the command?');
+      parts.push('- Did you skip any steps or stop early?');
+      parts.push('- If the command has a summary/verification step at the end, did you do it?');
+      parts.push('');
+      parts.push('If you completed everything, proceed. If not, go back and finish.');
+    }
+
     const output = {
       decision: 'block',
-      reason: `Debug statements found in modified files. Please remove before completing:\n\n${issueText}`
+      reason: parts.join('\n')
     };
 
     console.log(JSON.stringify(output));

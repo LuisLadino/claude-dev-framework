@@ -264,8 +264,32 @@ const CONTENT_WRITING_PATTERNS = [
   /\bhow (should|would) (I|this) (say|phrase|word)\b/i
 ];
 
+// Ideation/drafting detection - inject identity + voice BEFORE writing starts
+const IDEATION_PATTERNS = [
+  // Brainstorming
+  /\b(brainstorm|ideate|ideas for|concepts for)\b/i,
+  /\blet'?s (think about|explore|figure out)\b/i,
+  /\bwhat (should|could) (I|we|this) (say|include|cover|show|demonstrate)\b/i,
+  // Page/content planning
+  /\b(page|section|narrative|story|message) (for|about|structure|outline)\b/i,
+  /\bhow (should|do) (I|we) (present|position|frame|tell)\b/i,
+  /\bwhat'?s the (story|narrative|angle|message)\b/i,
+  // Portfolio/professional content
+  /\b(portfolio|case study|project page)\b/i,
+  /\b(showcase|demonstrate|highlight|feature) (my|this)\b/i,
+  /\bhow do I (show|demonstrate|prove|convey)\b/i,
+  // Drafting phases
+  /\b(draft|outline|sketch out|rough out|v1|first pass)\b/i,
+  /\bwork on (the |my )?(content|copy|page|narrative)\b/i,
+  // Strategy/positioning
+  /\bhow (should|do) (I|we) (approach|structure|organize)\b/i,
+  /\bwhat (tone|angle|approach)\b/i,
+  /\bwho is the audience\b/i
+];
+
 const HOME = process.env.HOME || process.env.USERPROFILE;
 const VOICE_PROFILE_PATH = path.join(HOME, '.gemini/antigravity/brain/voice-profile.md');
+const IDENTITY_PATH = path.join(HOME, 'Repositories/Personal/my-brain/CLAUDE.md');
 
 const {
   getSessionId,
@@ -276,6 +300,63 @@ const {
 function loadVoiceProfile() {
   try {
     return fs.readFileSync(VOICE_PROFILE_PATH, 'utf8');
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Load identity context for ideation
+ * Extracts: who Luis is, his goals, what he's trying to demonstrate
+ */
+function loadIdentityContext() {
+  try {
+    const content = fs.readFileSync(IDENTITY_PATH, 'utf8');
+
+    const sections = [];
+
+    // Extract key sections for ideation context
+    const summaryMatch = content.match(/Design thinker[^\n]+/);
+    if (summaryMatch) {
+      sections.push(`**Who:** ${summaryMatch[0].trim()}`);
+    }
+
+    const currentMatch = content.match(/\*\*Current work:\*\*([^\n]+)/);
+    if (currentMatch) {
+      sections.push(`**Current work:** ${currentMatch[1].trim()}`);
+    }
+
+    const goalsSection = content.match(/\*\*In progress:\*\*\n([\s\S]*?)\n\n/);
+    if (goalsSection) {
+      const goals = goalsSection[1]
+        .split('\n')
+        .filter(line => line.startsWith('-'))
+        .map(line => line.trim())
+        .slice(0, 5);
+      if (goals.length > 0) {
+        sections.push(`**Goals:**\n${goals.join('\n')}`);
+      }
+    }
+
+    const approachMatch = content.match(/\*\*Approach:\*\*([^\n]+)/);
+    if (approachMatch) {
+      sections.push(`**Approach:** ${approachMatch[1].trim()}`);
+    }
+
+    const valuesSection = content.match(/\*\*Values:\*\*\n([\s\S]*?)\n\n\*\*Mindset/);
+    if (valuesSection) {
+      const values = valuesSection[1]
+        .split('\n')
+        .filter(line => line.startsWith('-'))
+        .map(line => line.replace(/^-\s*/, '').split(':')[0].trim());
+      if (values.length > 0) {
+        sections.push(`**Values:** ${values.join(', ')}`);
+      }
+    }
+
+    if (sections.length === 0) return null;
+
+    return sections.join('\n\n');
   } catch {
     return null;
   }
@@ -428,9 +509,32 @@ function handleHook(data) {
     }
   }
 
-  // Check for content writing - inject voice profile
+  // Check for ideation - inject identity + voice profile BEFORE creative work starts
+  const isIdeation = IDEATION_PATTERNS.some(pattern => pattern.test(prompt));
+  let identityLoaded = false;
+
+  if (isIdeation) {
+    const identity = loadIdentityContext();
+    const voiceProfile = loadVoiceProfile();
+
+    if (identity) {
+      identityLoaded = true;
+      contextParts.push(`[IDEATION CONTEXT - WHO IS LUIS]\n\nYou are ideating/drafting content for Luis. Keep this context in mind:\n\n${identity}\n\n**What to consider:**
+- What is Luis trying to demonstrate or prove?
+- Who is the audience for this content?
+- How does this connect to his goals?
+- What expertise should come through?`);
+    }
+
+    if (voiceProfile) {
+      voiceProfileLoaded = true;
+      contextParts.push(`[VOICE PROFILE - MAINTAIN THROUGHOUT]\n\nEven during ideation, think in Luis's voice:\n\n${voiceProfile}`);
+    }
+  }
+
+  // Check for content writing - inject voice profile (if not already loaded)
   const isContentWriting = CONTENT_WRITING_PATTERNS.some(pattern => pattern.test(prompt));
-  if (isContentWriting) {
+  if (isContentWriting && !voiceProfileLoaded) {
     const voiceProfile = loadVoiceProfile();
     if (voiceProfile) {
       voiceProfileLoaded = true;
@@ -476,6 +580,7 @@ Would Luis actually say this? If not, rewrite.`);
     };
     if (commandSuggested) actions.commandSuggested = commandSuggested;
     if (reasoningCheckpoints.length > 0) actions.reasoningCheckpoints = reasoningCheckpoints.length;
+    if (identityLoaded) actions.identityLoaded = true;
     if (voiceProfileLoaded) actions.voiceProfileLoaded = voiceProfileLoaded;
     if (specsLoaded.length > 0) actions.specsLoaded = specsLoaded;
 
