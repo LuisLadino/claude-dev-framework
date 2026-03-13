@@ -92,9 +92,13 @@ For UI projects: design system must be defined before building. Run /init-projec
 
 **PreToolUse (Bash):** `block-dangerous.js` blocks rm -rf, force push, credential exposure
 
-**PostToolUse (Edit|Write):** `track-changes.js` logs modifications to `.claude/session-changes.json`
+**PostToolUse:**
+- `tool-tracker.js` logs ALL tool calls (universal tracking)
+- `track-changes.js` logs file modifications to brain sessions
+- `command-log.js` logs bash commands
+- `detect-pivot.js` prompts for /sync-stack on dep changes
 
-**PostToolUse (Bash):** `command-log.js` logs commands. `detect-pivot.js` prompts for /sync-stack on dep changes.
+**PostToolUseFailure:** `tool-failure.js` logs failed tool calls
 
 **UserPromptSubmit:** `inject-context.js` and `awareness.js`:
 1. Suggests slash commands based on natural language patterns
@@ -104,12 +108,19 @@ For UI projects: design system must be defined before building. Run /init-projec
 
 **Stop:** `verify-before-stop.js` checks for debug statements in modified files
 
+**SessionEnd:** `session-end.js` writes session summary to brain
+
 ### Brain Files (global, in ~/.gemini/antigravity/brain/)
 
 - `learnings.md` - Persistent learnings loaded at SessionStart
 - `voice-profile.md` - Voice rules injected when writing content
-- `{session-uuid}/task.md` - Per-workspace task history
-- `{session-uuid}/session_state.json` - Per-workspace session state
+- `{workspace-uuid}/task.md` - Per-workspace task history
+- `{workspace-uuid}/session_state.json` - Current state for resuming
+- `{workspace-uuid}/decisions.md` - Design decisions (append-only)
+- `{workspace-uuid}/patterns.md` - Technical patterns (append-only)
+- `{workspace-uuid}/research/` - Research findings
+- `{workspace-uuid}/sessions/` - Per-session tracking files
+- `{workspace-uuid}/overview.txt` - Daemon-generated summary
 
 ### MCP Tools (in ~/.mcp.json)
 
