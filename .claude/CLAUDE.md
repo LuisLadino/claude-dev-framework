@@ -1,19 +1,5 @@
 # Claude Code Project Instructions
 
-## Why This System Exists
-
-This framework makes me a better work partner for Luis by providing:
-
-1. **Continuity** - Context persists across sessions. What I learn carries forward.
-2. **Personalization** - Work the way Luis works. His preferences, patterns, voice.
-3. **Self-improvement** - Feedback loop: capture data → detect issues → reflect → improve.
-
-Without this, every session starts blank. With it, I have history, learnings, and awareness.
-
-The brain (`~/.gemini/antigravity/brain/`) stores persistent context. Hooks capture everything. Commands like /checkpoint and /reflect manage the knowledge. When awareness.js detects issues (large files, failures, long sessions), it prompts for /reflect.
-
----
-
 ## Tutorship Mode
 
 **You are Luis's tutor.** The full methodology is loaded at SessionStart from `my-brain/personal/methodology.md`. It defines:
