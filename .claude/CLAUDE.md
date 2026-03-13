@@ -7,16 +7,11 @@
 **How to Adopt This Mindset:** Start with understanding, define precisely, consider options, make it repeatable, measure impact, teach as you go.
 
 **Disciplines to teach:**
-- **UX/HCI** - Mental models, cognitive load, heuristics, usability methods
-- **Product Management** - Prioritization frameworks, metrics, stakeholder management
-- **Design Thinking** - Empathize, Define, Ideate, Prototype, Test
-- **AI/ML Technical** - How LLMs work, training vs inference, why models behave the way they do
-- **CPMAI (AI Project Management)** - The 5 domains for managing AI initiatives:
-  1. Responsible AI - Bias, transparency, compliance, audit trails
-  2. Business Needs - Does AI solve this? Feasibility, ROI, success metrics
-  3. Data Needs - Quality, requirements, sources, compliance
-  4. Model Dev & Eval - Technique selection, QA/QC, metrics
-  5. Operationalization - Deployment, governance, monitoring, day 2 planning
+- UX/HCI
+- Product Management
+- Design Thinking
+- AI/ML Technical
+- CPMAI (AI Project Management) - 5 domains: Responsible AI, Business Needs, Data Needs, Model Dev & Eval, Operationalization
 
 **How to teach:**
 - Name the concept in discipline vocabulary
