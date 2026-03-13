@@ -250,6 +250,73 @@ const REASONING_CHECKPOINTS = [
   }
 ];
 
+// Methodology enforcement - reinforce teaching mode based on context
+// These fire IN ADDITION to reasoning checkpoints (complementary)
+const METHODOLOGY_ENFORCEMENT = [
+  {
+    patterns: [
+      // AI/ML topics
+      /\b(llm|gpt|claude|model|transformer|attention|embedding|rag|fine.?tun|rlhf|alignment|hallucination|prompt|inference|training)\b/i,
+      /\b(ai|ml|machine learning|deep learning|neural)\b/i,
+      /\b(vector|semantic|retrieval|generation|token)\b/i
+    ],
+    reminder: `[TEACHING MODE: AI TECHNICAL FLUENCY]
+Explain HOW it works, not just WHAT it does.
+- Mechanisms: Why does this happen? What's the underlying process?
+- Failure modes: How can this break? What are the edge cases?
+- Trade-offs: What are the costs of this approach?
+
+Don't say "RAG helps with hallucinations."
+Say "RAG reduces hallucination by grounding generation in retrieved context. The model relies less on parametric memory. But retrieval quality matters - garbage in, garbage out."`
+  },
+  {
+    patterns: [
+      // Coding/building
+      /\b(error|exception|bug|issue|problem)\s*(handling|recovery|catching|fix)\b/i,
+      /\b(add|implement|write|create)\s+(a |an |the )?(function|component|handler|service|endpoint)\b/i,
+      /\bvalidat(e|ion|ing)\b/i,
+      /\brefactor/i
+    ],
+    reminder: `[TEACHING MODE: DISCIPLINE FRAMING]
+Name the concept and connect to disciplines:
+- What's this called in UX/PM/AI terms?
+- How does it fit the design thinking cycle?
+- What's the PM question (is this worth the investment)?
+
+"This is defensive design (UX) - anticipating errors. Nielsen's heuristic #9. The PM question: is this error common enough to justify complexity?"`
+  },
+  {
+    patterns: [
+      // Planning/prioritization (no trailing \b so "prioritize" matches "priorit")
+      /\b(priorit|roadmap|scope|requirement|stakeholder|tradeoff|trade-off)/i,
+      /\bwhich (one|approach|option|way)\b/i,
+      /\b(plan|strategy|decision) (for|about|on)\b/i
+    ],
+    reminder: `[TEACHING MODE: PM FRAMEWORKS]
+Make the framework visible:
+- Name the prioritization approach (RICE, MoSCoW, impact/effort)
+- Surface trade-offs explicitly
+- What would a PM ask here?
+
+The PM skill is making decisions transparent so stakeholders understand trade-offs.`
+  },
+  {
+    patterns: [
+      // Research/investigation
+      /\b(understand|investigate|research|explore|figure out|look into)\b/i,
+      /\bwhy (does|is|do|are|did|was|isn't|doesn't)\b/i,
+      /\bwhat('s| is) (happening|going on|wrong|the issue|causing)\b/i
+    ],
+    reminder: `[METHODOLOGY: DESIGN THINKING]
+Start with Understand:
+- What's actually happening? What are the constraints?
+- Define precisely. Not symptoms, root causes.
+- Research before acting. Read the code/docs first.
+
+The check: "Would a PM with UX foundations and AI technical fluency approach it this way?"`
+  }
+];
+
 // Content writing detection - inject voice profile when writing for Luis
 const CONTENT_WRITING_PATTERNS = [
   // Direct content requests
@@ -518,6 +585,20 @@ function handleHook(data) {
     }
   }
 
+  // Methodology enforcement - reinforce teaching mode based on context
+  // These fire regardless of command suggestion (always remind about methodology)
+  let methodologyReminders = [];
+  for (const enforcement of METHODOLOGY_ENFORCEMENT) {
+    const matches = enforcement.patterns.some(pattern => pattern.test(prompt));
+    if (matches) {
+      methodologyReminders.push(enforcement.reminder);
+    }
+  }
+  // Limit to 1 methodology reminder (the most specific match wins)
+  if (methodologyReminders.length > 0) {
+    contextParts.push(methodologyReminders[0]);
+  }
+
   // Check for ideation - inject identity + voice profile BEFORE creative work starts
   const isIdeation = IDEATION_PATTERNS.some(pattern => pattern.test(prompt));
   let identityLoaded = false;
@@ -589,6 +670,7 @@ Would Luis actually say this? If not, rewrite.`);
     };
     if (commandSuggested) actions.commandSuggested = commandSuggested;
     if (reasoningCheckpoints.length > 0) actions.reasoningCheckpoints = reasoningCheckpoints.length;
+    if (methodologyReminders.length > 0) actions.methodologyEnforced = true;
     if (identityLoaded) actions.identityLoaded = true;
     if (voiceProfileLoaded) actions.voiceProfileLoaded = voiceProfileLoaded;
     if (specsLoaded.length > 0) actions.specsLoaded = specsLoaded;
