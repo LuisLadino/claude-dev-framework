@@ -845,8 +845,9 @@ Full profile: ~/.gemini/antigravity/brain/voice-profile.md`);
   contextParts.push(complianceReminder);
 
   // Log what we did for observability (always log now since we always inject)
+  // Full prompt captured for analysis (user confirmed privacy not a concern)
   const actions = {
-    promptSnippet: prompt.slice(0, 80) + (prompt.length > 80 ? '...' : ''),
+    prompt: prompt,
     complianceReminderInjected: true
   };
   if (commandSuggested) actions.commandSuggested = commandSuggested;

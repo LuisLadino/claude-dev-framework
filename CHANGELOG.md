@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`/analyze` command** - Framework analyst agent that runs in split terminal. Does both technical analysis (hooks working, data flowing) AND qualitative analysis (goals aligned, teaching landing). Applies design thinking to iterate on the framework.
+- **Full prompt capture** - `inject-context.js` now logs complete prompts (not just 80 chars) for analyst to evaluate hook trigger accuracy.
 - **`/reflect` command** - Analyzes session data, patterns, and learnings to identify improvements. Reads tracking data, generates report with suggested changes, user approves before writing to brain files.
 - **Awareness hook (`awareness.js`)** - Detects conditions warranting /reflect: large files (learnings.md >200 lines), failures accumulating (5+), long sessions without checkpoint (60+ min). Prompts gently with 30min cooldown per warning type.
 - **Universal tracking hooks** - New observability layer:

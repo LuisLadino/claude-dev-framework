@@ -181,6 +181,7 @@ Descriptions match command frontmatter (source of truth in `.claude/commands/`).
 | `/learn` | Explain any topic using ELI5 style. Analogies, foundations first, no jargon. Use for ALL explanations. |
 | `/reflect` | Analyze session data, patterns, and learnings to identify improvements. Use periodically or when prompted by awareness hooks. |
 | `/checkpoint` | Save session context to brain files. Use before ending work or context compaction to preserve what was accomplished. |
+| `/analyze` | Run as framework analyst. Evaluates framework health, analyzes session data, iterates on the system. Run in a split terminal pane alongside your working session. |
 
 ---
 
