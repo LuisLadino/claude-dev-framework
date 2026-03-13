@@ -1,21 +1,67 @@
 # Claude Development Framework
 
-**A structured `.claude/` directory that makes Claude Code follow your specs consistently.**
+**Make Claude a better work partner through context persistence and pattern enforcement.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2.3.0-brightgreen.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2.4.0-brightgreen.svg)](CHANGELOG.md)
 
 ---
 
 ## What Is This?
 
-A portable framework that lives in your project's `.claude/` directory. It gives Claude Code:
+A framework that makes Claude Code:
 
-- **Your coding specs** - Enforced on every task
-- **Stack awareness** - Adapts to any technology
-- **Quality gates** - Format, lint, type-check, test before completion
-- **Hooks** - Safety, tracking, and context injection automation
-- **Self-updating** - Pull improvements from your fork
+1. **Remember across sessions** - Context persists. What Claude learns today carries forward.
+2. **Work your way** - Your preferences, patterns, and voice are enforced consistently.
+3. **Improve over time** - Feedback loop captures data, detects issues, reflects on what to change.
+
+Without this, every Claude session starts blank. With it, Claude has history, learnings, and awareness.
+
+### How It Works
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    SESSION LIFECYCLE                         │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  SessionStart → Loads identity, task, learnings from brain  │
+│       ↓                                                      │
+│  During Session → Hooks track everything (tools, files,     │
+│                   commands, failures)                        │
+│       ↓                                                      │
+│  /checkpoint or PreCompact → Saves state to brain           │
+│       ↓                                                      │
+│  SessionEnd → Writes summary for next session               │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### The Feedback Loop
+
+```
+CAPTURE ──► DETECT ──► DECIDE ──► ACT
+   │           │          │        │
+   │           │          │        └─► Write to brain files
+   │           │          │
+   │           │          └─► /reflect analyzes, suggests changes
+   │           │
+   │           └─► awareness.js notices issues (large files,
+   │               failures, long sessions)
+   │
+   └─► Tracking hooks log everything
+```
+
+### Two Layers
+
+**Global Layer** (Antigravity - `~/.gemini/antigravity/`):
+- Brain storage for persistent context (learnings, patterns, decisions)
+- SessionStart/PreCompact scripts that load and save state
+- Shared with Gemini for cross-agent context
+
+**Framework Layer** (this repo - copied to projects via `/update-framework`):
+- Slash commands for workflows
+- Hooks for safety, tracking, context injection
+- Specs for pattern enforcement
 
 Works with any stack: React, Vue, Svelte, Next.js, Python, Rust, Go, etc.
 
@@ -88,6 +134,13 @@ That's it. Claude now follows your patterns.
 /learn react hooks       # Explain a specific topic
 ```
 
+### Managing Context
+
+```
+/checkpoint              # Save session context before ending work
+/reflect                 # Analyze patterns, identify improvements
+```
+
 ---
 
 ## Commands
@@ -148,6 +201,8 @@ You approve → Claude implements → Runs quality gates → Done
 
 ## Structure
 
+### Framework (copied to each project)
+
 ```
 .claude/
 ├── CLAUDE.md              # Core instructions for Claude
@@ -155,18 +210,59 @@ You approve → Claude implements → Runs quality gates → Done
 │   ├── development/       # start-task, add-feature, process-tasks, commit, pr
 │   ├── project-management/# sync-stack, init-project, update-framework
 │   ├── specs/             # add-spec, verify, audit
-│   └── utilities/         # learn, checkpoint
+│   └── utilities/         # learn, checkpoint, reflect
 ├── hooks/                 # Automation hooks
-│   ├── safety/            # Block dangerous commands
-│   ├── tracking/          # Log file changes, commands, detect pivots, awareness
-│   ├── quality/           # Verify before stop
-│   └── context/           # Session init, command routing, voice injection
+│   ├── safety/            # block-dangerous.js
+│   ├── tracking/          # tool-tracker, track-changes, command-log, awareness
+│   ├── quality/           # verify-before-stop.js
+│   └── context/           # inject-context.js (command routing, voice profile)
 ├── skills/                # Auto-routing (you don't call these directly)
 └── specs/                 # YOUR project's specs
     ├── stack-config.yaml  # Stack + active specs list + quality gates
     ├── config/            # Git, deploy, env, testing templates
     └── coding/            # Created by /sync-stack for your dependencies
 ```
+
+### Brain (global, persistent across all projects)
+
+```
+~/.gemini/antigravity/brain/
+├── learnings.md              # What Claude has learned (loaded every session)
+├── voice-profile.md          # Writing style rules
+└── {workspace-uuid}/         # Per-project context
+    ├── task.md               # Task history
+    ├── session_state.json    # Current state for resuming
+    ├── decisions.md          # Design decisions
+    ├── patterns.md           # Technical patterns
+    ├── research/             # Research findings
+    ├── sessions/             # Per-session tracking
+    └── overview.txt          # Daemon-generated summary
+```
+
+---
+
+## Hooks
+
+Hooks automate safety, tracking, and context injection. They fire automatically.
+
+### Safety
+- **block-dangerous.js** - Blocks `rm -rf /`, force push to main, credential exposure
+
+### Tracking
+- **tool-tracker.js** - Logs ALL tool calls (universal tracking)
+- **track-changes.js** - Logs file modifications to brain
+- **command-log.js** - Logs bash commands
+- **tool-failure.js** - Logs failed tool calls
+- **session-end.js** - Writes session summary
+- **awareness.js** - Detects issues (large files, failures, long sessions), prompts for /reflect
+
+### Context
+- **inject-context.js** - Suggests commands from natural language, loads voice profile for writing
+- **detect-pivot.js** - Prompts for /sync-stack when dependencies change
+
+### Global (in ~/.claude/settings.json)
+- **SessionStart** - Loads identity, task, learnings from brain
+- **PreCompact** - Saves state before context compaction
 
 ---
 
