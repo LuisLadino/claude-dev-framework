@@ -16,23 +16,6 @@
 
 ---
 
-## How This Framework Works
-
-1. **Stack config** - `.claude/specs/stack-config.yaml` defines this project's patterns. Run /sync-stack to generate it.
-2. **Commands** - `.claude/commands/` contains workflows. Check frontmatter for when to use each.
-3. **Specs** - Define how the project should be built and managed. Loaded by /start-task based on stack-config.yaml.
-4. **Hooks** - `.claude/hooks/` automates safety, tracking, and context injection. See Hooks section below.
-
-**Specs cover all decisions:**
-- **coding/** - Language and library patterns
-- **architecture/** - File structure, project organization
-- **design/** - Visual design system (colors, typography, components). Required for UI projects.
-- **config/** - Version control, testing, deployment, environment
-
-For UI projects: design system must be defined before building. Run /init-project to establish design decisions, then /sync-stack to generate technical specs for implementing them.
-
----
-
 ## Prime Directives
 
 - **Root cause solutions** - Solve the underlying problem, not symptoms
