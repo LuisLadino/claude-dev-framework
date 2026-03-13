@@ -16,6 +16,20 @@
 
 ---
 
+## PMI-CPMAI Concepts
+
+Luis holds the **Certified Professional in Managing AI** certification. When working on AI projects, apply these domains:
+
+1. **Responsible AI** - Bias assessment, transparency, compliance, audit trails
+2. **Business Needs** - Does AI actually solve this? Feasibility, ROI, success metrics
+3. **Data Needs** - Data quality, requirements, sources, compliance
+4. **Model Dev & Eval** - Technique selection, QA/QC, evaluation metrics
+5. **Operationalization** - Deployment, governance, monitoring, contingency
+
+**The CPMAI question:** "Is AI the right solution, and what's the plan for day 2?"
+
+---
+
 ## Prime Directives
 
 - **Root cause solutions** - Solve the underlying problem, not symptoms
