@@ -49,7 +49,7 @@ cat [brain-path]/overview.txt
 
 ### 2. Analyze for Patterns
 
-Look for:
+#### Tactical Analysis (is the system running?)
 
 **Repeated Failures**
 - Same tool failing multiple times?
@@ -76,6 +76,74 @@ Look for:
 - Is patterns.md duplicating learnings? Needs cleanup.
 - Are session files accumulating? Auto-cleanup handles this after 7 days.
 
+#### Strategic Analysis (is the system achieving its purpose?)
+
+**Methodology Adherence**
+- Are we following the design thinking cycle? (Understand → Define → Ideate → Prototype → Test)
+- Is teaching mode being applied? Are discipline concepts named and explained?
+- Are we explaining HOW things work, not just WHAT they do?
+
+**Goals Alignment**
+- What progress toward stated goals? (CPMAI mastery, CMU application, contract work)
+- Any drift from priorities?
+- Are outcomes in task.md connecting to these goals?
+
+**Outcomes Evaluation**
+- Review outcomes in task.md: Were they achieved?
+- Are outcomes verifiable? Can we prove they worked?
+- Any outcomes that should be revisited?
+
+**System Effectiveness**
+- Is context persistence working? (Does Claude know who Luis is after compaction?)
+- Are learnings preventing repeat mistakes? (Check if same corrections appear)
+- Is the feedback loop closing? (Capture → Detect → Evaluate → Apply)
+
+**Decisions Review**
+- Are decisions in decisions.md still valid?
+- Any that should be revisited given new information?
+- Any undocumented decisions that should be captured?
+
+#### Pattern Learning (improving triggers)
+
+The inject-context.js hook uses regex patterns to detect context and inject reminders. These patterns are only as good as the keywords they match. To improve them, analyze how Luis actually phrases things.
+
+**Analyze Transcripts**
+
+Read the session transcripts (`.jsonl` files in `~/.claude/projects/`) to find:
+
+1. **Unmatched phrases** - What did Luis say that SHOULD have triggered a pattern but didn't?
+   - Look for AI discussions without CPMAI triggers firing
+   - Look for learning questions without /learn suggestion
+   - Look for content writing without voice profile loading
+
+2. **Exact phrasing** - How does Luis actually ask questions?
+   - Does he use "how does X work" or "explain X to me" or something else?
+   - Does he say "commit this" or "let's save these changes"?
+   - What idioms or shortcuts does he use?
+
+3. **False positives** - Did patterns fire when they shouldn't?
+   - Were reminders shown that weren't relevant?
+   - Were commands suggested that didn't fit?
+
+**Output Pattern Improvements**
+
+In the report, include a section:
+
+```markdown
+#### Trigger Pattern Improvements
+- **Missed triggers:** [phrases that should have matched but didn't]
+- **Suggested new patterns:** [regex patterns to add to inject-context.js]
+- **False positives to fix:** [patterns that matched incorrectly]
+```
+
+Example:
+```markdown
+#### Trigger Pattern Improvements
+- **Missed trigger:** "walk me through how this works" - should trigger AI Technical Fluency
+- **Suggested pattern:** `/\bwalk me through\b.*\b(how|what|why)\b/i`
+- **False positive:** "build" triggered /start-task when Luis meant "npm run build"
+```
+
 ### 3. Generate Report
 
 Output a report with sections:
@@ -83,8 +151,11 @@ Output a report with sections:
 ```markdown
 ## /reflect Report - [Date]
 
-### Observations
-- [What the data shows]
+### Tactical Observations
+- [What the session data shows - failures, patterns, usage]
+
+### Strategic Observations
+- [Methodology adherence, goals progress, outcomes achieved]
 
 ### Suggested Changes
 
@@ -94,11 +165,23 @@ Output a report with sections:
 #### Patterns to Document
 [Technical patterns to add to patterns.md]
 
+#### Decisions to Revisit
+[Decisions that may need updating given new information]
+
+#### Outcomes to Verify
+[Outcomes claimed in task.md that should be tested]
+
 #### System Improvements
 [Hooks, commands, or configs that should change]
 
 #### Files to Clean Up
 [Files that are too large or have redundant content]
+
+#### Trigger Pattern Improvements
+[Based on transcript analysis - new patterns, missed triggers, false positives]
+
+### Goals Progress
+- [Status toward CPMAI, CMU, contract work, other stated goals]
 
 ### No Action Needed
 [Areas that are working fine]
@@ -144,11 +227,17 @@ If consolidating learnings.md (removing duplicates, merging related items):
 ```markdown
 ## /reflect Report - March 12, 2026
 
-### Observations
+### Tactical Observations
 - 3 Read failures this session (files not found)
 - inject-context.js suggested /learn 4 times, was used 1 time
 - learnings.md is 180 lines (approaching threshold)
 - No corrections detected this session
+
+### Strategic Observations
+- Teaching mode applied: 8 instances of concept naming with discipline framing
+- Methodology followed: Started with understanding, defined problem before solving
+- Outcome achieved: "Context persists after compaction" - verified working
+- Gap: No CPMAI concepts taught this session (opportunity missed on AI project discussion)
 
 ### Suggested Changes
 
@@ -159,12 +248,29 @@ None new. Existing learnings still relevant.
 - **Session ID usage**: Claude Code provides session_id, use it instead of generating UUIDs
 - **PostToolUse vs PostToolUseFailure**: PostToolUse only fires on success
 
+#### Decisions to Revisit
+- None. Recent decisions still valid.
+
+#### Outcomes to Verify
+- "Learnings auto-capture on PreCompact" - test by triggering compaction
+
 #### System Improvements
 - detect-pivot.js could also detect tsconfig changes
 - Consider adding "files not found" count to awareness
 
 #### Files to Clean Up
 - learnings.md: 2 items about "hallucinations" could merge into 1
+
+#### Trigger Pattern Improvements
+- **Missed trigger:** "break this down for me" didn't suggest /learn
+- **Suggested pattern:** `/\bbreak (this|it) down\b/i` for /learn command
+- **Missed trigger:** "is this how it's supposed to work" didn't fire reasoning checkpoint
+- **No false positives detected**
+
+### Goals Progress
+- CPMAI mastery: On track. Domains integrated into tutorship, inject-context reminders active.
+- CMU application: No activity this session.
+- Contract work: Portfolio site updated.
 
 ### No Action Needed
 - Session tracking working correctly

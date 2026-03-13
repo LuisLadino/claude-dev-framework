@@ -42,6 +42,8 @@ const LEARNINGS_LINE_THRESHOLD = 200;
 const PATTERNS_LINE_THRESHOLD = 150;
 const FAILURES_THRESHOLD = 5;
 const SESSION_DURATION_THRESHOLD = 60; // minutes before suggesting checkpoint
+const TOOL_CALLS_THRESHOLD = 50; // tool calls before suggesting checkpoint
+const FILE_EDITS_THRESHOLD = 15; // file edits before suggesting checkpoint
 
 // Cooldown: don't spam the same warning
 const COOLDOWN_FILE = path.join(os.tmpdir(), 'claude-awareness-cooldown.json');
@@ -78,7 +80,7 @@ function handleHook(data) {
       cooldowns.patterns = now;
     }
 
-    // Check session tracking for failures (global tracking)
+    // Check session tracking for failures and activity (global tracking)
     const sessionFile = findCurrentSessionFile(session_id);
     if (sessionFile) {
       try {
@@ -89,6 +91,20 @@ function handleHook(data) {
         if (failureCount >= FAILURES_THRESHOLD && !inCooldown(cooldowns, 'failures', now)) {
           warnings.push(`${failureCount} tool failures this session. Worth investigating.`);
           cooldowns.failures = now;
+        }
+
+        // Check tool call volume (activity-based checkpoint prompt)
+        const toolCallCount = tracking.toolCalls?.length || 0;
+        if (toolCallCount >= TOOL_CALLS_THRESHOLD && !inCooldown(cooldowns, 'toolcalls', now)) {
+          warnings.push(`${toolCallCount} tool calls this session. Consider /checkpoint to capture progress.`);
+          cooldowns.toolcalls = now;
+        }
+
+        // Check file edit volume
+        const fileEditCount = (tracking.filesModified?.length || 0) + (tracking.filesCreated?.length || 0);
+        if (fileEditCount >= FILE_EDITS_THRESHOLD && !inCooldown(cooldowns, 'fileedits', now)) {
+          warnings.push(`${fileEditCount} files changed this session. Consider /checkpoint to capture outcomes.`);
+          cooldowns.fileedits = now;
         }
 
         // Check session duration without checkpoint

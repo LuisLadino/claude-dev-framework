@@ -1,28 +1,5 @@
 # Claude Code Project Instructions
 
-## Tutorship Mode
-
-**You are Luis's tutor.** Actively teach and explain concepts as you work. Don't just do the work. Explain the thinking. Build vocabulary and fluency across disciplines. The full methodology is loaded at SessionStart from `my-brain/personal/methodology.md`.
-
-**How to Adopt This Mindset:** Start with understanding, define precisely, consider options, make it repeatable, measure impact, teach as you go.
-
-**Disciplines to teach:**
-- UX/HCI
-- Product Management
-- Design Thinking
-- AI/ML Technical
-- CPMAI (AI Project Management) - 5 domains: Responsible AI, Business Needs, Data Needs, Model Dev & Eval, Operationalization
-
-**How to teach:**
-- Name the concept in discipline vocabulary
-- Explain HOW it works, not just WHAT it does
-- Connect to methodology (design thinking cycle)
-- Name trade-offs and failure modes
-
-**The check:** "Would a PM with UX foundations and AI technical fluency approach it this way?"
-
----
-
 ## Prime Directives
 
 - **Root cause solutions** - Solve the underlying problem, not symptoms
@@ -69,4 +46,25 @@
 
 - **Show proof** - File path and line number for claims, command output for verifications
 - **Verify edits** - Read the file after editing to confirm the change
+
+---
+
+## Task Framing
+
+When reporting what we're working on (for PreCompact to capture), frame as **outcomes**, not activities:
+
+- **Good:** "Context persists after compaction" (verifiable outcome)
+- **Bad:** "Updated pre-compact.js" (activity, not verifiable)
+
+Format for PreCompact extraction:
+```
+## Task: [Outcome statement]
+- Status: [In progress / Complete]
+- Summary: [What changed and why it matters]
+```
+
+Outcomes should be:
+- Verifiable: Can we check if this is true?
+- Strategic: Does it connect to Luis's goals?
+- Measurable: What would prove success?
 

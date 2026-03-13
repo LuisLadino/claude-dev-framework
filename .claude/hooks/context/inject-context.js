@@ -252,14 +252,41 @@ const REASONING_CHECKPOINTS = [
 
 // Methodology enforcement - reinforce teaching mode based on context
 // These fire IN ADDITION to reasoning checkpoints (complementary)
-// ORDER MATTERS: More specific patterns (CPMAI) before general (AI Technical Fluency)
+// ORDER MATTERS: More specific patterns first, generic teaching modes last
+// Career/professional first (most specific), then CPMAI, then general teaching
 const METHODOLOGY_ENFORCEMENT = [
-  // CPMAI DOMAINS FIRST (specific AI project management contexts)
+  // CAREER/PROFESSIONAL CONTEXT FIRST (very specific, should win over generic)
   {
     patterns: [
-      // CPMAI Domain 1: Responsible AI
+      /\b(resume|cv|cover letter|job|interview|application)\b/i,
+      /\b(hire|hiring|recruiter|employer|company)\b/i,
+      /\b(portfolio|case study|work sample)\b/i,
+      /\b(linkedin|profile|bio)\b/i,
+      /\b(cmu|tepper|msba|mba|graduate|school)\b/i,
+      /\b(career|professional|experience|background)\b/i,
+      /\bhow (do|should) I (present|show|demonstrate|position)\b/i
+    ],
+    reminder: `[CONTEXT: CAREER/PROFESSIONAL]
+Goal: AI product roles (PM, product analyst)
+
+In progress:
+- AI data annotation contract work (Handshake, Mercor)
+- CMU Tepper Part-Time MSBA application (Fall 2026)
+- Building portfolio that demonstrates design thinking + AI fluency
+
+Key narrative: Design thinker who applies structured problem-solving. The methodology transfers; contexts change.
+What to emphasize: UX research foundations → AI evaluation → PM fluency`
+  },
+  // CPMAI DOMAINS (specific AI project management contexts)
+  {
+    patterns: [
+      // CPMAI Domain 1: Responsible AI - expanded
       /\b(bias|fairness|ethic|transparent|accountab|audit|compliance|regulat)\b/i,
-      /\b(responsible|trustworthy) ai\b/i
+      /\b(responsible|trustworthy) ai\b/i,
+      /\b(safe|safety|harm|risk|danger)\b.*\b(ai|model|system)\b/i,
+      /\b(ai|model|system)\b.*\b(safe|safety|harm|risk|danger)\b/i,
+      /\bwhat could go wrong\b/i,
+      /\b(discriminat|unfair|harmful output)\b/i
     ],
     reminder: `[CPMAI: RESPONSIBLE AI - Domain 1 (15%)]
 - Bias assessment: Check models, data, AND algorithms
@@ -271,11 +298,16 @@ The CPMAI question: "Would this pass an AI ethics review?"`
   },
   {
     patterns: [
-      // CPMAI Domain 2: Business Needs
+      // CPMAI Domain 2: Business Needs - expanded
       /\b(feasib|roi|business case|success metric|kpi|stakeholder persona)\b/i,
       /\bshould (we|I) (use|build|implement) ai\b/i,
       /\bis ai (the right|necessary|needed)\b/i,
-      /\bai (solution|project|initiative)\b/i
+      /\bai (solution|project|initiative)\b/i,
+      /\b(worth|value|cost|benefit|investment)\b.*\b(ai|model|ml)\b/i,
+      /\bwhy (ai|ml|machine learning)\b/i,
+      /\bwhat problem (does|is|are|will)\b/i,
+      /\b(measure|track|prove) (success|value|impact)\b/i,
+      /\bwill this (work|help|solve)\b/i
     ],
     reminder: `[CPMAI: BUSINESS NEEDS - Domain 2 (26%)]
 - Problem assessment: Does AI actually solve this?
@@ -287,10 +319,15 @@ The CPMAI question: "Is AI the right solution, or are we assuming it?"`
   },
   {
     patterns: [
-      // CPMAI Domain 3: Data Needs
+      // CPMAI Domain 3: Data Needs - expanded
       /\b(data quality|data requirement|data source|data infrastructure|data compliance)\b/i,
       /\b(training data|dataset|data pipeline|data access)\b/i,
-      /\bdo we have (the |enough )?data\b/i
+      /\bdo we have (the |enough )?data\b/i,
+      /\b(where|what|how).*(data|dataset|training)\b/i,
+      /\b(collect|gather|source|acquire) (the )?data\b/i,
+      /\b(clean|label|annotate|prepare) (the )?(data|dataset)\b/i,
+      /\bdata (is|are|looks|seems) (good|bad|dirty|clean|ready)\b/i,
+      /\b(representative|balanced|biased) (data|dataset|sample)\b/i
     ],
     reminder: `[CPMAI: DATA NEEDS - Domain 3 (26%)]
 - Requirements: What data do we actually need?
@@ -302,11 +339,16 @@ The CPMAI question: "Does our data meet solution requirements?"`
   },
   {
     patterns: [
-      // CPMAI Domain 4: Model Development & Evaluation
+      // CPMAI Domain 4: Model Development & Evaluation - expanded
       /\b(model (select|evaluat|valid|train|develop))/i,
       /\b(qa.?qc|quality assurance|model performance|accuracy|precision|recall|f1)\b/i,
       /\bwhich model (should|to use)\b/i,
-      /\b(baseline|benchmark|ground truth)\b/i
+      /\b(baseline|benchmark|ground truth)\b/i,
+      /\bhow (good|well|accurate) (is|does)\b/i,
+      /\b(compare|versus|vs) (models|approaches)\b/i,
+      /\b(test|evaluate|assess|measure) (the |this )?(model|output|results)\b/i,
+      /\bis (this|the|it) (working|good enough|ready)\b/i,
+      /\b(improve|better|optimize) (the |this )?(model|performance|results)\b/i
     ],
     reminder: `[CPMAI: MODEL DEV & EVAL - Domain 4 (16%)]
 - Technique selection: Why this model approach?
@@ -318,11 +360,16 @@ The CPMAI question: "How do we know this model is ready?"`
   },
   {
     patterns: [
-      // CPMAI Domain 5: Operationalization
+      // CPMAI Domain 5: Operationalization - expanded
       /\b(mlops|model governance|monitor|drift|maintenance)\b/i,
       /\b(operationalize|productionize|roll.?out)\b/i,
       /\bafter (we |it )?(deploy|launch|ship)/i,
-      /\bin production\b/i
+      /\bin production\b/i,
+      /\b(deploy|ship|release|launch) (the |this )?(model|system|ai)\b/i,
+      /\bwhat happens (after|when|if)\b/i,
+      /\b(keep|maintain|update|refresh) (the |this )?(model|system)\b/i,
+      /\b(degrade|decay|stale|outdated)\b/i,
+      /\blong.?term\b/i
     ],
     reminder: `[CPMAI: OPERATIONALIZATION - Domain 5 (17%)]
 - Deployment: What's the rollout plan?
@@ -335,10 +382,16 @@ The CPMAI question: "What's the plan for day 2 and beyond?"`
   // GENERAL AI TECHNICAL (after CPMAI specifics)
   {
     patterns: [
-      // AI/ML technical topics (not project management)
+      // AI/ML technical topics - expanded
       /\b(llm|gpt|claude|transformer|attention|embedding|rag|fine.?tun|rlhf|alignment|hallucination|inference)\b/i,
       /\b(machine learning|deep learning|neural)\b/i,
-      /\b(vector|semantic|retrieval|generation|token)\b/i
+      /\b(vector|semantic|retrieval|generation|token)\b/i,
+      /\b(prompt|context window|temperature|top.?p)\b/i,
+      /\b(agent|tool use|function call|chain.?of.?thought)\b/i,
+      /\bhow (does|do) (llm|gpt|claude|model|ai)\b/i,
+      /\bwhy (does|do) (llm|gpt|claude|model|ai)\b/i,
+      /\b(pretraining|pretrain|sft|supervised fine.?tun)\b/i,
+      /\b(red team|jailbreak|prompt injection|adversarial)\b/i
     ],
     reminder: `[TEACHING MODE: AI TECHNICAL FLUENCY]
 Explain HOW it works, not just WHAT it does.
@@ -351,11 +404,15 @@ Say "RAG reduces hallucination by grounding generation in retrieved context. The
   },
   {
     patterns: [
-      // Coding/building
+      // Coding/building - expanded
       /\b(error|exception|bug|issue|problem)\s*(handling|recovery|catching|fix)\b/i,
       /\b(add|implement|write|create)\s+(a |an |the )?(function|component|handler|service|endpoint)\b/i,
       /\bvalidat(e|ion|ing)\b/i,
-      /\brefactor/i
+      /\brefactor/i,
+      /\b(debug|fix|solve|resolve) (this|the|a)\b/i,
+      /\bhow (should|do) (I|we) (handle|deal with|manage)\b/i,
+      /\b(build|create|make|write) (this|it|a|the)\b/i,
+      /\bwhat'?s the (pattern|approach|way) (for|to)\b/i
     ],
     reminder: `[TEACHING MODE: DISCIPLINE FRAMING]
 Name the concept and connect to disciplines:
@@ -367,10 +424,15 @@ Name the concept and connect to disciplines:
   },
   {
     patterns: [
-      // Planning/prioritization (no trailing \b so "prioritize" matches "priorit")
+      // Planning/prioritization - expanded
       /\b(priorit|roadmap|scope|requirement|stakeholder|tradeoff|trade-off)/i,
       /\bwhich (one|approach|option|way)\b/i,
-      /\b(plan|strategy|decision) (for|about|on)\b/i
+      /\b(plan|strategy|decision) (for|about|on)\b/i,
+      /\bwhat (should|do) (I|we) (do|focus|work on) (first|next)\b/i,
+      /\b(important|urgent|critical|blocker)\b/i,
+      /\b(or|versus) (should|do) (I|we)\b/i,
+      /\b(choose|decide|pick) (between|which)\b/i,
+      /\bwhat matters (most|more)\b/i
     ],
     reminder: `[TEACHING MODE: PM FRAMEWORKS]
 Make the framework visible:
@@ -382,10 +444,15 @@ The PM skill is making decisions transparent so stakeholders understand trade-of
   },
   {
     patterns: [
-      // Research/investigation
+      // Research/investigation - expanded
       /\b(understand|investigate|research|explore|figure out|look into)\b/i,
       /\bwhy (does|is|do|are|did|was|isn't|doesn't)\b/i,
-      /\bwhat('s| is) (happening|going on|wrong|the issue|causing)\b/i
+      /\bwhat('s| is) (happening|going on|wrong|the issue|causing)\b/i,
+      /\bhelp me (understand|figure out|see|grasp)\b/i,
+      /\bi (don't|do not) (understand|get|see)\b/i,
+      /\b(confused|unclear|lost)\b/i,
+      /\bwalk me through\b/i,
+      /\bwhat (am I|are we) missing\b/i
     ],
     reminder: `[METHODOLOGY: DESIGN THINKING]
 Start with Understand:
@@ -394,7 +461,8 @@ Start with Understand:
 - Research before acting. Read the code/docs first.
 
 The check: "Would a PM with UX foundations and AI technical fluency approach it this way?"`
-  }
+  },
+  // (Career/professional moved to top of array for priority)
 ];
 
 // Content writing detection - inject voice profile when writing for Luis
@@ -482,16 +550,23 @@ function loadIdentityContext() {
       sections.push(`**Current work:** ${currentMatch[1].trim()}`);
     }
 
-    const goalsSection = content.match(/\*\*In progress:\*\*\n([\s\S]*?)\n\n/);
-    if (goalsSection) {
-      const goals = goalsSection[1]
+    // Extract "In progress:" (current activities)
+    const inProgressSection = content.match(/\*\*In progress:\*\*\n([\s\S]*?)\n\n/);
+    if (inProgressSection) {
+      const items = inProgressSection[1]
         .split('\n')
         .filter(line => line.startsWith('-'))
         .map(line => line.trim())
         .slice(0, 5);
-      if (goals.length > 0) {
-        sections.push(`**Goals:**\n${goals.join('\n')}`);
+      if (items.length > 0) {
+        sections.push(`**In progress:**\n${items.join('\n')}`);
       }
+    }
+
+    // Extract "Target direction:" (actual goals)
+    const targetMatch = content.match(/\*\*Target direction:\*\*([^\n]+)/);
+    if (targetMatch) {
+      sections.push(`**Goal:** ${targetMatch[1].trim()}`);
     }
 
     const approachMatch = content.match(/\*\*Approach:\*\*([^\n]+)/);
@@ -637,11 +712,20 @@ function handleHook(data) {
   let voiceProfileLoaded = false;
   let specsLoaded = [];
 
+  // Pre-check: is this content writing or ideation?
+  // If so, don't suggest /start-task (it's for coding, not writing)
+  const isContentWriting = CONTENT_WRITING_PATTERNS.some(pattern => pattern.test(prompt));
+  const isIdeation = IDEATION_PATTERNS.some(pattern => pattern.test(prompt));
+
   // Check for command routing first
   for (const route of COMMAND_ROUTES) {
     const matches = route.patterns.some(pattern => pattern.test(prompt));
 
     if (matches) {
+      // Skip /start-task if this is content writing or ideation
+      if (route.command === '/start-task' && (isContentWriting || isIdeation)) {
+        continue;
+      }
       contextParts.push(`[SUGGESTED COMMAND: ${route.command}]\n${route.reason}\n\nConsider using ${route.command} for this task. If the user wants to proceed differently, follow their lead.`);
       commandSuggested = route.command;
       break; // Only suggest one command
@@ -680,12 +764,11 @@ function handleHook(data) {
   }
 
   // Check for ideation - inject identity + voice profile BEFORE creative work starts
-  const isIdeation = IDEATION_PATTERNS.some(pattern => pattern.test(prompt));
+  // (isIdeation already computed above for command routing)
   let identityLoaded = false;
 
   if (isIdeation) {
     const identity = loadIdentityContext();
-    const voiceProfile = loadVoiceProfile();
 
     if (identity) {
       identityLoaded = true;
@@ -696,37 +779,41 @@ function handleHook(data) {
 - What expertise should come through?`);
     }
 
-    if (voiceProfile) {
-      voiceProfileLoaded = true;
-      contextParts.push(`[VOICE PROFILE - MAINTAIN THROUGHOUT]\n\nEven during ideation, think in Luis's voice:\n\n${voiceProfile}`);
-    }
+    // Use condensed voice profile for ideation too
+    voiceProfileLoaded = true;
+    contextParts.push(`[VOICE PROFILE - MAINTAIN THROUGHOUT]
+Even during ideation, think in Luis's voice:
+- Direct, honest, evidence-based
+- No em dashes, no corporate speak, no filler
+- Short sentences, active voice, contractions
+- Would Luis actually say this?`);
   }
 
-  // Check for content writing - inject voice profile (if not already loaded)
-  const isContentWriting = CONTENT_WRITING_PATTERNS.some(pattern => pattern.test(prompt));
+  // Check for content writing - inject condensed voice profile (if not already loaded)
+  // Full voice profile is at ~/.gemini/antigravity/brain/voice-profile.md for reference
+  // (isContentWriting already computed above for command routing)
   if (isContentWriting && !voiceProfileLoaded) {
-    const voiceProfile = loadVoiceProfile();
-    if (voiceProfile) {
-      voiceProfileLoaded = true;
-      contextParts.push(`[VOICE PROFILE - WRITE AS LUIS]\n\nYou are writing content that will be published as Luis's voice. Follow this profile EXACTLY:\n\n${voiceProfile}`);
-    } else {
-      // Fallback if file not found - inject key rules
-      voiceProfileLoaded = 'fallback';
-      contextParts.push(`[VOICE PROFILE - WRITE AS LUIS]\n
-You are writing content that will be published as Luis's voice.
+    voiceProfileLoaded = true;
+    contextParts.push(`[VOICE PROFILE - WRITE AS LUIS]
+Writing content as Luis's voice. Key rules:
 
-KEY RULES:
-- NO em dashes (—). Use periods or colons.
-- NO corporate speak: leverage, synergize, passionate, utilize, ensure
-- NO filler: "solid", "comprehensive", "well-structured"
-- NO scaffolding: "Here's what I found:", "Let me explain:"
-- USE contractions: doesn't, won't, I've
-- USE short sentences. Active voice. Specific examples.
-- USE varied sentence length. Mix short and medium.
-- SOUND human, not AI. Read it out loud. If it sounds like LinkedIn, rewrite.
+**Core voice:** Direct, honest, evidence-based, warm but professional.
 
-Would Luis actually say this? If not, rewrite.`);
-    }
+**NEVER use:**
+- Em dashes (—) - use periods or colons
+- Corporate speak: leverage, synergize, passionate, utilize, ensure
+- Filler: "solid", "comprehensive", "well-structured"
+- Scaffolding: "Here's what I found:", "Let me explain:"
+- Absolutes: "I always..."
+
+**DO use:**
+- Contractions: doesn't, won't, I've
+- Short sentences. Active voice. Specific examples.
+- Varied sentence length. Mix short and medium.
+- Technical vocabulary when precise (not buzzwords)
+
+**The check:** Would Luis actually say this? If it sounds like LinkedIn, rewrite.
+Full profile: ~/.gemini/antigravity/brain/voice-profile.md`);
   }
 
   // Check each context trigger
@@ -742,29 +829,40 @@ Would Luis actually say this? If not, rewrite.`);
     }
   }
 
-  // Log what we did for observability
-  // Only log if we actually did something
-  if (contextParts.length > 0) {
-    const actions = {
-      promptSnippet: prompt.slice(0, 80) + (prompt.length > 80 ? '...' : '')
-    };
-    if (commandSuggested) actions.commandSuggested = commandSuggested;
-    if (reasoningCheckpoints.length > 0) actions.reasoningCheckpoints = reasoningCheckpoints.length;
-    if (methodologyReminders.length > 0) actions.methodologyEnforced = true;
-    if (identityLoaded) actions.identityLoaded = true;
-    if (voiceProfileLoaded) actions.voiceProfileLoaded = voiceProfileLoaded;
-    if (specsLoaded.length > 0) actions.specsLoaded = specsLoaded;
+  // ALWAYS inject methodology reminder
+  // This fires every input to reinforce the operating system
+  const complianceReminder = `[METHODOLOGY]
+**Why:** Luis is building fluency for AI product roles. Internalization, not memorization. Think in these frameworks.
 
-    logInjection(session_id, actions);
-  }
+**Teach:** Name the concept. Explain HOW it works. Give discipline framing (PM/UX/AI). Don't just do the work.
 
-  // If we have context to inject, output it
-  if (contextParts.length > 0) {
-    const output = {
-      additionalContext: contextParts.join('\n\n---\n\n')
-    };
-    console.log(JSON.stringify(output));
-  }
+**Mindset:** Systematize it. Impact over output. Research first. Say "I don't know" when true.
+
+**Think:** What does Luis actually want? Am I thinking or pattern-matching? One root cause, not symptoms.
+
+**The check:** Would a PM with UX foundations and AI technical fluency approach it this way?`;
+
+  contextParts.push(complianceReminder);
+
+  // Log what we did for observability (always log now since we always inject)
+  const actions = {
+    promptSnippet: prompt.slice(0, 80) + (prompt.length > 80 ? '...' : ''),
+    complianceReminderInjected: true
+  };
+  if (commandSuggested) actions.commandSuggested = commandSuggested;
+  if (reasoningCheckpoints.length > 0) actions.reasoningCheckpoints = reasoningCheckpoints.length;
+  if (methodologyReminders.length > 0) actions.methodologyEnforced = true;
+  if (identityLoaded) actions.identityLoaded = true;
+  if (voiceProfileLoaded) actions.voiceProfileLoaded = voiceProfileLoaded;
+  if (specsLoaded.length > 0) actions.specsLoaded = specsLoaded;
+
+  logInjection(session_id, actions);
+
+  // Output context (always has at least compliance reminder)
+  const output = {
+    additionalContext: contextParts.join('\n\n---\n\n')
+  };
+  console.log(JSON.stringify(output));
 
   process.exit(0);
 }
