@@ -110,16 +110,20 @@ For UI projects: design system must be defined before building. Run /init-projec
 
 **SessionEnd:** `session-end.js` writes session summary to brain
 
-### Brain Files (global, in ~/.gemini/antigravity/brain/)
+### Brain Files (in ~/.gemini/antigravity/brain/)
 
+**Global (all projects):**
 - `learnings.md` - Persistent learnings loaded at SessionStart
 - `voice-profile.md` - Voice rules injected when writing content
-- `{workspace-uuid}/task.md` - Per-workspace task history
+- `framework-issues.md` - Framework bugs/gaps (loaded when in claude-dev-framework)
+- `tracking/sessions/` - Session tracking files (global telemetry)
+
+**Per-workspace:**
+- `{workspace-uuid}/task.md` - Task history
 - `{workspace-uuid}/session_state.json` - Current state for resuming
 - `{workspace-uuid}/decisions.md` - Design decisions (append-only)
 - `{workspace-uuid}/patterns.md` - Technical patterns (append-only)
 - `{workspace-uuid}/research/` - Research findings
-- `{workspace-uuid}/sessions/` - Per-session tracking files
 - `{workspace-uuid}/overview.txt` - Daemon-generated summary
 
 ### MCP Tools (in ~/.mcp.json)

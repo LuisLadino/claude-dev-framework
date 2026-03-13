@@ -20,6 +20,10 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
+// Global tracking directory
+const HOME = process.env.HOME || process.env.USERPROFILE;
+const TRACKING_DIR = path.join(HOME, '.gemini/antigravity/brain/tracking/sessions');
+
 // Read hook input from stdin
 let input = '';
 process.stdin.setEncoding('utf8');
@@ -74,8 +78,8 @@ function handleHook(data) {
       cooldowns.patterns = now;
     }
 
-    // Check session tracking for failures
-    const sessionFile = findCurrentSessionFile(brainPath, session_id);
+    // Check session tracking for failures (global tracking)
+    const sessionFile = findCurrentSessionFile(session_id);
     if (sessionFile) {
       try {
         const tracking = JSON.parse(fs.readFileSync(sessionFile, 'utf8'));
@@ -169,11 +173,10 @@ function findBrainPath() {
   return null;
 }
 
-function findCurrentSessionFile(brainPath, sessionId) {
+function findCurrentSessionFile(sessionId) {
   if (!sessionId) return null;
 
-  const sessionsDir = path.join(brainPath, 'sessions');
-  const sessionFile = path.join(sessionsDir, `${sessionId}.json`);
+  const sessionFile = path.join(TRACKING_DIR, `${sessionId}.json`);
 
   if (fs.existsSync(sessionFile)) {
     return sessionFile;

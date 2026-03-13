@@ -235,13 +235,14 @@ You approve → Claude implements → Runs quality gates → Done
 ~/.gemini/antigravity/brain/
 ├── learnings.md              # What Claude has learned (loaded every session)
 ├── voice-profile.md          # Writing style rules
+├── framework-issues.md       # Framework bugs/gaps (loaded in claude-dev-framework)
+├── tracking/sessions/        # Global session tracking (framework telemetry)
 └── {workspace-uuid}/         # Per-project context
     ├── task.md               # Task history
     ├── session_state.json    # Current state for resuming
     ├── decisions.md          # Design decisions
     ├── patterns.md           # Technical patterns
     ├── research/             # Research findings
-    ├── sessions/             # Per-session tracking
     └── overview.txt          # Daemon-generated summary
 ```
 

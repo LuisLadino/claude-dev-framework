@@ -3,8 +3,11 @@
 /**
  * Shared utilities for session tracking hooks
  *
- * All session tracking lives in the brain:
- * ~/.gemini/antigravity/brain/{workspace-uuid}/sessions/{session-id}.json
+ * Session tracking is GLOBAL (framework telemetry):
+ * ~/.gemini/antigravity/brain/tracking/sessions/{session-id}.json
+ *
+ * Project context is per-workspace:
+ * ~/.gemini/antigravity/brain/{workspace-uuid}/task.md, decisions.md, etc.
  */
 
 const fs = require('fs');
@@ -13,6 +16,7 @@ const crypto = require('crypto');
 
 const HOME = process.env.HOME || process.env.USERPROFILE;
 const BRAIN_DIR = path.join(HOME, '.gemini/antigravity/brain');
+const TRACKING_DIR = path.join(BRAIN_DIR, 'tracking/sessions');
 
 /**
  * Find the brain folder for a workspace
@@ -71,14 +75,11 @@ function generateSessionId() {
  * Get session ID - prefer Claude Code's session_id from hook input
  * Falls back to generating our own if not provided
  *
- * @param {string} brainPath - Path to the brain folder
  * @param {string} [claudeSessionId] - Claude Code's session_id from hook input
  */
-function getSessionId(brainPath, claudeSessionId) {
-  const sessionsDir = path.join(brainPath, 'sessions');
-
-  if (!fs.existsSync(sessionsDir)) {
-    fs.mkdirSync(sessionsDir, { recursive: true });
+function getSessionId(claudeSessionId) {
+  if (!fs.existsSync(TRACKING_DIR)) {
+    fs.mkdirSync(TRACKING_DIR, { recursive: true });
   }
 
   // Use Claude Code's session_id if provided (preferred - eliminates fragmentation)
@@ -87,7 +88,7 @@ function getSessionId(brainPath, claudeSessionId) {
   }
 
   // Fallback: use our own session ID with timeout logic
-  const activeSessionFile = path.join(sessionsDir, '.active-session');
+  const activeSessionFile = path.join(TRACKING_DIR, '.active-session');
 
   if (fs.existsSync(activeSessionFile)) {
     try {
@@ -111,17 +112,17 @@ function getSessionId(brainPath, claudeSessionId) {
 }
 
 /**
- * Get path to session tracking file
+ * Get path to session tracking file (global tracking dir)
  */
-function getSessionTrackingPath(brainPath, sessionId) {
-  return path.join(brainPath, 'sessions', `${sessionId}.json`);
+function getSessionTrackingPath(sessionId) {
+  return path.join(TRACKING_DIR, `${sessionId}.json`);
 }
 
 /**
  * Load session tracking data
  */
-function loadSessionTracking(brainPath, sessionId) {
-  const trackingPath = getSessionTrackingPath(brainPath, sessionId);
+function loadSessionTracking(sessionId) {
+  const trackingPath = getSessionTrackingPath(sessionId);
   try {
     const content = fs.readFileSync(trackingPath, 'utf8');
     return JSON.parse(content);
@@ -141,29 +142,27 @@ function loadSessionTracking(brainPath, sessionId) {
 /**
  * Save session tracking data
  */
-function saveSessionTracking(brainPath, sessionId, data) {
-  const sessionsDir = path.join(brainPath, 'sessions');
-  if (!fs.existsSync(sessionsDir)) {
-    fs.mkdirSync(sessionsDir, { recursive: true });
+function saveSessionTracking(sessionId, data) {
+  if (!fs.existsSync(TRACKING_DIR)) {
+    fs.mkdirSync(TRACKING_DIR, { recursive: true });
   }
 
-  const trackingPath = getSessionTrackingPath(brainPath, sessionId);
+  const trackingPath = getSessionTrackingPath(sessionId);
   fs.writeFileSync(trackingPath, JSON.stringify(data, null, 2));
 }
 
 /**
  * Initialize a new session
  */
-function initSession(brainPath) {
+function initSession() {
   const sessionId = generateSessionId();
-  const sessionsDir = path.join(brainPath, 'sessions');
 
-  if (!fs.existsSync(sessionsDir)) {
-    fs.mkdirSync(sessionsDir, { recursive: true });
+  if (!fs.existsSync(TRACKING_DIR)) {
+    fs.mkdirSync(TRACKING_DIR, { recursive: true });
   }
 
   // Write active session marker
-  const activeSessionFile = path.join(sessionsDir, '.active-session');
+  const activeSessionFile = path.join(TRACKING_DIR, '.active-session');
   fs.writeFileSync(activeSessionFile, JSON.stringify({
     sessionId,
     createdAt: Date.now()
@@ -180,7 +179,7 @@ function initSession(brainPath) {
     commands: []
   };
 
-  saveSessionTracking(brainPath, sessionId, trackingData);
+  saveSessionTracking(sessionId, trackingData);
 
   return sessionId;
 }
@@ -188,18 +187,17 @@ function initSession(brainPath) {
 /**
  * Clean up old session files (older than 7 days)
  */
-function cleanupOldSessions(brainPath) {
-  const sessionsDir = path.join(brainPath, 'sessions');
-  if (!fs.existsSync(sessionsDir)) return;
+function cleanupOldSessions() {
+  if (!fs.existsSync(TRACKING_DIR)) return;
 
   const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days
   const now = Date.now();
 
-  const files = fs.readdirSync(sessionsDir);
+  const files = fs.readdirSync(TRACKING_DIR);
   for (const file of files) {
     if (file === '.active-session') continue;
 
-    const filePath = path.join(sessionsDir, file);
+    const filePath = path.join(TRACKING_DIR, file);
     try {
       const stat = fs.statSync(filePath);
       if (now - stat.mtime.getTime() > maxAge) {
@@ -216,5 +214,6 @@ module.exports = {
   saveSessionTracking,
   initSession,
   cleanupOldSessions,
-  BRAIN_DIR
+  BRAIN_DIR,
+  TRACKING_DIR
 };

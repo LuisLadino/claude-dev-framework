@@ -268,7 +268,6 @@ const HOME = process.env.HOME || process.env.USERPROFILE;
 const VOICE_PROFILE_PATH = path.join(HOME, '.gemini/antigravity/brain/voice-profile.md');
 
 const {
-  findWorkspaceBrain,
   getSessionId,
   loadSessionTracking,
   saveSessionTracking
@@ -288,9 +287,7 @@ function loadVoiceProfile() {
  */
 function logInjection(sessionId, actions) {
   try {
-    const cwd = process.cwd();
-    const brainPath = findWorkspaceBrain(cwd);
-    const tracking = loadSessionTracking(brainPath, sessionId);
+    const tracking = loadSessionTracking(sessionId);
 
     if (!tracking.injections) {
       tracking.injections = [];
@@ -301,7 +298,7 @@ function logInjection(sessionId, actions) {
       ...actions
     });
 
-    saveSessionTracking(brainPath, sessionId, tracking);
+    saveSessionTracking(sessionId, tracking);
   } catch (e) {
     // Don't fail the hook if logging fails
   }

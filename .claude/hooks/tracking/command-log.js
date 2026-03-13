@@ -6,15 +6,14 @@
  * Event: PostToolUse (Bash)
  * Purpose: Logs all bash commands executed during session
  *
- * Stores tracking in brain:
- * ~/.gemini/antigravity/brain/{workspace-uuid}/sessions/{session-id}.json
+ * Stores tracking in global brain:
+ * ~/.gemini/antigravity/brain/tracking/sessions/{session-id}.json
  */
 
 const fs = require('fs');
 const path = require('path');
 
 const {
-  findWorkspaceBrain,
   getSessionId,
   loadSessionTracking,
   saveSessionTracking
@@ -43,13 +42,11 @@ function handleHook(data) {
 
   const cwd = process.cwd();
 
-  // Find brain folder and session
-  // Use Claude Code's session_id to eliminate fragmentation
-  const brainPath = findWorkspaceBrain(cwd);
-  const sessionId = getSessionId(brainPath, session_id);
+  // Get session (global tracking)
+  const sessionId = getSessionId(session_id);
 
   // Load current session tracking
-  const tracking = loadSessionTracking(brainPath, sessionId);
+  const tracking = loadSessionTracking(sessionId);
 
   // Initialize commands array if needed
   if (!tracking.commands) {
@@ -69,7 +66,7 @@ function handleHook(data) {
   });
 
   // Save updated tracking
-  saveSessionTracking(brainPath, sessionId, tracking);
+  saveSessionTracking(sessionId, tracking);
 
   process.exit(0);
 }

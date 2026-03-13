@@ -16,7 +16,6 @@ const fs = require('fs');
 const path = require('path');
 
 const {
-  findWorkspaceBrain,
   getSessionId,
   loadSessionTracking,
   saveSessionTracking
@@ -38,10 +37,9 @@ process.stdin.on('end', () => {
 function handleHook(data) {
   const { session_id, hook_type, subagent_id, subagent_type, description } = data;
 
-  const cwd = process.cwd();
-  const brainPath = findWorkspaceBrain(cwd);
-  const sessionId = getSessionId(brainPath, session_id);
-  const tracking = loadSessionTracking(brainPath, sessionId);
+  // Get session (global tracking)
+  const sessionId = getSessionId(session_id);
+  const tracking = loadSessionTracking(sessionId);
 
   // Initialize subagents array if needed
   if (!tracking.subagents) {
@@ -80,7 +78,7 @@ function handleHook(data) {
     }
   }
 
-  saveSessionTracking(brainPath, sessionId, tracking);
+  saveSessionTracking(sessionId, tracking);
 
   process.exit(0);
 }

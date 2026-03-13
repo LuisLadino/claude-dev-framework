@@ -24,6 +24,17 @@ description: Wire project together, verify setup, generate coding specs. Handles
 
 ---
 
+## Core Principle
+
+**All spec categories are treated the same.** Coding specs, config specs, architecture specs - all get:
+1. Verified against official docs (context7 or official sites)
+2. Populated with real content, not placeholders
+3. If not configured, prompt to set it up
+
+No category is "just project conventions" that skips verification.
+
+---
+
 ## What This Does
 
 ### 1. Project Setup
@@ -37,7 +48,7 @@ description: Wire project together, verify setup, generate coding specs. Handles
 - Ensures build pipeline will work
 
 ### 3. Spec Generation
-Researches your stack via context7 and generates specs with **real patterns from official docs**.
+Researches your stack via context7 and generates specs with **real patterns from official docs**. This applies to ALL categories - coding, config, architecture, design.
 
 | Category | What it contains | Source |
 |----------|------------------|--------|
@@ -307,7 +318,7 @@ find . -name "*.test.*" -o -name "*.spec.*" | head -10
 
 ## STEP 7: Update Config Specs
 
-Read and update the config template files based on detected project settings.
+Config specs follow the same principle as coding specs: verify against official docs, no placeholders.
 
 ### Read existing templates
 
@@ -316,6 +327,11 @@ ls .claude/specs/config/
 ```
 
 Read each file: version-control.md, deployment.md, environment.md, testing.md
+
+### For each config spec:
+1. Detect what's configured in the project
+2. If configured: fetch official docs (e.g., Vitest docs, Cloudflare docs), verify spec accuracy
+3. If not configured: prompt to set it up with recommendation based on stack
 
 ### Update version-control.md
 
@@ -350,10 +366,24 @@ find . -name "*.test.*" -o -name "*.spec.*" | head -5
 ls vitest.config.* jest.config.* 2>/dev/null
 ```
 
-Update the template with:
-- Actual test framework and version
-- Test file location pattern
-- Test commands
+**If no testing framework detected:**
+```
+TESTING NOT CONFIGURED
+
+No test framework detected. Recommendation for this stack:
+- [Framework]: Vitest (fast, Vite-native)
+- [Components]: @testing-library/react
+- [Environment]: jsdom
+
+Add testing? (yes / skip)
+```
+
+If yes: install packages, fetch Vitest docs via context7, generate real testing spec.
+
+**If testing framework detected:**
+- Fetch docs for detected framework via context7
+- Update spec with verified patterns
+- Include test file location, commands, coverage setup
 
 ### Update deployment.md
 
@@ -363,10 +393,14 @@ Detect from project:
 ls vercel.json netlify.toml fly.toml render.yaml Dockerfile docker-compose.yml 2>/dev/null
 ```
 
-Update the template with:
-- Detected deployment platform
-- Build commands from config
-- Environment setup
+**If deployment platform detected:**
+- Fetch platform docs (Cloudflare, Vercel, Netlify, etc.) via context7 or WebFetch
+- Verify spec matches current platform requirements
+- Update with build commands, environment setup, platform-specific patterns
+
+**If no deployment config:**
+- Note it's not configured
+- Suggest platforms based on stack (Cloudflare for static, Vercel for Next.js, etc.)
 
 ### Update environment.md
 

@@ -13,7 +13,6 @@ const fs = require('fs');
 const path = require('path');
 
 const {
-  findWorkspaceBrain,
   getSessionId,
   loadSessionTracking,
   saveSessionTracking
@@ -48,10 +47,9 @@ function handleHook(data) {
     process.exit(0);
   }
 
-  const cwd = process.cwd();
-  const brainPath = findWorkspaceBrain(cwd);
-  const sessionId = getSessionId(brainPath, session_id);
-  const tracking = loadSessionTracking(brainPath, sessionId);
+  // Get session (global tracking)
+  const sessionId = getSessionId(session_id);
+  const tracking = loadSessionTracking(sessionId);
 
   // Initialize failures array if needed
   if (!tracking.failures) {
@@ -86,7 +84,7 @@ function handleHook(data) {
   }
 
   tracking.failures.push(entry);
-  saveSessionTracking(brainPath, sessionId, tracking);
+  saveSessionTracking(sessionId, tracking);
 
   process.exit(0);
 }

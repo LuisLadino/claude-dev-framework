@@ -19,7 +19,6 @@ const fs = require('fs');
 const path = require('path');
 
 const {
-  findWorkspaceBrain,
   getSessionId,
   loadSessionTracking,
   saveSessionTracking
@@ -57,12 +56,11 @@ function handleHook(data) {
 
   const cwd = process.cwd();
 
-  // Find brain folder and session
-  const brainPath = findWorkspaceBrain(cwd);
-  const sessionId = getSessionId(brainPath, session_id);
+  // Get session (global tracking)
+  const sessionId = getSessionId(session_id);
 
   // Load current session tracking
-  const tracking = loadSessionTracking(brainPath, sessionId);
+  const tracking = loadSessionTracking(sessionId);
 
   // Initialize tools array if needed
   if (!tracking.tools) {
@@ -149,8 +147,11 @@ function handleHook(data) {
 
   tracking.tools.push(entry);
 
+  // Update last activity timestamp (used when SessionEnd doesn't fire)
+  tracking.lastActivity = new Date().toISOString();
+
   // Save updated tracking
-  saveSessionTracking(brainPath, sessionId, tracking);
+  saveSessionTracking(sessionId, tracking);
 
   process.exit(0);
 }

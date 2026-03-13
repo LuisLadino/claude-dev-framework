@@ -25,6 +25,8 @@ const {
   saveSessionTracking
 } = require('../lib/session-utils.js');
 
+// Note: Session tracking is global. Project state (session_state.json) is per-workspace.
+
 // Read hook input from stdin
 let input = '';
 process.stdin.setEncoding('utf8');
@@ -42,9 +44,13 @@ function handleHook(data) {
   const { session_id } = data;
 
   const cwd = process.cwd();
+
+  // Session tracking is global
+  const sessionId = getSessionId(session_id);
+  const tracking = loadSessionTracking(sessionId);
+
+  // Project state is per-workspace
   const brainPath = findWorkspaceBrain(cwd);
-  const sessionId = getSessionId(brainPath, session_id);
-  const tracking = loadSessionTracking(brainPath, sessionId);
 
   // Mark session as ended
   tracking.sessionEnd = new Date().toISOString();
@@ -67,7 +73,7 @@ function handleHook(data) {
     injections: tracking.injections?.length || 0
   };
 
-  saveSessionTracking(brainPath, sessionId, tracking);
+  saveSessionTracking(sessionId, tracking);
 
   // Also update session_state.json with session summary
   // This is what SessionStart loads
