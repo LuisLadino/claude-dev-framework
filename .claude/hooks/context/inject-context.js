@@ -840,7 +840,11 @@ Full profile: ~/.gemini/antigravity/brain/voice-profile.md`);
 
 **Think:** What does Luis actually want? Am I thinking or pattern-matching? One root cause, not symptoms.
 
-**The check:** Would a PM with UX foundations and AI technical fluency approach it this way?`;
+**The check:** Would a PM with UX foundations and AI technical fluency approach it this way?
+
+---
+
+**CRITICAL - DO THIS NOW:** Before responding, identify ONE concept from this interaction that connects to UX, PM, AI/ML, or CPMAI. Name it explicitly in your response. If you cannot identify a concept, state what discipline lens applies to this task. DO NOT skip this step.`;
 
   contextParts.push(complianceReminder);
 
