@@ -102,6 +102,20 @@ function checkForChanges() {
   return { changed: false };
 }
 
+const LOCAL_SESSION_STATE = '.claude/session-state.json';
+
+function resetLocalSessionState() {
+  try {
+    const state = {
+      specsRead: false,
+      sessionStart: new Date().toISOString()
+    };
+    fs.writeFileSync(LOCAL_SESSION_STATE, JSON.stringify(state, null, 2));
+  } catch (e) {
+    // Ignore errors
+  }
+}
+
 function loadProjectContext() {
   const context = [];
 
@@ -157,6 +171,9 @@ function handleHook(data) {
 
     // Clean up old sessions (7+ days old)
     cleanupOldSessions(brainPath);
+
+    // Reset local session state (for spec enforcement)
+    resetLocalSessionState();
   }
 
   // Check for project changes

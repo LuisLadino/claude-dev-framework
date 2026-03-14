@@ -163,3 +163,4 @@ docs/.vitepress/dist/
 *.patch
 # Local commands (personal, not distributed)
 .claude/commands/local/
+.claude/session-state.json
