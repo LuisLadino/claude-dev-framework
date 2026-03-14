@@ -58,7 +58,7 @@ CAPTURE ──► DETECT ──► DECIDE ──► ACT
 - SessionStart/PreCompact scripts that load and save state
 - Shared with Gemini for cross-agent context
 
-**Framework Layer** (this repo - copied to projects via `/update-framework`):
+**Framework Layer** (this repo - copied to projects):
 - Slash commands for workflows
 - Hooks for safety, tracking, context injection
 - Specs for pattern enforcement
@@ -161,7 +161,6 @@ Descriptions match command frontmatter (source of truth in `.claude/commands/`).
 |---------|-------------|
 | `/sync-stack` | Wire project together, verify setup, generate coding specs. Handles the HOW after /init-project defines the WHAT. |
 | `/init-project` | Define product requirements before coding. Creates project-brief, architecture decisions, design system. For complex projects needing upfront planning. |
-| `/update-framework` | Pull latest framework changes from source repo. Compares files, shows diffs, lets you selectively apply updates. |
 
 ### Quality
 
@@ -208,7 +207,7 @@ You approve → Claude implements → Runs quality gates → Done
 ├── CLAUDE.md              # Core instructions for Claude
 ├── commands/              # Slash commands
 │   ├── development/       # start-task, add-feature, process-tasks, commit, pr
-│   ├── project-management/# sync-stack, init-project, update-framework
+│   ├── project-management/# sync-stack, init-project
 │   ├── specs/             # audit
 │   └── utilities/         # learn, analyze
 ├── hooks/                 # Automation hooks
@@ -312,16 +311,6 @@ Everything in `specs/` is yours. Edit any file to match your patterns.
 - **Framework updates never touch specs/** - Your customizations are safe
 - **Add custom specs** with `/sync-stack --custom`
 - **Create custom directories** - Just add them to specs/ and list in stack-config.yaml
-
----
-
-## Updating the Framework
-
-```
-/update-framework
-```
-
-Checks your fork for updates, shows what changed, lets you choose what to apply.
 
 ---
 

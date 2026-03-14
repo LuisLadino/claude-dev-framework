@@ -27,7 +27,7 @@ Open an issue with:
 
 Commands live in `.claude/commands/` organized by category:
 - `development/` - start-task, add-feature, process-tasks, commit, pr
-- `project-management/` - init-project, sync-stack, update-framework
+- `project-management/` - init-project, sync-stack
 - `specs/` - audit
 - `utilities/` - learn, analyze
 
