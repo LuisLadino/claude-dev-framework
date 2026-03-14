@@ -488,6 +488,30 @@ const CONTENT_WRITING_PATTERNS = [
   /\bhow (should|would) (I|this) (say|phrase|word)\b/i
 ];
 
+// Capture trigger - persist ideas/insights to brain files
+// User says "capture this" or "capture: [idea]" and it gets saved
+const CAPTURE_PATTERNS = [
+  /\bcapture[:\s]+this\b/i,           // "capture this" or "capture: this"
+  /\bcapture[:\s]+that\b/i,           // "capture that"
+  /\bcapture[:\s]+(.{10,})/i,         // "capture: [explicit content]" (min 10 chars)
+  /\bremember this\b/i,               // "remember this"
+  /\bsave this (idea|thought|insight|decision|pattern)\b/i,
+  /\bnote this down\b/i,              // "note this down"
+  /\bpersist this\b/i,                // "persist this"
+  /\bkeep this\b/i,                   // "keep this"
+  /\bdon'?t forget (this|that)\b/i    // "don't forget this"
+];
+
+// Keywords to determine which brain file to write to
+const CAPTURE_ROUTING = {
+  decision: 'decisions.md',
+  pattern: 'patterns.md',
+  learning: 'learnings.md',
+  idea: 'ideas.md',
+  insight: 'ideas.md',
+  thought: 'ideas.md'
+};
+
 // Ideation/drafting detection - inject identity + voice BEFORE writing starts
 const IDEATION_PATTERNS = [
   // Brainstorming
@@ -717,6 +741,68 @@ function handleHook(data) {
   const isContentWriting = CONTENT_WRITING_PATTERNS.some(pattern => pattern.test(prompt));
   const isIdeation = IDEATION_PATTERNS.some(pattern => pattern.test(prompt));
 
+  // Check for capture trigger - persist ideas/insights to brain
+  const isCaptureRequest = CAPTURE_PATTERNS.some(pattern => pattern.test(prompt));
+
+  if (isCaptureRequest) {
+    // Determine target file based on keywords in prompt
+    let targetFile = 'ideas.md'; // default
+    for (const [keyword, file] of Object.entries(CAPTURE_ROUTING)) {
+      if (prompt.toLowerCase().includes(keyword)) {
+        targetFile = file;
+        break;
+      }
+    }
+
+    // Extract explicit content if provided (e.g., "capture: this is my idea")
+    const explicitMatch = prompt.match(/capture[:\s]+(.{10,})/i);
+    const explicitContent = explicitMatch ? explicitMatch[1].trim() : null;
+
+    // Get brain path from environment or construct it
+    const brainBasePath = path.join(HOME, '.gemini/antigravity/brain');
+
+    // Inject capture instructions for Claude
+    // Note: Claude already has the brain path from session context injection
+    const today = new Date().toISOString().split('T')[0];
+
+    const captureInstructions = explicitContent
+      ? `[CAPTURE TRIGGERED]
+Content to persist: "${explicitContent}"
+Target file: ${targetFile}
+
+**Action required:** Write this to the brain file.
+Use the brain path from your session context (e.g., ~/.gemini/antigravity/brain/{uuid}/).
+Append to ${targetFile} with this format:
+
+\`\`\`markdown
+### [${today}] [Brief title]
+${explicitContent}
+
+Context: [What prompted this capture]
+\`\`\`
+
+Create the file if it doesn't exist. Confirm what was captured.`
+      : `[CAPTURE TRIGGERED]
+User wants to capture something from this conversation.
+Target file: ${targetFile}
+
+**Action required:** Extract and persist the relevant insight.
+1. Identify what the user wants to capture (recent idea, decision, pattern, or learning from the conversation)
+2. Use the brain path from your session context
+3. Append to ${targetFile} with this format:
+
+\`\`\`markdown
+### [${today}] [Brief title]
+[The captured content - be specific]
+
+Context: [What prompted this capture]
+\`\`\`
+
+Create the file if it doesn't exist. Confirm what was captured.`;
+
+    contextParts.push(captureInstructions);
+  }
+
   // Check for command routing first
   for (const route of COMMAND_ROUTES) {
     const matches = route.patterns.some(pattern => pattern.test(prompt));
@@ -860,6 +946,7 @@ Full profile: ~/.gemini/antigravity/brain/voice-profile.md`);
   if (identityLoaded) actions.identityLoaded = true;
   if (voiceProfileLoaded) actions.voiceProfileLoaded = voiceProfileLoaded;
   if (specsLoaded.length > 0) actions.specsLoaded = specsLoaded;
+  if (isCaptureRequest) actions.captureTriggered = true;
 
   logInjection(session_id, actions);
 
