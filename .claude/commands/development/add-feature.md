@@ -171,17 +171,22 @@ Include in task list:
 
 ---
 
-## STEP 10: Save Task List
+## STEP 10: Create GitHub Issues (Optional)
 
-Save to `.claude/tasks/tasks-NNNN-prd-[feature-slug].md` (matching PRD filename).
+Ask: "Create GitHub issues for these tasks? (yes/no)"
 
-Show summary: PRD location, task list location, parent task count, subtask count.
+If yes:
+```bash
+gh issue create --title "Task 1.0: Set up feature structure" --body "Details..." --label "type/feature"
+```
+
+Create one issue per parent task, or one parent issue with a checklist of subtasks.
 
 ---
 
 ## STEP 11: Next Steps
 
 Suggest:
-1. Review task list file
-2. Run `/process-tasks` to start implementation
-3. Or edit task list if adjustments needed
+1. Pick which task to start with
+2. Use start-task workflow to begin implementation
+3. Each task follows: Branch → Build + Test → Commit → PR

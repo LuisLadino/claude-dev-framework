@@ -1,10 +1,12 @@
 ---
-description: Execute a task list one at a time. Use after /add-feature to implement each subtask with verification and commits.
+description: Execute a task list file one at a time. Legacy command for .claude/tasks/ workflow. Prefer GitHub Issues workflow instead.
 ---
 
-# /process-tasks - Execute Task List
+# /process-tasks - Execute Task List (Legacy)
 
-Use after `/add-feature` to implement a feature one subtask at a time. Executes ONE subtask at a time, runs `/start-task` workflow for each, verifies after each, waits for approval, commits after each parent task, and can pause/resume anytime.
+Execute tasks from a `.claude/tasks/` file one subtask at a time. This is a fallback for projects using task files instead of GitHub Issues.
+
+**Preferred workflow:** Use GitHub Issues with start-task skill instead.
 
 ---
 
