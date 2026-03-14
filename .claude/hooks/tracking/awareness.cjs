@@ -4,16 +4,15 @@
  * Awareness Hook
  *
  * Event: UserPromptSubmit
- * Purpose: Detect conditions that warrant running /reflect
+ * Purpose: Detect conditions that warrant running /analyze
  *
  * Checks for:
- * - Large context files (learnings.md, patterns.md)
+ * - Large context files (learnings.md)
  * - Failures accumulating
- * - Long session without checkpoint
- * - Corrections detected (from session tracking)
+ * - Overview.txt bloat
  *
  * Outputs a gentle reminder when conditions are met.
- * Similar pattern to detect-pivot.js but for system health.
+ * Note: Context saving is handled automatically by pre-compact.js
  */
 
 const fs = require('fs');
@@ -41,9 +40,6 @@ process.stdin.on('end', () => {
 const LEARNINGS_LINE_THRESHOLD = 200;
 const PATTERNS_LINE_THRESHOLD = 150;
 const FAILURES_THRESHOLD = 5;
-const SESSION_DURATION_THRESHOLD = 60; // minutes before suggesting checkpoint
-const TOOL_CALLS_THRESHOLD = 50; // tool calls before suggesting checkpoint
-const FILE_EDITS_THRESHOLD = 15; // file edits before suggesting checkpoint
 
 // Cooldown: don't spam the same warning
 const COOLDOWN_FILE = path.join(os.tmpdir(), 'claude-awareness-cooldown.json');
@@ -93,42 +89,8 @@ function handleHook(data) {
           cooldowns.failures = now;
         }
 
-        // Check tool call volume (activity-based checkpoint prompt)
-        const toolCallCount = tracking.toolCalls?.length || 0;
-        if (toolCallCount >= TOOL_CALLS_THRESHOLD && !inCooldown(cooldowns, 'toolcalls', now)) {
-          warnings.push(`${toolCallCount} tool calls this session. Consider /checkpoint to capture progress.`);
-          cooldowns.toolcalls = now;
-        }
-
-        // Check file edit volume
-        const fileEditCount = (tracking.filesModified?.length || 0) + (tracking.filesCreated?.length || 0);
-        if (fileEditCount >= FILE_EDITS_THRESHOLD && !inCooldown(cooldowns, 'fileedits', now)) {
-          warnings.push(`${fileEditCount} files changed this session. Consider /checkpoint to capture outcomes.`);
-          cooldowns.fileedits = now;
-        }
-
-        // Check session duration without checkpoint
-        if (tracking.sessionStart) {
-          const startTime = new Date(tracking.sessionStart).getTime();
-          const durationMinutes = Math.floor((now - startTime) / 60000);
-          if (durationMinutes > SESSION_DURATION_THRESHOLD && !inCooldown(cooldowns, 'duration', now)) {
-            // Only warn if no recent checkpoint (check session_state.json timestamp)
-            const statePath = path.join(brainPath, 'session_state.json');
-            try {
-              const state = JSON.parse(fs.readFileSync(statePath, 'utf8'));
-              const lastCheckpoint = state.timestamp ? new Date(state.timestamp).getTime() : 0;
-              const minutesSinceCheckpoint = Math.floor((now - lastCheckpoint) / 60000);
-              if (minutesSinceCheckpoint > SESSION_DURATION_THRESHOLD) {
-                warnings.push(`${durationMinutes}min session with no recent checkpoint. Consider /checkpoint.`);
-                cooldowns.duration = now;
-              }
-            } catch (e) {
-              // No state file, suggest checkpoint
-              warnings.push(`${durationMinutes}min session with no checkpoint. Consider /checkpoint.`);
-              cooldowns.duration = now;
-            }
-          }
-        }
+        // Note: Tool call volume, file edits, and session duration checks removed
+        // pre-compact.js handles context saving automatically before compaction
       } catch (e) {}
     }
 
@@ -150,7 +112,7 @@ function handleHook(data) {
   if (warnings.length > 0) {
     console.error('\n[AWARENESS] System check:');
     warnings.forEach(w => console.error(`  - ${w}`));
-    console.error('Consider running /reflect to analyze and improve.\n');
+    console.error('Consider running /analyze to analyze and improve.\n');
   }
 
   process.exit(0);

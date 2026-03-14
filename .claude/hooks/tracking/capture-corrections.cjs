@@ -14,34 +14,31 @@ const HOME = process.env.HOME || process.env.USERPROFILE;
 const LEARNINGS_PATH = path.join(HOME, '.gemini/antigravity/brain/learnings.md');
 
 // Patterns indicating user is correcting Claude
+// Tightened to reduce false positives - must be about Claude's behavior being wrong
 const CORRECTION_PATTERNS = [
-  // Direct corrections
-  /you('re| are) not (following|doing|applying)/i,
-  /you didn('t|'t| not)/i,
-  /I (told|asked) you to/i,
-  /why (aren't|didn't|haven't) you/i,
-  /that's (wrong|incorrect|not right|not what)/i,
-  /no,? (that|you|it)/i,
+  // Direct corrections about Claude's behavior
+  /you('re| are) not (following|doing|applying|listening)/i,
+  /you didn'?t (follow|do|apply|listen|read|check)/i,
+  /I (told|asked) you (to|not to)/i,
+  /why (aren't|didn't|haven't) you (follow|do|apply|read|check)/i,
+  /that's (wrong|incorrect|not right|not what I asked)/i,
 
   // Methodology/instruction failures
   /you('re| are) not teaching/i,
-  /where('s| is) the tutorship/i,
   /you forgot to/i,
   /you skipped/i,
-  /you missed/i,
+  /you missed the/i,
 
-  // Behavior patterns
-  /stop (guessing|assuming|making up)/i,
-  /you('re| are) (hallucinating|pattern.?matching)/i,
-  /read (the|it) (first|again)/i,
-  /look it up/i,
-  /check (the|your)/i,
+  // Explicit behavior callouts
+  /stop (guessing|assuming|making up|hallucinating)/i,
+  /you('re| are) (hallucinating|pattern.?matching|guessing)/i,
+  /read (the code|the file|it) (first|again|before)/i,
 
-  // Explicit callouts
-  /I('ve| have) (told|corrected|reminded) you/i,
+  // Repeated corrections
+  /I('ve| have) (already )?(told|corrected|reminded) you/i,
   /this is the (second|third|\d+) time/i,
-  /we discussed this/i,
-  /I thought (this|you|we) (had|was|were)/i
+  /we (already )?discussed this/i,
+  /I already (said|told|explained)/i
 ];
 
 async function getInput() {

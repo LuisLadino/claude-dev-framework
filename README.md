@@ -29,7 +29,7 @@ Without this, every Claude session starts blank. With it, Claude has history, le
 │  During Session → Hooks track everything (tools, files,     │
 │                   commands, failures)                        │
 │       ↓                                                      │
-│  /checkpoint or PreCompact → Saves state to brain           │
+│  PreCompact → Saves state to brain                          │
 │       ↓                                                      │
 │  SessionEnd → Writes summary for next session               │
 │                                                              │
@@ -43,7 +43,7 @@ CAPTURE ──► DETECT ──► DECIDE ──► ACT
    │           │          │        │
    │           │          │        └─► Write to brain files
    │           │          │
-   │           │          └─► /reflect analyzes, suggests changes
+   │           │          └─► /analyze investigates, suggests changes
    │           │
    │           └─► awareness.js notices issues (large files,
    │               failures, long sessions)
@@ -123,7 +123,6 @@ That's it. Claude now follows your patterns.
 ### Checking Code Quality
 
 ```
-/verify                  # Check code against your specs
 /audit                   # Deep parallel review (security, performance, tests)
 ```
 
@@ -134,11 +133,10 @@ That's it. Claude now follows your patterns.
 /learn react hooks       # Explain a specific topic
 ```
 
-### Managing Context
+### Analyzing the Framework
 
 ```
-/checkpoint              # Save session context before ending work
-/reflect                 # Analyze patterns, identify improvements
+/analyze                 # Analyze patterns, identify improvements (run in split pane)
 ```
 
 ---
@@ -163,15 +161,12 @@ Descriptions match command frontmatter (source of truth in `.claude/commands/`).
 |---------|-------------|
 | `/sync-stack` | Wire project together, verify setup, generate coding specs. Handles the HOW after /init-project defines the WHAT. |
 | `/init-project` | Define product requirements before coding. Creates project-brief, architecture decisions, design system. For complex projects needing upfront planning. |
-| `/generate-project-specs` | Generate comprehensive project docs (PRD, architecture, API specs). For enterprise/team projects needing full documentation. |
 | `/update-framework` | Pull latest framework changes from source repo. Compares files, shows diffs, lets you selectively apply updates. |
 
 ### Quality
 
 | Command | Description |
 |---------|-------------|
-| `/add-spec` | Add a custom coding rule specific to this project. Use for internal conventions not covered by library docs. |
-| `/verify` | Check code against project specs before committing. Quick validation that code follows established patterns. |
 | `/audit` | Deep code review using parallel agents. Security, performance, tests, architecture reviewed simultaneously. |
 
 ### Utilities
@@ -179,8 +174,6 @@ Descriptions match command frontmatter (source of truth in `.claude/commands/`).
 | Command | Description |
 |---------|-------------|
 | `/learn` | Explain any topic using ELI5 style. Analogies, foundations first, no jargon. Use for ALL explanations. |
-| `/reflect` | Analyze session data, patterns, and learnings to identify improvements. Use periodically or when prompted by awareness hooks. |
-| `/checkpoint` | Save session context to brain files. Use before ending work or context compaction to preserve what was accomplished. |
 | `/analyze` | Run as framework analyst. Evaluates framework health, analyzes session data, iterates on the system. Run in a split terminal pane alongside your working session. |
 
 ---
@@ -216,8 +209,8 @@ You approve → Claude implements → Runs quality gates → Done
 ├── commands/              # Slash commands
 │   ├── development/       # start-task, add-feature, process-tasks, commit, pr
 │   ├── project-management/# sync-stack, init-project, update-framework
-│   ├── specs/             # add-spec, verify, audit
-│   └── utilities/         # learn, checkpoint, reflect
+│   ├── specs/             # audit
+│   └── utilities/         # learn, analyze
 ├── hooks/                 # Automation hooks
 │   ├── safety/            # block-dangerous.js
 │   ├── tracking/          # tool-tracker, track-changes, command-log, awareness
@@ -317,7 +310,7 @@ Listed under `quality:` in stack-config.yaml. Commands are detected from package
 Everything in `specs/` is yours. Edit any file to match your patterns.
 
 - **Framework updates never touch specs/** - Your customizations are safe
-- **Add custom specs** with `/add-spec`
+- **Add custom specs** with `/sync-stack --custom`
 - **Create custom directories** - Just add them to specs/ and list in stack-config.yaml
 
 ---

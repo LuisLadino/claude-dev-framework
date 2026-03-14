@@ -23,7 +23,7 @@ Options:
 
 Explain: "This spawns 3 parallel reviewers (security, performance, test coverage). Uses ~3x tokens. Continue? (yes/no)"
 
-If no, suggest `/verify` for single-agent specs check instead.
+If no, suggest `/audit` for single-agent specs check instead.
 
 ---
 
@@ -84,7 +84,7 @@ MEDIUM/LOW PRIORITY:
 Next steps:
 - Fix critical/high issues before merging
 - Consider medium issues for follow-up tasks
-- Run /verify after fixes to check against your specs
+- Run /audit after fixes to check against your specs
 ```
 
 ---

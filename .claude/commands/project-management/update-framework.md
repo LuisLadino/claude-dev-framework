@@ -114,12 +114,12 @@ Framework Source: {owner}/{repo}
 
 Recent Changes:
 - feat: add new /audit command
-- fix: improve error handling in /verify
+- fix: improve error handling in /audit
 - docs: update CLAUDE.md reasoning section
 
 Files to Update:
   MODIFIED: CLAUDE.md
-  MODIFIED: commands/specs/verify.md
+  MODIFIED: commands/specs/audit.md
   NEW: commands/specs/audit.md
 
 Unchanged: 12 files
@@ -168,7 +168,7 @@ Report what was updated:
 ```
 Updated:
 - CLAUDE.md
-- commands/specs/verify.md
+- commands/specs/audit.md
 
 Added:
 - commands/specs/audit.md
@@ -191,4 +191,4 @@ To revert: git checkout .claude/
 ## Related Commands
 
 - `/sync-stack` - Detect stack and generate specs
-- `/verify` - Check code against specs
+- `/audit` - Check code against specs

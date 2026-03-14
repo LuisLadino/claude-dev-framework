@@ -45,13 +45,13 @@ Directories are created as needed based on your stack.
 |---------|---------|
 | `/sync-stack` | Auto-generate specs from library docs (React, Next.js, etc.) |
 | `/sync-stack prisma` | Add specs for a specific dependency |
-| `/add-spec` | Add custom project-specific rules (API conventions, security, etc.) |
-| `/verify` | Check code against specs |
+| `/sync-stack --custom api-conventions` | Add custom project-specific rules |
+
 
 ---
 
 ## Customization
 
 - Edit any generated file to match your team's patterns
-- Use `/add-spec` for internal rules not covered by library docs
+- Use `/sync-stack --custom` for internal rules not covered by library docs
 - Framework updates never touch this directory

@@ -17,9 +17,10 @@ description: Wire project together, verify setup, generate coding specs. Handles
 ## Usage
 
 ```
-/sync-stack              # Full setup (install, wire, verify, generate specs)
-/sync-stack prisma       # Add a specific dependency and update wiring
-/sync-stack --verify     # Just verify wiring, don't regenerate specs
+/sync-stack                      # Full setup (install, wire, verify, generate specs)
+/sync-stack prisma               # Add a specific dependency and update wiring
+/sync-stack --verify             # Just verify wiring, don't regenerate specs
+/sync-stack --custom api-conventions   # Add custom project-specific spec
 ```
 
 ---
@@ -885,6 +886,83 @@ When run as `/sync-stack [dependency]`:
 6. Add to stack-config.yaml specs list
 
 **Note:** Single dependency mode focuses on coding specs. Run full `/sync-stack` to regenerate architecture/design/documentation specs.
+
+---
+
+## Adding Custom Project Specs
+
+When run as `/sync-stack --custom [name]`:
+
+Use this for internal project rules NOT covered by library documentation:
+- Internal API conventions
+- Company naming standards
+- Security requirements
+- Accessibility standards
+- Business logic rules
+- Any project-specific patterns
+
+**Don't use for:** Library patterns (React, Prisma, Tailwind). Use regular `/sync-stack` for those.
+
+### Step 1: Spec Type
+
+Ask the user which type:
+
+1. **coding** - Internal coding standards (`.claude/specs/coding/`)
+2. **architecture** - System design rules (`.claude/specs/architecture/`)
+3. **design** - Design rules (`.claude/specs/design/`)
+4. **config** - Operational rules (`.claude/specs/config/`)
+
+### Step 2: Confirm
+
+Show: type, name, file path. Ask for confirmation.
+
+### Step 3: Create File
+
+Create the spec file with template:
+
+```markdown
+# [Spec Name]
+
+## Overview
+
+[What this spec covers]
+
+## Patterns
+
+### [Pattern Name]
+[Description with code example]
+
+## Anti-Patterns
+
+- [What NOT to do] - [Why]
+```
+
+### Step 4: Update stack-config.yaml
+
+Add the spec filename (without .md) to the appropriate category:
+
+```yaml
+specs:
+  coding:
+    - api-conventions    # Custom spec added here
+```
+
+### Step 5: Generate Content (Optional)
+
+Ask if they want help filling in the spec:
+
+1. **Research** - Research general best practices to scaffold
+2. **Manual** - Keep template for manual editing
+
+Research sources for custom specs:
+- REST/GraphQL API design guidelines
+- OWASP security best practices
+- WCAG accessibility standards
+- Language-agnostic patterns
+
+### Step 6: Done
+
+Confirm the spec was created. Suggest reviewing and customizing.
 
 ---
 

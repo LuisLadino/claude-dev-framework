@@ -130,7 +130,7 @@ Ask: "Want to commit these changes? (yes/no)"
 
 ## STEP 8: Next Steps
 
-Suggest: `/learn` to understand the code, `/verify` for deeper check, or `/start-task` for another task.
+Suggest: `/learn` to understand the code, `/audit` for deeper check, or `/start-task` for another task.
 
 ---
 

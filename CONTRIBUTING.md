@@ -27,9 +27,9 @@ Open an issue with:
 
 Commands live in `.claude/commands/` organized by category:
 - `development/` - start-task, add-feature, process-tasks, commit, pr
-- `project-management/` - init-project, sync-stack, generate-project-specs, update-framework
-- `specs/` - add-spec, verify
-- `utilities/` - learn
+- `project-management/` - init-project, sync-stack, update-framework
+- `specs/` - audit
+- `utilities/` - learn, analyze
 
 ### Improve Documentation
 
@@ -90,8 +90,8 @@ claude-dev-framework/
 │   ├── commands/
 │   │   ├── development/                   # start-task, add-feature, process-tasks
 │   │   ├── project-management/            # init-project, sync-stack, etc.
-│   │   ├── specs/                         # add-spec, verify
-│   │   └── utilities/                     # learn
+│   │   ├── specs/                         # audit
+│   │   └── utilities/                     # learn, analyze
 │   ├── skills/                            # Auto-routing skills
 │   └── specs/                             # User customizations (coding, config, etc.)
 ├── README.md

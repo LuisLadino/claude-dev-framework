@@ -40,6 +40,7 @@ You need BOTH to know if the framework is actually helping Luis.
 - **Systematizer** - Don't just fix this instance. Create patterns that scale.
 - **Impact over output** - Is this change actually valuable, or just activity?
 - **Research first** - Read the data before proposing. Don't guess at problems.
+- **Verify before proposing** - "Fix needed" notes may be stale. CHECK if the fix already exists before proposing solutions. Read the actual code, check git log. Don't trust notes without verification.
 - **Honest about gaps** - If you don't know, say so. Surface risks early.
 
 ### The Big Questions (Qualitative)
@@ -62,7 +63,11 @@ You need BOTH to know if the framework is actually helping Luis.
 1. Read the most recent session tracking file for this workspace to see what's happening
 2. Read learnings.md for accumulated patterns and corrections
 3. Read framework-issues.md for known issues
-4. Give Luis a quick status: "Here's what I see, what do you want to focus on?"
+4. **CRITICAL: For any "fix needed" notes, verify current state before reporting:**
+   - Check git log for recent changes that may have addressed it
+   - Read the actual hook/command code to see current implementation
+   - Notes may be stale (written before fix was implemented)
+5. Give Luis a quick status: "Here's what I see, what do you want to focus on?"
 
 Then wait for Luis to direct you. He may:
 - Ask you to watch the active session and comment on what you see
@@ -107,7 +112,7 @@ You're not automatically watching - Luis tells you when to look and what to focu
 
 3. **Context Loading**
    - Is session-context.js loading the right identity/task/learnings?
-   - Is inject-context.js adding useful context or noise?
+   - Is inject-context.cjs adding useful context or noise?
 
 4. **System Health**
    - Are brain files getting too large?
@@ -170,20 +175,24 @@ Understand the full system before analyzing:
 SessionStart ─► session-context.js loads identity, task, learnings
      │
      ▼
-UserPromptSubmit ─► inject-context.js suggests commands, loads voice
-                ─► capture-corrections.js detects corrections
-                ─► awareness.js checks system health
+UserPromptSubmit ─► inject-context.cjs suggests commands, loads voice
+                ─► capture-corrections.cjs detects corrections
+                ─► awareness.cjs checks system health
      │
      ▼
-PostToolUse ─► tool-tracker.js logs ALL tool calls
-           ─► track-changes.js logs file modifications
-           ─► command-log.js logs bash commands
+PreToolUse ─► enforce-specs.cjs DENIES code edits until specs read
+           ─► block-dangerous.cjs blocks destructive commands
+     │
+     ▼
+PostToolUse ─► tool-tracker.cjs logs ALL tool calls
+           ─► track-changes.cjs logs file modifications
+           ─► command-log.cjs logs bash commands
      │
      ▼
 PreCompact ─► pre-compact.js saves task.md, session_state.json
      │
      ▼
-SessionEnd ─► session-end.js writes summary (often doesn't fire)
+SessionEnd ─► session-end.cjs writes summary (often doesn't fire)
      │
      ▼
 Background ─► daemon.js watches sessions, generates overview.txt
@@ -193,10 +202,11 @@ Background ─► daemon.js watches sessions, generates overview.txt
 
 | Component | Purpose | Key Questions |
 |-----------|---------|---------------|
-| `inject-context.js` | Suggest commands, inject methodology | Are patterns matching correctly? Too many false positives? |
-| `capture-corrections.js` | Detect user corrections | Are correction patterns comprehensive? |
-| `awareness.js` | System health checks | Are thresholds right? Too noisy? |
-| `tool-tracker.js` | Log all tool calls | Is data structure useful? |
+| `inject-context.cjs` | Suggest commands, inject methodology | Are patterns matching correctly? Too many false positives? |
+| `capture-corrections.cjs` | Detect user corrections | Are correction patterns comprehensive? |
+| `awareness.cjs` | System health checks | Are thresholds right? Too noisy? |
+| `tool-tracker.cjs` | Log all tool calls | Is data structure useful? |
+| `enforce-specs.cjs` | DENY code edits until specs read | Is it blocking appropriately? |
 | `session-context.js` | Load identity, task, learnings at start | Is the right context loading? |
 | `pre-compact.js` | Save state before compaction | Is it capturing what matters? |
 | `daemon.js` | Synthesize session data | Is overview.txt useful? |
@@ -225,20 +235,21 @@ Background ─► daemon.js watches sessions, generates overview.txt
 ├── .claude/CLAUDE.md                    # Instructions for Claude
 ├── .claude/hooks/
 │   ├── tracking/
-│   │   ├── tool-tracker.js              # ALL tool calls
-│   │   ├── track-changes.js             # File modifications
-│   │   ├── command-log.js               # Bash commands
-│   │   ├── capture-corrections.js       # User corrections
-│   │   ├── awareness.js                 # System health
-│   │   ├── session-end.js               # Session summary
-│   │   └── subagent-tracker.js          # Subagent spawns
+│   │   ├── tool-tracker.cjs             # ALL tool calls
+│   │   ├── track-changes.cjs            # File modifications
+│   │   ├── command-log.cjs              # Bash commands
+│   │   ├── capture-corrections.cjs      # User corrections
+│   │   ├── awareness.cjs                # System health
+│   │   ├── session-end.cjs              # Session summary
+│   │   └── subagent-tracker.cjs         # Subagent spawns
 │   ├── context/
-│   │   ├── inject-context.js            # Command routing, methodology
-│   │   └── session-init.js              # Session setup
+│   │   ├── inject-context.cjs           # Command routing, methodology
+│   │   ├── enforce-specs.cjs            # DENY code edits until specs read
+│   │   └── session-init.cjs             # Session setup
 │   ├── safety/
-│   │   └── block-dangerous.js           # Block destructive commands
+│   │   └── block-dangerous.cjs          # Block destructive commands
 │   └── quality/
-│       └── verify-before-stop.js        # Check for debug statements
+│       └── verify-before-stop.cjs       # Check for debug statements
 ├── .claude/commands/                    # Slash commands
 └── .claude/specs/                       # Project patterns
 ```

@@ -84,23 +84,14 @@ const COMMAND_ROUTES = [
       /\bbefore I (push|merge|submit|pr)\b/i,
       /\bgive (this|it) a once.over\b/i,
       /\baudit\b/i,
-      /\bcode review\b/i
+      /\bcode review\b/i,
+      // Quick validation (merged from /verify)
+      /\bdoes this (look|seem) right\b/i,
+      /\bquick (check|look)\b/i,
+      /\bverify (this|it)\b/i
     ],
     command: '/audit',
     reason: 'Want a code review? /audit runs parallel agents for security, performance, tests, architecture.'
-  },
-  {
-    patterns: [
-      // Quick validation phrases
-      /\bdoes this (look|seem) right\b/i,
-      /\bam I doing this right\b/i,
-      /\bquick (check|look)\b/i,
-      /\bis this (following|matching) the patterns\b/i,
-      /\bverify (this|it)\b/i,
-      /\bdid I do this (right|correctly)\b/i
-    ],
-    command: '/verify',
-    reason: 'Quick validation? /verify checks code against your specs.'
   },
   {
     patterns: [
@@ -149,23 +140,6 @@ const COMMAND_ROUTES = [
   },
   {
     patterns: [
-      // Session end/save phrases
-      /\bsave (where we'?re at|progress|this)\b/i,
-      /\b(gonna |going to )?(take a break|stop here|pause)\b/i,
-      /\bwrap (this |it )?up\b/i,
-      /\bbefore I (go|leave|stop)\b/i,
-      /\blet'?s (pause|stop) here\b/i,
-      /\bending (the |this )?session\b/i,
-      /\bcheckpoint\b/i,
-      /\bpicking this up later\b/i,
-      /\bcontinue (this )?later\b/i,
-      /\bthat'?s (it |all )?for (now|today)\b/i
-    ],
-    command: '/checkpoint',
-    reason: 'Saving context? /checkpoint writes session state to brain files.'
-  },
-  {
-    patterns: [
       // Analysis/improvement phrases
       /\b(analyze|review) (the |my )?(sessions?|patterns?|learnings?)\b/i,
       /\bwhat (have I|have we|did I|did we) learn\b/i,
@@ -179,8 +153,8 @@ const COMMAND_ROUTES = [
       /\bconsolidate\b/i,
       /\b(are|is) (the |my )?(learnings?|brain|context) (too big|large|bloated)\b/i
     ],
-    command: '/reflect',
-    reason: 'Analysis time? /reflect reads session data and identifies improvements.'
+    command: '/analyze',
+    reason: 'Analysis time? /analyze reads session data and identifies improvements.'
   }
 ];
 

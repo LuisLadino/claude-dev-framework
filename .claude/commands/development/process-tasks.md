@@ -70,7 +70,7 @@ When ALL parent tasks are done, show completion summary:
 - All created files organized by type
 - Stack patterns used
 
-Suggest next steps: test the feature manually, run `/verify`, run `/learn`, deploy if ready.
+Suggest next steps: test the feature manually, run `/audit`, run `/learn`, deploy if ready.
 
 ---
 

@@ -1,51 +1,49 @@
 # Claude Code Project Instructions
 
-## Prime Directives
+## Rules
 
-- **Root cause solutions** - Solve the underlying problem, not symptoms
-- **Follow instructions exactly** - Don't skip or shortcut what I explicitly asked for
-- **Trust code over docs** - Documentation can be outdated. When in doubt, read the implementation
-- **Learn from errors** - When corrected, explain why and whether instructions should change
-- **Use slash commands** - Before acting, check if a command exists for this task
-- **Keep it simple** - Easy to read, predictable patterns, easy to modify
-- **Verify before presenting** - Before showing work, check that it actually does what you claim
+- Verify edits by reading the file after editing
+- Show proof: file path and line number for claims, command output for verifications
+- Use slash commands when they exist for the task
+- Check context7 before claiming library patterns
 
 ---
 
-## Reasoning
+## Specs
 
-- **Problem first** - State what problem you're solving before suggesting a fix
-- **Think independently** - User's words are input, not answers.
-- **Logic check** - Does your suggestion actually solve the stated problem?
-- **Existing tools first** - Check if a tool, API, or pattern already solves it before building
-- **Explain your reasoning** - When making decisions, share why and how it compares to best practices
+Specs define how code should be written. They live in `.claude/specs/`.
 
----
+Before writing code, read the specs listed in `stack-config.yaml`. The enforce-specs hook will block edits until you do.
 
-## Execution
-
-- **Show proof** - File path and line number for claims, command output for verifications
-- **Verify edits** - Read the file after editing to confirm the change
+To generate specs: `/sync-stack`
+To add a library: `/sync-stack prisma`
+To add custom rules: `/sync-stack --custom api-conventions`
 
 ---
 
-## Task Framing
+## Hooks
 
-When reporting what we're working on (for PreCompact to capture), frame as **outcomes**, not activities:
+Hooks enforce behavior. Don't fight them.
 
-- **Good:** "Context persists after compaction" (verifiable outcome)
-- **Bad:** "Updated pre-compact.js" (activity, not verifiable)
+- **enforce-specs** blocks code edits until specs are read
+- **block-dangerous** blocks rm -rf, force push, credential exposure
+- **verify-before-stop** checks for debug statements before stopping
+- **awareness** prompts for /analyze when issues accumulate
 
-Format for PreCompact extraction:
+If a hook blocks you, there's a reason.
 
-```
-## Task: [Outcome statement]
-- Status: [In progress / Complete]
-- Summary: [What changed and why it matters]
-```
+---
 
-Outcomes should be:
+## Commands
 
-- Verifiable: Can we check if this is true?
-- Strategic: Does it connect to Luis's goals?
-- Measurable: What would prove success?
+Use `/start-task` when starting any coding task. It loads specs.
+
+Use `/add-feature` for complex features needing planning. Then `/process-tasks` to implement.
+
+Use `/commit` when ready to commit. Use `/pr` when ready to open a PR.
+
+Use `/sync-stack` to set up a project or add dependencies.
+
+Use `/audit` before major releases or PRs.
+
+Use `/analyze` in a split pane to monitor framework health.
