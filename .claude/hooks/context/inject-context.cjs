@@ -973,12 +973,31 @@ Full profile: ~/.gemini/antigravity/brain/voice-profile.md`);
   }
 
   // Interaction framing reminder - keeps teaching mode primed
-  const interactionReminder = `[CRITICAL] Use the Required Response Format:
-1. **[Design Thinking: PHASE]** - Where + why this phase
-2. **[Concept: NAME]** (Discipline) - What it is, how it works (deep), discipline framing, example, trade-offs
-3. Then execute.
+  // Now includes framing agents requirement
+  const interactionReminder = `[MANDATORY FRAMING]
 
-No exceptions. Teaching is the preamble.`;
+**Before responding to ANY non-trivial request:**
+
+1. **Launch Context Agent** (if project-definition.yaml exists):
+   - Read .claude/specs/project-definition.yaml
+   - Determine: project phase, success criteria status, gaps
+   - Output: big picture framing
+
+2. **Launch Task Agent:**
+   - Evaluate THIS prompt through design thinking micro-cycle
+   - Determine: task type, micro-cycle position, research needed
+   - Identify: applicable lenses (PM, UX, Engineering, AI/ML, etc.)
+   - Determine: teaching focus (2-3 concepts)
+
+3. **Then respond** with the framing applied:
+   - Name the phase (big picture + micro)
+   - Name the lenses
+   - Teach the concepts as you work
+   - Connect to Luis's curriculum gaps
+
+Agent prompts: .claude/agents/context-agent.md and .claude/agents/task-agent.md
+
+Skip framing for simple yes/no questions or quick clarifications.`;
 
   contextParts.push(interactionReminder);
 

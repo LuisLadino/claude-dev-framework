@@ -26,10 +26,9 @@ Open an issue with:
 ### Improve Commands
 
 Commands live in `.claude/commands/` organized by category:
-- `development/` - start-task, add-feature, process-tasks, commit, pr
+- `development/` - start-task, add-feature, commit, pr
 - `project-management/` - init-project, sync-stack
-- `specs/` - audit
-- `utilities/` - learn, analyze
+- `utilities/` - learn, analyze, audit
 
 ### Improve Documentation
 
@@ -88,10 +87,9 @@ claude-dev-framework/
 │   ├── CLAUDE.md                          # Framework instructions
 │   ├── framework-source.txt               # Update source URL
 │   ├── commands/
-│   │   ├── development/                   # start-task, add-feature, process-tasks
-│   │   ├── project-management/            # init-project, sync-stack, etc.
-│   │   ├── specs/                         # audit
-│   │   └── utilities/                     # learn, analyze
+│   │   ├── development/                   # start-task, add-feature, commit, pr
+│   │   ├── project-management/            # init-project, sync-stack
+│   │   └── utilities/                     # learn, analyze, audit
 │   ├── skills/                            # Auto-routing skills
 │   └── specs/                             # User customizations (coding, config, etc.)
 ├── README.md

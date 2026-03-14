@@ -185,10 +185,9 @@ You approve → Claude implements → Runs quality gates → Done
 .claude/
 ├── CLAUDE.md              # Core instructions for Claude
 ├── commands/              # Slash commands
-│   ├── development/       # start-task, add-feature, process-tasks, commit, pr
+│   ├── development/       # start-task, add-feature, commit, pr
 │   ├── project-management/# sync-stack, init-project
-│   ├── specs/             # audit
-│   └── utilities/         # learn, analyze
+│   └── utilities/         # learn, analyze, audit
 ├── hooks/                 # Automation hooks
 │   ├── safety/            # block-dangerous.js
 │   ├── tracking/          # tool-tracker, track-changes, command-log, awareness

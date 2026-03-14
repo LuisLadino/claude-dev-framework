@@ -1,0 +1,430 @@
+# Project Definition
+# ===================
+# This is the source of truth for what the project IS.
+# The Context Agent reads this to understand the big picture.
+# Fill this out at project start, update as the project evolves.
+#
+# Lenses used to create this document:
+# - Product Management: vision, problem, value proposition
+# - UX Research: users, journeys, needs
+# - Data Science: success metrics, measurement
+# - Business: model, market, competition
+# - Project Management: scope, risks, milestones
+# - AI/ML: AI-specific considerations (if applicable)
+# - Responsible AI: ethical considerations (if applicable)
+
+# ============================================
+# SECTION 1: PROJECT IDENTITY
+# ============================================
+# What is this project? (Product Management lens)
+
+project:
+  name: "Claude Dev Framework"
+  tagline: "Make Claude a better work partner through persistent context and self-improvement"
+  vision: "Claude becomes a true collaborator who remembers, learns, and improves - not a stateless assistant who starts blank every session"
+
+# ============================================
+# SECTION 2: PROBLEM
+# ============================================
+# What pain are we solving? (UX Research + PM lens)
+
+problem:
+  statement: "Every Claude session starts blank, losing continuity, personalization, and accumulated learnings"
+  target_users:
+    - "Luis (primary) - developer who wants Claude as a persistent work partner"
+    - "Claude (meta-user) - the AI model that operates within this framework"
+  current_state: "Each session requires re-explaining context, preferences, and project state; no learning carries forward"
+  pain_points:
+    - "Loss of context between sessions forces repetitive explanations"
+    - "Generic responses don't match personal working style"
+    - "No mechanism for Claude to learn from mistakes"
+    - "Inconsistent patterns across projects"
+    - "No awareness of what's working vs what isn't"
+  why_now: "Claude Code now supports hooks and custom commands, making persistent context injection possible"
+
+# ============================================
+# SECTION 3: VALUE PROPOSITION
+# ============================================
+# Why will this solution win? (PM + Business lens)
+
+value:
+  proposition: "For Luis, who needs a consistent AI work partner across sessions and projects, Claude Dev Framework is a configuration system that provides continuity, personalization, and self-improvement, unlike vanilla Claude Code which starts blank every time"
+  jobs_to_be_done:
+    - "Remember what we worked on and what I learned"
+    - "Work the way I work (preferences, patterns, voice)"
+    - "Make better decisions based on accumulated context"
+    - "Identify what's working and what to change"
+  differentiators:
+    - "SessionStart loads identity + task + learnings automatically"
+    - "Hooks enforce patterns without manual reminders"
+    - "Brain persists learnings across all sessions and projects"
+    - "Self-analysis through /analyze command"
+    - "Specs generated from official docs via context7"
+  alternatives:
+    - "Raw Claude Code (no persistence)"
+    - "Manual context copy-paste each session"
+    - "Project-specific CLAUDE.md only (no cross-session learning)"
+
+# ============================================
+# SECTION 4: USERS
+# ============================================
+# Who are we building for? (UX Research lens)
+
+users:
+  primary:
+    description: "Luis - the developer who interacts with Claude through this framework"
+    needs:
+      - "Continuity across sessions without re-explaining"
+      - "Claude that matches his working style and voice"
+      - "Confidence that patterns are being followed"
+      - "Visibility into what Claude is learning"
+    behaviors:
+      - "Works on multiple projects simultaneously"
+      - "Values teaching-while-working (tutorship mode)"
+      - "Wants to understand the 'why' not just the 'what'"
+      - "Iterates quickly, prefers action over lengthy planning"
+  secondary:
+    - description: "Claude (the AI) as a meta-user that operates within the framework"
+      needs:
+        - "Clear instructions on how to behave"
+        - "Access to relevant context at the right time"
+        - "Feedback on what's working"
+        - "Specs to follow for consistent patterns"
+  anti_users:
+    - "Users who want fully autonomous AI (this framework requires human guidance)"
+    - "Users who don't want AI teaching them concepts"
+    - "Single-session users with no need for persistence"
+
+user_journeys:
+  - name: "Start work session"
+    steps:
+      - "Open Claude Code in project directory"
+      - "SessionStart hook loads identity, task, learnings"
+      - "User sees injected context confirming what's loaded"
+      - "User continues from where they left off"
+    pain_points:
+      - "Hook failures leave Claude without context"
+      - "Too much context can overwhelm"
+    success_criteria: "Claude demonstrates awareness of prior work within first response"
+
+  - name: "Work on coding task"
+    steps:
+      - "User says 'work on X' or runs /start-task"
+      - "Specs are loaded, enforce-specs hook active"
+      - "Work proceeds with pattern enforcement"
+      - "User runs /commit when done"
+    pain_points:
+      - "Enforce-specs blocking when specs aren't relevant"
+      - "Context7 returning outdated patterns"
+    success_criteria: "Code follows project patterns without explicit reminders"
+
+# ============================================
+# SECTION 5: SUCCESS METRICS
+# ============================================
+# How do we know if it's working? (Data Science + PM lens)
+
+success:
+  north_star: "Corrections per session"
+  description: "If Claude is learning effectively, Luis should need to correct Claude less often over time"
+
+  leading_indicators:
+    - metric: "Context loaded at session start"
+      target: "100% of sessions load identity + task + learnings"
+      measurement: "SessionStart hook logs"
+    - metric: "Specs read before coding"
+      target: "100% of coding tasks read relevant specs first"
+      measurement: "enforce-specs hook logs"
+    - metric: "Teaching moments delivered"
+      target: "1-3 concepts taught per substantial task"
+      measurement: "Response analysis for teaching format"
+
+  lagging_indicators:
+    - metric: "User corrections captured"
+      target: "Decreasing trend over 30 days"
+      measurement: "capture-corrections hook data"
+    - metric: "Learnings written to brain"
+      target: "Growing learnings.md with actionable entries"
+      measurement: "File growth and quality audit"
+    - metric: "Session continuity success"
+      target: "90% of sessions resume without re-explaining"
+      measurement: "Task.md continuation rate"
+
+  qualitative_criteria:
+    - "Luis feels like Claude 'knows' him"
+    - "Less frustration explaining the same things"
+    - "Confidence in code quality without manual review"
+    - "Learning something new each session"
+
+  anti_metrics:
+    - "Total lines of code (not optimizing for volume)"
+    - "Session length (longer isn't better)"
+    - "Number of tool calls (efficiency matters)"
+
+# ============================================
+# SECTION 6: SCOPE
+# ============================================
+# What are we building (and not building)? (PM + Project Management lens)
+
+scope:
+  in_scope:
+    - feature: "Session context injection (SessionStart, PreCompact)"
+      rationale: "Core to solving the continuity problem"
+    - feature: "Slash commands for common workflows"
+      rationale: "Encode patterns into repeatable actions"
+    - feature: "Hooks for safety, tracking, and enforcement"
+      rationale: "Automate what shouldn't require thought"
+    - feature: "Specs system for pattern documentation"
+      rationale: "Capture project-specific conventions"
+    - feature: "Brain storage for cross-session persistence"
+      rationale: "Central to learning and continuity"
+    - feature: "Agent system for specialized tasks"
+      rationale: "Enable parallel, focused work"
+  out_of_scope:
+    - feature: "GUI/web interface"
+      rationale: "This is CLI tooling for Claude Code"
+    - feature: "Multi-user support"
+      rationale: "Personal tool for Luis only"
+    - feature: "Model fine-tuning"
+      rationale: "Works with Claude as-is via prompting"
+    - feature: "Non-Claude AI support"
+      rationale: "Claude-specific features and integration"
+  assumptions:
+    - "Claude Code hooks API remains stable"
+    - "Luis will run sessions regularly enough for learning to compound"
+    - "Context7 provides accurate, up-to-date documentation"
+  constraints:
+    - "Must work within Claude Code's extension model"
+    - "Session state must survive context compaction"
+    - "Hooks must be fast (synchronous, blocking)"
+  dependencies:
+    - "Claude Code CLI"
+    - "Antigravity (external context system)"
+    - "Context7 (documentation fetching)"
+    - "GitHub CLI (gh) for project management"
+
+# ============================================
+# SECTION 7: RISKS
+# ============================================
+# What could go wrong? (Project Management lens)
+
+risks:
+  - risk: "Claude Code API changes break hooks"
+    category: "technical"
+    likelihood: "medium"
+    impact: "high"
+    mitigation: "Monitor Claude Code releases, test after updates"
+    owner: "Luis"
+
+  - risk: "Context overload reduces response quality"
+    category: "technical"
+    likelihood: "medium"
+    impact: "medium"
+    mitigation: "Be selective about what loads at SessionStart, use brain hierarchy"
+    owner: "Luis"
+
+  - risk: "Framework complexity exceeds value"
+    category: "product"
+    likelihood: "low"
+    impact: "high"
+    mitigation: "Regular /analyze sessions to prune what isn't working"
+    owner: "Luis"
+
+  - risk: "Learnings become stale or contradictory"
+    category: "technical"
+    likelihood: "medium"
+    impact: "medium"
+    mitigation: "Periodic learnings audit, versioning"
+    owner: "Luis"
+
+# ============================================
+# SECTION 8: AI CONSIDERATIONS (if applicable)
+# ============================================
+# AI-specific project factors (AI/ML + Responsible AI lens)
+
+ai:
+  is_ai_appropriate: "This IS an AI tooling project - the AI model is both tool and user"
+  ai_capabilities_needed:
+    - "Long context understanding (for loaded specs/context)"
+    - "Instruction following (for hooks and commands)"
+    - "Self-reflection (for /analyze and learning capture)"
+    - "Teaching ability (for tutorship mode)"
+
+  data:
+    requirements:
+      - "Session telemetry (tool calls, commands, failures)"
+      - "User corrections (for learning capture)"
+      - "Spec compliance (for pattern enforcement)"
+    sources:
+      - "Hooks (tool-tracker, capture-corrections, etc.)"
+      - "Brain files (task.md, session_state.json)"
+      - "Git history (commits, PRs)"
+    quality_considerations:
+      - "Corrections must be genuine corrections, not just conversation flow"
+      - "Telemetry must not include sensitive content"
+    privacy_considerations:
+      - "All data stays local (no cloud sync)"
+      - "Brain files in ~/.gemini/antigravity/ not committed"
+
+  model:
+    approach: "Prompt engineering via system rules, context injection, and command instructions"
+    evaluation_approach: "Manual review of Claude's behavior + /analyze sessions"
+    failure_modes:
+      - "Ignoring loaded context"
+      - "Over-teaching when not appropriate"
+      - "Failing to capture learnings when corrected"
+
+  responsible_ai:
+    bias_considerations:
+      - "Framework encodes Luis's preferences, not universal best practices"
+      - "Teaching content reflects single perspective"
+    fairness_approach: "N/A - single user tool"
+    transparency_requirements:
+      - "Claude should explain when hooks block actions"
+      - "Context sources should be visible"
+    human_oversight: "Human (Luis) in the loop for all significant actions"
+
+# ============================================
+# SECTION 9: BUSINESS (if applicable)
+# ============================================
+# Business viability (Business lens)
+
+business:
+  model: "Personal productivity tool - no revenue model"
+  market_size: "N/A - single user"
+  competition:
+    - competitor: "Vanilla Claude Code"
+      strengths:
+        - "Simpler, no setup"
+        - "Official support"
+      weaknesses:
+        - "No persistence"
+        - "No personalization"
+        - "No learning"
+  roi_estimate: "Value measured in time saved and quality improvement, not revenue"
+
+# ============================================
+# SECTION 10: PROJECT LIFECYCLE
+# ============================================
+# Where are we? (Project Management + Design Thinking lens)
+
+lifecycle:
+  current_phase: "iterate"
+  phase_started: "2024-01"
+
+  phase_history:
+    - phase: "understand"
+      started: "2023-11"
+      completed: "2023-12"
+      key_artifacts:
+        - "Initial exploration of Claude Code capabilities"
+      key_learnings:
+        - "Hooks provide the extensibility needed"
+        - "Context compaction is the key challenge"
+    - phase: "define"
+      started: "2023-12"
+      completed: "2024-01"
+      key_artifacts:
+        - "Architecture Overview (in CLAUDE.md)"
+        - "Brain structure design"
+      key_learnings:
+        - "Three-layer architecture (system, global, project) works well"
+    - phase: "prototype"
+      started: "2024-01"
+      completed: "2024-03"
+      key_artifacts:
+        - "Initial commands (/commit, /start-task)"
+        - "First hooks (session-init, enforce-specs)"
+      key_learnings:
+        - "Commands are more usable than raw instructions"
+        - "Hooks need to be fast and non-blocking where possible"
+    - phase: "iterate"
+      started: "2024-03"
+      completed: ""
+      key_artifacts:
+        - "Full command suite"
+        - "Agent system (context-agent, task-agent)"
+        - "Specs system with context7"
+      key_learnings:
+        - "Dogfooding reveals gaps quickly"
+        - "Teaching mode is valuable for Luis's learning"
+
+# ============================================
+# SECTION 11: MILESTONES
+# ============================================
+# Key checkpoints (Project Management lens)
+
+milestones:
+  - name: "Agent system operational"
+    target_date: "2024-03"
+    status: "in_progress"
+    success_criteria:
+      - "Context Agent evaluates project definition"
+      - "Task Agent evaluates specific tasks"
+      - "Agents coordinate via structured output"
+    blockers:
+      - "Need to test agent launch mechanism"
+
+  - name: "Project definition dogfood complete"
+    target_date: "2024-03"
+    status: "in_progress"
+    success_criteria:
+      - "project-definition.yaml filled out for this project"
+      - "Context Agent successfully reads and evaluates it"
+    blockers: []
+
+  - name: "Corrections-to-learnings pipeline"
+    target_date: "2024-04"
+    status: "pending"
+    success_criteria:
+      - "capture-corrections hook reliably detects corrections"
+      - "Corrections prompt for learning capture"
+      - "Learnings written to brain"
+    blockers:
+      - "Need reliable correction detection heuristics"
+
+# ============================================
+# SECTION 12: DECISION LOG
+# ============================================
+# Key decisions made (for context and reversibility)
+
+decisions:
+  - date: "2024-01"
+    decision: "Use three-layer architecture (system prompt, global hooks, project hooks)"
+    rationale: "Separates concerns - what drifts vs what's project-specific"
+    alternatives_considered:
+      - "All in CLAUDE.md"
+      - "All in global hooks"
+    reversible: true
+
+  - date: "2024-02"
+    decision: "Store brain in ~/.gemini/antigravity/ not in project repos"
+    rationale: "Keeps personal context out of git, shared across projects"
+    alternatives_considered:
+      - "Per-project .claude/brain/"
+      - "Centralized but in home directory"
+    reversible: true
+
+  - date: "2024-03"
+    decision: "Use YAML for project-definition instead of markdown"
+    rationale: "Structured data is easier for agents to parse and evaluate"
+    alternatives_considered:
+      - "Markdown with sections"
+      - "JSON (too verbose)"
+    reversible: true
+
+  - date: "2024-03"
+    decision: "Create specialized agents (context, task) instead of one omniscient agent"
+    rationale: "Single responsibility - each agent does one thing well"
+    alternatives_considered:
+      - "Monolithic agent with all responsibilities"
+      - "Many micro-agents"
+    reversible: true
+
+# ============================================
+# METADATA
+# ============================================
+
+metadata:
+  created: "2024-03-14"
+  last_updated: "2024-03-14"
+  version: "1.0"
