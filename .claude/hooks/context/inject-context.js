@@ -67,7 +67,10 @@ const COMMAND_ROUTES = [
       /\bfinished (with )?(this|these|the) changes\b/i
     ],
     command: '/commit',
-    reason: 'Ready to commit? /commit follows your version-control.md patterns.'
+    reason: 'Ready to commit? /commit follows your version-control.md patterns.',
+    // Instead of just suggesting, inject the workflow
+    injectWorkflow: true,
+    workflowLoader: 'commit'
   },
   {
     patterns: [
@@ -553,6 +556,56 @@ function loadVoiceProfile() {
 }
 
 /**
+ * Load workflow content for auto-injection
+ * Instead of suggesting /commit, inject the actual workflow
+ */
+function loadWorkflow(workflowName) {
+  const cwd = process.cwd();
+
+  if (workflowName === 'commit') {
+    // Load version-control.md
+    const vcPath = path.join(cwd, '.claude/specs/config/version-control.md');
+    let vcContent = '';
+    try {
+      vcContent = fs.readFileSync(vcPath, 'utf8');
+    } catch {
+      vcContent = 'No version-control.md found. Use conventional commits: type(scope): description';
+    }
+
+    return `[COMMIT WORKFLOW - AUTO-LOADED]
+
+**Version Control Spec:**
+${vcContent}
+
+---
+
+**WORKFLOW - Follow these steps:**
+
+1. **Check status:**
+   \`\`\`bash
+   git status
+   git diff --staged
+   git diff
+   \`\`\`
+
+2. **Update documentation BEFORE committing:**
+   - Find all .md files near changed files (same dir + parents)
+   - Read each one
+   - Update any that need it (CHANGELOG, README, etc.)
+   - Report: \`[filepath]: [still accurate / updated: what changed]\`
+   - Do NOT update CLAUDE.md (user-only file)
+
+3. **Stage and commit:**
+   - Use the commit format from version-control spec above
+   - No Co-Authored-By for Claude
+
+**Do not skip the documentation check.** This is the key differentiator.`;
+  }
+
+  return null;
+}
+
+/**
  * Load identity context for ideation
  * Extracts: who Luis is, his goals, what he's trying to demonstrate
  */
@@ -820,6 +873,18 @@ Confirm what was captured and where.`;
       if (route.command === '/start-task' && (isContentWriting || isIdeation)) {
         continue;
       }
+
+      // If workflow injection enabled, load and inject the full workflow
+      if (route.injectWorkflow && route.workflowLoader) {
+        const workflow = loadWorkflow(route.workflowLoader);
+        if (workflow) {
+          contextParts.push(workflow);
+          commandSuggested = route.command; // Track that we handled this
+          break;
+        }
+      }
+
+      // Otherwise, just suggest the command
       contextParts.push(`[SUGGESTED COMMAND: ${route.command}]\n${route.reason}\n\nConsider using ${route.command} for this task. If the user wants to proceed differently, follow their lead.`);
       commandSuggested = route.command;
       break; // Only suggest one command
