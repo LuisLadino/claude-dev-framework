@@ -4,8 +4,22 @@
 
 - Verify edits by reading the file after editing
 - Show proof: file path and line number for claims, command output for verifications
-- Use slash commands when they exist for the task
 - Check context7 before claiming library patterns
+
+---
+
+## Development Workflow
+
+**Setup (once per project):**
+Discuss → Document → Create repo → Copy framework → /init-project → /sync-stack → Set up GitHub with /plan
+
+**Development (repeatable):**
+GitHub Issue → Branch → start-task → Build + Test → commit → Push → pr → Merge
+
+When starting work, move issue to "In Progress". When creating PR, include "Closes #X". Issue auto-closes on merge.
+
+**Planning (anytime):**
+Use /plan to create issues, review backlog, prioritize, manage milestones. GitHub Issues are the system of record.
 
 ---
 
@@ -34,16 +48,22 @@ If a hook blocks you, there's a reason.
 
 ---
 
-## Commands
+## Skills
 
-Use `/start-task` when starting any coding task. It loads specs.
+Skills trigger automatically from natural language. You can also invoke explicitly with /name.
 
-Use `/add-feature` for complex features needing planning. Then `/process-tasks` to implement.
+**Development:**
+- **start-task** - "let's work on issue #12", "implement", "build"
+- **commit** - "let's commit", "save this", "checkpoint"
+- **pr** - "create PR", "ready for review", "let's merge"
+- **add-feature** - "plan this feature", "break down", "design"
 
-Use `/commit` when ready to commit. Use `/pr` when ready to open a PR.
+**Planning:**
+- **plan** - "what's next", "add to backlog", "create an issue", "prioritize"
 
-Use `/sync-stack` to set up a project or add dependencies.
+**Setup:**
+- **/init-project** - Define product requirements (explicit only)
+- **/sync-stack** - Detect stack, generate specs (explicit only)
 
-Use `/audit` before major releases or PRs.
-
-Use `/analyze` in a split pane to monitor framework health.
+**Quality:**
+- **/audit** - Deep code review before major releases

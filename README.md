@@ -84,83 +84,62 @@ That's it. Claude now follows your patterns.
 
 ---
 
-## When to Use What
+## Development Workflow
 
-### Starting a New Project
+Skills trigger automatically from natural language. You can also invoke explicitly.
 
-```
-/sync-stack              # Detects stack, generates specs
-/start-task              # Build something
-```
-
-### Adding to an Existing Project
+### Setup (once per project)
 
 ```
-/sync-stack              # Reads your code, learns your patterns
-/start-task              # Build following those patterns
+Discuss → Document → Create repo → Copy framework → /init-project → /sync-stack → Set up GitHub
 ```
 
-### Planning a Complex Feature
+### Development (repeatable)
 
 ```
-/add-feature             # Creates PRD + task breakdown
-/process-tasks           # Executes tasks one by one
+GitHub Issue → Branch → "let's build" → Build + Test → "commit" → Push → "create PR" → Merge
 ```
 
-### Adding a New Dependency
+Just talk naturally:
+- "Let's work on issue #12" → loads specs, starts work
+- "Let's commit" → updates docs, commits
+- "Create a PR" → creates PR linked to issue
+
+### Planning
 
 ```
-/sync-stack prisma       # Generate specs for just that dependency
-```
-
-### Committing and PRs
-
-```
-/commit                  # Commit with proper message format
-/pr                      # Create pull request
-```
-
-### Checking Code Quality
-
-```
-/audit                   # Deep parallel review (security, performance, tests)
-```
-
-### Understanding Code
-
-```
-/learn                   # Explain anything in plain English
-/learn react hooks       # Explain a specific topic
-```
-
-### Analyzing the Framework
-
-```
-/analyze                 # Analyze patterns, identify improvements (run in split pane)
+"Add this to backlog"    # Creates GitHub issue
+"What's next?"           # Reviews backlog, recommends
+"Let's plan"             # Organize and prioritize
 ```
 
 ---
 
-## Commands
+## Skills
 
-Descriptions match command frontmatter (source of truth in `.claude/commands/`).
+Skills auto-trigger from natural language. Source of truth in `.claude/skills/`.
 
 ### Development
 
-| Command | Description |
-|---------|-------------|
-| `/start-task` | Start any coding task. Loads stack config and specs, gathers requirements interactively, then executes. |
-| `/add-feature` | Plan a complex feature before building. Creates PRD, breaks into tasks. Use when feature needs multiple components or design decisions. |
-| `/process-tasks` | Execute a task list one at a time. Use after /add-feature to implement each subtask with verification and commits. |
-| `/commit` | Commit changes using project specs. Loads version-control.md, updates docs to reflect changes, then commits. |
-| `/pr` | Create a pull request. Checks branch status, generates summary from commits, creates PR with gh cli. |
+| Skill | Triggers On | What It Does |
+|-------|-------------|--------------|
+| `start-task` | "work on issue #X", "implement", "build" | Load specs, execute with tests |
+| `commit` | "commit", "save this", "checkpoint" | Update docs, commit changes |
+| `pr` | "create PR", "ready for review" | Create PR linked to issue |
+| `add-feature` | "plan", "design", "break down" | Plan complex features |
 
-### Project Setup
+### Planning
 
-| Command | Description |
-|---------|-------------|
-| `/sync-stack` | Wire project together, verify setup, generate coding specs. Handles the HOW after /init-project defines the WHAT. |
-| `/init-project` | Define product requirements before coding. Creates project-brief, architecture decisions, design system. For complex projects needing upfront planning. |
+| Skill | Triggers On | What It Does |
+|-------|-------------|--------------|
+| `plan` | "add to backlog", "what's next", "prioritize" | Manage GitHub issues, milestones |
+
+### Setup (explicit only)
+
+| Command | What It Does |
+|---------|--------------|
+| `/init-project` | Define product requirements |
+| `/sync-stack` | Detect stack, generate specs |
 
 ### Quality
 

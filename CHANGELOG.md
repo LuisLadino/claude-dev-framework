@@ -11,6 +11,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Skills system** - Converted commands to skills that auto-trigger from natural language:
+  - `start-task` - triggers on "let's work on", "implement", "build", issue references
+  - `commit` - triggers on "let's commit", "save this", "checkpoint"
+  - `pr` - triggers on "create PR", "ready for review", "let's merge"
+  - `add-feature` - triggers on "plan", "design", "break down"
+  - `plan` - NEW skill for GitHub issue management, backlog, milestones
+- **Development workflow documentation** - Two-phase workflow (Setup + Development) documented in .claude/CLAUDE.md
+- **Project management integration** - start-task moves issues to "In Progress", pr ensures "Closes #X" for auto-close
+
+### Changed
+
+- **`.claude/CLAUDE.md`** - Replaced Commands section with Skills section, added Development Workflow
+- **commit skill** - Now includes documentation update step to prevent doc drift
+
+### Previous
+
 - **`/analyze` command** - Framework analyst agent that runs in split terminal. Does both technical analysis (hooks working, data flowing) AND qualitative analysis (goals aligned, teaching landing). Applies design thinking to iterate on the framework.
 - **Full prompt capture** - `inject-context.js` now logs complete prompts (not just 80 chars) for analyst to evaluate hook trigger accuracy.
 - **`/reflect` command** - Analyzes session data, patterns, and learnings to identify improvements. Reads tracking data, generates report with suggested changes, user approves before writing to brain files.
