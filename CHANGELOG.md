@@ -11,6 +11,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Agent hooks for lifecycle management** - Design thinking agents that shape Claude's approach:
+  - `context-agent.md` - SessionStart agent evaluates project phase, gaps, lenses, GitHub state
+  - `task-agent.md` - UserPromptSubmit agent evaluates each task through design thinking micro-cycle
+  - `phase-evaluator.md` - PostToolUse (commit) agent checks for phase transitions
+  - `inject-context-from-file.cjs` - Injects Context Agent output as additionalContext
+  - `inject-task-framing.cjs` - Injects Task Agent output as additionalContext
+  - `apply-phase-update.cjs` - Applies Phase Evaluator recommendations to project-definition.yaml
+- **Lifecycle directory** - New `.claude/hooks/lifecycle/` for phase management hooks
+- **Agent hooks documentation** - README.md updated with agent hooks architecture and trade-offs
+
+### Changed
+
+- **Context Agent** - Rewritten to output JSON to `.claude/current-context.json` for hook injection
+- **Task Agent** - Rewritten to output JSON to `.claude/current-task.json` for hook injection
+- **settings.json** - Added agent hooks for SessionStart, UserPromptSubmit, and PostToolUse (commit)
+
+### Previous
+
 - **Skills system** - Converted commands to skills that auto-trigger from natural language:
   - `start-task` - triggers on "let's work on", "implement", "build", issue references
   - `commit` - triggers on "let's commit", "save this", "checkpoint"

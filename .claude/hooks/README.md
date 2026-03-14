@@ -19,9 +19,15 @@ hooks/
 │   └── awareness.cjs         # Detect when /analyze is needed
 ├── quality/             # Enforce standards
 │   └── verify-before-stop.cjs    # Check for debug statements
-└── context/             # Smart context injection
-    ├── session-init.cjs      # Initialize session + check sync state
-    └── inject-context.cjs    # Auto-load relevant specs
+├── context/             # Smart context injection
+│   ├── session-init.cjs      # Initialize session + check sync state
+│   ├── inject-context.cjs    # Auto-load relevant specs
+│   ├── inject-context-from-file.cjs  # Inject Context Agent output
+│   └── inject-task-framing.cjs       # Inject Task Agent output
+├── lifecycle/           # Project lifecycle management
+│   └── apply-phase-update.cjs # Apply Phase Evaluator recommendations
+└── lib/                 # Shared utilities
+    └── session-utils.cjs     # Session ID and tracking helpers
 ```
 
 ## Observability
@@ -333,16 +339,97 @@ tail -f ~/.gemini/antigravity/brain/{uuid}/sessions/{session-id}.json
 tail ~/.gemini/antigravity/brain/hook-errors.log
 ```
 
+## Agent Hooks (Lifecycle Management)
+
+Agent hooks spawn a mini Claude agent with tool access for multi-turn evaluation. They're more powerful than command hooks but add latency.
+
+### Architecture
+
+```
+SessionStart
+├── Context Agent (agent hook) → evaluates project state
+│   └── Writes: .claude/current-context.json
+├── inject-context-from-file.cjs → reads JSON, injects as additionalContext
+└── Claude receives: project phase, gaps, lens, success criteria
+
+UserPromptSubmit
+├── Task Agent (agent hook) → evaluates this specific prompt
+│   └── Writes: .claude/current-task.json
+├── inject-task-framing.cjs → reads JSON, injects as additionalContext
+└── Claude receives: design cycle position, research needed, teaching focus
+
+PostToolUse (git commit)
+├── Phase Evaluator (agent hook) → checks for phase transitions
+│   └── Writes: .claude/phase-evaluation.json
+├── apply-phase-update.cjs → applies updates to project-definition.yaml
+└── Project phase stays current automatically
+```
+
+### Agent Files
+
+Located in `.claude/agents/`:
+
+| Agent | Trigger | Purpose |
+|-------|---------|---------|
+| context-agent.md | SessionStart | Evaluate project lifecycle, gaps, lenses |
+| task-agent.md | UserPromptSubmit | Evaluate each task through design thinking |
+| phase-evaluator.md | PostToolUse (commit) | Check for phase transitions after commits |
+
+### Configuration
+
+See `agent-hooks-config.json` for the full configuration. Add to `~/.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "type": "agent",
+        "prompt": "You are the Context Agent. Read .claude/agents/context-agent.md...",
+        "timeout": 45000
+      },
+      {
+        "type": "command",
+        "command": "node .claude/hooks/context/inject-context-from-file.cjs"
+      }
+    ]
+  }
+}
+```
+
+### Trade-offs
+
+| Aspect | Command Hooks | Agent Hooks |
+|--------|---------------|-------------|
+| Speed | Fast (ms) | Slower (seconds) |
+| Capability | Pattern match, file read | Multi-turn reasoning, tool use |
+| Use case | Validation, logging | Semantic evaluation, complex decisions |
+
+Use agent hooks for:
+- Project lifecycle management (phase transitions)
+- Design thinking evaluation (requires reasoning)
+- Semantic validation (understanding intent, not just patterns)
+
+Use command hooks for:
+- Tracking and logging
+- Simple pattern-based validation
+- Context injection from files
+
+---
+
 ## How Hooks Work Together
 
-1. **Session starts** → session-init.cjs creates tracking file, session-context.js loads brain context
-2. **You type a prompt** → inject-context.cjs suggests commands, injects voice profile, logs what it did. awareness.cjs checks system health, prompts for /analyze if needed.
-3. **Claude uses any tool** → tool-tracker.cjs logs it (universal tracking)
-4. **Claude runs bash** → block-dangerous.cjs validates, command-log.cjs logs, detect-pivot.cjs checks deps
-5. **Claude edits files** → track-changes.cjs logs modifications
-6. **Tool fails** → tool-failure.cjs logs the error
-7. **Subagent spawns** → subagent-tracker.cjs logs start
-8. **Subagent finishes** → subagent-tracker.cjs logs stop with duration
-9. **Claude stops** → verify-before-stop.cjs checks for debug statements
-10. **Session ends** → session-end.cjs writes summary
-11. **Context compacts** → pre-compact.js writes persistent state
+1. **Session starts** → Context Agent evaluates project state, writes .claude/current-context.json
+2. **Context injected** → inject-context-from-file.cjs reads JSON, injects as additionalContext
+3. **You type a prompt** → Task Agent evaluates through design thinking, writes .claude/current-task.json
+4. **Task framing injected** → inject-task-framing.cjs reads JSON, injects teaching focus and approach
+5. **Also on prompt** → inject-context.cjs suggests commands, injects voice profile. awareness.cjs checks health.
+6. **Claude uses any tool** → tool-tracker.cjs logs it (universal tracking)
+7. **Claude runs bash** → block-dangerous.cjs validates, command-log.cjs logs, detect-pivot.cjs checks deps
+8. **Claude commits** → Phase Evaluator checks for phase transitions, apply-phase-update.cjs updates project-definition.yaml
+9. **Claude edits files** → track-changes.cjs logs modifications
+10. **Tool fails** → tool-failure.cjs logs the error
+11. **Subagent spawns/finishes** → subagent-tracker.cjs logs lifecycle
+12. **Claude stops** → verify-before-stop.cjs checks for debug statements
+13. **Session ends** → session-end.cjs writes summary
+14. **Context compacts** → pre-compact.js writes persistent state
