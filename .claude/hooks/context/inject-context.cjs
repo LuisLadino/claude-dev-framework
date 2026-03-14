@@ -992,14 +992,19 @@ Full profile: ~/.gemini/antigravity/brain/voice-profile.md`);
     }
   }
 
-  // NOTE: Compliance reminder removed - now in system prompt layer
-  // (--append-system-prompt-file ~/.claude/system-rules.md)
-  // This keeps inject-context.cjs focused on per-prompt routing and on-demand context.
+  // Interaction framing reminder - keeps teaching mode primed
+  const interactionReminder = `[CRITICAL]
+- Every prompt is an interaction. Name the discipline (UX/PM/AI/CPMAI) before tool calls.
+- Teach: HOW it works, WHY it matters, what practitioners call it.
+- Design thinking: understand → define → execute. Research before acting.`;
+
+  contextParts.push(interactionReminder);
 
   // Log what we did for observability
   // Full prompt captured for analysis (user confirmed privacy not a concern)
   const actions = {
-    prompt: prompt
+    prompt: prompt,
+    interactionReminder: true
   };
   if (commandSuggested) actions.commandSuggested = commandSuggested;
   if (reasoningCheckpoints.length > 0) actions.reasoningCheckpoints = reasoningCheckpoints.length;
@@ -1009,18 +1014,14 @@ Full profile: ~/.gemini/antigravity/brain/voice-profile.md`);
   if (specsLoaded.length > 0) actions.specsLoaded = specsLoaded;
   if (isCaptureRequest) actions.captureTriggered = true;
 
-  // Only log if we actually injected something
-  if (Object.keys(actions).length > 1) {
-    logInjection(session_id, actions);
-  }
+  // Log injection (always happens now due to interaction reminder)
+  logInjection(session_id, actions);
 
-  // Output context only if we have something to inject
-  if (contextParts.length > 0) {
-    const output = {
-      additionalContext: contextParts.join('\n\n---\n\n')
-    };
-    console.log(JSON.stringify(output));
-  }
+  // Output context (always has at least interaction reminder)
+  const output = {
+    additionalContext: contextParts.join('\n\n---\n\n')
+  };
+  console.log(JSON.stringify(output));
 
   process.exit(0);
 }
