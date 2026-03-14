@@ -784,6 +784,7 @@ function handleHook(data) {
 
   const contextParts = [];
   let commandSuggested = null;
+  let workflowInjected = false;
   let reasoningCheckpoints = [];
   let voiceProfileLoaded = false;
   let specsLoaded = [];
@@ -879,7 +880,8 @@ Confirm what was captured and where.`;
         const workflow = loadWorkflow(route.workflowLoader);
         if (workflow) {
           contextParts.push(workflow);
-          commandSuggested = route.command; // Track that we handled this
+          commandSuggested = route.command;
+          workflowInjected = true; // Skip CONTEXT_TRIGGERS - workflow already has the content
           break;
         }
       }
@@ -975,43 +977,29 @@ Writing content as Luis's voice. Key rules:
 Full profile: ~/.gemini/antigravity/brain/voice-profile.md`);
   }
 
-  // Check each context trigger
-  for (const trigger of CONTEXT_TRIGGERS) {
-    const matches = trigger.patterns.some(pattern => pattern.test(prompt));
+  // Check each context trigger (skip if workflow already injected - it includes the content)
+  if (!workflowInjected) {
+    for (const trigger of CONTEXT_TRIGGERS) {
+      const matches = trigger.patterns.some(pattern => pattern.test(prompt));
 
-    if (matches) {
-      const content = readSpecFile(trigger.specFile, trigger.isJson);
-      if (content) {
-        specsLoaded.push(trigger.label);
-        contextParts.push(`[Auto-loaded: ${trigger.label}]\n${content}`);
+      if (matches) {
+        const content = readSpecFile(trigger.specFile, trigger.isJson);
+        if (content) {
+          specsLoaded.push(trigger.label);
+          contextParts.push(`[Auto-loaded: ${trigger.label}]\n${content}`);
+        }
       }
     }
   }
 
-  // ALWAYS inject methodology reminder
-  // This fires every input to reinforce the operating system
-  const complianceReminder = `[METHODOLOGY]
-**Why:** Luis is building fluency for AI product roles. Internalization, not memorization.
+  // NOTE: Compliance reminder removed - now in system prompt layer
+  // (--append-system-prompt-file ~/.claude/system-rules.md)
+  // This keeps inject-context.cjs focused on per-prompt routing and on-demand context.
 
-**Teach:** Name the concept. Explain HOW it works. Frame in UX, PM, AI/ML, or CPMAI (AI project management) terms.
-
-**Mindset:** Systematize it. Impact over output. Research first. Say "I don't know" when true.
-
-**Think:** What does Luis actually want? Am I thinking or pattern-matching? One root cause, not symptoms.
-
-**The check:** Would a PM with UX foundations and AI technical fluency approach it this way?
-
----
-
-**CRITICAL - DO THIS NOW:** Before responding, identify ONE concept from this interaction that connects to UX, PM, AI/ML, or CPMAI. Name it explicitly in your response. If you cannot identify a concept, state what discipline lens applies to this task. DO NOT skip this step.`;
-
-  contextParts.push(complianceReminder);
-
-  // Log what we did for observability (always log now since we always inject)
+  // Log what we did for observability
   // Full prompt captured for analysis (user confirmed privacy not a concern)
   const actions = {
-    prompt: prompt,
-    complianceReminderInjected: true
+    prompt: prompt
   };
   if (commandSuggested) actions.commandSuggested = commandSuggested;
   if (reasoningCheckpoints.length > 0) actions.reasoningCheckpoints = reasoningCheckpoints.length;
@@ -1021,13 +1009,18 @@ Full profile: ~/.gemini/antigravity/brain/voice-profile.md`);
   if (specsLoaded.length > 0) actions.specsLoaded = specsLoaded;
   if (isCaptureRequest) actions.captureTriggered = true;
 
-  logInjection(session_id, actions);
+  // Only log if we actually injected something
+  if (Object.keys(actions).length > 1) {
+    logInjection(session_id, actions);
+  }
 
-  // Output context (always has at least compliance reminder)
-  const output = {
-    additionalContext: contextParts.join('\n\n---\n\n')
-  };
-  console.log(JSON.stringify(output));
+  // Output context only if we have something to inject
+  if (contextParts.length > 0) {
+    const output = {
+      additionalContext: contextParts.join('\n\n---\n\n')
+    };
+    console.log(JSON.stringify(output));
+  }
 
   process.exit(0);
 }
