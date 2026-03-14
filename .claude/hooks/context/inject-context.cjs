@@ -994,8 +994,8 @@ Full profile: ~/.gemini/antigravity/brain/voice-profile.md`);
 
   // Interaction framing reminder - keeps teaching mode primed
   const interactionReminder = `[CRITICAL] Use the Required Response Format:
-1. **[Design Thinking: PHASE]** - Where are we in the cycle?
-2. **[Concept: NAME]** (Discipline) - What it is, how it works, methodology connection, discipline framing, example, trade-offs
+1. **[Design Thinking: PHASE]** - Where + why this phase
+2. **[Concept: NAME]** (Discipline) - What it is, how it works (deep), discipline framing, example, trade-offs
 3. Then execute.
 
 No exceptions. Teaching is the preamble.`;
