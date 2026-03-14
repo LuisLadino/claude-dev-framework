@@ -993,10 +993,12 @@ Full profile: ~/.gemini/antigravity/brain/voice-profile.md`);
   }
 
   // Interaction framing reminder - keeps teaching mode primed
-  const interactionReminder = `[CRITICAL]
-- Every prompt is an interaction. Name the discipline (UX/PM/AI/CPMAI) before tool calls.
-- Teach: HOW it works, WHY it matters, what practitioners call it.
-- Design thinking: understand → define → execute. Research before acting.`;
+  const interactionReminder = `[CRITICAL] Use the Required Response Format:
+1. **[Design Thinking: PHASE]** - Where are we in the cycle?
+2. **[Concept: NAME]** (Discipline) - What it is, how it works, methodology connection, discipline framing, example, trade-offs
+3. Then execute.
+
+No exceptions. Teaching is the preamble.`;
 
   contextParts.push(interactionReminder);
 
