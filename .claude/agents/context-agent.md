@@ -14,7 +14,6 @@ Read the project definition and determine:
 
 You will receive:
 - The project definition file (`project-definition.yaml`)
-- Current session state (if available)
 - The user's prompt (for context on what they're asking)
 
 ## Phase Determination Algorithm
@@ -140,13 +139,6 @@ If required fields are missing or unparseable:
 - Flag malformed structure as a gap
 - Do not invent missing information
 
-### Missing Session State
-
-If session state is unavailable:
-- Omit "RECENT ACCOMPLISHMENTS" or note "No session history available"
-- Continue with project definition analysis
-- This is normal for first session
-
 ## Output Format
 
 ```
@@ -163,8 +155,8 @@ SUCCESS CRITERIA:
 - Blockers: [what's preventing progress, or "none identified"]
 
 RECENT ACCOMPLISHMENTS:
-- [from session state or git history]
-- [if unavailable: "No session history available"]
+- [from git history: recent commits relevant to project]
+- [from milestones: completed milestones if tracked]
 
 CURRENT FOCUS:
 - [what should be the focus based on phase and gaps]
@@ -229,13 +221,6 @@ The Task Agent expects these fields:
 - **GAPS IDENTIFIED**: List of gaps with actions, or "None identified"
 - **BIG PICTURE LENS**: Primary lens name
 - **CONTEXT FOR TASK AGENT**: Free text summary with phase, gaps, and lens guidance
-
-### Shared State Reference
-
-Both agents may access `session_state.json`:
-- `specs_read`: boolean - whether specs have been loaded
-- `current_task`: string or null
-- `files_modified`: array of file paths
 
 ## Important Notes
 
