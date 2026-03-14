@@ -503,13 +503,12 @@ const CAPTURE_PATTERNS = [
 ];
 
 // Keywords to determine which brain file to write to
+// Only routes to existing files - no new file types
 const CAPTURE_ROUTING = {
   decision: 'decisions.md',
   pattern: 'patterns.md',
-  learning: 'learnings.md',
-  idea: 'ideas.md',
-  insight: 'ideas.md',
-  thought: 'ideas.md'
+  learning: 'learnings.md'
+  // Default (no keyword match) = Claude decides based on content
 };
 
 // Ideation/drafting detection - inject identity + voice BEFORE writing starts
@@ -746,7 +745,8 @@ function handleHook(data) {
 
   if (isCaptureRequest) {
     // Determine target file based on keywords in prompt
-    let targetFile = 'ideas.md'; // default
+    // If no keyword match, Claude decides based on content
+    let targetFile = null;
     for (const [keyword, file] of Object.entries(CAPTURE_ROUTING)) {
       if (prompt.toLowerCase().includes(keyword)) {
         targetFile = file;
@@ -765,14 +765,21 @@ function handleHook(data) {
     // Note: Claude already has the brain path from session context injection
     const today = new Date().toISOString().split('T')[0];
 
+    const targetFileInstruction = targetFile
+      ? `Target file: ${targetFile}`
+      : `Target file: Decide based on content type:
+  - decisions.md = architectural/design choices
+  - patterns.md = technical patterns discovered
+  - learnings.md = mistakes, corrections, things to remember`;
+
     const captureInstructions = explicitContent
       ? `[CAPTURE TRIGGERED]
 Content to persist: "${explicitContent}"
-Target file: ${targetFile}
+${targetFileInstruction}
 
 **Action required:** Write this to the brain file.
 Use the brain path from your session context (e.g., ~/.gemini/antigravity/brain/{uuid}/).
-Append to ${targetFile} with this format:
+Append with this format:
 
 \`\`\`markdown
 ### [${today}] [Brief title]
@@ -781,15 +788,16 @@ ${explicitContent}
 Context: [What prompted this capture]
 \`\`\`
 
-Create the file if it doesn't exist. Confirm what was captured.`
+Confirm what was captured and where.`
       : `[CAPTURE TRIGGERED]
 User wants to capture something from this conversation.
-Target file: ${targetFile}
+${targetFileInstruction}
 
 **Action required:** Extract and persist the relevant insight.
-1. Identify what the user wants to capture (recent idea, decision, pattern, or learning from the conversation)
-2. Use the brain path from your session context
-3. Append to ${targetFile} with this format:
+1. Identify what the user wants to capture from the conversation
+2. Determine the appropriate file based on content type
+3. Use the brain path from your session context
+4. Append with this format:
 
 \`\`\`markdown
 ### [${today}] [Brief title]
@@ -798,7 +806,7 @@ Target file: ${targetFile}
 Context: [What prompted this capture]
 \`\`\`
 
-Create the file if it doesn't exist. Confirm what was captured.`;
+Confirm what was captured and where.`;
 
     contextParts.push(captureInstructions);
   }
