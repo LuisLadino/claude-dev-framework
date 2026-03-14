@@ -375,9 +375,11 @@ Explain HOW it works, not just WHAT it does.
 - Mechanisms: Why does this happen? What's the underlying process?
 - Failure modes: How can this break? What are the edge cases?
 - Trade-offs: What are the costs of this approach?
+- How to use it: When would you say this term? Formal vs casual. Example sentences.
 
 Don't say "RAG helps with hallucinations."
-Say "RAG reduces hallucination by grounding generation in retrieved context. The model relies less on parametric memory. But retrieval quality matters - garbage in, garbage out."`
+Say "RAG reduces hallucination by grounding generation in retrieved context. The model relies less on parametric memory. But retrieval quality matters - garbage in, garbage out."
+Usage: In a technical interview you'd say "we use RAG to ground generation." In a standup: "the retrieval step is slow."`
   },
   {
     patterns: [
@@ -396,8 +398,10 @@ Name the concept and connect to disciplines:
 - What's this called in UX/PM/AI terms?
 - How does it fit the design thinking cycle?
 - What's the PM question (is this worth the investment)?
+- How to use it: When would you say this term? Example sentences a practitioner would say.
 
-"This is defensive design (UX) - anticipating errors. Nielsen's heuristic #9. The PM question: is this error common enough to justify complexity?"`
+"This is defensive design (UX) - anticipating errors. Nielsen's heuristic #9."
+Usage: In a design review: "we need more defensive design here." In a PR: "added input validation - defensive design."`
   },
   {
     patterns: [
@@ -416,8 +420,10 @@ Make the framework visible:
 - Name the prioritization approach (RICE, MoSCoW, impact/effort)
 - Surface trade-offs explicitly
 - What would a PM ask here?
+- How to use it: When would you say this term? Example sentences.
 
-The PM skill is making decisions transparent so stakeholders understand trade-offs.`
+The PM skill is making decisions transparent so stakeholders understand trade-offs.
+Usage: In planning: "let's RICE score these." In a 1:1: "the impact/effort doesn't justify this." In a stakeholder meeting: "here's how we prioritized."`
   },
   {
     patterns: [
