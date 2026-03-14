@@ -23,7 +23,7 @@ const {
   getSessionId,
   loadSessionTracking,
   saveSessionTracking
-} = require('../lib/session-utils.js');
+} = require('../lib/session-utils.cjs');
 
 // Note: Session tracking is global. Project state (session_state.json) is per-workspace.
 

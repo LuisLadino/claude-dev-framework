@@ -17,7 +17,7 @@ const {
   getSessionId,
   loadSessionTracking,
   saveSessionTracking
-} = require('../lib/session-utils.js');
+} = require('../lib/session-utils.cjs');
 
 function fileExisted(filePath) {
   // Check git to see if file existed before

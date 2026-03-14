@@ -545,7 +545,7 @@ const {
   getSessionId,
   loadSessionTracking,
   saveSessionTracking
-} = require('../lib/session-utils.js');
+} = require('../lib/session-utils.cjs');
 
 function loadVoiceProfile() {
   try {

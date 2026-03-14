@@ -17,7 +17,7 @@ const {
   getSessionId,
   loadSessionTracking,
   saveSessionTracking
-} = require('../lib/session-utils.js');
+} = require('../lib/session-utils.cjs');
 
 // Read hook input from stdin
 let input = '';

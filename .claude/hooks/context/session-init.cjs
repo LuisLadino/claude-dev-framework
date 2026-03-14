@@ -20,7 +20,7 @@ const {
   findWorkspaceBrain,
   initSession,
   cleanupOldSessions
-} = require('../lib/session-utils.js');
+} = require('../lib/session-utils.cjs');
 
 const SYNC_STATE_PATH = '.claude/specs/.sync-state.json';
 
