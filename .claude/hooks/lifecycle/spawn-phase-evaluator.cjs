@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+// Fix: Using "Bash" matcher instead of "Bash(*git commit*)" - glob pattern wasn't matching
+
 /**
  * Spawn Phase Evaluator Hook
  *
