@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Claude task system for design thinking stages** - Tasks persist across sessions and represent design thinking phases:
+  - Context Agent and Task Agent now check task state via TaskList/TaskGet
+  - Task Agent recommends task_actions (create, complete, start)
+  - Injection hooks include task_state in context
+  - Design thinking phases (understand, define, ideate, prototype, test) as tasks with dependencies
+  - Enable with `CLAUDE_CODE_TASK_LIST_ID` env var in settings.json
+
 - **Agent hooks for lifecycle management** - Design thinking agents that shape Claude's approach:
   - `context-agent.md` - SessionStart agent evaluates project phase, gaps, lenses, GitHub state
   - `task-agent.md` - UserPromptSubmit agent evaluates each task through design thinking micro-cycle
