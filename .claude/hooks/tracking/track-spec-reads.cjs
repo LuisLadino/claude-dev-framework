@@ -19,6 +19,9 @@ const SPEC_PATTERNS = [
   /stack-config\.yaml$/,
 ];
 
+// Pattern for plan skill
+const PLAN_SKILL_PATTERN = /\.claude\/skills\/plan\/SKILL\.md$/;
+
 // Session state file
 const SESSION_STATE_FILE = '.claude/session-state.json';
 
@@ -45,19 +48,30 @@ function handleHook(data) {
   // Check if this is a spec file
   const isSpecFile = SPEC_PATTERNS.some(pattern => pattern.test(filePath));
 
-  if (!isSpecFile) {
+  // Check if this is the plan skill
+  const isPlanSkill = PLAN_SKILL_PATTERN.test(filePath);
+
+  if (!isSpecFile && !isPlanSkill) {
     process.exit(0);
   }
 
   // Update session state
   const sessionState = loadSessionState();
-  sessionState.specsRead = true;
-  sessionState.lastSpecRead = filePath;
-  sessionState.specReadAt = new Date().toISOString();
+
+  if (isSpecFile) {
+    sessionState.specsRead = true;
+    sessionState.lastSpecRead = filePath;
+    sessionState.specReadAt = new Date().toISOString();
+    console.log(`[SPECS] Read ${path.basename(filePath)} - code editing now allowed.`);
+  }
+
+  if (isPlanSkill) {
+    sessionState.planSkillRead = true;
+    sessionState.planSkillReadAt = new Date().toISOString();
+    console.log(`[PLAN] Read plan skill - issue creation now allowed.`);
+  }
 
   saveSessionState(sessionState);
-
-  console.log(`[SPECS] Read ${path.basename(filePath)} - code editing now allowed.`);
 
   process.exit(0);
 }

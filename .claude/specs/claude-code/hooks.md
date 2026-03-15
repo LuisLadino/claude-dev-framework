@@ -146,6 +146,66 @@ process.exit(0);
 
 ---
 
+## Hook Types
+
+### Command Hooks (type: "command")
+
+Execute a script. Most common type.
+
+```json
+{
+  "type": "command",
+  "command": "/path/to/script.cjs"
+}
+```
+
+### Agent Hooks (type: "agent")
+
+Spawn a subagent to handle complex tasks.
+
+```json
+{
+  "type": "agent",
+  "prompt": "Instructions for the agent. $ARGUMENTS available for context.",
+  "timeout": 60
+}
+```
+
+**Required fields:**
+- `type`: Must be `"agent"`
+- `prompt`: Instructions for the subagent (string)
+
+**Optional fields:**
+- `timeout`: Seconds before canceling (default: 60, max: 600)
+- `model`: Model to use (defaults to Haiku)
+- `statusMessage`: Custom spinner text while running
+
+**Agent hook pattern for external instructions:**
+```json
+{
+  "type": "agent",
+  "prompt": "You are the Context Agent. Read .claude/agents/context-agent.md for full instructions. Execute the steps there. Write output to .claude/current-context.json.",
+  "timeout": 45
+}
+```
+
+**Agent return format:**
+```json
+{"ok": true}
+```
+or
+```json
+{"ok": false, "reason": "explanation"}
+```
+
+**Differences from command hooks:**
+- Run as subagents with tool access (up to 50 turns)
+- Can read files, run commands, call tools
+- Longer timeout allowance
+- Return JSON status, not exit codes
+
+---
+
 ## File Extensions
 
 **Use `.cjs` for hooks, not `.js`**

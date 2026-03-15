@@ -41,6 +41,7 @@ Hooks enforce behavior. Don't fight them.
 
 - **enforce-specs** blocks code edits until specs are read
 - **enforce-skills** blocks git commit, requires Skill tool invocation for full workflow
+- **enforce-plan** blocks `gh issue create` until plan skill is read (ensures issues have proper context)
 - **block-dangerous** blocks rm -rf, force push, credential exposure
 - **verify-before-stop** checks for debug statements before stopping
 - **awareness** prompts for /analyze when issues accumulate

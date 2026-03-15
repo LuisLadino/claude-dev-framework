@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Plan enforcement hook** - `enforce-plan.cjs` blocks `gh issue create` until plan skill is read. Ensures GitHub issues have proper context (Problem, Why It Matters sections) so future sessions understand WHY work was done.
+
+- **Problem-first issue creation** - Updated plan skill requires understanding the problem before creating issues. Issues must document reasoning, not just tasks. Added Issue Lifecycle section showing how issues evolve from creation through PR/close.
+
+- **Agent hook documentation** - Added `type: "agent"` hook format to hooks.md spec. Documents prompt, timeout, model fields and differences from command hooks.
+
 - **Claude Code specs** - Self-referential specs that document Claude Code internals:
   - `claude-code/tools.md` - All available tools, parameters, capabilities
   - `claude-code/hooks.md` - Hook schemas, exit codes, matchers, events

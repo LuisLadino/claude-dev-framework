@@ -41,37 +41,65 @@ This skill handles several planning activities. Detect what the user wants:
 
 ## Create Issue
 
-Capture something for tracking.
+Capture something for tracking. **Issues are the system of record for WHY work happens.**
 
-### 1. Understand What to Capture
+### 1. Understand the Problem
 
-Ask if not clear:
-- What's the idea/task/feature?
-- Any context or details?
-- Is this urgent or future?
+Before creating an issue, understand:
+- **What problem are we solving?** Not what to build, but what's wrong or missing.
+- **Why does it matter?** What's the impact of not solving it?
+- **What's the context?** How did we discover this? What's the background?
 
-### 2. Determine Labels
+If the user just says "add X feature", ask: "What problem does X solve?"
+
+### 2. Determine Issue Type and Labels
 
 Standard labels:
 - **Type:** `type/feature`, `type/bug`, `type/chore`, `type/idea`, `type/tech-debt`
 - **Priority:** `priority/high`, `priority/medium`, `priority/low`
 - **Status:** `status/backlog`, `status/ready`, `status/in-progress`
 
-### 3. Create the Issue
+### 3. Create the Issue with Full Context
+
+**The issue body must explain the problem clearly enough that someone reading it later (including Claude in a future session) understands WHY this work matters.**
 
 ```bash
 gh issue create \
-  --title "Short descriptive title" \
-  --body "## Context
-What this is and why it matters.
+  --title "type: Short description of what changes" \
+  --body "## Problem
 
-## Details
-Any specific requirements or notes.
+What's wrong or missing? What triggered this?
+Be specific. Include error messages, user feedback, or observations.
 
-## Acceptance Criteria
-- [ ] What done looks like" \
+## Why It Matters
+
+What's the impact? What happens if we don't fix this?
+Connect to user value or system health.
+
+## Proposed Solution
+
+How might we solve this? (Not required for ideas/exploration)
+Include trade-offs if multiple approaches exist.
+
+## Design Thinking Phase
+
+Starting in **Understand** / **Define** / etc.
+
+## Tasks
+
+- [ ] First step
+- [ ] Second step" \
   --label "type/feature,priority/medium,status/backlog"
 ```
+
+**Required sections:**
+- **Problem** - The actual issue, not a solution masquerading as a problem
+- **Why It Matters** - Stakes and impact
+
+**Optional sections:**
+- **Proposed Solution** - If approach is known
+- **Design Thinking Phase** - Where this work starts in the cycle
+- **Tasks** - Breakdown if scope is clear
 
 ### 4. Add to Milestone (Optional)
 
@@ -184,6 +212,32 @@ gh issue create --title "Idea: X" --label "type/idea,status/backlog" --body "Cap
 ```
 
 Then continue with whatever else was happening.
+
+---
+
+## Issue Lifecycle
+
+Issues track work from idea to completion. The issue body evolves:
+
+### When Created
+- Problem and context documented
+- May not have solution yet
+
+### When Work Starts (/start-task)
+- Issue moved to "In Progress"
+- Branch created referencing issue number
+- Issue content loaded as task context
+
+### When PR Created
+- PR body includes "Closes #X"
+- PR summarizes the implementation approach
+
+### When Merged/Closed
+- **PR description becomes the implementation record**
+- Future readers can see: Problem (issue) → Solution (PR)
+- If closing without PR, add comment explaining resolution
+
+**The goal:** Anyone reading a closed issue understands both the problem AND how it was solved.
 
 ---
 
