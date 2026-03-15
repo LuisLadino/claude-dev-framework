@@ -37,6 +37,7 @@ function clearPendingFlags() {
     // Clear per-prompt flags
     delete state.pendingEdit;
     delete state.pendingIssue;
+    delete state.lastSkillRead;
 
     fs.writeFileSync(SESSION_STATE_FILE, JSON.stringify(state, null, 2));
   } catch {

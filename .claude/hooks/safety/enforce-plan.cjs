@@ -9,6 +9,10 @@
  * Issues are the system of record for WHY work happens.
  * The plan skill documents how to create issues with proper context.
  * This hook ensures Claude reads those guidelines before creating issues.
+ *
+ * NOTE: PostToolUse doesn't fire for Skill tool, so we can't track skill
+ * invocations via hooks. Instead, the plan skill itself sets the flag
+ * via an inline command when loaded.
  */
 
 const fs = require('fs');
@@ -22,8 +26,11 @@ const PLAN_COMMANDS = [
 // Session state file
 const SESSION_STATE_FILE = '.claude/session-state.json';
 
-// Allow if invoked from within the skill
+// Allow if invoked from within the skill (bypass marker)
 const SKILL_ACTIVE_MARKER = 'SKILL_ACTIVE=1';
+
+// Alternative: check if plan skill was recently loaded by checking lastSkillRead
+// This gets set by the skill's setup command
 
 let input = '';
 process.stdin.setEncoding('utf8');
@@ -60,27 +67,22 @@ function handleHook(data) {
   // Check if plan skill was read this prompt
   const sessionState = loadSessionState();
 
-  if (sessionState.pendingIssue) {
-    // Plan skill was read, allow issue creation
-    // pendingIssue is cleared at start of next prompt by clear-pending.cjs
+  // Allow if pendingIssue flag is set OR if plan skill was loaded recently
+  if (sessionState.pendingIssue || sessionState.lastSkillRead === 'plan') {
     process.exit(0);
   }
 
   // Plan skill not read - DENY and instruct
   console.error(`[BLOCKED] Creating GitHub issue without reading plan guidelines.
 
-You're about to create a GitHub issue but haven't read the plan skill this session.
-
 **Why this matters:**
 Issues are the system of record for WHY work happens. They need proper context
 so future sessions (including Claude) understand the problem being solved.
 
-**Required action:**
-1. Read .claude/skills/plan/SKILL.md
-2. Note the required sections: Problem, Why It Matters
-3. Then retry creating the issue
+**To fix:**
+Invoke the plan skill first: Skill(skill: "plan")
 
-This ensures issues capture the reasoning, not just the task.`);
+The skill documents required sections (Problem, Why It Matters) and proper labels.`);
 
   process.exit(2); // DENY
 }
@@ -90,6 +92,6 @@ function loadSessionState() {
     const content = fs.readFileSync(SESSION_STATE_FILE, 'utf8');
     return JSON.parse(content);
   } catch {
-    return { planSkillRead: false };
+    return {};
   }
 }

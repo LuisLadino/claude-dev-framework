@@ -63,8 +63,10 @@ Standard labels:
 
 **The issue body must explain the problem clearly enough that someone reading it later (including Claude in a future session) understands WHY this work matters.**
 
+**Important:** Prefix `gh issue create` with `SKILL_ACTIVE=1` to signal that the proper workflow was followed:
+
 ```bash
-gh issue create \
+SKILL_ACTIVE=1 gh issue create \
   --title "type: Short description of what changes" \
   --body "## Problem
 
@@ -208,7 +210,7 @@ gh issue edit {number} --milestone "v0.2"
 If the user just mentions something in passing ("we should add X eventually"), quickly capture it:
 
 ```bash
-gh issue create --title "Idea: X" --label "type/idea,status/backlog" --body "Captured from conversation. Needs refinement."
+SKILL_ACTIVE=1 gh issue create --title "Idea: X" --label "type/idea,status/backlog" --body "Captured from conversation. Needs refinement."
 ```
 
 Then continue with whatever else was happening.
