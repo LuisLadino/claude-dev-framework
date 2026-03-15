@@ -696,7 +696,114 @@ The above is an example. Generate a diagram that reflects THIS project's actual:
 
 ---
 
-## STEP 10: Verify Wiring
+## STEP 10: Generate CI Workflow
+
+**Generate GitHub Actions CI workflow based on detected stack.**
+
+### Check if CI exists
+
+```bash
+ls .github/workflows/ci.yml 2>/dev/null
+```
+
+If exists, ask: "CI workflow exists. Regenerate based on current stack? (yes/skip)"
+
+### Generate based on stack
+
+Create `.github/workflows/ci.yml` with checks appropriate for the detected stack:
+
+**Node.js projects (React, Next.js, Astro, Docusaurus, etc.):**
+
+```yaml
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: '[npm/yarn/pnpm]'
+      - run: [npm ci / yarn / pnpm install]
+      - run: npm run build
+      - run: npm run lint --if-present
+      - run: npm test --if-present
+```
+
+**Python projects:**
+
+```yaml
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.txt
+      - run: ruff check . --if-present
+      - run: pytest --if-present
+```
+
+**Config/docs projects (no build):**
+
+```yaml
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate YAML
+        run: |
+          python3 -c "import yaml; [yaml.safe_load(open(f)) for f in __import__('glob').glob('**/*.yaml', recursive=True)]"
+      - name: Validate JSON
+        run: |
+          python3 -c "import json; [json.load(open(f)) for f in __import__('glob').glob('**/*.json', recursive=True)]"
+```
+
+### Adapt to detected stack
+
+Use the stack detected in Step 4 to:
+1. Choose the right base template
+2. Set correct package manager (npm/yarn/pnpm/bun)
+3. Include test command if testing framework detected
+4. Include lint command if linter detected
+5. Include build command if framework has one
+
+### Enable auto-merge support
+
+Add to the workflow:
+
+```yaml
+permissions:
+  contents: write
+  pull-requests: write
+```
+
+This allows the commit skill's `gh pr merge --auto` to work.
+
+---
+
+## STEP 11: Verify Wiring
 
 **Check that all configs are actually connected properly.**
 
@@ -751,7 +858,7 @@ Fix these issues? (yes/no)
 
 ---
 
-## STEP 11: Update stack-config.yaml
+## STEP 12: Update stack-config.yaml
 
 Update `.claude/specs/stack-config.yaml` with:
 
@@ -792,7 +899,7 @@ Only include categories that have specs. Don't add empty categories.
 
 ---
 
-## STEP 12: Summary
+## STEP 13: Summary
 
 Show what was created/updated:
 
@@ -826,10 +933,14 @@ Specs generated:
 - architecture/wiring.md (with mermaid diagram)
 - design/tailwind-implementation.md
 
+CI/CD:
+- .github/workflows/ci.yml (build, lint, test)
+- Auto-merge enabled via commit skill
+
 Updated: stack-config.yaml
 
 Next steps:
-- Review wiring diagram in architecture/wiring.md
+- Review CI workflow in .github/workflows/ci.yml
 - Review specs in .claude/specs/
 - Run /start-task to build with these specs enforced
 ```
