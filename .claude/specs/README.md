@@ -13,10 +13,13 @@ specs/
 ├── coding/              # Language and library patterns
 ├── architecture/        # File structure, project organization
 ├── design/              # Design tokens, styling conventions
-└── documentation/       # Code comments, docstrings
+├── documentation/       # Code comments, docstrings
+└── claude-code/         # Claude Code internals (framework-specific)
 ```
 
 Directories are created as needed based on your stack.
+
+The `claude-code/` directory is specific to claude-dev-framework. It contains specs about Claude Code itself - tools, hooks, skills, agents, and anti-patterns.
 
 ---
 

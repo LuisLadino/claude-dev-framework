@@ -1,18 +1,18 @@
 # Stack Configuration
 # Run /sync-stack to auto-detect and populate
 
-name: ""
+name: "claude-dev-framework"
 version: "1.0.0"
-description: ""
+description: "Shared .claude/ framework for all projects"
 
 # Tech Stack
 stack:
   framework: ""           # React, Next.js, Vue, Astro, etc.
   framework_version: ""
-  language: ""            # TypeScript, JavaScript, Python, etc.
+  language: "JavaScript"  # Hooks are .cjs
   styling: ""             # Tailwind, CSS Modules, etc.
   testing: ""             # Vitest, Jest, Playwright, etc.
-  package_manager: ""     # npm, pnpm, yarn, bun
+  package_manager: "npm"
 
 # Active Specs
 # Listed specs are loaded by /start-task before coding
@@ -28,6 +28,13 @@ specs:
     - deployment
     - environment
     - testing
+  # Claude Code internals - specs about Claude Code itself
+  claude-code:
+    - tools          # All available tools and their parameters
+    - hooks          # Hook schemas, exit codes, matchers
+    - skills         # Skill frontmatter, triggering behavior
+    - agents         # Agent frontmatter, tool permissions
+    - anti-patterns  # What doesn't work, behavioral issues
 
 # Project Settings
 project:

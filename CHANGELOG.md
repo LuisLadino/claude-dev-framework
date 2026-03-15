@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Claude Code specs** - Self-referential specs that document Claude Code internals:
+  - `claude-code/tools.md` - All available tools, parameters, capabilities
+  - `claude-code/hooks.md` - Hook schemas, exit codes, matchers, events
+  - `claude-code/skills.md` - Skill frontmatter, triggering behavior
+  - `claude-code/agents.md` - Agent frontmatter, tool permissions, models
+  - `claude-code/anti-patterns.md` - What doesn't work, behavioral issues to avoid
+  - Addresses Issue #5: specs that help Claude understand its own capabilities
+
 - **Skill enforcement hook** - `enforce-skills.cjs` blocks direct `git commit`, requiring Skill tool invocation instead. Workaround for known skill undertrigger problem (~20% activation rate). Ensures commit workflow includes proper checks (version-control.md, CHANGELOG updates, etc.).
 
 - **Unified commit skill** - Merged commit and PR skills into one flow: commit → push → PR → auto-merge. Removed separate pr skill. Matches solo developer workflow where commit = done.
