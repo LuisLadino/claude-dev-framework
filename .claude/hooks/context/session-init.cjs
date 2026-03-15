@@ -106,8 +106,11 @@ const LOCAL_SESSION_STATE = '.claude/session-state.json';
 
 function resetLocalSessionState() {
   try {
+    // Reset all gating flags at session start
+    // Each enforcement hook checks its flag here
     const state = {
-      specsRead: false,
+      specsRead: false,      // For enforce-specs (code edits)
+      planSkillRead: false,  // For enforce-plan (issue creation)
       sessionStart: new Date().toISOString()
     };
     fs.writeFileSync(LOCAL_SESSION_STATE, JSON.stringify(state, null, 2));
