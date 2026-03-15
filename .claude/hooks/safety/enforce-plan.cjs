@@ -57,11 +57,13 @@ function handleHook(data) {
     process.exit(0); // Allow - not a plan command
   }
 
-  // Check if plan skill was read this session
+  // Check if plan skill was read this prompt
   const sessionState = loadSessionState();
 
-  if (sessionState.planSkillRead) {
-    process.exit(0); // Allow
+  if (sessionState.pendingIssue) {
+    // Plan skill was read, allow issue creation
+    // pendingIssue is cleared at start of next prompt by clear-pending.cjs
+    process.exit(0);
   }
 
   // Plan skill not read - DENY and instruct

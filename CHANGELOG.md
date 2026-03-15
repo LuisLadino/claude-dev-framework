@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Per-prompt spec enforcement** - Enforcement now requires reading specs before EACH prompt's edits, not just once per session. Prevents context drift during long sessions:
+  - `enforce-specs.cjs` - Maps file types to required specs (hooks→hooks.md, skills→skills.md, etc.)
+  - `track-spec-reads.cjs` - Sets `pendingEdit` type when spec is read
+  - `clear-pending.cjs` - Clears pending flags at UserPromptSubmit (start of each prompt)
+  - Multiple edits allowed within same prompt after reading spec
+
 - **Plan enforcement hook** - `enforce-plan.cjs` blocks `gh issue create` until plan skill is read. Ensures GitHub issues have proper context (Problem, Why It Matters sections) so future sessions understand WHY work was done.
 
 - **Problem-first issue creation** - Updated plan skill requires understanding the problem before creating issues. Issues must document reasoning, not just tasks. Added Issue Lifecycle section showing how issues evolve from creation through PR/close.

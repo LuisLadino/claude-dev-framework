@@ -106,12 +106,14 @@ const LOCAL_SESSION_STATE = '.claude/session-state.json';
 
 function resetLocalSessionState() {
   try {
-    // Reset all gating flags at session start
-    // Each enforcement hook checks its flag here
+    // Reset per-prompt flags at session start
+    // pendingEdit: cleared, must read spec before editing
+    // pendingIssue: cleared, must read plan skill before creating issues
+    // These are also cleared at each UserPromptSubmit by clear-pending.cjs
     const state = {
-      specsRead: false,      // For enforce-specs (code edits)
-      planSkillRead: false,  // For enforce-plan (issue creation)
       sessionStart: new Date().toISOString()
+      // pendingEdit and pendingIssue intentionally not set
+      // Their absence means "must read spec first"
     };
     fs.writeFileSync(LOCAL_SESSION_STATE, JSON.stringify(state, null, 2));
   } catch (e) {

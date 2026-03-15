@@ -4,32 +4,61 @@
  * Enforce Specs Hook
  *
  * Event: PreToolUse (Edit|Write)
- * Purpose: DENY code edits until specs have been read this session
+ * Purpose: DENY file edits until the RELEVANT spec has been read
  *
- * The forcing function:
- * 1. Check if editing a code file
- * 2. Check if specs were read this session (tracked in session state)
- * 3. If not → DENY with instruction to read specs first
- * 4. If yes → ALLOW
+ * Per-action enforcement (not per-session):
+ * 1. Determine which spec applies to the file being edited
+ * 2. Check if that specific spec was read BEFORE this action
+ * 3. If not → DENY with instruction to read the spec first
+ * 4. If yes → ALLOW and clear the flag (must re-read for next edit)
+ *
+ * This prevents context drift by forcing re-reading before each action.
  */
 
 const fs = require('fs');
 const path = require('path');
 
-// Code file extensions that require specs
-const CODE_EXTENSIONS = ['.js', '.ts', '.jsx', '.tsx', '.py', '.mjs', '.cjs'];
+// File patterns → required spec mapping
+const FILE_TO_SPEC = [
+  {
+    pattern: /\.claude\/hooks\/.*\.cjs$/,
+    spec: '.claude/specs/claude-code/hooks.md',
+    name: 'hooks'
+  },
+  {
+    pattern: /\.claude\/skills\/.*\.md$/,
+    spec: '.claude/specs/claude-code/skills.md',
+    name: 'skills'
+  },
+  {
+    pattern: /\.claude\/agents\/.*\.md$/,
+    spec: '.claude/specs/claude-code/agents.md',
+    name: 'agents'
+  },
+  {
+    pattern: /\.claude\/commands\/.*\.md$/,
+    spec: '.claude/specs/claude-code/tools.md',
+    name: 'commands'
+  },
+  {
+    pattern: /\.claude\/specs\/.*\.md$/,
+    spec: '.claude/specs/README.md',
+    name: 'specs-readme'
+  },
+  {
+    pattern: /\.(js|ts|jsx|tsx|mjs|cjs)$/,
+    spec: '.claude/specs/stack-config.yaml',
+    name: 'coding'
+  }
+];
 
-// Files/paths to skip enforcement
+// Files/paths to skip enforcement entirely
 const SKIP_PATTERNS = [
   /node_modules/,
-  /\.git/,
-  /\.claude\/hooks/,      // Don't block editing hooks
+  /\.git\//,
   /package-lock\.json/,
   /yarn\.lock/,
-  /\.md$/,                // Markdown doesn't need coding specs
-  /\.json$/,              // Config files don't need coding specs
-  /\.yaml$/,
-  /\.yml$/,
+  /pnpm-lock\.yaml/,
 ];
 
 // Session state file
@@ -55,40 +84,40 @@ function handleHook(data) {
     process.exit(0); // Allow
   }
 
-  // Check if should skip
+  // Check if should skip entirely
   for (const pattern of SKIP_PATTERNS) {
     if (pattern.test(filePath)) {
       process.exit(0); // Allow
     }
   }
 
-  // Check if code file
-  const ext = path.extname(filePath);
-  if (!CODE_EXTENSIONS.includes(ext)) {
-    process.exit(0); // Allow - not a code file
+  // Find which spec applies to this file
+  const mapping = FILE_TO_SPEC.find(m => m.pattern.test(filePath));
+
+  if (!mapping) {
+    process.exit(0); // No spec requirement for this file type
   }
 
-  // Check if specs were read this session
+  // Check if the required spec was read (pendingEdit matches this file type)
   const sessionState = loadSessionState();
 
-  if (sessionState.specsRead) {
-    // Specs were read, allow the edit
+  if (sessionState.pendingEdit === mapping.name) {
+    // Spec was just read for this file type, allow the edit
+    // Clear the pending flag so next edit requires re-reading
+    clearPendingEdit();
     process.exit(0);
   }
 
-  // Specs not read - DENY and instruct
-  console.error(`[BLOCKED] Editing code without reading specs.
+  // Spec not read - DENY and instruct
+  console.error(`[BLOCKED] Read the spec before editing.
 
-You're about to edit ${path.basename(filePath)} but haven't read the project specs this session.
+You're about to edit: ${path.basename(filePath)}
+Required spec: ${mapping.spec}
 
-**Required action:** Read the relevant specs first:
-1. Read .claude/specs/stack-config.yaml to see what specs are active
-2. Read the spec files listed there (e.g., .claude/specs/coding/*.md)
-3. Then retry this edit
+**Read the spec first, then retry this edit.**
 
-After reading specs, the session state will be updated and edits will be allowed.
-
-This ensures code follows project patterns.`);
+This ensures you have the current guidelines fresh in context.
+Every edit requires reading the relevant spec - this prevents context drift.`);
 
   process.exit(2); // DENY
 }
@@ -98,6 +127,9 @@ function loadSessionState() {
     const content = fs.readFileSync(SESSION_STATE_FILE, 'utf8');
     return JSON.parse(content);
   } catch {
-    return { specsRead: false };
+    return {};
   }
 }
+
+// pendingEdit is cleared by clear-pending.cjs at UserPromptSubmit
+// This allows multiple edits within a single prompt after reading the spec

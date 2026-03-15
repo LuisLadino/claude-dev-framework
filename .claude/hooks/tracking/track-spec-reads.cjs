@@ -4,22 +4,30 @@
  * Track Spec Reads Hook
  *
  * Event: PostToolUse (Read)
- * Purpose: Track when spec files are read, update session state
+ * Purpose: Track when spec/skill files are read, enable gated actions
  *
- * When Claude reads a spec file (.claude/specs/*), mark specsRead: true
- * This unlocks code editing (enforce-specs.js checks this flag)
+ * Per-prompt enforcement:
+ * - When a spec is read, set pendingEdit to the spec type
+ * - Multiple edits of that type allowed within the same prompt
+ * - UserPromptSubmit clears pendingEdit at start of each new prompt
+ * - This forces re-reading for each new user request, preventing context drift
  */
 
 const fs = require('fs');
 const path = require('path');
 
-// Patterns that count as "reading specs"
-const SPEC_PATTERNS = [
-  /\.claude\/specs\//,
-  /stack-config\.yaml$/,
+// Spec file → edit type mapping
+const SPEC_TO_EDIT_TYPE = [
+  { pattern: /hooks\.md$/, type: 'hooks' },
+  { pattern: /skills\.md$/, type: 'skills' },
+  { pattern: /agents\.md$/, type: 'agents' },
+  { pattern: /tools\.md$/, type: 'commands' },
+  { pattern: /specs\/README\.md$/, type: 'specs-readme' },
+  { pattern: /stack-config\.yaml$/, type: 'coding' },
+  { pattern: /coding\/.*\.md$/, type: 'coding' },
 ];
 
-// Pattern for plan skill
+// Pattern for plan skill (separate enforcement)
 const PLAN_SKILL_PATTERN = /\.claude\/skills\/plan\/SKILL\.md$/;
 
 // Session state file
@@ -45,30 +53,30 @@ function handleHook(data) {
     process.exit(0);
   }
 
-  // Check if this is a spec file
-  const isSpecFile = SPEC_PATTERNS.some(pattern => pattern.test(filePath));
+  // Check if this is a spec file and get the edit type
+  const mapping = SPEC_TO_EDIT_TYPE.find(m => m.pattern.test(filePath));
 
   // Check if this is the plan skill
   const isPlanSkill = PLAN_SKILL_PATTERN.test(filePath);
 
-  if (!isSpecFile && !isPlanSkill) {
+  if (!mapping && !isPlanSkill) {
     process.exit(0);
   }
 
   // Update session state
   const sessionState = loadSessionState();
 
-  if (isSpecFile) {
-    sessionState.specsRead = true;
+  if (mapping) {
+    sessionState.pendingEdit = mapping.type;
     sessionState.lastSpecRead = filePath;
     sessionState.specReadAt = new Date().toISOString();
-    console.log(`[SPECS] Read ${path.basename(filePath)} - code editing now allowed.`);
+    console.log(`[READY] Read ${path.basename(filePath)} - ${mapping.type} edits allowed this prompt.`);
   }
 
   if (isPlanSkill) {
-    sessionState.planSkillRead = true;
+    sessionState.pendingIssue = true;
     sessionState.planSkillReadAt = new Date().toISOString();
-    console.log(`[PLAN] Read plan skill - issue creation now allowed.`);
+    console.log(`[READY] Read plan skill - issue creation allowed this prompt.`);
   }
 
   saveSessionState(sessionState);
