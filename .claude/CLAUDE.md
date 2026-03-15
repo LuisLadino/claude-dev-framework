@@ -40,6 +40,7 @@ To add custom rules: `/sync-stack --custom api-conventions`
 Hooks enforce behavior. Don't fight them.
 
 - **enforce-specs** blocks code edits until specs are read
+- **enforce-skills** blocks git commit and gh pr create, requires Skill tool invocation
 - **block-dangerous** blocks rm -rf, force push, credential exposure
 - **verify-before-stop** checks for debug statements before stopping
 - **awareness** prompts for /analyze when issues accumulate

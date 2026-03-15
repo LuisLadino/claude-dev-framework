@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Skill enforcement hook** - `enforce-skills.cjs` blocks direct `git commit` and `gh pr create`, requiring Skill tool invocation instead. Workaround for known skill undertrigger problem (~20% activation rate). Ensures commit and PR workflows include proper checks (version-control.md, CHANGELOG updates, etc.).
+
 - **Claude task system for design thinking stages** - Tasks persist across sessions and represent design thinking phases:
   - Context Agent and Task Agent now check task state via TaskList/TaskGet
   - Task Agent recommends task_actions (create, complete, start)
