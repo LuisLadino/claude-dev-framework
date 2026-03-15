@@ -1,24 +1,21 @@
 ---
 name: commit
 description: >
-  Commit code changes. Use when: the user says "commit", "let's commit",
-  "save this", "checkpoint", "commit these changes", "ready to commit",
-  or indicates a unit of work is complete and should be saved.
+  Commit and create PR. Use when: the user says "commit", "let's commit",
+  "save this", "checkpoint", "done", "ready to merge", or indicates work
+  is complete. Does the full flow: commit → push → PR.
 allowed-tools: Read, Bash, Edit
 ---
 
 # Commit
 
-You're committing changes. This is step 4 of the development workflow:
+You're finishing work. This skill does the full flow:
 
 ```
-1. Pick Issue (GitHub)
-2. Create Branch
-3. Start Task → build with tests
-4. Commit (YOU ARE HERE) → save completed work
-5. Push + PR (when feature complete)
-6. Merge (GitHub)
+Commit → Push → Create PR → Enable Auto-merge
 ```
+
+GitHub merges automatically after CI checks pass.
 
 ---
 
@@ -44,68 +41,88 @@ Types: feat, fix, refactor, test, docs, chore
 
 ### 3. Update Documentation
 
-Before committing code, ensure docs reflect the changes. Documentation that doesn't match the code is worse than no documentation.
+Before committing, ensure docs reflect the changes.
 
-**For each changed file:**
-1. Check for .md files in the same directory and parent directories
-2. Read any found (README, CHANGELOG, etc.)
-3. Update if they reference changed functionality
-
-**Common updates:**
+**Check and update if needed:**
 - `CHANGELOG.md` - Add entry for features or fixes
 - `README.md` - Update if structure, API, or features changed
 - Component/module docs - Update if interface changed
 
 **Do not update:**
 - `CLAUDE.md` - Only the user edits this
-- Docs for unchanged code
 
 **Report what you did:**
 ```
-docs/api.md: updated - added new endpoint
+CHANGELOG.md: added entry
 README.md: still accurate
-CHANGELOG.md: added entry for feature
 ```
 
-### 4. Stage Changes
-
-Stage the relevant files:
+### 4. Stage and Commit
 
 ```bash
 git add path/to/files
+SKILL_ACTIVE=1 git commit -m "type(scope): description"
 ```
 
-Prefer specific files over `git add -A` to avoid accidentally staging unrelated changes.
+Prefer specific files over `git add -A`.
 
-### 5. Generate Commit Message
+**Note:** `SKILL_ACTIVE=1` bypasses the enforce-skills hook. Only use within this skill.
 
-Based on the diff, write a commit message that:
-- Starts with the type (feat, fix, etc.)
-- Describes WHAT changed in imperative mood
-- Optionally explains WHY in the body
-
-### 6. Commit
+### 5. Push
 
 ```bash
-git commit -m "type(scope): description"
+git push -u origin $(git branch --show-current)
 ```
 
-Show the result.
+### 6. Create PR with Auto-merge
 
-### 7. Continue or Push?
+Extract issue number from branch name if present:
 
-Ask: "Continue working, or push and create PR?"
+```bash
+git branch --show-current | grep -oE '[0-9]+' | head -1
+```
 
-- If continue: Done for now, user keeps working
-- If push/PR: Guide them to the PR workflow
+Create PR with summary from commits:
+
+```bash
+gh pr create --title "title" --body "body"
+```
+
+**PR body format:**
+```markdown
+## Summary
+- What changed
+- Why it changed
+
+Closes #X
+
+## Test Plan
+- How to verify
+```
+
+**Important:** Include `Closes #X` so GitHub auto-closes the issue on merge.
+
+### 7. Enable Auto-merge
+
+```bash
+gh pr merge --auto --squash --delete-branch
+```
+
+This queues the PR to merge automatically after CI checks pass.
+
+### 8. Done
+
+Show the PR URL. GitHub handles the rest:
+- CI runs checks
+- If pass, squash-merges automatically
+- Deletes branch after merge
+- Closes linked issue
 
 ---
 
-## Multiple Commits
+## Notes
 
-It's normal to have multiple commits during development. Each commit should be a logical unit:
-- "feat: add user validation"
-- "test: add validation tests"
-- "fix: handle empty email case"
-
-These get squashed into one commit when the PR is merged.
+- Each commit should be a logical unit
+- Multiple commits get squashed on merge
+- Branch auto-deletes after merge
+- Requires: repo has branch protection rules allowing auto-merge

@@ -11,7 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **Skill enforcement hook** - `enforce-skills.cjs` blocks direct `git commit` and `gh pr create`, requiring Skill tool invocation instead. Workaround for known skill undertrigger problem (~20% activation rate). Ensures commit and PR workflows include proper checks (version-control.md, CHANGELOG updates, etc.).
+- **Skill enforcement hook** - `enforce-skills.cjs` blocks direct `git commit`, requiring Skill tool invocation instead. Workaround for known skill undertrigger problem (~20% activation rate). Ensures commit workflow includes proper checks (version-control.md, CHANGELOG updates, etc.).
+
+- **Unified commit skill** - Merged commit and PR skills into one flow: commit → push → PR → auto-merge. Removed separate pr skill. Matches solo developer workflow where commit = done.
+
+- **Auto-merge support** - Commit skill enables auto-merge with `gh pr merge --auto --squash --delete-branch`. Added template CI workflow (`.github/workflows/ci.yml`). PRs merge automatically after checks pass.
 
 - **Claude task system for design thinking stages** - Tasks persist across sessions and represent design thinking phases:
   - Context Agent and Task Agent now check task state via TaskList/TaskGet

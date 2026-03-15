@@ -15,19 +15,16 @@
 
 const SKILL_COMMANDS = [
   {
-    // Matches: git commit, git commit -m "...", etc.
-    pattern: /^git\s+commit\b/i,
+    // Matches: git commit anywhere in command (handles chained commands like "git add && git commit")
+    // This is the entry point - blocking this ensures the commit skill is used,
+    // which handles docs, push, and PR creation.
+    pattern: /\bgit\s+commit\b/i,
     skill: 'commit',
-    reason: 'Use the commit skill for proper workflow (version-control.md, CHANGELOG, docs)',
+    reason: 'Use the commit skill for proper workflow (version-control.md, CHANGELOG, push, PR)',
     instruction: 'Invoke: Skill(skill: "commit")'
-  },
-  {
-    // Matches: gh pr create, gh pr create --title "..."
-    pattern: /^gh\s+pr\s+create\b/i,
-    skill: 'pr',
-    reason: 'Use the PR skill for proper workflow (summary generation, linking)',
-    instruction: 'Invoke: Skill(skill: "pr")'
   }
+  // Note: gh pr create is NOT blocked because the commit skill runs it internally.
+  // Blocking git commit is sufficient - it's the entry point to the workflow.
 ];
 
 // Read hook input from stdin
@@ -51,6 +48,11 @@ function handleHook(data) {
     process.exit(0);
   }
 
+  // Allow commands with SKILL_ACTIVE marker (set by skills to bypass enforcement)
+  if (command.includes('SKILL_ACTIVE=1')) {
+    process.exit(0);
+  }
+
   // Check if this command should use a skill instead
   for (const { pattern, skill, reason, instruction } of SKILL_COMMANDS) {
     if (pattern.test(command.trim())) {
@@ -61,15 +63,10 @@ function handleHook(data) {
       console.error(instruction);
       console.error('');
       console.error('The skill handles:');
-      if (skill === 'commit') {
-        console.error('- Reading version-control.md for commit format');
-        console.error('- Updating CHANGELOG and related docs');
-        console.error('- Asking continue/push after commit');
-      } else if (skill === 'pr') {
-        console.error('- Generating summary from all commits');
-        console.error('- Creating branch and pushing if needed');
-        console.error('- Proper PR body format');
-      }
+      console.error('- Reading version-control.md for commit format');
+      console.error('- Updating CHANGELOG and related docs');
+      console.error('- Push to remote');
+      console.error('- Create PR with proper format');
 
       // Exit code 2 = deny the tool call
       process.exit(2);

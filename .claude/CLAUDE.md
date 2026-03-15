@@ -14,9 +14,9 @@
 Discuss → Document → Create repo → Copy framework → /init-project → /sync-stack → Set up GitHub with /plan
 
 **Development (repeatable):**
-GitHub Issue → Branch → start-task → Build + Test → commit → Push → pr → Merge
+GitHub Issue → Branch → start-task → Build + Test → commit → Merge
 
-When starting work, move issue to "In Progress". When creating PR, include "Closes #X". Issue auto-closes on merge.
+When starting work, move issue to "In Progress". Commit skill handles push + PR with "Closes #X". Issue auto-closes on merge.
 
 **Planning (anytime):**
 Use /plan to create issues, review backlog, prioritize, manage milestones. GitHub Issues are the system of record.
@@ -40,7 +40,7 @@ To add custom rules: `/sync-stack --custom api-conventions`
 Hooks enforce behavior. Don't fight them.
 
 - **enforce-specs** blocks code edits until specs are read
-- **enforce-skills** blocks git commit and gh pr create, requires Skill tool invocation
+- **enforce-skills** blocks git commit, requires Skill tool invocation for full workflow
 - **block-dangerous** blocks rm -rf, force push, credential exposure
 - **verify-before-stop** checks for debug statements before stopping
 - **awareness** prompts for /analyze when issues accumulate
@@ -55,8 +55,7 @@ Skills trigger automatically from natural language. You can also invoke explicit
 
 **Development:**
 - **start-task** - "let's work on issue #12", "implement", "build"
-- **commit** - "let's commit", "save this", "checkpoint"
-- **pr** - "create PR", "ready for review", "let's merge"
+- **commit** - "let's commit", "save this", "done", "ready to merge" (does commit + push + PR)
 - **add-feature** - "plan this feature", "break down", "design"
 
 **Planning:**

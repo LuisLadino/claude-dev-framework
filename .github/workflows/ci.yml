@@ -1,0 +1,36 @@
+# CI workflow - runs on pull requests
+# Customize checks per project (tests, lint, build, etc.)
+
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Add project-specific checks here
+      # Examples:
+      #
+      # Node.js project:
+      # - uses: actions/setup-node@v4
+      #   with:
+      #     node-version: '20'
+      # - run: npm ci
+      # - run: npm test
+      # - run: npm run lint
+      #
+      # Python project:
+      # - uses: actions/setup-python@v5
+      #   with:
+      #     python-version: '3.12'
+      # - run: pip install -r requirements.txt
+      # - run: pytest
+      #
+      # For now, just verify the PR exists (placeholder)
+      - name: Verify PR
+        run: echo "PR checks passed"
