@@ -1,3 +1,13 @@
+---
+name: hooks
+description: >
+  Hook configuration and behavior. Required reading before creating or editing
+  hook scripts (.cjs files in .claude/hooks/).
+applies_to:
+  - ".claude/hooks/**/*.cjs"
+category: claude-code
+---
+
 # Claude Code Hooks Reference
 
 Hooks execute code in response to Claude Code events. This spec documents hook configuration and behavior.

@@ -1,5 +1,6 @@
 # Stack Configuration
-# Run /sync-stack to auto-detect and populate
+# Last synced: 2026-03-14
+# Source of truth for specs and their enforcement patterns
 
 name: "claude-dev-framework"
 version: "1.0.0"
@@ -7,45 +8,85 @@ description: "Shared .claude/ framework for all projects"
 
 # Tech Stack
 stack:
-  framework: ""           # React, Next.js, Vue, Astro, etc.
-  framework_version: ""
-  language: "JavaScript"  # Hooks are .cjs
-  styling: ""             # Tailwind, CSS Modules, etc.
-  testing: ""             # Vitest, Jest, Playwright, etc.
+  type: "framework"
+  language: "JavaScript"
+  runtime: "Node.js"
   package_manager: "npm"
 
 # Active Specs
-# Listed specs are loaded by /start-task before coding
-# /sync-stack populates this based on your stack
+# Each spec has: name, file path, applies_to patterns, and optional related specs
+# enforce-specs.cjs reads this to determine which spec to require before edits
+# /start-task reads this to load specs into context
+
 specs:
-  coding: []
-    # - typescript-specs
-    # - react-specs
-  architecture: []
-    # - project-structure  # Created by /init-project or /sync-stack
-  config:
-    - version-control
-    - deployment
-    - environment
-    - testing
-  # Claude Code internals - specs about Claude Code itself
   claude-code:
-    - tools          # All available tools and their parameters
-    - hooks          # Hook schemas, exit codes, matchers
-    - skills         # Skill frontmatter, triggering behavior
-    - agents         # Agent frontmatter, tool permissions
-    - anti-patterns  # What doesn't work, behavioral issues
+    - name: hooks
+      file: claude-code/hooks.md
+      applies_to:
+        - ".claude/hooks/**/*.cjs"
+      description: "Hook configuration and behavior"
+
+    - name: skills
+      file: claude-code/skills.md
+      applies_to:
+        - ".claude/skills/**/*.md"
+      related: [instruction-format]
+      description: "Skill configuration and behavior"
+
+    - name: agents
+      file: claude-code/agents.md
+      applies_to:
+        - ".claude/agents/**/*.md"
+      related: [instruction-format]
+      description: "Agent configuration and behavior"
+
+    - name: tools
+      file: claude-code/tools.md
+      applies_to:
+        - ".claude/commands/**/*.md"
+      description: "Available tools and parameters"
+
+    - name: instruction-format
+      file: claude-code/instruction-format.md
+      applies_to:
+        - ".claude/skills/**/*.md"
+        - ".claude/agents/**/*.md"
+        - ".claude/specs/**/*.md"
+      description: "How to write instructions Claude follows"
+
+    - name: spec-format
+      file: claude-code/spec-format.md
+      applies_to:
+        - ".claude/specs/**/*.md"
+        - ".claude/specs/**/*.yaml"
+      description: "How to structure spec files"
+
+    - name: anti-patterns
+      file: claude-code/anti-patterns.md
+      applies_to: []
+      description: "Known failures and mistakes"
+
+  architecture:
+    - name: wiring
+      file: architecture/wiring.md
+      applies_to: []
+      description: "How framework components connect"
+
+  config:
+    - name: version-control
+      file: config/version-control.md
+      applies_to: []
+      description: "Git conventions"
 
 # Project Settings
 project:
-  import_alias: "@/"
-  components_dir: "src/components"
-  tests_dir: "tests"
+  hooks_dir: ".claude/hooks"
+  commands_dir: ".claude/commands"
+  skills_dir: ".claude/skills"
+  agents_dir: ".claude/agents"
+  specs_dir: ".claude/specs"
 
 # Quality Gates (run before commit)
 quality:
-  - format
-  - lint
-  - type_check
-  # - test
-  # - build
+  - validate_yaml
+  - validate_json

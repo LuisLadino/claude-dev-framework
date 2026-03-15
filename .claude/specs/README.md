@@ -1,6 +1,27 @@
 # Specs
 
-Your project's coding specs. Claude reads these before every task.
+Reference documents Claude reads before taking actions. Specs prevent context drift by ensuring guidelines are fresh before each edit.
+
+---
+
+## Source of Truth: stack-config.yaml
+
+`stack-config.yaml` defines everything:
+- Which specs exist
+- What files each spec governs (`applies_to` patterns)
+- Related specs that should be read together
+
+```yaml
+specs:
+  claude-code:
+    - name: hooks
+      file: claude-code/hooks.md
+      applies_to:
+        - ".claude/hooks/**/*.cjs"
+      description: "Hook configuration and behavior"
+```
+
+The enforce-specs hook reads stack-config.yaml to determine which spec to require before edits.
 
 ---
 
@@ -8,27 +29,16 @@ Your project's coding specs. Claude reads these before every task.
 
 ```
 specs/
-├── stack-config.yaml    # Your tech stack + active specs list
+├── stack-config.yaml    # Source of truth for specs and enforcement
 ├── config/              # Git, deploy, environment, testing
 ├── coding/              # Language and library patterns
 ├── architecture/        # File structure, project organization
 ├── design/              # Design tokens, styling conventions
 ├── documentation/       # Code comments, docstrings
-└── claude-code/         # Claude Code internals (framework-specific)
+└── claude-code/         # Claude Code internals (this framework)
 ```
 
 Directories are created as needed based on your stack.
-
-The `claude-code/` directory is specific to claude-dev-framework. It contains specs about Claude Code itself - tools, hooks, skills, agents, and anti-patterns.
-
----
-
-## Quick Start
-
-```
-/sync-stack              # Detects stack, generates all specs
-/start-task              # Uses specs when coding
-```
 
 ---
 
@@ -36,9 +46,10 @@ The `claude-code/` directory is specific to claude-dev-framework. It contains sp
 
 1. `/sync-stack` detects your tech stack
 2. Researches official docs for each technology
-3. Generates specs across all relevant categories
-4. Updates `stack-config.yaml` with active specs
-5. `/start-task` loads specs and enforces patterns
+3. Generates spec files with content
+4. Updates `stack-config.yaml` with specs and their applies_to patterns
+5. `enforce-specs.cjs` reads stack-config.yaml and blocks edits until spec is read
+6. `/start-task` loads specs listed in stack-config.yaml
 
 ---
 
@@ -46,15 +57,14 @@ The `claude-code/` directory is specific to claude-dev-framework. It contains sp
 
 | Command | Purpose |
 |---------|---------|
-| `/sync-stack` | Auto-generate specs from library docs (React, Next.js, etc.) |
+| `/sync-stack` | Auto-generate specs from library docs |
 | `/sync-stack prisma` | Add specs for a specific dependency |
 | `/sync-stack --custom api-conventions` | Add custom project-specific rules |
-
 
 ---
 
 ## Customization
 
 - Edit any generated file to match your team's patterns
+- Update `applies_to` patterns in stack-config.yaml to change enforcement
 - Use `/sync-stack --custom` for internal rules not covered by library docs
-- Framework updates never touch this directory

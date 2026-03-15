@@ -1,5 +1,5 @@
-# CI workflow - runs on pull requests
-# Customize checks per project (tests, lint, build, etc.)
+# CI workflow - validates framework files
+# Runs on pull requests to main
 
 name: CI
 
@@ -7,30 +7,91 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
-  checks:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      # Add project-specific checks here
-      # Examples:
-      #
-      # Node.js project:
-      # - uses: actions/setup-node@v4
-      #   with:
-      #     node-version: '20'
-      # - run: npm ci
-      # - run: npm test
-      # - run: npm run lint
-      #
-      # Python project:
-      # - uses: actions/setup-python@v5
-      #   with:
-      #     python-version: '3.12'
-      # - run: pip install -r requirements.txt
-      # - run: pytest
-      #
-      # For now, just verify the PR exists (placeholder)
-      - name: Verify PR
-        run: echo "PR checks passed"
+      - name: Validate YAML files
+        run: |
+          echo "Validating YAML files..."
+          python3 -c "
+          import yaml
+          import glob
+          import sys
+
+          errors = []
+          for f in glob.glob('**/*.yaml', recursive=True) + glob.glob('**/*.yml', recursive=True):
+              try:
+                  with open(f) as file:
+                      yaml.safe_load(file)
+                  print(f'✓ {f}')
+              except Exception as e:
+                  errors.append(f'{f}: {e}')
+                  print(f'✗ {f}: {e}')
+
+          if errors:
+              sys.exit(1)
+          print('All YAML files valid')
+          "
+
+      - name: Validate JSON files
+        run: |
+          echo "Validating JSON files..."
+          python3 -c "
+          import json
+          import glob
+          import sys
+
+          errors = []
+          for f in glob.glob('**/*.json', recursive=True):
+              try:
+                  with open(f) as file:
+                      json.load(file)
+                  print(f'✓ {f}')
+              except Exception as e:
+                  errors.append(f'{f}: {e}')
+                  print(f'✗ {f}: {e}')
+
+          if errors:
+              sys.exit(1)
+          print('All JSON files valid')
+          "
+
+      - name: Check hook syntax
+        run: |
+          echo "Checking hook JavaScript syntax..."
+          for f in $(find .claude/hooks -name "*.cjs" 2>/dev/null); do
+            if node --check "$f" 2>&1; then
+              echo "✓ $f"
+            else
+              echo "✗ $f"
+              exit 1
+            fi
+          done
+          echo "All hooks have valid syntax"
+
+      - name: Verify required files exist
+        run: |
+          echo "Checking required framework files..."
+          required_files=(
+            ".claude/CLAUDE.md"
+            ".claude/specs/stack-config.yaml"
+            ".claude/specs/README.md"
+            ".claude/hooks/README.md"
+          )
+
+          for f in "${required_files[@]}"; do
+            if [ -f "$f" ]; then
+              echo "✓ $f"
+            else
+              echo "✗ Missing: $f"
+              exit 1
+            fi
+          done
+          echo "All required files present"

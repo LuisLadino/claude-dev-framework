@@ -863,7 +863,9 @@ Fix these issues? (yes/no)
 Update `.claude/specs/stack-config.yaml` with:
 
 1. **Stack details** - framework, language, styling, testing, package_manager
-2. **Specs list** - all generated spec files across all categories
+2. **Specs list** - each spec needs: name, file, applies_to patterns, description
+
+The `applies_to` patterns tell enforce-specs.cjs which files require reading this spec before editing.
 
 Example update:
 
@@ -878,22 +880,59 @@ stack:
 
 specs:
   coding:
-    - nextjs-specs
-    - typescript-specs
-    - tailwind-specs
-    - vitest-specs
+    - name: nextjs-specs
+      file: coding/nextjs-specs.md
+      applies_to:
+        - "app/**/*.tsx"
+        - "pages/**/*.tsx"
+      description: "Next.js patterns and conventions"
+
+    - name: typescript-specs
+      file: coding/typescript-specs.md
+      applies_to:
+        - "**/*.ts"
+        - "**/*.tsx"
+      description: "TypeScript patterns"
+
+    - name: tailwind-specs
+      file: coding/tailwind-specs.md
+      applies_to:
+        - "**/*.tsx"
+        - "**/*.jsx"
+        - "tailwind.config.*"
+      description: "Tailwind CSS patterns"
+
+    - name: vitest-specs
+      file: coding/vitest-specs.md
+      applies_to:
+        - "**/*.test.ts"
+        - "**/*.spec.ts"
+      description: "Testing patterns"
+
   architecture:
-    - project-structure
+    - name: project-structure
+      file: architecture/project-structure.md
+      applies_to: []
+      description: "File structure conventions"
+
   design:
-    - design-system
-  documentation:
-    - code-comments
+    - name: design-system
+      file: design/design-system.md
+      applies_to: []
+      description: "Design tokens and styles"
+
   config:
-    - version-control
-    - deployment
-    - environment
-    - testing
+    - name: version-control
+      file: config/version-control.md
+      applies_to: []
+      description: "Git conventions"
 ```
+
+**applies_to patterns:**
+- Use glob patterns that match files this spec governs
+- `**/*.tsx` matches all .tsx files
+- `app/**/*.tsx` matches .tsx files under app/
+- Empty array `[]` means spec is loaded but not enforced on specific files
 
 Only include categories that have specs. Don't add empty categories.
 
@@ -1050,13 +1089,20 @@ Create the spec file with template:
 
 ### Step 4: Update stack-config.yaml
 
-Add the spec filename (without .md) to the appropriate category:
+Add the spec to the appropriate category with its applies_to patterns:
 
 ```yaml
 specs:
   coding:
-    - api-conventions    # Custom spec added here
+    - name: api-conventions
+      file: coding/api-conventions.md
+      applies_to:
+        - "src/api/**/*.ts"
+        - "src/routes/**/*.ts"
+      description: "Internal API conventions"
 ```
+
+Ask the user what file patterns this spec should govern. These patterns determine when Claude must read this spec before editing.
 
 ### Step 5: Generate Content (Optional)
 
@@ -1081,12 +1127,16 @@ Confirm the spec was created. Suggest reviewing and customizing.
 
 After running `/sync-stack`:
 
-1. User runs `/start-task`
-2. Claude loads `stack-config.yaml`
-3. Reads all files listed under `specs:`
-4. Shows patterns that will be enforced
-5. User approves
-6. Claude implements following specs
-7. Runs quality gates
+**For /start-task:**
+1. Claude loads `stack-config.yaml`
+2. Reads all spec files listed under `specs:`
+3. Specs are now in context for the task
 
-**Your specs become the rules.**
+**For enforcement (automatic):**
+1. Claude attempts to edit a file
+2. `enforce-specs.cjs` reads `stack-config.yaml`
+3. Checks if file matches any spec's `applies_to` patterns
+4. If match found, blocks edit until that spec is read
+5. After reading spec, edits are allowed for that prompt
+
+**Your specs become the rules.** The `applies_to` patterns determine which files require which specs.

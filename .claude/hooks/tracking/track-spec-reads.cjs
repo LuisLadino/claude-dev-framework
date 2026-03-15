@@ -4,34 +4,22 @@
  * Track Spec Reads Hook
  *
  * Event: PostToolUse (Read)
- * Purpose: Track when spec/skill files are read, enable gated actions
+ * Purpose: Track when spec files are read, enable gated actions
  *
- * Per-prompt enforcement:
- * - When a spec is read, set pendingEdit to the spec type
- * - Multiple edits of that type allowed within the same prompt
- * - UserPromptSubmit clears pendingEdit at start of each new prompt
- * - This forces re-reading for each new user request, preventing context drift
+ * Reads spec definitions from stack-config.yaml.
+ * When a spec file is read, adds spec name to pendingEdit array.
+ * Multiple specs can be tracked per prompt.
  */
 
 const fs = require('fs');
 const path = require('path');
+const yaml = require('yaml');
 
-// Spec file → edit type mapping
-const SPEC_TO_EDIT_TYPE = [
-  { pattern: /hooks\.md$/, type: 'hooks' },
-  { pattern: /skills\.md$/, type: 'skills' },
-  { pattern: /agents\.md$/, type: 'agents' },
-  { pattern: /tools\.md$/, type: 'commands' },
-  { pattern: /specs\/README\.md$/, type: 'specs-readme' },
-  { pattern: /stack-config\.yaml$/, type: 'coding' },
-  { pattern: /coding\/.*\.md$/, type: 'coding' },
-];
+const STACK_CONFIG_PATH = '.claude/specs/stack-config.yaml';
+const SESSION_STATE_FILE = '.claude/session-state.json';
 
 // Pattern for plan skill (separate enforcement)
 const PLAN_SKILL_PATTERN = /\.claude\/skills\/plan\/SKILL\.md$/;
-
-// Session state file
-const SESSION_STATE_FILE = '.claude/session-state.json';
 
 let input = '';
 process.stdin.setEncoding('utf8');
@@ -53,24 +41,33 @@ function handleHook(data) {
     process.exit(0);
   }
 
-  // Check if this is a spec file and get the edit type
-  const mapping = SPEC_TO_EDIT_TYPE.find(m => m.pattern.test(filePath));
-
   // Check if this is the plan skill
   const isPlanSkill = PLAN_SKILL_PATTERN.test(filePath);
 
-  if (!mapping && !isPlanSkill) {
+  // Check if this is a spec file
+  const specName = findSpecName(filePath);
+
+  if (!specName && !isPlanSkill) {
     process.exit(0);
   }
 
   // Update session state
   const sessionState = loadSessionState();
 
-  if (mapping) {
-    sessionState.pendingEdit = mapping.type;
+  if (specName) {
+    // Initialize pendingEdit as array if needed
+    if (!Array.isArray(sessionState.pendingEdit)) {
+      sessionState.pendingEdit = [];
+    }
+
+    // Add spec name if not already present
+    if (!sessionState.pendingEdit.includes(specName)) {
+      sessionState.pendingEdit.push(specName);
+    }
+
     sessionState.lastSpecRead = filePath;
     sessionState.specReadAt = new Date().toISOString();
-    console.log(`[READY] Read ${path.basename(filePath)} - ${mapping.type} edits allowed this prompt.`);
+    console.log(`[READY] Read ${specName} spec - edits allowed this prompt.`);
   }
 
   if (isPlanSkill) {
@@ -80,8 +77,50 @@ function handleHook(data) {
   }
 
   saveSessionState(sessionState);
-
   process.exit(0);
+}
+
+function loadStackConfig() {
+  try {
+    const content = fs.readFileSync(STACK_CONFIG_PATH, 'utf8');
+    return yaml.parse(content);
+  } catch {
+    return null;
+  }
+}
+
+function findSpecName(filePath) {
+  const config = loadStackConfig();
+  if (!config?.specs) return null;
+
+  // Normalize the file path
+  const normalizedPath = filePath.replace(/^.*?\.claude\/specs\//, '');
+
+  // Check each spec to see if the file matches
+  for (const category of Object.keys(config.specs)) {
+    const specs = config.specs[category];
+    if (!Array.isArray(specs)) continue;
+
+    for (const spec of specs) {
+      // Check if the read file IS this spec
+      if (spec.file && normalizedPath.endsWith(spec.file.replace(/^.*\//, ''))) {
+        return spec.name;
+      }
+      // Also match full path
+      if (spec.file && filePath.includes(spec.file)) {
+        return spec.name;
+      }
+    }
+  }
+
+  // Fallback: check if it's in the specs directory at all
+  if (filePath.includes('.claude/specs/')) {
+    // Return a generic name based on the file
+    const basename = path.basename(filePath, path.extname(filePath));
+    return basename;
+  }
+
+  return null;
 }
 
 function loadSessionState() {
@@ -95,7 +134,6 @@ function loadSessionState() {
 
 function saveSessionState(state) {
   try {
-    // Ensure directory exists
     const dir = path.dirname(SESSION_STATE_FILE);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });

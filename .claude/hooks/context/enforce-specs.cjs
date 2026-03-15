@@ -4,53 +4,19 @@
  * Enforce Specs Hook
  *
  * Event: PreToolUse (Edit|Write)
- * Purpose: DENY file edits until the RELEVANT spec has been read
+ * Purpose: DENY file edits until the relevant spec has been read
  *
- * Per-action enforcement (not per-session):
- * 1. Determine which spec applies to the file being edited
- * 2. Check if that specific spec was read BEFORE this action
- * 3. If not → DENY with instruction to read the spec first
- * 4. If yes → ALLOW and clear the flag (must re-read for next edit)
- *
- * This prevents context drift by forcing re-reading before each action.
+ * Reads patterns from stack-config.yaml (single source of truth).
+ * Each spec in stack-config has applies_to patterns.
+ * If the file being edited matches a pattern, that spec must be read first.
  */
 
 const fs = require('fs');
 const path = require('path');
+const yaml = require('yaml');
 
-// File patterns → required spec mapping
-const FILE_TO_SPEC = [
-  {
-    pattern: /\.claude\/hooks\/.*\.cjs$/,
-    spec: '.claude/specs/claude-code/hooks.md',
-    name: 'hooks'
-  },
-  {
-    pattern: /\.claude\/skills\/.*\.md$/,
-    spec: '.claude/specs/claude-code/skills.md',
-    name: 'skills'
-  },
-  {
-    pattern: /\.claude\/agents\/.*\.md$/,
-    spec: '.claude/specs/claude-code/agents.md',
-    name: 'agents'
-  },
-  {
-    pattern: /\.claude\/commands\/.*\.md$/,
-    spec: '.claude/specs/claude-code/tools.md',
-    name: 'commands'
-  },
-  {
-    pattern: /\.claude\/specs\/.*\.md$/,
-    spec: '.claude/specs/README.md',
-    name: 'specs-readme'
-  },
-  {
-    pattern: /\.(js|ts|jsx|tsx|mjs|cjs)$/,
-    spec: '.claude/specs/stack-config.yaml',
-    name: 'coding'
-  }
-];
+const STACK_CONFIG_PATH = '.claude/specs/stack-config.yaml';
+const SESSION_STATE_FILE = '.claude/session-state.json';
 
 // Files/paths to skip enforcement entirely
 const SKIP_PATTERNS = [
@@ -60,9 +26,6 @@ const SKIP_PATTERNS = [
   /yarn\.lock/,
   /pnpm-lock\.yaml/,
 ];
-
-// Session state file
-const SESSION_STATE_FILE = '.claude/session-state.json';
 
 let input = '';
 process.stdin.setEncoding('utf8');
@@ -91,35 +54,115 @@ function handleHook(data) {
     }
   }
 
-  // Find which spec applies to this file
-  const mapping = FILE_TO_SPEC.find(m => m.pattern.test(filePath));
+  // Load stack-config.yaml for spec mappings
+  const mappings = loadSpecMappings();
+  if (!mappings || mappings.length === 0) {
+    process.exit(0); // No mappings, allow
+  }
 
-  if (!mapping) {
+  // Find which spec applies to this file
+  const match = findMatchingSpec(filePath, mappings);
+
+  if (!match) {
     process.exit(0); // No spec requirement for this file type
   }
 
-  // Check if the required spec was read (pendingEdit matches this file type)
+  // Check if the required spec was read (pendingEdit matches this spec name)
   const sessionState = loadSessionState();
 
-  if (sessionState.pendingEdit === mapping.name) {
-    // Spec was just read for this file type, allow the edit
-    // Clear the pending flag so next edit requires re-reading
-    clearPendingEdit();
-    process.exit(0);
+  // Check if ANY of the required specs were read
+  const requiredSpecs = [match.name, ...(match.related || [])];
+  const readSpecs = sessionState.pendingEdit || [];
+  const pendingEditArray = Array.isArray(readSpecs) ? readSpecs : [readSpecs];
+
+  // Check if we have all required specs
+  const hasRequired = requiredSpecs.some(req => pendingEditArray.includes(req));
+
+  if (hasRequired) {
+    process.exit(0); // Spec was read, allow
   }
 
   // Spec not read - DENY and instruct
+  const specPath = `.claude/specs/${match.file}`;
+  const relatedNote = match.related?.length
+    ? `\nRelated specs to also read: ${match.related.join(', ')}`
+    : '';
+
   console.error(`[BLOCKED] Read the spec before editing.
 
 You're about to edit: ${path.basename(filePath)}
-Required spec: ${mapping.spec}
+Required spec: ${specPath}${relatedNote}
 
 **Read the spec first, then retry this edit.**
 
-This ensures you have the current guidelines fresh in context.
-Every edit requires reading the relevant spec - this prevents context drift.`);
+This ensures you have the current guidelines fresh in context.`);
 
   process.exit(2); // DENY
+}
+
+function loadStackConfig() {
+  try {
+    const content = fs.readFileSync(STACK_CONFIG_PATH, 'utf8');
+    return yaml.parse(content);
+  } catch {
+    return null;
+  }
+}
+
+function loadSpecMappings() {
+  const config = loadStackConfig();
+  if (!config?.specs) return [];
+
+  const mappings = [];
+
+  // Flatten all spec categories into a single list with their patterns
+  for (const category of Object.keys(config.specs)) {
+    const specs = config.specs[category];
+    if (!Array.isArray(specs)) continue;
+
+    for (const spec of specs) {
+      if (spec.applies_to && spec.applies_to.length > 0) {
+        mappings.push({
+          name: spec.name,
+          file: spec.file,
+          patterns: spec.applies_to,
+          related: spec.related || []
+        });
+      }
+    }
+  }
+
+  return mappings;
+}
+
+function findMatchingSpec(filePath, mappings) {
+  // Normalize the file path for matching
+  const normalizedPath = filePath.replace(/^\//, '');
+
+  for (const mapping of mappings) {
+    for (const pattern of mapping.patterns) {
+      if (matchGlob(normalizedPath, pattern)) {
+        return mapping;
+      }
+    }
+  }
+
+  return null;
+}
+
+function matchGlob(filePath, pattern) {
+  // Convert glob pattern to regex
+  // Handle: ** (any path), * (any segment), ? (single char)
+  let regex = pattern
+    .replace(/[.+^${}()|[\]\\]/g, '\\$&') // Escape special regex chars except * and ?
+    .replace(/\*\*/g, '{{DOUBLESTAR}}')    // Placeholder for **
+    .replace(/\*/g, '[^/]*')               // * matches anything except /
+    .replace(/\?/g, '.')                   // ? matches single char
+    .replace(/{{DOUBLESTAR}}/g, '.*');     // ** matches anything including /
+
+  // Match against the file path (could be absolute or relative)
+  const re = new RegExp(regex);
+  return re.test(filePath) || re.test(filePath.replace(/^.*?\.claude/, '.claude'));
 }
 
 function loadSessionState() {
@@ -130,6 +173,3 @@ function loadSessionState() {
     return {};
   }
 }
-
-// pendingEdit is cleared by clear-pending.cjs at UserPromptSubmit
-// This allows multiple edits within a single prompt after reading the spec
