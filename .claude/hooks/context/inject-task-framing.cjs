@@ -113,6 +113,40 @@ function handleHook() {
     parts.push('');
   }
 
+  // Task state (design thinking phases)
+  if (task.task_state) {
+    parts.push('TASK STATE:');
+    if (task.task_state.current_phase_task) {
+      parts.push(`- Current: ${task.task_state.current_phase_task}`);
+    }
+    if (task.task_state.completed_tasks?.length > 0) {
+      parts.push(`- Completed: ${task.task_state.completed_tasks.join(', ')}`);
+    }
+    if (task.task_state.next_task) {
+      parts.push(`- Next: ${task.task_state.next_task}`);
+    }
+    if (task.task_state.note) {
+      parts.push(`- Note: ${task.task_state.note}`);
+    }
+    parts.push('');
+  }
+
+  // Task actions (what Claude should do with tasks)
+  if (task.task_actions?.length > 0) {
+    parts.push('TASK ACTIONS NEEDED:');
+    task.task_actions.forEach(a => {
+      if (a.action === 'create_phase_tasks') {
+        parts.push(`- CREATE phase tasks for: ${a.work_area}`);
+        parts.push(`  Reason: ${a.reason}`);
+      } else if (a.action === 'complete') {
+        parts.push(`- COMPLETE task ${a.taskId}: ${a.reason}`);
+      } else if (a.action === 'start') {
+        parts.push(`- START task ${a.taskId}: ${a.reason}`);
+      }
+    });
+    parts.push('');
+  }
+
   // Recommended approach
   if (task.recommended_approach) {
     parts.push('RECOMMENDED APPROACH:');

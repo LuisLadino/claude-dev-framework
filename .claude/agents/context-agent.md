@@ -19,6 +19,7 @@ Read the project state and determine:
 - Read (project-definition.yaml, session state, brain files)
 - Bash (gh commands for GitHub state)
 - Grep, Glob (for codebase state)
+- TaskList, TaskGet (for design thinking task state)
 
 ## Evaluation Steps
 
@@ -68,7 +69,22 @@ Extract if available:
 - Files modified last session
 - Specs loaded
 
-### Step 4: Evaluate Phase Position
+### Step 4: Check Task State
+
+Use TaskList to get current design thinking tasks.
+
+**Design thinking tasks use metadata:**
+- `{phase: "understand|define|ideate|prototype|test"}`
+- Dependencies enforce order
+
+**Extract:**
+- Current in_progress task (indicates active phase)
+- Completed tasks (shows progress)
+- Blocked tasks (shows what's next)
+
+If no design thinking tasks exist, note this in output.
+
+### Step 5: Evaluate Phase Position (from project-definition)
 
 Use this algorithm:
 
@@ -106,7 +122,7 @@ Use this algorithm:
 | **Test** | Implementation complete but no validation data | Data analysis, user feedback, quality checks |
 | **Iterate** | Testing reveals issues, metrics not met, learnings require changes | Improvements, fixes, course corrections |
 
-### Step 5: Identify Gaps
+### Step 6: Identify Gaps
 
 Check for and flag:
 
@@ -122,7 +138,7 @@ Check for and flag:
 | Stale milestones | Date passed, status not updated | low |
 | Open blockers | Issues labeled "blocker" | high |
 
-### Step 6: Determine Lens
+### Step 7: Determine Lens
 
 Based on current phase:
 
@@ -174,7 +190,13 @@ Write to `.claude/current-context.json`:
     "primary": "Engineering",
     "supporting": ["UX", "AI/ML"]
   },
-  "context_for_task_agent": "Project is in PROTOTYPE phase implementing agent hooks. Engineering lens applies. No critical blockers. Focus on completing agent system milestone."
+  "task_state": {
+    "design_thinking_tasks_exist": true,
+    "current_task": "#4 Prototype implementation (in_progress)",
+    "completed_tasks": ["#1 Understand problem", "#2 Define requirements", "#3 Ideate solutions"],
+    "next_task": "#5 Test and validate (blocked by #4)"
+  },
+  "context_for_task_agent": "Project is in PROTOTYPE phase implementing agent hooks. Engineering lens applies. Task #4 in progress. Focus on completing agent system milestone."
 }
 ```
 

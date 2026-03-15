@@ -126,6 +126,24 @@ Context file exists but could not be parsed: ${e.message}`
     parts.push('');
   }
 
+  // Task state (design thinking phases)
+  if (context.task_state) {
+    parts.push('DESIGN THINKING TASKS:');
+    if (context.task_state.current_task) {
+      parts.push(`- Current: ${context.task_state.current_task}`);
+    }
+    if (context.task_state.completed_tasks?.length > 0) {
+      parts.push(`- Completed: ${context.task_state.completed_tasks.join(', ')}`);
+    }
+    if (context.task_state.next_task) {
+      parts.push(`- Next: ${context.task_state.next_task}`);
+    }
+    if (!context.task_state.design_thinking_tasks_exist) {
+      parts.push('- No design thinking tasks exist for current work');
+    }
+    parts.push('');
+  }
+
   // Context for Task Agent
   if (context.context_for_task_agent) {
     parts.push('CONTEXT FOR THIS SESSION:');

@@ -18,6 +18,7 @@ For every user prompt, evaluate:
 
 - Read (context file, specs, code files)
 - Grep, Glob (for finding relevant code)
+- TaskList, TaskGet (for checking current task state)
 
 ## Evaluation Steps
 
@@ -155,6 +156,50 @@ Luis is building fluency for AI product roles (PM, product analyst).
 
 Pick 1-2 concepts maximum. Focus on what's directly applicable.
 
+### Step 7: Check Task State
+
+Use TaskList to check current design thinking tasks.
+
+**Design thinking tasks follow this pattern:**
+- Tasks have metadata `{phase: "understand|define|ideate|prototype|test"}`
+- Dependencies enforce order: define blockedBy understand, ideate blockedBy define, etc.
+- Status tracks progress: pending → in_progress → completed
+
+**Evaluate:**
+1. Do design thinking phase tasks exist for current work?
+2. Which task is currently in_progress?
+3. Should a task be marked completed based on this prompt?
+4. Should next phase task be started?
+
+**Include in output:**
+```json
+{
+  "task_state": {
+    "current_phase_task": "#3 Ideate solutions (in_progress)",
+    "completed_tasks": ["#1 Understand problem", "#2 Define requirements"],
+    "next_task": "#4 Prototype implementation (blocked by #3)"
+  },
+  "task_actions": [
+    {"action": "complete", "taskId": "3", "reason": "Approach decided, ready to implement"},
+    {"action": "start", "taskId": "4", "reason": "Beginning implementation"}
+  ]
+}
+```
+
+**When no design thinking tasks exist:**
+If starting significant new work and no phase tasks exist, recommend creating them:
+```json
+{
+  "task_state": {
+    "current_phase_task": null,
+    "note": "No design thinking tasks for this work area"
+  },
+  "task_actions": [
+    {"action": "create_phase_tasks", "work_area": "GitHub integration", "reason": "New significant work area identified"}
+  ]
+}
+```
+
 ## Output
 
 Write to `.claude/current-task.json`:
@@ -196,7 +241,13 @@ Write to `.claude/current-task.json`:
     }
   ],
   "big_picture_connection": "Project is in PROTOTYPE phase. Password reset completes auth implementation before TEST phase.",
-  "recommended_approach": "Read existing auth code first. Design reset flow as state machine. Implement using existing patterns. Teach state machine concept during implementation."
+  "recommended_approach": "Read existing auth code first. Design reset flow as state machine. Implement using existing patterns. Teach state machine concept during implementation.",
+  "task_state": {
+    "current_phase_task": "#4 Prototype implementation (in_progress)",
+    "completed_tasks": ["#1 Understand problem", "#2 Define requirements", "#3 Ideate solutions"],
+    "next_task": "#5 Test and validate (blocked by #4)"
+  },
+  "task_actions": []
 }
 ```
 
