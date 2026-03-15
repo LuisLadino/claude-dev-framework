@@ -114,21 +114,43 @@ ${filesChanged}
 
   // Build the prompt for claude -p
   // NOTE: We run from /tmp to avoid deadlock with parent Claude session
-  const prompt = `You are the Phase Evaluator. A commit was just made. Evaluate the project rhythm.
+  // NOTE: Prompt structured for JSON output - schema at END for recency effect
+  const prompt = `You are the Phase Evaluator. A commit was just made. Evaluate design thinking rhythm.
 
 WORKSPACE: ${cwd}
 ${commitInfo}
 ${projectPhase}
 
-INSTRUCTIONS:
-${instructions}
+ROLE: Observer, not director. Say "I notice..." not "You should..."
 
-IMPORTANT:
-- Return ONLY valid JSON (no markdown code fences, no explanation)
-- Focus on OBSERVATIONS, not directives
-- Say "I notice..." not "You should..."
-- Detect groan zone if multiple approaches discussed without selection
-- Include 1-2 reflection prompts`;
+PHASES: Understand → Define → Ideate → Prototype → Test → Iterate
+(Not sequential - can move back/forward based on learnings)
+
+EVALUATE:
+1. What phase is this work in? (micro=task, macro=project)
+2. Is there tension or groan zone? (stuck between options)
+3. Any signals for phase transition?
+
+CRITICAL: You MUST respond with ONLY valid JSON. No explanations. No questions. No text.
+If you lack information, use "unknown" or empty arrays. NEVER respond with prose.
+
+REQUIRED JSON FORMAT (respond with this structure, nothing else):
+{
+  "phase_assessment": {
+    "micro": { "phase": "understand|define|ideate|prototype|test|iterate", "confidence": "low|medium|high" },
+    "macro": { "phase": "understand|define|ideate|prototype|test|iterate", "confidence": "low|medium|high" }
+  },
+  "observations": ["observation 1", "observation 2"],
+  "rhythm": {
+    "mode": "diverging|groan_zone|converging",
+    "pattern": "description",
+    "groan_zone_detected": false
+  },
+  "reflection_prompts": ["question 1", "question 2"],
+  "observation_summary": "one sentence summary"
+}
+
+RESPOND WITH JSON ONLY:`;
 
   // Spawn claude -p
   const start = Date.now();

@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Phase Evaluator JSON output** - Rewrote prompt to reliably return JSON instead of prose:
+  - Added CRITICAL instruction for JSON-only response
+  - Put schema at END of prompt (recency effect)
+  - Added fallback behavior ("use unknown" for missing info)
+  - Previously haiku model would return prose asking for more information
+
+- **Context Agent deadlock** - Fixed `claude -p` hanging when spawned from same directory as parent Claude session:
+  - Root cause: Session resource conflict
+  - Fix: Run from `/tmp`, pass workspace path in prompt
+  - Both `spawn-context-agent.cjs` and `spawn-phase-evaluator.cjs` updated
+
 ### Added
 
 - **Working agent spawn system** - Replaced broken `type: "agent"` hooks with command hooks that spawn `claude -p`:
