@@ -36,6 +36,14 @@ let input = '';
 process.stdin.setEncoding('utf8');
 process.stdin.on('data', chunk => input += chunk);
 process.stdin.on('end', () => {
+  // Debug: Log every invocation
+  const debugPath = path.join(process.cwd(), '.claude/phase-evaluator-debug.log');
+  try {
+    const timestamp = new Date().toISOString();
+    const debugEntry = `[${timestamp}] Hook invoked\nInput: ${input.substring(0, 500)}\n---\n`;
+    fs.appendFileSync(debugPath, debugEntry);
+  } catch (e) { /* ignore */ }
+
   try {
     runPhaseEvaluator();
   } catch (e) {
