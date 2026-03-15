@@ -11,6 +11,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Working agent spawn system** - Replaced broken `type: "agent"` hooks with command hooks that spawn `claude -p`:
+  - `spawn-context-agent.cjs` - SessionStart hook that spawns Context Agent, captures JSON output, injects as additionalContext
+  - Test infrastructure in `.claude/hooks/test/` for validating agent spawn
+  - Agent hooks CAN'T write files (per Claude Code docs), but command hooks CAN spawn `claude -p` which returns structured output
+
+- **Design thinking research documentation** - `.claude/research/design-thinking-operating-system.md` with key findings:
+  - Design thinking is rhythm, not sequence (diverge → groan zone → converge)
+  - Fractal application at project, feature, and task levels
+  - Phase Evaluator as observer/cognitive mirror, not director
+
+### Changed
+
+- **Phase Evaluator agent** - Rewritten based on research findings:
+  - Now covers both micro (per-prompt) and macro (per-commit) evaluation
+  - Observer role emphasized ("I notice..." not "You should...")
+  - Includes groan zone detection and reflection prompts
+
+### Removed
+
+- **Broken agent hooks** - Removed `type: "agent"` hooks that couldn't write files:
+  - Context Agent hook (replaced with spawn-context-agent.cjs)
+  - Task Agent hook (to be replaced with spawn-task-agent.cjs)
+  - Phase Evaluator hook (to be replaced with spawn-phase-evaluator.cjs)
+- **Dead consumer hooks** - Removed hooks that read files never written:
+  - `inject-context-from-file.cjs`
+  - `inject-task-framing.cjs`
+  - `apply-phase-update.cjs`
+
+### Previous
+
 - **Per-prompt spec enforcement** - Enforcement now requires reading specs before EACH prompt's edits, not just once per session. Prevents context drift during long sessions:
   - `enforce-specs.cjs` - Maps file types to required specs (hooks→hooks.md, skills→skills.md, etc.)
   - `track-spec-reads.cjs` - Sets `pendingEdit` type when spec is read
