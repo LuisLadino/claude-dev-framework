@@ -27,6 +27,7 @@ const path = require('path');
 // Configuration
 const AGENT_INSTRUCTIONS_PATH = '.claude/agents/phase-evaluator.md';
 const PROJECT_DEFINITION_PATH = '.claude/specs/project-definition.yaml';
+const PHASE_EVAL_OUTPUT_PATH = '.claude/phase-evaluation.json'; // Written for inject-context.cjs to read
 const TIMEOUT_MS = 120000; // 120 seconds (agent does research now)
 const MODEL = 'haiku';
 
@@ -402,11 +403,20 @@ RESPOND WITH JSON ONLY:`;
   // Output to stderr for user to see in terminal
   console.error(formattedOutput);
 
-  // Output JSON with additionalContext to stdout for main Claude session
-  const hookOutput = {
-    additionalContext: formattedOutput
-  };
-  console.log(JSON.stringify(hookOutput));
+  // Write to file for inject-context.cjs to read on next prompt
+  // This ensures the main Claude session receives the context
+  const outputPath = path.join(cwd, PHASE_EVAL_OUTPUT_PATH);
+  try {
+    const fileContent = {
+      timestamp: new Date().toISOString(),
+      elapsed_ms: elapsed,
+      content: formattedOutput,
+      raw: evalJson
+    };
+    fs.writeFileSync(outputPath, JSON.stringify(fileContent, null, 2));
+  } catch (e) {
+    // If we can't write the file, at least stderr was shown
+  }
 
   process.exit(0);
 }

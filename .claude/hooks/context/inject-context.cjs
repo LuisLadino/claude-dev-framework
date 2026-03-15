@@ -541,6 +541,7 @@ const IDEATION_PATTERNS = [
 const HOME = process.env.HOME || process.env.USERPROFILE;
 const VOICE_PROFILE_PATH = path.join(HOME, '.gemini/antigravity/brain/voice-profile.md');
 const IDENTITY_PATH = path.join(HOME, 'Repositories/Personal/my-brain/CLAUDE.md');
+const PHASE_EVAL_PATH = '.claude/phase-evaluation.json'; // Written by Phase Evaluator hook
 
 const {
   getSessionId,
@@ -552,6 +553,43 @@ function loadVoiceProfile() {
   try {
     return fs.readFileSync(VOICE_PROFILE_PATH, 'utf8');
   } catch {
+    return null;
+  }
+}
+
+/**
+ * Check for Phase Evaluation output from last commit
+ * Written by spawn-phase-evaluator.cjs, consumed here, then deleted
+ * This ensures the main Claude session receives strategic context
+ */
+function loadAndConsumePhaseEvaluation() {
+  const evalPath = path.join(process.cwd(), PHASE_EVAL_PATH);
+  try {
+    if (!fs.existsSync(evalPath)) {
+      return null;
+    }
+
+    const content = fs.readFileSync(evalPath, 'utf8');
+    const data = JSON.parse(content);
+
+    // Check if it's recent (within last 10 minutes)
+    const timestamp = new Date(data.timestamp);
+    const now = new Date();
+    const ageMinutes = (now - timestamp) / 1000 / 60;
+
+    if (ageMinutes > 10) {
+      // Stale evaluation - delete and skip
+      fs.unlinkSync(evalPath);
+      return null;
+    }
+
+    // Delete the file after reading (consume it)
+    fs.unlinkSync(evalPath);
+
+    return data.content;
+  } catch {
+    // If anything fails, try to clean up
+    try { fs.unlinkSync(evalPath); } catch {}
     return null;
   }
 }
@@ -857,6 +895,15 @@ function handleHook(data) {
 
   const contextParts = [];
   let commandSuggested = null;
+  let phaseEvalInjected = false;
+
+  // Check for Phase Evaluation from recent commit
+  // This is the strategic context from Phase Evaluator agent
+  const phaseEvalContent = loadAndConsumePhaseEvaluation();
+  if (phaseEvalContent) {
+    contextParts.push(`[PHASE EVALUATION - From last commit]\n\n${phaseEvalContent}`);
+    phaseEvalInjected = true;
+  }
   let workflowInjected = false;
   let reasoningCheckpoints = [];
   let voiceProfileLoaded = false;
@@ -1107,6 +1154,7 @@ Skip framing for simple yes/no questions or quick clarifications.`;
   if (voiceProfileLoaded) actions.voiceProfileLoaded = voiceProfileLoaded;
   if (specsLoaded.length > 0) actions.specsLoaded = specsLoaded;
   if (isCaptureRequest) actions.captureTriggered = true;
+  if (phaseEvalInjected) actions.phaseEvalInjected = true;
 
   // Log injection (always happens now due to interaction reminder)
   logInjection(session_id, actions);
