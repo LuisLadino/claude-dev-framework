@@ -62,6 +62,9 @@ Skills trigger automatically from natural language. You can also invoke explicit
 **Planning:**
 - **plan** - "what's next", "add to backlog", "create an issue", "prioritize"
 
+**Session:**
+- **handoff** - "let's handoff", "end session", "save context", "wrapping up" (captures context for next session)
+
 **Setup:**
 - **/init-project** - Define product requirements (explicit only)
 - **/sync-stack** - Detect stack, generate specs (explicit only)

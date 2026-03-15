@@ -155,6 +155,27 @@ const COMMAND_ROUTES = [
     ],
     command: '/analyze',
     reason: 'Analysis time? /analyze reads session data and identifies improvements.'
+  },
+  {
+    patterns: [
+      // Session ending phrases
+      /\bhandoff\b/i,
+      /\blet'?s handoff\b/i,
+      /\bend session\b/i,
+      /\bsave (the )?context\b/i,
+      /\bi'?m done( for now)?\b/i,
+      /\bwrapping up\b/i,
+      /\bswitching context\b/i,
+      /\bcall it (a day|here)\b/i,
+      /\bpause (here|this)\b/i,
+      /\bpick (this |it )?up later\b/i,
+      /\bcontinue (this )?later\b/i,
+      /\bsave (where we are|our place|progress)\b/i
+    ],
+    command: '/handoff',
+    reason: 'Ending session? /handoff captures context so the next session can resume.',
+    injectWorkflow: true,
+    workflowLoader: 'handoff'
   }
 ];
 
@@ -541,6 +562,78 @@ function loadVoiceProfile() {
  */
 function loadWorkflow(workflowName) {
   const cwd = process.cwd();
+
+  if (workflowName === 'handoff') {
+    // Find brain path for this workspace
+    const brainDir = path.join(HOME, '.gemini/antigravity/brain');
+    let brainPath = brainDir; // fallback
+
+    // Try to find the workspace-specific brain folder
+    try {
+      const sessions = fs.readdirSync(brainDir).filter(f => {
+        const fullPath = path.join(brainDir, f);
+        return fs.statSync(fullPath).isDirectory() && f !== 'tempmediaStorage' && f !== 'tracking';
+      });
+
+      for (const uuid of sessions) {
+        const statePath = path.join(brainDir, uuid, 'session_state.json');
+        if (fs.existsSync(statePath)) {
+          try {
+            const state = JSON.parse(fs.readFileSync(statePath, 'utf8'));
+            const workspacePath = (state.workspace || '').split(' -> ')[0];
+            if (workspacePath === cwd || cwd.startsWith(workspacePath)) {
+              brainPath = path.join(brainDir, uuid);
+              break;
+            }
+          } catch {}
+        }
+      }
+    } catch {}
+
+    const today = new Date().toISOString().split('T')[0];
+
+    return `[HANDOFF WORKFLOW - AUTO-LOADED]
+
+**Brain path:** ${brainPath}
+**Output file:** ${brainPath}/handoff.md
+
+---
+
+**HANDOFF WORKFLOW:**
+
+1. **Review the session:** What did we work on? What did we discover?
+
+2. **Write handoff.md** (use cat with heredoc):
+
+\`\`\`bash
+cat > "${brainPath}/handoff.md" << 'EOF'
+# Session Handoff - {Brief Title}
+
+**Created:** ${today}
+**Reason:** {Why handing off}
+
+## What We Were Doing
+
+{1-3 sentences: task/issue, where we are}
+
+## What We Discovered
+
+{Key decisions, problems solved, things that didn't work}
+
+## Next Steps
+
+{Clear actions for resuming}
+
+## Related
+
+{Links to issues, PRs, files}
+EOF
+\`\`\`
+
+3. **Confirm** what was captured.
+
+**Keep it short.** Focus on what the next session needs to resume.`;
+  }
 
   if (workflowName === 'commit') {
     // Load version-control.md

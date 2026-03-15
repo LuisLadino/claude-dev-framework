@@ -200,3 +200,4 @@ Use commands for explicit-only operations or complex multi-file content.
 | `start-task` | "work on issue", "implement", "build" | Load specs, gather requirements, code |
 | `plan` | "what's next", "add to backlog", "create issue" | Manage GitHub issues/milestones |
 | `add-feature` | "plan feature", "break down", "design" | Create PRD, break into subtasks |
+| `handoff` | "handoff", "end session", "save context" | Capture context for next session |

@@ -113,7 +113,10 @@ ${filesChanged}
   }
 
   // Build the prompt for claude -p
+  // NOTE: We run from /tmp to avoid deadlock with parent Claude session
   const prompt = `You are the Phase Evaluator. A commit was just made. Evaluate the project rhythm.
+
+WORKSPACE: ${cwd}
 ${commitInfo}
 ${projectPhase}
 
@@ -132,6 +135,7 @@ IMPORTANT:
   let result;
 
   try {
+    // Run from /tmp to avoid deadlock with parent Claude session
     result = execSync(
       `claude -p --model ${MODEL} --output-format json`,
       {
@@ -139,7 +143,7 @@ IMPORTANT:
         encoding: 'utf8',
         timeout: TIMEOUT_MS,
         maxBuffer: 5 * 1024 * 1024,
-        cwd: cwd,
+        cwd: '/tmp',
         env: { ...process.env }
       }
     );

@@ -65,12 +65,17 @@ function runContextAgent() {
 
   // Build the prompt for claude -p
   // The agent should return JSON with project context
+  // NOTE: We run from /tmp to avoid deadlock with parent Claude session
   const prompt = `You are the Context Agent. Execute these instructions and return ONLY valid JSON (no markdown code fences, no explanation).
+
+WORKSPACE: ${cwd}
+(Use absolute paths based on WORKSPACE - we run from /tmp to avoid session conflicts)
 
 ${instructions}
 
 IMPORTANT:
 - Execute all steps (read files, run gh commands, evaluate phase)
+- Use absolute paths: ${cwd}/.claude/specs/project-definition.yaml, etc.
 - Return the final JSON object directly (no \`\`\`json wrapper)
 - If you cannot complete a step, include an error in the output
 - Be fast - this runs at session start`;
@@ -80,6 +85,8 @@ IMPORTANT:
   let result;
 
   try {
+    // Run from /tmp to avoid deadlock with parent Claude session
+    // (claude -p hangs when run from same directory as parent)
     result = execSync(
       `claude -p --model ${MODEL} --output-format json`,
       {
@@ -87,7 +94,7 @@ IMPORTANT:
         encoding: 'utf8',
         timeout: TIMEOUT_MS,
         maxBuffer: 5 * 1024 * 1024, // 5MB buffer
-        cwd: cwd,
+        cwd: '/tmp',
         env: { ...process.env }
       }
     );
