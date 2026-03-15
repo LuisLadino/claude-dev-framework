@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Phase Evaluator now actionable** - Complete rewrite to be a project-level strategic advisor:
+  - Creates GitHub issues for research needs, gaps, things to track
+  - Adds comments to active issues with context and links
+  - Updates project-definition.yaml with phase changes
+  - Outputs to both stderr (user terminal) and stdout (main Claude session via additionalContext)
+  - Agent file rewritten with strategic advisor role, not just observer
+
 - **Phase Evaluator JSON output** - Rewrote prompt to reliably return JSON instead of prose:
   - Added CRITICAL instruction for JSON-only response
   - Put schema at END of prompt (recency effect)

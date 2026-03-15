@@ -8,16 +8,16 @@
  *
  * This hook:
  * 1. Reads Phase Evaluator instructions from .claude/agents/phase-evaluator.md
- * 2. Includes recent commit info in the spawn command
+ * 2. Includes commit info and workspace path in the spawn command
  * 3. Spawns `claude -p` with those instructions
  * 4. Parses the JSON response
- * 5. Outputs observations for the main session to consider
- *
- * The Phase Evaluator:
- * - Observes (doesn't direct) design thinking rhythm
- * - Detects groan zone indicators
- * - Provides reflection prompts
- * - Says "I notice..." not "You should..."
+ * 5. EXECUTES ACTIONS:
+ *    - Creates GitHub issues for items in issues_to_create
+ *    - Adds comment to active issue if issue_comment provided
+ *    - Updates project-definition.yaml if phase_change specified
+ * 6. Outputs to BOTH:
+ *    - stdout (JSON with additionalContext) - for main Claude session
+ *    - stderr (formatted text) - for user to see in terminal
  */
 
 const { execSync } = require('child_process');
@@ -27,8 +27,8 @@ const path = require('path');
 // Configuration
 const AGENT_INSTRUCTIONS_PATH = '.claude/agents/phase-evaluator.md';
 const PROJECT_DEFINITION_PATH = '.claude/specs/project-definition.yaml';
-const TIMEOUT_MS = 60000; // 60 seconds
-const MODEL = 'haiku'; // Fast model
+const TIMEOUT_MS = 120000; // 120 seconds (agent does research now)
+const MODEL = 'haiku';
 
 // Read stdin (hook input)
 let input = '';
@@ -86,12 +86,30 @@ function runPhaseEvaluator() {
       timeout: 5000
     }).trim();
 
+    const recentCommits = execSync('git log -5 --oneline', {
+      encoding: 'utf8',
+      cwd: cwd,
+      timeout: 5000
+    }).trim();
+
+    const currentBranch = execSync('git branch --show-current', {
+      encoding: 'utf8',
+      cwd: cwd,
+      timeout: 5000
+    }).trim();
+
     commitInfo = `
 RECENT COMMIT:
 ${lastCommit}
 
 FILES CHANGED:
 ${filesChanged}
+
+RECENT COMMITS (for pattern detection):
+${recentCommits}
+
+CURRENT BRANCH:
+${currentBranch}
 `;
   } catch (e) {
     commitInfo = '\n[Could not get commit info]\n';
@@ -112,42 +130,76 @@ ${filesChanged}
     }
   }
 
+  // Get open issues for context
+  let openIssues = '';
+  try {
+    openIssues = execSync('gh issue list --state open --limit 5 --json number,title 2>/dev/null || echo "[]"', {
+      encoding: 'utf8',
+      cwd: cwd,
+      timeout: 10000
+    }).trim();
+    if (openIssues && openIssues !== '[]') {
+      openIssues = `\nOPEN ISSUES:\n${openIssues}\n`;
+    } else {
+      openIssues = '';
+    }
+  } catch (e) {
+    openIssues = '';
+  }
+
   // Build the prompt for claude -p
-  // NOTE: We run from /tmp to avoid deadlock with parent Claude session
-  // NOTE: Prompt structured for JSON output - schema at END for recency effect
-  const prompt = `You are the Phase Evaluator. A commit was just made. Evaluate design thinking rhythm.
+  const prompt = `You are the Phase Evaluator. A commit was just made. Evaluate the project and take action.
 
 WORKSPACE: ${cwd}
 ${commitInfo}
 ${projectPhase}
+${openIssues}
 
-ROLE: Observer, not director. Say "I notice..." not "You should..."
+YOUR ROLE: Project-level strategic advisor. You:
+- Evaluate project health and rhythm at the macro level
+- Identify research needs, gaps, things to track
+- Find relevant documentation and links
+- Surface patterns the main session might miss
+- Create GitHub issues for things that need attention
 
-PHASES: Understand → Define → Ideate → Prototype → Test → Iterate
-(Not sequential - can move back/forward based on learnings)
+INSTRUCTIONS:
+${instructions}
 
-EVALUATE:
-1. What phase is this work in? (micro=task, macro=project)
-2. Is there tension or groan zone? (stuck between options)
-3. Any signals for phase transition?
+CRITICAL: You MUST respond with ONLY valid JSON. No explanations. No markdown fences. No text before or after.
+If you lack information for a field, use null or empty arrays. NEVER respond with prose.
 
-CRITICAL: You MUST respond with ONLY valid JSON. No explanations. No questions. No text.
-If you lack information, use "unknown" or empty arrays. NEVER respond with prose.
-
-REQUIRED JSON FORMAT (respond with this structure, nothing else):
+REQUIRED JSON STRUCTURE:
 {
   "phase_assessment": {
     "micro": { "phase": "understand|define|ideate|prototype|test|iterate", "confidence": "low|medium|high" },
     "macro": { "phase": "understand|define|ideate|prototype|test|iterate", "confidence": "low|medium|high" }
   },
+  "commit_analysis": {
+    "summary": "What this commit accomplished",
+    "type": "feature|fix|refactor|docs|test|chore"
+  },
   "observations": ["observation 1", "observation 2"],
   "rhythm": {
     "mode": "diverging|groan_zone|converging",
-    "pattern": "description",
-    "groan_zone_detected": false
+    "health": "on_track|needs_attention|blocked",
+    "pattern": "description"
   },
+  "issues_to_create": [
+    {
+      "title": "Issue title",
+      "body": "Issue body with context",
+      "labels": ["label1", "label2"]
+    }
+  ],
+  "issue_comment": {
+    "active_issue": null,
+    "comment": null
+  },
+  "related_links": [
+    { "title": "Link title", "url": "https://..." }
+  ],
   "reflection_prompts": ["question 1", "question 2"],
-  "observation_summary": "one sentence summary"
+  "summary": "One sentence summary"
 }
 
 RESPOND WITH JSON ONLY:`;
@@ -199,68 +251,162 @@ RESPOND WITH JSON ONLY:`;
     process.exit(0);
   }
 
-  // Format phase evaluation for output
-  const evalParts = [];
-  evalParts.push(`[PHASE EVALUATION - From Phase Evaluator (${elapsed}ms)]`);
-  evalParts.push('');
+  // ============================================
+  // EXECUTE ACTIONS
+  // ============================================
+
+  const actionResults = [];
+
+  // 1. Create GitHub issues
+  if (evalJson.issues_to_create && evalJson.issues_to_create.length > 0) {
+    for (const issue of evalJson.issues_to_create) {
+      if (!issue.title) continue;
+
+      try {
+        const labels = issue.labels && issue.labels.length > 0
+          ? `--label "${issue.labels.join(',')}"`
+          : '';
+        const body = issue.body || 'Created by Phase Evaluator';
+
+        // Create the issue
+        const createCmd = `gh issue create --title "${issue.title.replace(/"/g, '\\"')}" --body "${body.replace(/"/g, '\\"')}" ${labels}`;
+        const issueUrl = execSync(createCmd, {
+          encoding: 'utf8',
+          cwd: cwd,
+          timeout: 15000
+        }).trim();
+
+        actionResults.push(`Created issue: ${issueUrl}`);
+      } catch (e) {
+        actionResults.push(`Failed to create issue: ${issue.title}`);
+      }
+    }
+  }
+
+  // 2. Add comment to active issue
+  if (evalJson.issue_comment && evalJson.issue_comment.active_issue && evalJson.issue_comment.comment) {
+    try {
+      const issueNum = evalJson.issue_comment.active_issue;
+      const comment = evalJson.issue_comment.comment.replace(/"/g, '\\"');
+
+      execSync(`gh issue comment ${issueNum} --body "${comment}"`, {
+        encoding: 'utf8',
+        cwd: cwd,
+        timeout: 15000
+      });
+
+      actionResults.push(`Added comment to issue #${issueNum}`);
+    } catch (e) {
+      actionResults.push(`Failed to comment on issue #${evalJson.issue_comment.active_issue}`);
+    }
+  }
+
+  // 3. Update project-definition.yaml if phase changed
+  if (evalJson.project_updates && evalJson.project_updates.phase_change) {
+    try {
+      if (fs.existsSync(projectDefPath)) {
+        let yamlContent = fs.readFileSync(projectDefPath, 'utf8');
+        const newPhase = evalJson.project_updates.phase_change;
+
+        if (yamlContent.includes('current_phase:')) {
+          yamlContent = yamlContent.replace(
+            /current_phase:\s*\w+/,
+            `current_phase: ${newPhase}`
+          );
+        } else {
+          yamlContent += `\ncurrent_phase: ${newPhase}\n`;
+        }
+
+        fs.writeFileSync(projectDefPath, yamlContent);
+        actionResults.push(`Updated phase to: ${newPhase}`);
+      }
+    } catch (e) {
+      actionResults.push(`Failed to update project phase`);
+    }
+  }
+
+  // ============================================
+  // FORMAT OUTPUT
+  // ============================================
+
+  const outputParts = [];
+  outputParts.push(`[PHASE EVALUATION - ${elapsed}ms]`);
+  outputParts.push('');
 
   // Phase assessment
   if (evalJson.phase_assessment) {
     if (evalJson.phase_assessment.micro) {
-      evalParts.push(`MICRO (this task): ${evalJson.phase_assessment.micro.phase} (${evalJson.phase_assessment.micro.confidence})`);
+      outputParts.push(`MICRO: ${evalJson.phase_assessment.micro.phase} (${evalJson.phase_assessment.micro.confidence})`);
     }
     if (evalJson.phase_assessment.macro) {
-      evalParts.push(`MACRO (project): ${evalJson.phase_assessment.macro.phase} (${evalJson.phase_assessment.macro.confidence})`);
+      outputParts.push(`MACRO: ${evalJson.phase_assessment.macro.phase} (${evalJson.phase_assessment.macro.confidence})`);
     }
-    evalParts.push('');
-  }
-
-  // Observations
-  if (evalJson.observations?.length > 0) {
-    evalParts.push('OBSERVATIONS:');
-    evalJson.observations.forEach(o => evalParts.push(`- ${o}`));
-    evalParts.push('');
   }
 
   // Rhythm
   if (evalJson.rhythm) {
-    evalParts.push(`RHYTHM: ${evalJson.rhythm.mode} - ${evalJson.rhythm.pattern}`);
-    if (evalJson.rhythm.groan_zone_detected) {
-      evalParts.push('**GROAN ZONE DETECTED** - This discomfort between options is normal.');
+    outputParts.push(`RHYTHM: ${evalJson.rhythm.mode} | ${evalJson.rhythm.health}`);
+    if (evalJson.rhythm.pattern) {
+      outputParts.push(`  ${evalJson.rhythm.pattern}`);
     }
-    evalParts.push('');
+  }
+  outputParts.push('');
+
+  // Commit analysis
+  if (evalJson.commit_analysis) {
+    outputParts.push(`COMMIT: ${evalJson.commit_analysis.type} - ${evalJson.commit_analysis.summary}`);
+    outputParts.push('');
   }
 
-  // Transition signals
-  if (evalJson.transition_signals) {
-    if (evalJson.transition_signals.ready_to_advance?.length > 0) {
-      evalParts.push('READY TO ADVANCE:');
-      evalJson.transition_signals.ready_to_advance.forEach(s => evalParts.push(`- ${s}`));
-    }
-    if (evalJson.transition_signals.reasons_to_stay?.length > 0) {
-      evalParts.push('REASONS TO STAY:');
-      evalJson.transition_signals.reasons_to_stay.forEach(s => evalParts.push(`- ${s}`));
-    }
-    if (evalJson.transition_signals.reasons_to_go_back?.length > 0) {
-      evalParts.push('CONSIDER GOING BACK:');
-      evalJson.transition_signals.reasons_to_go_back.forEach(s => evalParts.push(`- ${s}`));
-    }
-    evalParts.push('');
+  // Observations
+  if (evalJson.observations && evalJson.observations.length > 0) {
+    outputParts.push('OBSERVATIONS:');
+    evalJson.observations.forEach(o => outputParts.push(`- ${o}`));
+    outputParts.push('');
+  }
+
+  // Related links
+  if (evalJson.related_links && evalJson.related_links.length > 0) {
+    outputParts.push('RELATED:');
+    evalJson.related_links.forEach(l => {
+      if (l.url) {
+        outputParts.push(`- ${l.title}: ${l.url}`);
+      } else if (l.file) {
+        outputParts.push(`- ${l.title}: ${l.file}`);
+      }
+    });
+    outputParts.push('');
+  }
+
+  // Actions taken
+  if (actionResults.length > 0) {
+    outputParts.push('ACTIONS TAKEN:');
+    actionResults.forEach(a => outputParts.push(`- ${a}`));
+    outputParts.push('');
   }
 
   // Reflection prompts
-  if (evalJson.reflection_prompts?.length > 0) {
-    evalParts.push('REFLECTION PROMPTS:');
-    evalJson.reflection_prompts.forEach(p => evalParts.push(`- ${p}`));
-    evalParts.push('');
+  if (evalJson.reflection_prompts && evalJson.reflection_prompts.length > 0) {
+    outputParts.push('CONSIDER:');
+    evalJson.reflection_prompts.forEach(p => outputParts.push(`- ${p}`));
+    outputParts.push('');
   }
 
   // Summary
-  if (evalJson.observation_summary) {
-    evalParts.push(`SUMMARY: ${evalJson.observation_summary}`);
+  if (evalJson.summary) {
+    outputParts.push(`SUMMARY: ${evalJson.summary}`);
   }
 
-  // Output as stderr so it shows as a note, not blocking
-  console.error(evalParts.join('\n'));
+  const formattedOutput = outputParts.join('\n');
+
+  // Output to stderr for user to see in terminal
+  console.error(formattedOutput);
+
+  // Output JSON with additionalContext to stdout for main Claude session
+  const hookOutput = {
+    additionalContext: formattedOutput
+  };
+  console.log(JSON.stringify(hookOutput));
+
   process.exit(0);
 }
