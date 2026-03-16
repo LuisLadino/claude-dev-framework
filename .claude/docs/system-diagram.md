@@ -19,8 +19,8 @@ flowchart TD
         SI[session-init.cjs] --> |writes| LSS[.claude/session-state.json]
         SI --> |reads| SYNC[.claude/specs/.sync-state.json]
 
-        SCA[spawn-context-agent.cjs] --> |reads| CA[.claude/agents/context-agent.md]
-        SCA --> |spawns| CLAUDE_P[claude -p haiku]
+        SCA[spawn-context-agent.cjs] --> |outputs| TRIGGER[Trigger instruction]
+        Note over SCA: Claude then spawns context-agent via Task tool
     end
 
     subgraph CompactOnly["AFTER COMPACT ONLY"]
