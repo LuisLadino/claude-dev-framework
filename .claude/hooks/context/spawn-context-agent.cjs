@@ -123,15 +123,16 @@ IMPORTANT:
     process.exit(0);
   }
 
-  // Extract the actual result (it's in claudeOutput.result, possibly with markdown fence)
+  // Extract the actual result (JSON should be at the END, after research output)
   let contextJson;
   try {
     let resultText = claudeOutput.result || '';
 
-    // Strip markdown code fence if present
-    const jsonMatch = resultText.match(/```(?:json)?\n?([\s\S]*?)\n?```/);
-    if (jsonMatch) {
-      resultText = jsonMatch[1];
+    // Find the LAST markdown code fence (JSON comes after research)
+    const allFences = [...resultText.matchAll(/```(?:json)?\n?([\s\S]*?)\n?```/g)];
+    if (allFences.length > 0) {
+      // Get the last fence's content
+      resultText = allFences[allFences.length - 1][1];
     }
 
     contextJson = JSON.parse(resultText.trim());

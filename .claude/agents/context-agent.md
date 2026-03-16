@@ -160,7 +160,9 @@ Based on current phase:
 
 ## Output
 
-Write to `.claude/current-context.json`:
+**OUTPUT the JSON directly** (no file writing, the hook parses your output).
+
+Do your research FIRST, then output the JSON as the LAST thing you output, wrapped in a markdown code fence:
 
 ```json
 {
@@ -207,7 +209,7 @@ Write to `.claude/current-context.json`:
 }
 ```
 
-Then return: `{ "ok": true }`
+The hook will parse this JSON and inject it into the main session context.
 
 ## Error Handling
 
