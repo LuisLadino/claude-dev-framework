@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Context injection pipeline audit** (`.claude/docs/context-injection-audit.md`) - Comprehensive audit of all 8 context injection points:
+  - Maps injection timing (session start → per-prompt → pre-compact)
+  - Token budget analysis (~6,200 at start, grows ~600/prompt)
+  - Identifies redundancies (methodology loaded in 3+ places)
+  - Recommendations for optimization (remove redundant injections, split inject-context.cjs)
+
 - **Enforcement patterns documentation** (`.claude/docs/enforcement-patterns.md`) - Documents the two enforcement types in the framework:
   - **Marker-based (stateless)**: Gate checks for marker in action (e.g., `SKILL_ACTIVE=1`). Used when binary "did workflow run?" check suffices.
   - **State-based (per-prompt)**: Gate checks session-state.json, flag cleared each prompt. Used when content must be re-read per prompt.
