@@ -1181,40 +1181,10 @@ Full profile: ~/.gemini/antigravity/brain/voice-profile.md`);
     }
   }
 
-  // Interaction framing reminder - keeps teaching mode primed
-  // Now includes framing agents requirement
-  const interactionReminder = `[MANDATORY FRAMING]
-
-**Before responding to ANY non-trivial request:**
-
-1. **Launch Context Agent** (if project-definition.yaml exists):
-   - Read .claude/specs/project-definition.yaml
-   - Determine: project phase, success criteria status, gaps
-   - Output: big picture framing
-
-2. **Launch Task Agent:**
-   - Evaluate THIS prompt through design thinking micro-cycle
-   - Determine: task type, micro-cycle position, research needed
-   - Identify: applicable lenses (PM, UX, Engineering, AI/ML, etc.)
-   - Determine: teaching focus (2-3 concepts)
-
-3. **Then respond** with the framing applied:
-   - Name the phase (big picture + micro)
-   - Name the lenses
-   - Teach the concepts as you work
-   - Connect to Luis's curriculum gaps
-
-Agent prompts: .claude/agents/context-agent.md and .claude/agents/task-agent.md
-
-Skip framing for simple yes/no questions or quick clarifications.`;
-
-  contextParts.push(interactionReminder);
-
   // Log what we did for observability
   // Full prompt captured for analysis (user confirmed privacy not a concern)
   const actions = {
-    prompt: prompt,
-    interactionReminder: true
+    prompt: prompt
   };
   if (commandSuggested) actions.commandSuggested = commandSuggested;
   if (reasoningCheckpoints.length > 0) actions.reasoningCheckpoints = reasoningCheckpoints.length;
@@ -1225,14 +1195,18 @@ Skip framing for simple yes/no questions or quick clarifications.`;
   if (isCaptureRequest) actions.captureTriggered = true;
   if (phaseEvalInjected) actions.phaseEvalInjected = true;
 
-  // Log injection (always happens now due to interaction reminder)
-  logInjection(session_id, actions);
+  // Log injection if any context was added
+  if (contextParts.length > 0) {
+    logInjection(session_id, actions);
+  }
 
-  // Output context (always has at least interaction reminder)
-  const output = {
-    additionalContext: contextParts.join('\n\n---\n\n')
-  };
-  console.log(JSON.stringify(output));
+  // Output context if any was collected
+  if (contextParts.length > 0) {
+    const output = {
+      additionalContext: contextParts.join('\n\n---\n\n')
+    };
+    console.log(JSON.stringify(output));
+  }
 
   process.exit(0);
 }

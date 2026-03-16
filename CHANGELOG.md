@@ -35,6 +35,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Framework vs project files documentation** - CLAUDE.md now documents which files are framework-owned (sync from claude-dev-framework) vs project-specific (never overwrite).
 
+### Removed
+
+- **Redundant framing reminder** from `inject-context.cjs` - The "MANDATORY FRAMING" block (~240 tokens) fired on every prompt but Stop hooks already enforce the same behavior. Saves ~240 tokens per prompt. Hook now only outputs when there's actual context to inject.
+
 ### Fixed
 
 - **Phase Evaluator now actionable** - Complete rewrite to be a project-level strategic advisor:
