@@ -11,6 +11,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Async Phase Evaluator** - Phase Evaluator now runs in background, non-blocking:
+  - `spawn-phase-evaluator.cjs` - Hook gathers commit info, spawns detached worker, exits immediately
+  - `phase-evaluator-worker.cjs` - Background worker runs `claude -p`, parses response, executes actions
+  - Commits no longer block waiting for evaluation (was timing out at 120s with research-first approach)
+  - Results written to `.claude/phase-evaluation.json` for inject-context.cjs on next prompt
+  - History appended to `.claude/phase-evaluation-history.jsonl` for trend analysis
+
+- **"Commit ≠ Close" rule** - Updated commit skill with issue linking guidance:
+  - `Closes #X` - Only when fix is tested and verified working
+  - `Addresses #X` - Default, issue stays open for verification
+  - `Related to #X` - Partial progress, more work needed
+
 - **Context injection pipeline audit** (`.claude/docs/context-injection-audit.md`) - Comprehensive audit of all 8 context injection points:
   - Maps injection timing (session start → per-prompt → pre-compact)
   - Token budget analysis (~6,200 at start, grows ~600/prompt)
