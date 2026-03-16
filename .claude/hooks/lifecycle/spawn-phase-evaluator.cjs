@@ -221,6 +221,16 @@ RESPOND WITH JSON ONLY:`;
   const start = Date.now();
   let result;
 
+  // Debug helper
+  const debugLog = (msg) => {
+    try {
+      const timestamp = new Date().toISOString();
+      fs.appendFileSync(debugPath, `[${timestamp}] ${msg}\n`);
+    } catch (e) { /* ignore */ }
+  };
+
+  debugLog('Spawning claude -p...');
+
   try {
     // Run from /tmp to avoid deadlock with parent Claude session
     result = execSync(
@@ -235,16 +245,19 @@ RESPOND WITH JSON ONLY:`;
       }
     );
   } catch (err) {
+    debugLog(`Spawn FAILED: ${err.message}`);
     process.exit(0);
   }
 
   const elapsed = Date.now() - start;
+  debugLog(`Spawn completed in ${elapsed}ms`);
 
   // Parse the claude -p output
   let claudeOutput;
   try {
     claudeOutput = JSON.parse(result);
   } catch (e) {
+    debugLog(`JSON parse FAILED: ${e.message}. Raw: ${result.substring(0, 200)}`);
     process.exit(0);
   }
 
@@ -260,7 +273,9 @@ RESPOND WITH JSON ONLY:`;
     }
 
     evalJson = JSON.parse(resultText.trim());
+    debugLog(`Evaluation parsed successfully`);
   } catch (e) {
+    debugLog(`Eval parse FAILED: ${e.message}. Result: ${(claudeOutput.result || '').substring(0, 200)}`);
     process.exit(0);
   }
 
@@ -426,7 +441,9 @@ RESPOND WITH JSON ONLY:`;
       raw: evalJson
     };
     fs.writeFileSync(outputPath, JSON.stringify(fileContent, null, 2));
+    debugLog(`Output written to ${outputPath}`);
   } catch (e) {
+    debugLog(`File write FAILED: ${e.message}`);
     // If we can't write the file, at least stderr was shown
   }
 
