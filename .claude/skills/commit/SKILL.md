@@ -94,13 +94,23 @@ gh pr create --title "title" --body "body"
 - What changed
 - Why it changed
 
-Closes #X
+Addresses #X
 
 ## Test Plan
 - How to verify
+- [ ] Tested locally
+- [ ] Verified fix works
 ```
 
-**Important:** Include `Closes #X` so GitHub auto-closes the issue on merge.
+**Issue linking (commit ≠ close):**
+
+| Keyword | When to use |
+|---------|-------------|
+| `Closes #X` | Fix is **tested and verified working**. Issue can close on merge. |
+| `Addresses #X` | Code is written but **not yet verified**. Issue stays open. |
+| `Related to #X` | Partial progress. More work needed. |
+
+**Default to `Addresses`** - issues close when fixes are VERIFIED, not when code merges. Only use `Closes` when you've actually tested the fix works.
 
 ### 7. Enable Auto-merge
 
