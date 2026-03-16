@@ -33,13 +33,16 @@ const PHASE_EVAL_OUTPUT_PATH = '.claude/phase-evaluation.json'; // Written for i
 const TIMEOUT_MS = 120000; // 120 seconds (agent does research now)
 const MODEL = 'haiku';
 
+// Debug log path (module-level so runPhaseEvaluator can access it)
+let debugPath;
+
 // Read stdin (hook input)
 let input = '';
 process.stdin.setEncoding('utf8');
 process.stdin.on('data', chunk => input += chunk);
 process.stdin.on('end', () => {
   // Debug: Log every invocation
-  const debugPath = path.join(process.cwd(), '.claude/phase-evaluator-debug.log');
+  debugPath = path.join(process.cwd(), '.claude/phase-evaluator-debug.log');
   try {
     const timestamp = new Date().toISOString();
     const debugEntry = `[${timestamp}] Hook invoked\nInput: ${input.substring(0, 500)}\n---\n`;
