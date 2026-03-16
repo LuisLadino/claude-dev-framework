@@ -396,97 +396,13 @@ The CPMAI question: "How do we know this model is ready?"`
 - Contingency: What if it fails?
 
 The CPMAI question: "What's the plan for day 2 and beyond?"`
-  },
-  // GENERAL AI TECHNICAL (after CPMAI specifics)
-  {
-    patterns: [
-      // AI/ML technical topics - expanded
-      /\b(llm|gpt|claude|transformer|attention|embedding|rag|fine.?tun|rlhf|alignment|hallucination|inference)\b/i,
-      /\b(machine learning|deep learning|neural)\b/i,
-      /\b(vector|semantic|retrieval|generation|token)\b/i,
-      /\b(prompt|context window|temperature|top.?p)\b/i,
-      /\b(agent|tool use|function call|chain.?of.?thought)\b/i,
-      /\bhow (does|do) (llm|gpt|claude|model|ai)\b/i,
-      /\bwhy (does|do) (llm|gpt|claude|model|ai)\b/i,
-      /\b(pretraining|pretrain|sft|supervised fine.?tun)\b/i,
-      /\b(red team|jailbreak|prompt injection|adversarial)\b/i
-    ],
-    reminder: `[TEACHING MODE: AI TECHNICAL FLUENCY]
-Explain HOW it works, not just WHAT it does.
-- Mechanisms: Why does this happen? What's the underlying process?
-- Failure modes: How can this break? What are the edge cases?
-- Trade-offs: What are the costs of this approach?
-- How to use it: When would you say this term? Formal vs casual. Example sentences.
-
-Don't say "RAG helps with hallucinations."
-Say "RAG reduces hallucination by grounding generation in retrieved context. The model relies less on parametric memory. But retrieval quality matters - garbage in, garbage out."
-Usage: In a technical interview you'd say "we use RAG to ground generation." In a standup: "the retrieval step is slow."`
-  },
-  {
-    patterns: [
-      // Coding/building - expanded
-      /\b(error|exception|bug|issue|problem)\s*(handling|recovery|catching|fix)\b/i,
-      /\b(add|implement|write|create)\s+(a |an |the )?(function|component|handler|service|endpoint)\b/i,
-      /\bvalidat(e|ion|ing)\b/i,
-      /\brefactor/i,
-      /\b(debug|fix|solve|resolve) (this|the|a)\b/i,
-      /\bhow (should|do) (I|we) (handle|deal with|manage)\b/i,
-      /\b(build|create|make|write) (this|it|a|the)\b/i,
-      /\bwhat'?s the (pattern|approach|way) (for|to)\b/i
-    ],
-    reminder: `[TEACHING MODE: DISCIPLINE FRAMING]
-Name the concept and connect to disciplines:
-- What's this called in UX/PM/AI terms?
-- How does it fit the design thinking cycle?
-- What's the PM question (is this worth the investment)?
-- How to use it: When would you say this term? Example sentences a practitioner would say.
-
-"This is defensive design (UX) - anticipating errors. Nielsen's heuristic #9."
-Usage: In a design review: "we need more defensive design here." In a PR: "added input validation - defensive design."`
-  },
-  {
-    patterns: [
-      // Planning/prioritization - expanded
-      /\b(priorit|roadmap|scope|requirement|stakeholder|tradeoff|trade-off)/i,
-      /\bwhich (one|approach|option|way)\b/i,
-      /\b(plan|strategy|decision) (for|about|on)\b/i,
-      /\bwhat (should|do) (I|we) (do|focus|work on) (first|next)\b/i,
-      /\b(important|urgent|critical|blocker)\b/i,
-      /\b(or|versus) (should|do) (I|we)\b/i,
-      /\b(choose|decide|pick) (between|which)\b/i,
-      /\bwhat matters (most|more)\b/i
-    ],
-    reminder: `[TEACHING MODE: PM FRAMEWORKS]
-Make the framework visible:
-- Name the prioritization approach (RICE, MoSCoW, impact/effort)
-- Surface trade-offs explicitly
-- What would a PM ask here?
-- How to use it: When would you say this term? Example sentences.
-
-The PM skill is making decisions transparent so stakeholders understand trade-offs.
-Usage: In planning: "let's RICE score these." In a 1:1: "the impact/effort doesn't justify this." In a stakeholder meeting: "here's how we prioritized."`
-  },
-  {
-    patterns: [
-      // Research/investigation - expanded
-      /\b(understand|investigate|research|explore|figure out|look into)\b/i,
-      /\bwhy (does|is|do|are|did|was|isn't|doesn't)\b/i,
-      /\bwhat('s| is) (happening|going on|wrong|the issue|causing)\b/i,
-      /\bhelp me (understand|figure out|see|grasp)\b/i,
-      /\bi (don't|do not) (understand|get|see)\b/i,
-      /\b(confused|unclear|lost)\b/i,
-      /\bwalk me through\b/i,
-      /\bwhat (am I|are we) missing\b/i
-    ],
-    reminder: `[METHODOLOGY: DESIGN THINKING]
-Start with Understand:
-- What's actually happening? What are the constraints?
-- Define precisely. Not symptoms, root causes.
-- Research before acting. Read the code/docs first.
-
-The check: "Would a PM with UX foundations and AI technical fluency approach it this way?"`
-  },
-  // (Career/professional moved to top of array for priority)
+  }
+  // NOTE: Removed 4 generic teaching mode reminders that duplicate system-rules.md:
+  // - AI Technical Fluency (system prompt has teaching mode)
+  // - Discipline Framing (covered by Lens/Teach format requirement)
+  // - PM Frameworks (covered by design thinking phases)
+  // - Design Thinking (covered by Understand phase)
+  // Kept: Career/Professional (Luis-specific) + CPMAI Domains 1-5 (domain expertise)
 ];
 
 // Content writing detection - inject voice profile when writing for Luis

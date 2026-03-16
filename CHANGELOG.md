@@ -39,6 +39,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Redundant framing reminder** from `inject-context.cjs` - The "MANDATORY FRAMING" block (~240 tokens) fired on every prompt but Stop hooks already enforce the same behavior. Saves ~240 tokens per prompt. Hook now only outputs when there's actual context to inject.
 
+- **Redundant methodology enforcement** from `inject-context.cjs` - Removed 4 generic teaching mode patterns that duplicate system-rules.md:
+  - AI Technical Fluency (system prompt has teaching mode)
+  - Discipline Framing (covered by Lens/Teach format)
+  - PM Frameworks (covered by design thinking)
+  - Design Thinking (covered by Understand phase)
+  - Kept: Career/Professional (Luis-specific) + CPMAI Domains 1-5 (domain expertise)
+
 ### Fixed
 
 - **Phase Evaluator now actionable** - Complete rewrite to be a project-level strategic advisor:
