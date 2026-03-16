@@ -46,6 +46,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Design Thinking (covered by Understand phase)
   - Kept: Career/Professional (Luis-specific) + CPMAI Domains 1-5 (domain expertise)
 
+### Changed
+
+- **inject-context.cjs refactored into focused modules** - Decomposed 1,128-line monolith into 7 single-responsibility modules:
+  - `inject-context.cjs` (119 lines) - Orchestrator that calls modules
+  - `route-commands.cjs` (394 lines) - Command patterns + workflow loading
+  - `methodology.cjs` (159 lines) - Career + CPMAI domain reminders
+  - `voice-identity.cjs` (139 lines) - Voice profile + identity injection
+  - `inject-utils.cjs` (141 lines) - Shared utilities
+  - `spec-triggers.cjs` (119 lines) - Spec auto-loading
+  - `capture.cjs` (119 lines) - Capture request handling
+  - `reasoning-checkpoints.cjs` (108 lines) - Reasoning reminders
+  - Each module exports a `check(prompt)` function returning `{ content, metadata }`
+
 ### Fixed
 
 - **Phase Evaluator now actionable** - Complete rewrite to be a project-level strategic advisor:
