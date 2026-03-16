@@ -61,6 +61,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Agent spawn hooks now have tool access** - Added `--allowedTools "Read,Bash,Glob,Grep"` flag to both spawn hooks. Without this flag, `claude -p` subprocesses couldn't get user approval for tool access and would fail silently. Also increased Context Agent timeout from 60s to 120s. Closes #9.
+
 - **Phase Evaluator now actionable** - Complete rewrite to be a project-level strategic advisor:
   - Creates GitHub issues for research needs, gaps, things to track
   - Adds comments to active issues with context and links

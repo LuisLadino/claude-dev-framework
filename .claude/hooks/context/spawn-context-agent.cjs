@@ -25,7 +25,7 @@ const path = require('path');
 
 // Configuration
 const AGENT_INSTRUCTIONS_PATH = '.claude/agents/context-agent.md';
-const TIMEOUT_MS = 60000; // 60 seconds
+const TIMEOUT_MS = 120000; // 120 seconds (agent needs time to read files and evaluate)
 const MODEL = 'haiku'; // Fast model for context gathering
 
 // Read stdin (hook input)
@@ -80,7 +80,9 @@ IMPORTANT:
 - If you cannot complete a step, include an error in the output
 - Be fast - this runs at session start`;
 
-  // Spawn claude -p
+  // Spawn claude -p with pre-authorized tools
+  // Without --allowedTools, the subprocess can't get user approval for tool access
+  const ALLOWED_TOOLS = 'Read,Bash,Glob,Grep';
   const start = Date.now();
   let result;
 
@@ -88,7 +90,7 @@ IMPORTANT:
     // Run from /tmp to avoid deadlock with parent Claude session
     // (claude -p hangs when run from same directory as parent)
     result = execSync(
-      `claude -p --model ${MODEL} --output-format json`,
+      `claude -p --model ${MODEL} --output-format json --allowedTools "${ALLOWED_TOOLS}"`,
       {
         input: prompt,
         encoding: 'utf8',

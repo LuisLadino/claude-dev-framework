@@ -215,14 +215,16 @@ REQUIRED JSON STRUCTURE:
 
 RESPOND WITH JSON ONLY:`;
 
-  // Spawn claude -p
+  // Spawn claude -p with pre-authorized tools
+  // Without --allowedTools, the subprocess can't get user approval for tool access
+  const ALLOWED_TOOLS = 'Read,Bash,Glob,Grep';
   const start = Date.now();
   let result;
 
   try {
     // Run from /tmp to avoid deadlock with parent Claude session
     result = execSync(
-      `claude -p --model ${MODEL} --output-format json`,
+      `claude -p --model ${MODEL} --output-format json --allowedTools "${ALLOWED_TOOLS}"`,
       {
         input: prompt,
         encoding: 'utf8',
