@@ -4,9 +4,13 @@
  * Enforce Framing Hook
  *
  * Event: Stop
- * Purpose: Verify that Context and Task agents were launched this turn
+ * Purpose: Verify that design thinking tasks were used for substantive work
  *
- * Blocks session completion if framing agents weren't used.
+ * Checks for:
+ * 1. TaskCreate/TaskUpdate usage (native task management, not external agents)
+ * 2. Design thinking phases being tracked
+ *
+ * Warns if substantive work happened without task tracking.
  */
 
 const fs = require('fs');
@@ -47,46 +51,44 @@ function handleHook(data) {
     process.exit(0);
   }
 
-  // Check if Task agents were launched with framing prompts
+  // Check for native task tool usage (TaskCreate, TaskUpdate, TaskList, TaskGet)
+  // This is the NEW pattern - Claude uses tasks natively, not via external agents
   const assistantMessages = lastMessages.filter(m => m.role === 'assistant');
 
-  let hasContextAgent = false;
-  let hasTaskAgent = false;
+  let hasTaskUsage = false;
+  const taskTools = ['TaskCreate', 'TaskUpdate', 'TaskList', 'TaskGet'];
 
   for (const msg of assistantMessages) {
     const content = msg.content || [];
     for (const block of content) {
-      if (block.type === 'tool_use' && block.name === 'Task') {
-        const prompt = block.input?.prompt?.toLowerCase() || '';
-        const desc = block.input?.description?.toLowerCase() || '';
+      if (block.type === 'tool_use' && taskTools.includes(block.name)) {
+        hasTaskUsage = true;
+        break;
+      }
+    }
+    if (hasTaskUsage) break;
+  }
 
-        // Check for context agent
-        if (prompt.includes('context agent') ||
-            prompt.includes('project definition') ||
-            prompt.includes('big picture') ||
-            desc.includes('context')) {
-          hasContextAgent = true;
-        }
-
-        // Check for task agent
-        if (prompt.includes('task agent') ||
-            prompt.includes('micro-cycle') ||
-            prompt.includes('design thinking') ||
-            prompt.includes('teaching focus') ||
-            desc.includes('task evaluation')) {
-          hasTaskAgent = true;
+  // Also check for design thinking skill invocation
+  let hasDesignThinkingSkill = false;
+  for (const msg of assistantMessages) {
+    const content = msg.content || [];
+    for (const block of content) {
+      if (block.type === 'tool_use' && block.name === 'Skill') {
+        const skill = block.input?.skill?.toLowerCase() || '';
+        if (skill.includes('design-thinking')) {
+          hasDesignThinkingSkill = true;
+          break;
         }
       }
     }
   }
 
-  // For now, just check if EITHER agent was launched
-  // We can tighten this to require BOTH once the system is working
-  const hasFraming = hasContextAgent || hasTaskAgent;
+  const hasFraming = hasTaskUsage || hasDesignThinkingSkill;
 
   if (!hasFraming && hasToolUse) {
     // Output warning but don't block yet - we're in training mode
-    console.log('[FRAMING REMINDER] No framing agents detected. Consider launching Context and Task agents for better responses.');
+    console.log('[FRAMING REMINDER] Substantive work without design thinking tasks. Consider using TaskCreate to track the work.');
     process.exit(0);  // Exit 0 to not block
   }
 

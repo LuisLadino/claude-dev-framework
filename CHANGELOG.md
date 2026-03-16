@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Design thinking skill** (`.claude/skills/design-thinking/SKILL.md`) - Enforces always-on task flow: 6 tasks (UNDERSTAND → DEFINE → IDEATE → PROTOTYPE → TEST → ITERATE) that should be active for ALL substantive work, not just triggered work.
+
+- **enforce-framing hook updated** - Now checks for native TaskCreate/TaskUpdate usage instead of old agent spawning pattern. Warns if substantive work happened without task tracking.
+
 - **Issue scope criteria in plan skill** - Step 0 before creating issues: check if this has a different Definition of Done than current work. Prevents issue sprawl by defaulting to iteration on current issue unless scope is clearly different.
 
 - **Framework vs project files documentation** - CLAUDE.md now documents which files are framework-owned (sync from claude-dev-framework) vs project-specific (never overwrite).

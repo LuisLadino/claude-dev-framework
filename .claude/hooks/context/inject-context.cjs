@@ -17,6 +17,26 @@ const path = require('path');
 // Command routing - suggest commands based on intent
 // Patterns should match how Luis actually talks, not formal language
 const COMMAND_ROUTES = [
+  // Design thinking - foundational, triggers first for substantive work
+  {
+    patterns: [
+      /\blet'?s (start|begin|go|do this)\b/i,
+      /\bnew (problem|task|challenge|issue)\b/i,
+      /\bwhat (are|should) we (work on|do|tackle)\b/i,
+      /\bwhat are we working on\b/i,
+      /\bstart fresh\b/i,
+      /\bwhere (do|should) (we|I) start\b/i,
+      /\bkick (this |it )?off\b/i,
+      /\b(tackle|approach) this (problem|issue|task)?\b/i,
+      /\bdesign thinking\b/i,
+      /\bcreate (the )?tasks?\b/i,
+      /\bset up (the )?tasks?\b/i
+    ],
+    command: '/design-thinking',
+    reason: 'Starting substantive work? Design thinking creates 6 tasks (Understand → Define → Ideate → Prototype → Test → Iterate) to guide the work.',
+    injectWorkflow: true,
+    workflowLoader: 'design-thinking'
+  },
   {
     patterns: [
       // Natural coding requests
@@ -600,6 +620,55 @@ function loadAndConsumePhaseEvaluation() {
  */
 function loadWorkflow(workflowName) {
   const cwd = process.cwd();
+
+  if (workflowName === 'design-thinking') {
+    // Load the design thinking skill content
+    const skillPath = path.join(cwd, '.claude/skills/design-thinking/SKILL.md');
+    let skillContent = '';
+    try {
+      skillContent = fs.readFileSync(skillPath, 'utf8');
+      // Extract just the content after frontmatter
+      const match = skillContent.match(/---[\s\S]*?---\s*([\s\S]*)/);
+      if (match) {
+        skillContent = match[1].trim();
+      }
+    } catch {
+      // Skill file not found, use inline instructions
+      skillContent = `## The 6 Tasks
+
+Create these using TaskCreate:
+
+1. UNDERSTAND - Research the problem. What's actually happening?
+2. DEFINE - Name the problem precisely. Not symptoms, root causes.
+3. IDEATE - Generate approaches. What are the options?
+4. PROTOTYPE - Build something concrete. Make it real enough to test.
+5. TEST - Does it work? What did we learn?
+6. ITERATE - Back to any phase based on what you learned.
+
+Set UNDERSTAND to in_progress initially.
+
+## The Rhythm
+
+Movement is non-linear:
+- Go back when: Wrong problem discovered, new insight emerges, approach fails
+- Jump ahead when: Need to build to think, obvious solution needs validation
+- Iteration is NOT failure - it's the rhythm working`;
+    }
+
+    return `[DESIGN THINKING WORKFLOW - AUTO-LOADED]
+
+**This is the operating system for all substantive work.**
+
+${skillContent}
+
+---
+
+**ACTION REQUIRED:**
+1. Check TaskList for existing design thinking tasks
+2. If none exist, create the 6 tasks (UNDERSTAND through ITERATE)
+3. Mark the appropriate task as in_progress
+4. Proceed with the work, moving through tasks as you go`;
+  }
 
   if (workflowName === 'handoff') {
     // Find brain path for this workspace
