@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Results written to `.claude/phase-evaluation.json` for inject-context.cjs on next prompt
   - History appended to `.claude/phase-evaluation-history.jsonl` for trend analysis
 
+- **GitHub issue maintenance documentation** - Added "Maintaining Issues During Work" section to plan skill:
+  - When to update issues (decisions, discoveries, phase transitions, blockers, iterations)
+  - Comment templates: Decision Record, Discovery Log, Phase Transition, Iteration
+  - Examples of good vs bad issue updates
+  - References added in design-thinking skill and phase-evaluator agent
+
 - **"Commit ≠ Close" rule** - Updated commit skill with issue linking guidance:
   - `Closes #X` - Only when fix is tested and verified working
   - `Addresses #X` - Default, issue stays open for verification

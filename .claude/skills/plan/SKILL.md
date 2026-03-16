@@ -302,6 +302,128 @@ Issues track work from idea to completion. The issue body evolves:
 
 ---
 
+## Maintaining Issues During Work
+
+**Issues are the persistent record of the design thinking journey.** Conversation context gets compacted; issue comments survive.
+
+### When to Update the Issue
+
+Write to the issue at these trigger points:
+
+| Trigger | What Happened | What to Write |
+|---------|--------------|---------------|
+| **Decision made** | Chose between options | Decision record (see template) |
+| **Discovery** | Learned something significant | What we found + implications |
+| **Phase transition** | Moving UNDERSTAND → DEFINE, etc. | Phase change + rationale |
+| **Blocked** | Can't proceed | What's blocking + what we tried |
+| **Going backward** | Need to revisit earlier phase | Why we're iterating + new questions |
+
+### Comment Templates
+
+**Use these formats for structured comments that future sessions can parse.**
+
+#### Decision Record
+
+When you make a non-obvious choice:
+
+```markdown
+## Decision: [Short title]
+
+**Context:** What situation required a decision?
+**Options considered:**
+1. Option A - [brief description]
+2. Option B - [brief description]
+3. Option C - [brief description]
+
+**Chosen:** Option [X]
+**Rationale:** Why this option?
+**Trade-offs:** What we're giving up or accepting
+```
+
+#### Discovery Log
+
+When you learn something important:
+
+```markdown
+## Discovery: [What we found]
+
+**Source:** Where did this come from? (code, docs, testing, conversation)
+**Implication:** How does this affect our approach?
+**Action:** What we're doing about it (or "No action needed - informational")
+```
+
+#### Phase Transition
+
+When moving between design thinking phases:
+
+```markdown
+## Phase: [DEFINE] → [IDEATE]
+
+**Completed in [DEFINE]:**
+- [What we accomplished]
+- [Key outputs/artifacts]
+
+**Moving to [IDEATE] because:**
+- [Why we're ready to transition]
+
+**Questions for [IDEATE]:**
+- [What we need to explore]
+```
+
+#### Iteration (Going Backward)
+
+When returning to an earlier phase:
+
+```markdown
+## Iteration: [PROTOTYPE] → [UNDERSTAND]
+
+**Trigger:** What caused us to go back?
+**Discovery:** What we learned that invalidated assumptions
+**Questions to re-examine:**
+- [Question 1]
+- [Question 2]
+```
+
+### Command to Add Comments
+
+```bash
+gh issue comment {number} --body "## Decision: ...
+
+**Context:** ...
+..."
+```
+
+### Why This Matters
+
+1. **Session continuity** - Context compaction loses conversation details. Issues persist.
+2. **Decision traceability** - Future you (or Claude) can see WHY choices were made.
+3. **Iteration support** - When going backward, the trigger is documented.
+4. **Self-correction** - Inconsistencies between issue context and code become visible.
+
+### Example: Good vs Bad Issue Updates
+
+**Bad (vague):**
+```
+Updated the hook to fix the issue.
+```
+
+**Good (actionable context):**
+```
+## Decision: Make Phase Evaluator async
+
+**Context:** Phase Evaluator was blocking commits for 120+ seconds when doing research.
+**Options considered:**
+1. Increase timeout to 5 minutes
+2. Reduce research scope
+3. Make async with background worker
+
+**Chosen:** Option 3 - async with background worker
+**Rationale:** User asked "why can't we just run it in the background?" - valid point. The evaluation doesn't need to block the commit; results can be injected on next prompt.
+**Trade-offs:** Results appear on next prompt instead of immediately after commit.
+```
+
+---
+
 ## Standard Labels Reference
 
 Create these labels on new projects:

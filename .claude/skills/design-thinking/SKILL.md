@@ -88,7 +88,9 @@ TaskUpdate(
 
 The GitHub issue is the **persistent record**. Tasks are **session working memory**.
 
-At key milestones, update the GitHub issue with what we learned.
+**At key milestones, update the GitHub issue.** See plan skill's "Maintaining Issues During Work" for:
+- When to update (decisions, discoveries, phase transitions)
+- Comment templates (Decision Record, Discovery Log, Phase Transition)
 
 ---
 
@@ -144,7 +146,7 @@ If starting fresh:
 2. Mark UNDERSTAND as in_progress
 3. Begin researching/understanding the problem
 4. Move through tasks as work progresses
-5. Update GitHub issue with key discoveries
+5. Update GitHub issue with discoveries/decisions (see plan skill's "Maintaining Issues During Work")
 
 If resuming:
 1. Check TaskList for existing tasks

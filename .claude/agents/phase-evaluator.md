@@ -189,3 +189,4 @@ Return ONLY valid JSON. No explanations, no markdown fences.
 - **Research proactively**: Find documentation and links that help
 - **Create sparingly**: Only create issues for things that truly need tracking
 - **Enrich actively**: Add value to active issues with context and links
+- **Use structured formats**: Issue comments should follow plan skill's "Maintaining Issues During Work" templates (Decision Record, Discovery Log, Phase Transition)
