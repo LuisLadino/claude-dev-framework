@@ -12,7 +12,10 @@
  *
  * Checks for: **Lens:**, **Refine:**, **Phase:**, **Teach:**
  * Exit 2 if missing (blocks response)
- * Exit 0 if present or trivial response (allows)
+ * Exit 0 if present (allows)
+ *
+ * NO ESCAPE HATCHES. Every response needs the format. The format keeps
+ * Claude grounded in design thinking framing at all times.
  */
 
 const fs = require('fs');
@@ -26,15 +29,6 @@ const REQUIRED_MARKERS = [
   { pattern: /\*\*Phase:\*\*/i, name: 'Phase' },
   { pattern: /\*\*Teach:\*\*/i, name: 'Teach' }
 ];
-
-// Patterns that indicate trivial responses (skip enforcement)
-const TRIVIAL_PATTERNS = [
-  /^(yes|no|okay|ok|sure|done|thanks|got it)\.?$/i,
-  /^I('ll| will) /i,  // Simple acknowledgments
-];
-
-// Minimum response length to enforce (very short = trivial)
-const MIN_LENGTH_TO_ENFORCE = 100;
 
 // Read hook input from stdin
 let input = '';
@@ -63,18 +57,7 @@ async function handleHook(data) {
     process.exit(0);
   }
 
-  // Skip enforcement for trivial responses
-  if (lastResponse.length < MIN_LENGTH_TO_ENFORCE) {
-    process.exit(0);
-  }
-
-  for (const trivialPattern of TRIVIAL_PATTERNS) {
-    if (trivialPattern.test(lastResponse.trim())) {
-      process.exit(0);
-    }
-  }
-
-  // Check for required markers
+  // Check for required markers - NO ESCAPE HATCHES
   const missingMarkers = [];
 
   for (const marker of REQUIRED_MARKERS) {

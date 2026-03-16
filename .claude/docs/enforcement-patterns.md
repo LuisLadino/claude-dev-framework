@@ -163,13 +163,11 @@ Update this file with the new pattern.
 - `**Phase:**`
 - `**Teach:**`
 
-**Escape hatches:**
-- Responses under 100 characters (trivial)
-- Simple acknowledgments (yes, no, okay, etc.)
+**No escape hatches.** Every response needs the format. The format keeps Claude grounded in design thinking framing at all times - there are no "trivial" responses when we're always working on something.
 
 **Exit codes:**
-- EXIT 0 if all markers present or trivial response
-- EXIT 2 if markers missing (blocks response)
+- EXIT 0 if all markers present
+- EXIT 2 if any marker missing (blocks response)
 
 ---
 
