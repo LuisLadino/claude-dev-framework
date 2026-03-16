@@ -4,13 +4,17 @@
  * Enforce Framing Hook
  *
  * Event: Stop
- * Purpose: Verify that design thinking tasks were used for substantive work
+ * Purpose: ENFORCE design thinking task tracking for all tool use
  *
- * Checks for:
- * 1. TaskCreate/TaskUpdate usage (native task management, not external agents)
- * 2. Design thinking phases being tracked
+ * Type: Marker-based enforcement (checks transcript for TaskCreate/TaskUpdate)
+ * Constraint: Claude ignores task reminders, does work without tracking decisions
+ * Solution: Block responses that have tool use without task management
  *
- * Warns if substantive work happened without task tracking.
+ * Any tool use = changes = decisions being made = needs task tracking
+ * Tasks tie to GitHub Issues (system of record)
+ *
+ * Exit 2 if tool use without task usage (blocks response)
+ * Exit 0 if task usage present OR no tool use (allows)
  */
 
 const fs = require('fs');
@@ -87,9 +91,16 @@ function handleHook(data) {
   const hasFraming = hasTaskUsage || hasDesignThinkingSkill;
 
   if (!hasFraming && hasToolUse) {
-    // Output warning but don't block yet - we're in training mode
-    console.log('[FRAMING REMINDER] Substantive work without design thinking tasks. Consider using TaskCreate to track the work.');
-    process.exit(0);  // Exit 0 to not block
+    console.error('\n[BLOCKED] Tool use without task tracking.');
+    console.error('\nAny tool use = changes = decisions being made.');
+    console.error('Decisions need to be tracked in design thinking tasks.');
+    console.error('\nRequired: Use TaskCreate to create a task for the current work.');
+    console.error('Tasks should tie to a GitHub Issue (system of record).');
+    console.error('\nExample:');
+    console.error('  TaskCreate: "UNDERSTAND - Research enforcement patterns"');
+    console.error('  TaskCreate: "PROTOTYPE - Implement teaching format hook"');
+    console.error('\nThen retry your action.\n');
+    process.exit(2);  // BLOCK - enforce task tracking
   }
 
   process.exit(0);

@@ -236,6 +236,45 @@ Then continue with whatever else was happening.
 
 ---
 
+## Task Management (Design Thinking Tracking)
+
+**GitHub Issues** are the system of record (persistent, survive sessions).
+**Tasks** are in-session tracking of design thinking phases.
+
+Every task should tie to a GitHub Issue. This creates traceability:
+- Issue = WHY (the problem)
+- Tasks = HOW (phase by phase journey)
+- Changes = WHAT (the implementation)
+
+### When Starting Work on an Issue
+
+Create tasks for design thinking phases:
+
+```
+TaskCreate: "UNDERSTAND - Research [issue topic]"
+TaskCreate: "DEFINE - Clarify requirements for #X"
+TaskCreate: "IDEATE - Explore approaches for #X"
+TaskCreate: "PROTOTYPE - Implement [approach]"
+TaskCreate: "TEST - Verify implementation"
+TaskCreate: "ITERATE - Refine based on findings"
+```
+
+### Task Flow
+
+1. **Start with UNDERSTAND** - Create task, research the problem
+2. **Move through phases** - TaskUpdate to mark complete, create next phase
+3. **Go backward when needed** - Discovery in PROTOTYPE might need more UNDERSTAND
+4. **Update the issue** - Document findings, decisions, discoveries
+
+### Why This Matters
+
+The enforce-framing hook blocks any tool use without task tracking. This isn't punishment - it's ensuring that every change is tied to a decision trail. When you look back at an issue, you can see:
+- What phases we went through
+- What we learned in each phase
+- Why we made the choices we made
+
+---
+
 ## Issue Lifecycle
 
 Issues track work from idea to completion. The issue body evolves:
@@ -248,6 +287,7 @@ Issues track work from idea to completion. The issue body evolves:
 - Issue moved to "In Progress"
 - Branch created referencing issue number
 - Issue content loaded as task context
+- **Tasks created for design thinking phases**
 
 ### When PR Created
 - PR body includes "Closes #X"

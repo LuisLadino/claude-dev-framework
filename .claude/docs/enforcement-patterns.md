@@ -149,6 +149,27 @@ Update this file with the new pattern.
 | Read plan before issues | State-based | `enforce-plan.cjs` | Issues need proper context |
 | Block dangerous commands | Marker-based (no bypass) | `block-dangerous.cjs` | Safety |
 | Teaching format in responses | Marker-based | `check-teaching-format.cjs` | Claude ignores format instructions |
+| Task tracking for tool use | Marker-based | `enforce-framing.cjs` | Claude ignores task reminders |
+
+### Task Tracking Enforcement
+
+**Type:** Marker-based (checks transcript for TaskCreate/TaskUpdate at Stop)
+**Gate:** `enforce-framing.cjs`
+**Event:** Stop
+**Constraint:** Claude ignores task tracker reminders, does work without tracking decisions
+
+**Logic:**
+- Checks if response included tool use (any tool = changes = decisions)
+- Checks if TaskCreate/TaskUpdate was also used
+- If tool use without task usage → EXIT 2 (block)
+
+**Why any tool use:** Tool use means changes are being made. Changes mean decisions are being made. Decisions need to be tracked in design thinking phases tied to GitHub Issues.
+
+**Exit codes:**
+- EXIT 0 if task usage present OR no tool use
+- EXIT 2 if tool use without task usage (blocks response)
+
+---
 
 ### Teaching Format Enforcement
 
