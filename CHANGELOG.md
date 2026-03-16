@@ -11,6 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Enforcement patterns documentation** (`.claude/docs/enforcement-patterns.md`) - Documents the two enforcement types in the framework:
+  - **Marker-based (stateless)**: Gate checks for marker in action (e.g., `SKILL_ACTIVE=1`). Used when binary "did workflow run?" check suffices.
+  - **State-based (per-prompt)**: Gate checks session-state.json, flag cleared each prompt. Used when content must be re-read per prompt.
+  - Includes existing enforcement table, how to add new enforcement, exit codes reference.
+
+- **Teaching format enforcement** - `check-teaching-format.cjs` now blocks (EXIT 2) responses missing required format:
+  - Required markers: `**Lens:**`, `**Refine:**`, `**Phase:**`, `**Teach:**`
+  - Escape hatches: responses under 100 chars, simple acknowledgments
+  - Uses marker-based enforcement (stateless)
+
 - **Design thinking skill** (`.claude/skills/design-thinking/SKILL.md`) - Enforces always-on task flow: 6 tasks (UNDERSTAND → DEFINE → IDEATE → PROTOTYPE → TEST → ITERATE) that should be active for ALL substantive work, not just triggered work.
 
 - **enforce-framing hook updated** - Now checks for native TaskCreate/TaskUpdate usage instead of old agent spawning pattern. Warns if substantive work happened without task tracking.

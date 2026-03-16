@@ -4,22 +4,37 @@
  * Check Teaching Format Hook
  *
  * Event: Stop
- * Purpose: Check if response followed the Required Response Format
+ * Purpose: ENFORCE the Required Response Format (Lens/Refine/Phase/Teach)
  *
- * Post-hoc notification - flags violations after they happen.
- * Reads transcript, checks for [Design Thinking:] and [Concept:] markers.
- * If missing, outputs a warning for awareness.
+ * Type: Marker-based enforcement (stateless)
+ * Constraint: Claude doesn't follow format instructions reliably
+ * Solution: Block responses that don't have the required structure
+ *
+ * Checks for: **Lens:**, **Refine:**, **Phase:**, **Teach:**
+ * Exit 2 if missing (blocks response)
+ * Exit 0 if present or trivial response (allows)
  */
 
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
 
-// Required markers in response
+// Required markers in response (the teaching format)
 const REQUIRED_MARKERS = [
-  /\[Design Thinking:/i,
-  /\[Concept:/i
+  { pattern: /\*\*Lens:\*\*/i, name: 'Lens' },
+  { pattern: /\*\*Refine:\*\*/i, name: 'Refine' },
+  { pattern: /\*\*Phase:\*\*/i, name: 'Phase' },
+  { pattern: /\*\*Teach:\*\*/i, name: 'Teach' }
 ];
+
+// Patterns that indicate trivial responses (skip enforcement)
+const TRIVIAL_PATTERNS = [
+  /^(yes|no|okay|ok|sure|done|thanks|got it)\.?$/i,
+  /^I('ll| will) /i,  // Simple acknowledgments
+];
+
+// Minimum response length to enforce (very short = trivial)
+const MIN_LENGTH_TO_ENFORCE = 100;
 
 // Read hook input from stdin
 let input = '';
@@ -48,24 +63,36 @@ async function handleHook(data) {
     process.exit(0);
   }
 
+  // Skip enforcement for trivial responses
+  if (lastResponse.length < MIN_LENGTH_TO_ENFORCE) {
+    process.exit(0);
+  }
+
+  for (const trivialPattern of TRIVIAL_PATTERNS) {
+    if (trivialPattern.test(lastResponse.trim())) {
+      process.exit(0);
+    }
+  }
+
   // Check for required markers
   const missingMarkers = [];
 
   for (const marker of REQUIRED_MARKERS) {
-    if (!marker.test(lastResponse)) {
-      missingMarkers.push(marker.source);
+    if (!marker.pattern.test(lastResponse)) {
+      missingMarkers.push(marker.name);
     }
   }
 
   if (missingMarkers.length > 0) {
-    console.log('\n[FORMAT CHECK] Response missing required teaching structure:');
-    if (!/\[Design Thinking:/i.test(lastResponse)) {
-      console.log('  - Missing [Design Thinking: PHASE] - Where are we in the cycle?');
-    }
-    if (!/\[Concept:/i.test(lastResponse)) {
-      console.log('  - Missing [Concept: NAME] - What discipline/concept applies?');
-    }
-    console.log('\nNext response: Apply the Required Response Format before executing.\n');
+    console.error('\n[BLOCKED] Response missing required teaching format.');
+    console.error('\nRequired structure (start every response with):');
+    console.error('  **Lens:** [practitioner perspective]');
+    console.error('  **Refine:** [prompt restated in discipline vocabulary]');
+    console.error('  **Phase:** [design thinking phase]');
+    console.error('  **Teach:** [concept + mechanism + discipline framings + usage examples]');
+    console.error('\nMissing: ' + missingMarkers.join(', '));
+    console.error('\nRegenerate your response with the teaching format.\n');
+    process.exit(2); // BLOCK - enforce the format
   }
 
   process.exit(0);
