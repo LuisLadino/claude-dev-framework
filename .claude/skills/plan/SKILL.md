@@ -43,6 +43,24 @@ This skill handles several planning activities. Detect what the user wants:
 
 Capture something for tracking. **Issues are the system of record for WHY work happens.**
 
+### 0. Check Issue Scope First
+
+Before creating a new issue, ask: **Does this have a different Definition of Done than what we're currently working on?**
+
+**Create NEW issue when:**
+- Different Definition of Done than current work
+- Could be solved independently
+- Different component/domain
+- Would significantly expand current scope
+
+**DON'T create new issue when:**
+- Same root problem (iterate on current issue)
+- Bug found while testing (that's TEST → ITERATE)
+- Refinement of approach
+- DoD not yet met on current issue
+
+If working on an issue and something comes up, default to **documenting in current issue** unless it clearly has a separate DoD.
+
 ### 1. Understand the Problem
 
 Before creating an issue, understand:
@@ -102,6 +120,7 @@ Starting in **Understand** / **Define** / etc.
 - **Proposed Solution** - If approach is known
 - **Design Thinking Phase** - Where this work starts in the cycle
 - **Tasks** - Breakdown if scope is clear
+- **Definition of Done** - What does success look like? (Should be explicit by end of DEFINE phase)
 
 ### 4. Add to Milestone (Optional)
 

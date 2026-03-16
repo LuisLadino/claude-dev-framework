@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Issue scope criteria in plan skill** - Step 0 before creating issues: check if this has a different Definition of Done than current work. Prevents issue sprawl by defaulting to iteration on current issue unless scope is clearly different.
+
+- **Framework vs project files documentation** - CLAUDE.md now documents which files are framework-owned (sync from claude-dev-framework) vs project-specific (never overwrite).
+
 ### Fixed
 
 - **Phase Evaluator now actionable** - Complete rewrite to be a project-level strategic advisor:
