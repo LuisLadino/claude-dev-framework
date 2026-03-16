@@ -179,8 +179,19 @@ YOUR ROLE: Project-level strategic advisor. You:
 INSTRUCTIONS:
 ${instructions}
 
-CRITICAL: You MUST respond with ONLY valid JSON. No explanations. No markdown fences. No text before or after.
-If you lack information for a field, use null or empty arrays. NEVER respond with prose.
+IMPORTANT: Do your research FIRST using the tools available to you:
+1. Read relevant files to understand context
+2. Search for patterns in the codebase (Grep/Glob)
+3. Check GitHub for related issues or discussions
+
+THEN, after your research, output your findings as JSON.
+Your JSON output MUST be the LAST thing you output, wrapped in a markdown code fence:
+
+\`\`\`json
+{ ... your evaluation ... }
+\`\`\`
+
+If you lack information for a field, use null or empty arrays.
 
 REQUIRED JSON STRUCTURE:
 {
@@ -264,15 +275,16 @@ RESPOND WITH JSON ONLY:`;
     process.exit(0);
   }
 
-  // Extract the actual result
+  // Extract the actual result (JSON should be at the END, after research output)
   let evalJson;
   try {
     let resultText = claudeOutput.result || '';
 
-    // Strip markdown code fence if present
-    const jsonMatch = resultText.match(/```(?:json)?\n?([\s\S]*?)\n?```/);
-    if (jsonMatch) {
-      resultText = jsonMatch[1];
+    // Find the LAST markdown code fence (JSON comes after research)
+    const allFences = [...resultText.matchAll(/```(?:json)?\n?([\s\S]*?)\n?```/g)];
+    if (allFences.length > 0) {
+      // Get the last fence's content
+      resultText = allFences[allFences.length - 1][1];
     }
 
     evalJson = JSON.parse(resultText.trim());
