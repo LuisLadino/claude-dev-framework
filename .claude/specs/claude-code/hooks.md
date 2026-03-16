@@ -141,6 +141,15 @@ process.stdin.on('end', () => {
 
 Hooks can output to stderr (shown to Claude) or stdout (varies by event).
 
+### SessionStart Context
+```javascript
+// Plain text output - appears in Claude's session context
+console.log('[MY_HOOK] Context information for the session...');
+process.exit(0);
+```
+
+**Note:** JSON format with `additionalContext` field does NOT work for SessionStart hooks. Use plain `console.log()` instead.
+
 ### PreToolUse Denial
 ```javascript
 console.error('[BLOCKED] Reason for blocking');
@@ -171,13 +180,13 @@ Execute a script. Most common type.
 
 ### Agent Hooks (type: "agent")
 
-Spawn a subagent to handle complex tasks.
+Spawn a subagent with multi-turn tool access to verify conditions.
 
 ```json
 {
   "type": "agent",
-  "prompt": "Instructions for the agent. $ARGUMENTS available for context.",
-  "timeout": 60
+  "prompt": "Verify that all unit tests pass. Run the test suite and check the results.",
+  "timeout": 120
 }
 ```
 
@@ -190,15 +199,6 @@ Spawn a subagent to handle complex tasks.
 - `model`: Model to use (defaults to Haiku)
 - `statusMessage`: Custom spinner text while running
 
-**Agent hook pattern for external instructions:**
-```json
-{
-  "type": "agent",
-  "prompt": "You are the Context Agent. Read .claude/agents/context-agent.md for full instructions. Execute the steps there. Write output to .claude/current-context.json.",
-  "timeout": 45
-}
-```
-
 **Agent return format:**
 ```json
 {"ok": true}
@@ -208,11 +208,13 @@ or
 {"ok": false, "reason": "explanation"}
 ```
 
-**Differences from command hooks:**
-- Run as subagents with tool access (up to 50 turns)
-- Can read files, run commands, call tools
-- Longer timeout allowance
-- Return JSON status, not exit codes
+**Capabilities:** Agent hooks are full subagents that can:
+- Use tools iteratively (up to 50 turns)
+- Read files, search code, find files with glob patterns
+- Run bash commands (like test suites)
+- Do multi-turn investigation before deciding
+
+**Use agent hooks when:** Verification requires inspecting files, running commands, or iterative investigation. Use command hooks for deterministic tasks.
 
 ---
 

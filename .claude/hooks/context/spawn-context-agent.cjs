@@ -15,9 +15,8 @@ let data = '';
 process.stdin.setEncoding('utf8');
 process.stdin.on('data', chunk => data += chunk);
 process.stdin.on('end', () => {
-  const output = {
-    additionalContext: `[CONTEXT AGENT] Spawn context-agent via Task tool to evaluate project state and design thinking phase. Use model haiku for speed.`
-  };
-  console.log(JSON.stringify(output));
+  // Use plain console.log like session-context.js does
+  // JSON additionalContext format doesn't work for SessionStart
+  console.log('[CONTEXT AGENT] Spawn context-agent via Task tool to evaluate project state and design thinking phase. Use model haiku for speed.');
   process.exit(0);
 });
