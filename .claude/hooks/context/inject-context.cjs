@@ -81,18 +81,18 @@ function handleHook(data) {
     actions.specsLoaded = specResult.specsLoaded;
   }
 
-  // Log injection if any context was added
-  if (contextParts.length > 0) {
-    logInjection(session_id, actions);
-  }
+  // 6. Response format reminder (ALWAYS fires)
+  contextParts.push('[RESPONSE FORMAT] Start with: **Lens:** [perspective] | **Refine:** [restated prompt] | **Phase:** [design thinking phase] | **Teach:** [concept + framings + usage]. No exceptions.');
+  actions.formatReminder = true;
 
-  // Output context if any was collected
-  if (contextParts.length > 0) {
-    const output = {
-      additionalContext: contextParts.join('\n\n---\n\n')
-    };
-    console.log(JSON.stringify(output));
-  }
+  // Log injection (always fires due to format reminder)
+  logInjection(session_id, actions);
+
+  // Output context
+  const output = {
+    additionalContext: contextParts.join('\n\n---\n\n')
+  };
+  console.log(JSON.stringify(output));
 
   process.exit(0);
 }
