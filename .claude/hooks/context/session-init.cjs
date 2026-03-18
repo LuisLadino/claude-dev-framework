@@ -121,30 +121,6 @@ function resetLocalSessionState() {
   }
 }
 
-function loadProjectContext() {
-  const context = [];
-
-  // Check for project brief
-  const briefPath = '.claude/specs/project-brief.md';
-  if (fs.existsSync(briefPath)) {
-    const brief = fs.readFileSync(briefPath, 'utf8');
-    const summary = brief.split('\n').slice(0, 10).join('\n');
-    context.push(`Project: ${summary.substring(0, 200)}...`);
-  }
-
-  // Check for stack config
-  const stackPath = '.claude/specs/stack-config.yaml';
-  if (fs.existsSync(stackPath)) {
-    const stack = fs.readFileSync(stackPath, 'utf8');
-    const frameworkMatch = stack.match(/framework:\s*"?([^"\n]+)"?/);
-    if (frameworkMatch) {
-      context.push(`Stack: ${frameworkMatch[1]}`);
-    }
-  }
-
-  return context;
-}
-
 // Read hook input from stdin
 let input = '';
 process.stdin.setEncoding('utf8');
@@ -170,14 +146,23 @@ function handleHook(data) {
   // Find brain folder for this workspace
   const brainPath = findWorkspaceBrain(cwd);
 
-  // Initialize session tracking in brain
+  // Initialize session tracking in brain (global — always runs)
   if (source === 'startup' || source === 'clear') {
     const sessionId = initSession(brainPath);
 
     // Clean up old sessions (7+ days old)
     cleanupOldSessions(brainPath);
+  }
 
-    // Reset local session state (for spec enforcement)
+  // Project-specific work — only run inside a framework project
+  const isFrameworkProject = fs.existsSync(path.join(cwd, '.claude'));
+  if (!isFrameworkProject) {
+    process.exit(0);
+    return;
+  }
+
+  // Reset local session state (for spec enforcement)
+  if (source === 'startup' || source === 'clear') {
     resetLocalSessionState();
   }
 
@@ -193,12 +178,6 @@ function handleHook(data) {
     }
     console.log('\nConsider running /sync-stack to update wiring and specs.');
     console.log('========================================\n');
-  }
-
-  // Load and display project context
-  const context = loadProjectContext();
-  if (context.length > 0) {
-    console.log(context.join(' | '));
   }
 
   process.exit(0);

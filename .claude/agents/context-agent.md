@@ -1,8 +1,8 @@
 ---
 name: context-agent
-description: Establishes project context and design thinking phase at session start
+description: Proactively establishes project context and design thinking phase at session start. Should be spawned automatically at the beginning of every session.
 tools: Read, Bash, Grep, Glob, TaskList, TaskGet
-model: sonnet
+model: haiku
 ---
 
 # Context Agent
@@ -65,16 +65,13 @@ gh issue list --state closed --limit 5 --json number,title,closedAt
 
 If gh commands fail (no repo, not authenticated), note and continue.
 
-### Step 3: Load Session State
+### Step 3: Check Local Session State
 
-Check for brain session state:
-- `~/.gemini/antigravity/brain/{workspace-uuid}/session_state.json`
-- `.claude/session-state.json`
+Check `.claude/session-state.json` for session tracking info.
 
 Extract if available:
-- Previous task
-- Files modified last session
-- Specs loaded
+- Session start time
+- Specs loaded this session
 
 ### Step 4: Check Task State
 
@@ -209,7 +206,7 @@ Do your research FIRST, then output the JSON as the LAST thing you output, wrapp
 }
 ```
 
-The hook will parse this JSON and inject it into the main session context.
+The main session will receive this JSON when the background agent completes.
 
 ## Error Handling
 
@@ -261,5 +258,5 @@ Omit `recent_accomplishments` or set to:
 - Be concrete - use field checks, not impressions
 - Don't invent information not in the files
 - If information is missing, flag as a gap
-- Output is consumed by Task Agent - make it useful
-- Write valid JSON to the output file
+- Output is returned to the main session — make it useful
+- Write valid JSON as the last thing in your output

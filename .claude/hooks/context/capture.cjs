@@ -3,31 +3,20 @@
 /**
  * Capture Module
  *
- * Handles "capture this" requests to persist ideas/insights to brain files.
+ * Handles "capture this" / "remember that" requests.
+ * Redirects to Claude's native memory system instead of brain files.
  */
-
-const path = require('path');
-const HOME = process.env.HOME || process.env.USERPROFILE;
 
 // Capture trigger patterns
 const CAPTURE_PATTERNS = [
   /\bcapture[:\s]+this\b/i,
   /\bcapture[:\s]+that\b/i,
   /\bcapture[:\s]+.{5,}/i,
-  /\bsave (this|that) (to|in) (the )?(brain|learnings|decisions|patterns)\b/i,
+  /\bsave (this|that) (to|in) (the )?(brain|learnings|decisions|patterns|memory)\b/i,
   /\bremember (this|that)\b/i,
   /\bwrite (this|that) down\b/i,
-  /\badd (this|that) to (the )?(learnings|decisions|patterns)\b/i
+  /\badd (this|that) to (the )?(learnings|decisions|patterns|memory)\b/i
 ];
-
-// Routing keywords to determine target file
-const CAPTURE_ROUTING = {
-  'decision': 'decisions.md',
-  'pattern': 'patterns.md',
-  'learning': 'learnings.md',
-  'mistake': 'learnings.md',
-  'remember': 'learnings.md'
-};
 
 /**
  * Check if prompt is a capture request
@@ -46,74 +35,23 @@ function check(prompt) {
     return { content: null, triggered: false };
   }
 
-  // Determine target file based on keywords
-  let targetFile = null;
-  for (const [keyword, file] of Object.entries(CAPTURE_ROUTING)) {
-    if (prompt.toLowerCase().includes(keyword)) {
-      targetFile = file;
-      break;
-    }
-  }
-
-  // Extract explicit content if provided
-  const explicitMatch = prompt.match(/capture[:\s]+(.{10,})/i);
-  const explicitContent = explicitMatch ? explicitMatch[1].trim() : null;
-
-  const brainBasePath = path.join(HOME, '.gemini/antigravity/brain');
-  const today = new Date().toISOString().split('T')[0];
-
-  const targetFileInstruction = targetFile
-    ? `Target file: ${targetFile}`
-    : `Target file: Decide based on content type:
-  - decisions.md = architectural/design choices
-  - patterns.md = technical patterns discovered
-  - learnings.md = mistakes, corrections, things to remember`;
-
-  const captureInstructions = explicitContent
-    ? `[CAPTURE TRIGGERED]
-Content to persist: "${explicitContent}"
-${targetFileInstruction}
-
-**Action required:** Write this to the brain file.
-Use the brain path from your session context (e.g., ~/.gemini/antigravity/brain/{uuid}/).
-Append with this format:
-
-\`\`\`markdown
-### [${today}] [Brief title]
-${explicitContent}
-
-Context: [What prompted this capture]
-\`\`\`
-
-Confirm what was captured and where.`
-    : `[CAPTURE TRIGGERED]
-User wants to capture something from this conversation.
-${targetFileInstruction}
-
-**Action required:** Extract and persist the relevant insight.
-1. Identify what the user wants to capture from the conversation
-2. Determine the appropriate file based on content type
-3. Use the brain path from your session context
-4. Append with this format:
-
-\`\`\`markdown
-### [${today}] [Brief title]
-[The captured content - be specific]
-
-Context: [What prompted this capture]
-\`\`\`
-
-Confirm what was captured and where.`;
-
   return {
-    content: captureInstructions,
+    content: `[CAPTURE TRIGGERED]
+User wants to save something. Use your memory system to persist it.
+
+Choose the appropriate memory type:
+- **user** — information about Luis's role, goals, preferences
+- **feedback** — corrections or guidance Luis has given you
+- **project** — ongoing work context, decisions, discoveries
+- **reference** — pointers to external resources
+
+Write the memory file, then update MEMORY.md index. Confirm what was captured.`,
     triggered: true
   };
 }
 
 module.exports = {
   CAPTURE_PATTERNS,
-  CAPTURE_ROUTING,
   isCaptureRequest,
   check
 };

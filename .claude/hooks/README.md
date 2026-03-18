@@ -248,31 +248,17 @@ Does:
 
 #### inject-context.cjs
 **Event:** UserPromptSubmit
-**Purpose:** Auto-routes to commands, injects context, loads voice profile
+**Purpose:** Per-prompt context injection — reasoning checkpoints, voice reminders, capture, spec auto-loading
 
-**Now tracks what it does** in `injections[]`:
-```json
-{
-  "injections": [
-    {"timestamp": "...", "promptSnippet": "commit these changes", "commandSuggested": "/commit"},
-    {"timestamp": "...", "promptSnippet": "write an article about...", "voiceProfileLoaded": true},
-    {"timestamp": "...", "promptSnippet": "how does X work", "reasoningCheckpoints": 1}
-  ]
-}
-```
+**Modules:**
+- `reasoning-checkpoints.cjs` — reminders to research, verify, diagnose (max 2 per prompt)
+- `voice-identity.cjs` — short voice reminder when writing content for Luis (full rules in CLAUDE.md)
+- `capture.cjs` — "remember this" / "capture that" → saves to Claude memory system
+- `spec-triggers.cjs` — auto-loads spec files based on keywords
 
-**Command Routing:**
-| You say... | Suggested Command |
-|------------|-------------------|
-| "build a python app", "let's create...", "help me fix..." | /start-task |
-| "explain how...", "help me understand", "what is..." | /learn |
-| "commit this", "done with these changes" | /commit |
-| "look this over", "check my work", "before I push" | /audit |
-| "does this look right?", "quick check" | /audit |
-| "this is gonna be big", "need to plan this out" | /add-feature |
-| "new project", "from scratch", "set this up" | /init-project |
-| "wire this up", "install the deps" | /sync-stack |
-| "analyze sessions", "what patterns", "clean up learnings" | /analyze |
+**Removed modules:**
+- `route-commands.cjs` — skills system + gating hooks handle command routing natively
+- `methodology.cjs` — CPMAI domains folded into lenses in system-prompt.md
 
 **Reasoning Checkpoints:**
 | You say... | Reminder |
@@ -283,11 +269,11 @@ Does:
 | "I think it works..." | VERIFY: Don't assume. Read code to confirm. |
 | "not working", "getting an error" | ROOT CAUSE: Read the actual error. |
 
-**Voice Profile:**
+**Voice Reminder:**
 | You say... | What happens |
 |------------|--------------|
-| "write an article about...", "draft an email" | Loads voice-profile.md |
-| "portfolio content", "case study", "bio" | Loads voice-profile.md |
+| "write an article about...", "draft an email" | Short reminder to follow Writing for Luis rules in CLAUDE.md |
+| "portfolio content", "case study", "bio" | Same — points to CLAUDE.md voice rules |
 
 ## Session Tracking File Structure
 

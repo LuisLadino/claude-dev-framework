@@ -9,6 +9,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Context pipeline overhaul** — Full audit and rewrite of context injection pipeline:
+  - `system-rules.md` renamed to `system-prompt.md` — rewritten with identity, CPMAI folded into lenses, design thinking as behavioral constraint, encoding rules, primacy-recency ordering
+  - `session-context.js` — stripped identity injection (now in system-prompt.md), added project-definition.yaml reading, removed my-brain dependency (447 → 157 lines)
+  - `inject-context.cjs` — removed methodology.cjs and route-commands.cjs modules (handled by system-prompt.md and skills system)
+  - `voice-identity.cjs` — slimmed from full voice profile injection to short reminder pointing to CLAUDE.md
+  - `capture.cjs` — redirected from brain files to Claude native memory system
+  - `inject-utils.cjs` — removed loadIdentityContext and loadVoiceProfile (no longer reads from my-brain)
+  - `spawn-context-agent.cjs` — rewritten with Claude's native instruction patterns (commentary tag, proactive trigger)
+  - `session-init.cjs` — added .claude/ directory guard for issue #30, removed loadProjectContext
+
+- **CLAUDE.md (shared)** — updated to domain-agnostic language, added GitHub Issues as Design Thinking Records section, added Writing for Luis voice rules, added issue closing rules, removed redundant Skills section, moved docs/ to project-specific
+
+- **context-agent.md** — model set to haiku, removed brain session state dependency, updated output instructions, added proactive trigger in description
+
+### Removed
+
+- `methodology.cjs` — CPMAI domains folded into lenses in system-prompt.md
+- `route-commands.cjs` — skills system and gating hooks handle command routing natively
+- Identity injection from session-context.js — identity now lives in system-prompt.md
+- my-brain/CLAUDE.md dependency — nothing reads from external repos anymore
+
 ### Added
 
 - **Async Phase Evaluator** - Phase Evaluator now runs in background, non-blocking:
