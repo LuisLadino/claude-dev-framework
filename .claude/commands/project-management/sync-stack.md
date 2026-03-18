@@ -10,7 +10,7 @@ description: Wire project together, verify setup, generate project specs. Handle
 - Installs dependencies and wires configs together
 - Verifies everything is connected properly
 - Generates coding specs from official docs
-- Creates a wiring diagram showing how pieces connect
+- Creates a system map showing how pieces connect
 
 ---
 
@@ -18,8 +18,8 @@ description: Wire project together, verify setup, generate project specs. Handle
 
 ```
 /sync-stack                      # Full setup (install, wire, verify, generate specs)
-/sync-stack prisma               # Add a specific dependency and update wiring
-/sync-stack --verify             # Just verify wiring, don't regenerate specs
+/sync-stack prisma               # Add a specific dependency and update specs
+/sync-stack --verify             # Just verify setup, don't regenerate specs
 /sync-stack --custom api-conventions   # Add custom project-specific spec
 ```
 
@@ -54,13 +54,13 @@ Researches your stack via context7 and generates specs with **real patterns from
 | Category | What it contains | Source |
 |----------|------------------|--------|
 | `coding/` | Language and library patterns | Official docs (React, TS, etc.) |
-| `architecture/` | File structure, wiring diagram | Framework docs + detected config |
+| `architecture/` | File structure, system map | Framework docs + detected config |
 | `design/` | Implementation patterns for design system | Styling framework docs |
 | `documentation/` | Code comments, docstrings | Language conventions (TSDoc, etc.) |
 | `config/` | Git, testing, deployment, env | Detected from project files |
 
 ### 4. Wiring Diagram
-Generates `.claude/specs/architecture/wiring.md` with mermaid diagram showing:
+Generates `.claude/specs/architecture/system-map.yaml` showing:
 - Dependencies and their relationships
 - Config file connections
 - Build pipeline flow
@@ -612,87 +612,121 @@ export async function getUser(userId: string): Promise<User | null> {
 
 ---
 
-## STEP 9: Generate Wiring Diagram
+## STEP 9: Generate System Map
 
-Generate `.claude/specs/architecture/wiring.md` with a mermaid diagram showing how the project is wired together.
+Generate `.claude/specs/architecture/system-map.yaml` — a structured YAML document that maps how the project's components connect.
+
+### Purpose
+
+The system map is a dependency graph and change impact guide. It tells Claude: "if you change file X, what else is affected?" It gets:
+- **Enforced** by enforce-specs (must read before editing project files)
+- **Freshness-checked** by context agent at session start
+- **Update-flagged** by phase evaluator after commits that change architecture
 
 ### What to include
 
-1. **Dependencies** - Key packages and their relationships
-2. **Config connections** - What config files reference each other
-3. **Build pipeline** - How source becomes output
-4. **Data flow** - How data moves through the app (if applicable)
+Scan the project to identify:
+1. **Components** — key files/modules with their imports, reads, writes
+2. **Data flow** — how data moves through the system (routes, state, APIs)
+3. **Config connections** — what config files reference each other
+4. **Change impact rules** — "if you change X, also update Y"
 
-### Generate the diagram
+### How to scan
 
-```markdown
-# Project Wiring
+```bash
+# Detect project structure
+find src -type f -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" | head -30
 
-## Overview Diagram
+# Find imports and dependencies
+grep -r "^import\|require(" src --include="*.ts" --include="*.tsx" | head -20
 
-```mermaid
-graph TB
-    subgraph "Source"
-        src[src/]
-        components[components/]
-        pages[pages/]
-    end
+# Find config cross-references
+grep -r "tsconfig\|tailwind\|postcss\|vite" *.config.* *.json 2>/dev/null
 
-    subgraph "Config"
-        pkg[package.json]
-        ts[tsconfig.json]
-        vite[vite.config.ts]
-        tw[tailwind.config.ts]
-    end
-
-    subgraph "Build"
-        bundler[Vite]
-        tsc[TypeScript]
-        postcss[PostCSS]
-    end
-
-    subgraph "Output"
-        dist[dist/]
-    end
-
-    pkg --> bundler
-    ts --> tsc
-    tw --> postcss
-    src --> tsc
-    tsc --> bundler
-    postcss --> bundler
-    bundler --> dist
-
-    ts -.-> |paths| src
-    tw -.-> |content| components
-    tw -.-> |content| pages
-    vite -.-> |plugins| ts
-    vite -.-> |plugins| postcss
+# Find API routes / data sources
+find . -path "*/api/*" -name "*.ts" -o -path "*/routes/*" -name "*.ts" | head -10
 ```
 
-## Config Dependencies
+### Generate the YAML
 
-| Config File | Depends On | Referenced By |
-|-------------|------------|---------------|
-| tsconfig.json | - | vite.config.ts |
-| tailwind.config.ts | - | postcss.config.js |
-| vite.config.ts | tsconfig.json, tailwind | package.json scripts |
+```yaml
+# System Map — [project name]
+# Dependency graph and change impact guide.
+# Read this before editing project files.
+#
+# Generated by /sync-stack
+# Last verified: [date]
 
-## Key Connections
+components:
+  # For each key file/module:
+  src/components/Button.tsx:
+    purpose: Primary button component
+    imports: [src/lib/utils.ts, src/styles/tokens.ts]
+    used_by: [src/pages/Home.tsx, src/pages/Settings.tsx]
+    if_changed:
+      - Check all pages that import this component
+      - Update design system spec if API changes
 
-- **TypeScript paths** → Must match actual directory structure
-- **Tailwind content** → Must include all files with classes
-- **Vite plugins** → Must be installed and configured in order
+  src/lib/api.ts:
+    purpose: API client
+    imports: [src/lib/config.ts]
+    used_by: [src/hooks/useData.ts, src/pages/Dashboard.tsx]
+    if_changed:
+      - Update API types if response shape changes
+      - Check all hooks that call these functions
+
+data_flow:
+  # How data moves through the app
+  - "User action → src/hooks/useData.ts → src/lib/api.ts → external API"
+  - "API response → state store → component re-render"
+
+config_connections:
+  tsconfig.json:
+    referenced_by: [vite.config.ts]
+    paths_must_match: src/ directory structure
+  tailwind.config.ts:
+    content_must_include: ["src/**/*.tsx"]
+    referenced_by: [postcss.config.js]
+
+change_rules:
+  - trigger: "Adding a new page/route"
+    do:
+      - Add to navigation component
+      - Update sitemap if it exists
+      - Add route test
+
+  - trigger: "Changing API response shape"
+    do:
+      - Update TypeScript types
+      - Update all consumers of that endpoint
+      - Update tests
 ```
 
-### Adapt to actual stack
+### Adapt to project type
 
-The above is an example. Generate a diagram that reflects THIS project's actual:
-- Framework (Next.js, Astro, Vite, etc.)
-- Language (TypeScript, JavaScript, etc.)
-- Styling (Tailwind, CSS Modules, etc.)
-- Build tools
-- Config files present
+The example above is for a web app. Adapt the structure to match the actual project:
+
+| Project Type | Key Components | Key Connections |
+|-------------|----------------|-----------------|
+| Web app | Pages, components, API routes, state | Route → component → API → data |
+| CLI tool | Commands, modules, config | Command → handler → output |
+| Library | Public API, internal modules | Export → consumer → types |
+| API server | Routes, middleware, models | Request → middleware → handler → DB |
+| Static site | Pages, layouts, content | Content → template → output |
+
+### Add to stack-config.yaml
+
+Add the system map spec with applies_to patterns covering the project's source files:
+
+```yaml
+architecture:
+  - name: system-map
+    file: architecture/system-map.yaml
+    applies_to:
+      - "src/**/*.ts"
+      - "src/**/*.tsx"
+    description: "How project components connect — dependency graph and change impact guide"
+```
 
 ---
 
@@ -969,7 +1003,7 @@ Specs generated:
 - coding/tailwind-specs.md
 - coding/vitest-specs.md
 - architecture/project-structure.md
-- architecture/wiring.md (with mermaid diagram)
+- architecture/system-map.yaml (dependency graph + change impact)
 - design/tailwind-implementation.md
 
 CI/CD:

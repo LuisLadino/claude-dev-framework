@@ -1,0 +1,575 @@
+# ============================================
+# SYSTEM MAP — claude-dev-framework
+# ============================================
+# Dependency graph and change impact guide.
+# Read this before editing any framework file.
+# If you change a component, check its `if_changed` rules and `used_by` references.
+#
+# Spec metadata (for enforce-specs integration):
+#   name: system-map
+#   description: How all framework components connect. Required before editing hooks, scripts, or settings.
+#   applies_to: defined in stack-config.yaml
+#   category: architecture
+#
+# Generated: 2026-03-18
+# Last verified: 2026-03-18
+
+# ============================================
+# SECTION 1: EVENT LIFECYCLE
+# ============================================
+# What fires at each Claude Code event, in execution order.
+# Understanding this is critical — hooks execute in registration order.
+
+lifecycle:
+  SessionStart:
+    # Fires once when session begins (or after compaction with source="compact")
+    - session-context.js         # Global: loads project-definition.yaml + learnings
+    - session-init.cjs           # Framework: creates session tracking, detects config changes
+    - spawn-context-agent.cjs    # Framework: injects instruction to spawn context-agent
+    - post-compact-recovery.js   # Global: restores handoff (only after compaction)
+
+  UserPromptSubmit:
+    # Fires on EVERY user message, before Claude processes it
+    - clear-pending.cjs          # Resets per-prompt enforcement flags
+    - inject-context.cjs         # Orchestrates 5 sub-modules + response format reminder
+    - awareness.cjs              # Checks failure thresholds, suggests /analyze
+
+  PreToolUse:
+    # Fires before tool execution — can BLOCK (exit 2 = deny)
+    Bash:
+      - block-dangerous.cjs      # Blocks rm -rf, force push, credential exposure
+      - enforce-skills.cjs       # Blocks git commit (must use /commit skill)
+      - enforce-plan.cjs         # Blocks gh issue create (must read plan skill)
+    "Edit|Write":
+      - enforce-specs.cjs        # Blocks edits until required spec is read
+
+  PostToolUse:
+    # Fires after SUCCESSFUL tool execution only
+    all_tools:
+      - tool-tracker.cjs         # Logs every tool call
+    "Edit|Write":
+      - track-changes.cjs        # Tracks files modified/created
+    Read:
+      - track-spec-reads.cjs     # Records which specs were read (for enforce-specs)
+    Bash:
+      - command-log.cjs          # Logs bash commands
+      - detect-pivot.cjs         # Notifies when dependencies change
+      - spawn-phase-evaluator.cjs  # Spawns phase-evaluator after git commits
+
+  PostToolUseFailure:
+    all_tools:
+      - tool-failure.cjs         # Logs tool failures
+
+  Stop:
+    # Fires before Claude stops — can BLOCK
+    - verify-before-stop.cjs     # Blocks if debug statements in modified files
+    # DISABLED: check-teaching-format.cjs, enforce-framing.cjs (#14)
+
+  PreCompact:
+    - pre-compact.js             # Global: saves handoff to tracking/
+
+  SessionEnd:
+    - session-end.cjs            # Finalizes session tracking (unreliable)
+
+  SubagentStart_SubagentStop:
+    - subagent-tracker.cjs       # Tracks agent spawns/completions
+
+# ============================================
+# SECTION 2: SHARED RESOURCES (HIGH BLAST RADIUS)
+# ============================================
+# Changes to these files affect many components. Check carefully.
+
+shared_resources:
+
+  session-utils.cjs:
+    path: .claude/hooks/lib/session-utils.cjs
+    purpose: Shared library for ALL tracking hooks
+    used_by:
+      - tool-tracker.cjs
+      - tool-failure.cjs
+      - track-changes.cjs
+      - command-log.cjs
+      - session-end.cjs
+      - subagent-tracker.cjs
+      - awareness.cjs
+      - verify-before-stop.cjs
+    provides:
+      - "getWorkspaceKey() — converts path to persistence key"
+      - "getProjectDir() — returns ~/.claude/projects/{key}/"
+      - "getTrackingDir() — returns tracking/ subdirectory"
+      - "getSessionId() — manages session ID with 5-min reuse"
+      - "loadSessionTracking() / saveSessionTracking()"
+    if_changed:
+      - ALL tracking hooks affected
+      - Changing workspace key format breaks ALL persistence paths
+      - Changing session ID format breaks tracking file lookup
+      - Test every hook that imports this
+
+  settings.json:
+    path: ~/.claude/settings.json
+    purpose: ALL hook registrations
+    if_changed:
+      - Adding hooks — verify event type and matcher
+      - Blocking hooks (exit 2) must NOT have "|| true"
+      - Non-blocking hooks SHOULD have "|| true"
+      - Paths must resolve from git root via cd $(git rev-parse --show-toplevel)
+      - Test in new session (current session caches settings)
+
+  session-state.json:
+    path: .claude/session-state.json
+    purpose: Per-prompt enforcement flags
+    written_by: [session-init.cjs, clear-pending.cjs, track-spec-reads.cjs]
+    read_by: [enforce-specs.cjs, enforce-plan.cjs, clear-pending.cjs]
+    if_changed:
+      - Adding fields — update ALL writers AND readers
+      - Changing field names — update enforce-specs, enforce-plan, clear-pending
+
+  stack-config.yaml:
+    path: .claude/specs/stack-config.yaml
+    purpose: Single source of truth for spec enforcement
+    read_by: [enforce-specs.cjs, start-task skill, sync-stack command]
+    if_changed:
+      - Adding specs — create the file AND add applies_to patterns
+      - Changing applies_to — test enforce-specs matches correctly
+      - Removing specs — verify no hook references the removed spec
+
+  system-prompt.md:
+    path: ~/.claude/system-prompt.md
+    purpose: Identity, methodology, lenses, teaching, design thinking
+    if_changed:
+      - Affects ALL sessions across ALL projects
+      - Test in new session (current session won't see updates)
+      - Response format section — end of file (recency effect)
+      - Design thinking section — near beginning (primacy effect)
+      - Do NOT change without user approval
+
+# ============================================
+# SECTION 3: COMPONENTS
+# ============================================
+# Every framework file with its connections.
+
+components:
+
+  # ---- CONTEXT INJECTION ----
+
+  hooks/context/inject-context.cjs:
+    purpose: Per-prompt context orchestrator
+    trigger: UserPromptSubmit
+    imports: [inject-utils.cjs, reasoning-checkpoints.cjs, voice-identity.cjs, capture.cjs, spec-triggers.cjs]
+    reads: [phase-evaluation.json, session-state.json]
+    outputs: "{ additionalContext }"
+    critical: "Line 85 — response format reminder. NEVER remove."
+    if_changed:
+      - Verify all 5 sub-module imports resolve
+      - Test response format reminder fires
+      - Runs on EVERY prompt — performance matters
+
+  hooks/context/inject-utils.cjs:
+    purpose: Shared utilities for inject-context modules
+    exports: [loadAndConsumePhaseEvaluation, readSpecFile, logInjection]
+    reads: [phase-evaluation.json]
+    writes: [phase-evaluation.json (marks delivered, 10-min expiry)]
+
+  hooks/context/reasoning-checkpoints.cjs:
+    purpose: Injects reasoning reminders (LOOK IT UP, VERIFY, ROOT CAUSE)
+    stateless: true
+    low_blast_radius: true
+
+  hooks/context/voice-identity.cjs:
+    purpose: Detects content-writing, injects voice rules reminder
+    stateless: true
+    low_blast_radius: true
+
+  hooks/context/capture.cjs:
+    purpose: Detects "remember this" patterns
+    stateless: true
+    low_blast_radius: true
+
+  hooks/context/spec-triggers.cjs:
+    purpose: Auto-loads specs based on prompt keywords
+    reads: ".claude/specs/** (5 hardcoded specs)"
+    known_issue: "Hardcoded list — new specs invisible. See #31."
+
+  hooks/context/session-init.cjs:
+    purpose: Initialize session tracking, detect config changes
+    trigger: SessionStart
+    reads: [".claude/specs/.sync-state.json", "package.json", config files]
+    writes: [session-state.json, "tracking/{session-id}.json"]
+
+  hooks/context/spawn-context-agent.cjs:
+    purpose: Injects instruction to spawn context-agent
+    trigger: SessionStart
+    stateless: true
+    low_blast_radius: true
+
+  hooks/context/clear-pending.cjs:
+    purpose: Reset enforcement flags each new user message
+    trigger: UserPromptSubmit (runs BEFORE inject-context)
+    reads_writes: session-state.json
+    if_changed: "Affects spec enforcement cycle — flags not clearing means specs won't re-require"
+
+  hooks/context/enforce-specs.cjs:
+    purpose: BLOCKS edits until required spec is read
+    trigger: PreToolUse (Edit|Write)
+    reads: [stack-config.yaml, session-state.json]
+    exit_codes: { 0: allow, 2: deny }
+    if_changed:
+      - This IS the enforcement mechanism — changes affect ALL spec enforcement
+      - Test with actual file edits
+      - NEVER add "|| true" to its settings.json entry
+
+  # ---- UNUSED CONTEXT MODULES ----
+
+  hooks/context/methodology.cjs:
+    status: UNUSED — CPMAI folded into system-prompt.md lenses
+
+  hooks/context/route-commands.cjs:
+    status: UNUSED — skills system handles routing
+
+  # ---- SAFETY HOOKS ----
+
+  hooks/safety/block-dangerous.cjs:
+    purpose: Blocks destructive bash commands
+    trigger: PreToolUse (Bash)
+    stateless: true
+    blocks: "rm -rf, force push main, git reset --hard, DROP DATABASE, credentials, fork bombs"
+
+  hooks/safety/enforce-skills.cjs:
+    purpose: Blocks git commit — must use /commit skill
+    trigger: PreToolUse (Bash)
+    bypass: "SKILL_ACTIVE=1 prefix in command"
+    connected_to: "commit skill sets SKILL_ACTIVE=1"
+
+  hooks/safety/enforce-plan.cjs:
+    purpose: Blocks gh issue create — must read plan skill first
+    trigger: PreToolUse (Bash)
+    reads: "session-state.json (pendingIssue, lastSkillRead)"
+    connected_to: "plan skill sets session-state flags"
+
+  # ---- TRACKING HOOKS ----
+  # All use session-utils.cjs. All write to tracking/{session-id}.json.
+
+  hooks/tracking/tool-tracker.cjs:
+    purpose: Logs every tool call (universal observability)
+    trigger: PostToolUse (all)
+    writes: "tools[]"
+
+  hooks/tracking/tool-failure.cjs:
+    purpose: Logs tool failures
+    trigger: PostToolUseFailure (all)
+    writes: "failures[]"
+
+  hooks/tracking/track-changes.cjs:
+    purpose: Tracks files modified vs created (uses git ls-files)
+    trigger: PostToolUse (Edit|Write)
+    writes: "filesModified[], filesCreated[], operations[]"
+
+  hooks/tracking/track-spec-reads.cjs:
+    purpose: Records which specs were read
+    trigger: PostToolUse (Read)
+    writes: "session-state.json → specsRead"
+    connected_to: "enforce-specs.cjs reads what this writes"
+
+  hooks/tracking/command-log.cjs:
+    purpose: Logs bash commands
+    trigger: PostToolUse (Bash)
+    writes: "commands[]"
+
+  hooks/tracking/detect-pivot.cjs:
+    purpose: Notifies when dependencies change (npm install, etc.)
+    trigger: PostToolUse (Bash)
+    outputs: "stderr message suggesting /sync-stack"
+
+  hooks/tracking/session-end.cjs:
+    purpose: Finalizes session with duration and summary
+    trigger: SessionEnd
+    writes: "sessionEnd, durationMinutes, summary"
+    known_issue: "Unreliable — doesn't fire on terminal close"
+
+  hooks/tracking/subagent-tracker.cjs:
+    purpose: Tracks agent spawns/completions with duration
+    trigger: SubagentStart, SubagentStop
+    writes: "subagents[]"
+
+  hooks/tracking/awareness.cjs:
+    purpose: Suggests /analyze when failures accumulate
+    trigger: UserPromptSubmit
+    reads: ["tracking/{session-id}.json", "/tmp/claude-awareness-cooldown.json"]
+    threshold: "failures >= 5 (30-min cooldown)"
+
+  hooks/tracking/capture-corrections.cjs:
+    status: NOT REGISTERED in settings.json
+    purpose: Available but not wired — detects user correction patterns
+
+  # ---- LIFECYCLE HOOKS ----
+
+  hooks/lifecycle/spawn-phase-evaluator.cjs:
+    purpose: Spawns phase-evaluator agent after git commits
+    trigger: PostToolUse (Bash, git commit only)
+    reads: "git log (last commit message and diff)"
+    outputs: "Injection instruction to spawn via Agent tool"
+
+  hooks/lifecycle/phase-evaluator-worker.cjs:
+    purpose: Background worker for phase evaluation via claude -p
+    status: "Possibly dead code — phase evaluator rewritten to Agent tool (commit 13fb4a7). Verify before modifying."
+    reads: [project-definition.yaml, git history]
+    writes: [phase-evaluation.json, phase-evaluation-history.jsonl, GitHub issues]
+
+  # ---- QUALITY HOOKS ----
+
+  hooks/quality/verify-before-stop.cjs:
+    purpose: Blocks if debug statements in modified files
+    trigger: Stop
+    reads: [session-changes.json, "tracking/{session-id}.json", modified files]
+    checks: "console.log/debug, debugger, TODO/FIXME: REMOVE, XXX:"
+
+  hooks/quality/check-teaching-format.cjs:
+    status: NOT REGISTERED (disabled)
+    purpose: Blocks responses missing Lens/Refine/Phase/Teach
+
+  hooks/quality/enforce-framing.cjs:
+    status: NOT REGISTERED (disabled — crashed in non-git dirs)
+    see_issue: "#14"
+
+  # ---- GLOBAL SCRIPTS (outside this repo) ----
+
+  scripts/session-context.js:
+    path: ~/.gemini/antigravity/scripts/session-context.js
+    trigger: SessionStart
+    reads: [project-definition.yaml, "~/.gemini/antigravity/brain/learnings.md"]
+    outputs: "[SESSION CONTEXT] block"
+
+  scripts/pre-compact.js:
+    path: ~/.gemini/antigravity/scripts/pre-compact.js
+    trigger: PreCompact
+    reads: [transcript, "tracking/{session-id}.json"]
+    writes: "tracking/pre-compact-handoff.md"
+
+  scripts/post-compact-recovery.js:
+    path: ~/.gemini/antigravity/scripts/post-compact-recovery.js
+    trigger: SessionStart (only source="compact")
+    reads: ["tracking/pre-compact-handoff.md", learnings.md]
+    outputs: "[POST-COMPACT RECOVERY] block"
+
+  # ---- COMMANDS ----
+
+  commands/development/commit.md:
+    purpose: Commit with documentation updates
+    references: [version-control.md]
+    enforcement: Must update .md files near changed code
+    bypasses: enforce-skills via SKILL_ACTIVE=1
+
+  commands/development/start-task.md:
+    purpose: Execute task with specs enforcement
+    references: [stack-config.yaml, all relevant specs]
+
+  commands/development/pr.md:
+    purpose: Create PR with commit summary
+    references: [version-control.md]
+
+  commands/development/add-feature.md:
+    purpose: Plan complex features with research
+    references: [stack-config.yaml]
+
+  commands/project-management/init-project.md:
+    purpose: Define WHAT to build
+    creates: [project-brief.md, decisions.md, project-structure.md, design-system.md]
+    if_changed: Affects project setup for ALL new projects
+
+  commands/project-management/sync-stack.md:
+    purpose: Wire project — detect stack, research via context7, generate specs
+    creates: [all specs, system-map.yaml, stack-config.yaml]
+    if_changed: Affects spec generation for ALL projects
+
+  commands/utilities/learn.md:
+    purpose: ELI5 explanations
+    standalone: true
+
+  commands/utilities/analyze.md:
+    purpose: Framework analyst mode
+    reads: [tracking files, memory files]
+
+  commands/utilities/audit.md:
+    purpose: Deep parallel code review (3 agents)
+
+  # ---- SKILLS ----
+
+  skills/commit:
+    purpose: Full commit workflow (stage → commit → push → PR → auto-merge)
+    sets: SKILL_ACTIVE=1 to bypass enforce-skills
+    connected_to: enforce-skills.cjs
+    issue_linking: "'Closes #X' only when verified working"
+
+  skills/plan:
+    purpose: GitHub issue management
+    sets: "session-state.json pendingIssue flag"
+    connected_to: enforce-plan.cjs
+
+  skills/start-task:
+    purpose: Load issue, load specs, execute task
+    reads: [GitHub issue, stack-config.yaml]
+
+  skills/handoff:
+    purpose: Capture session context for next session
+    writes: ["memory/project_handoff.md", "memory/MEMORY.md"]
+
+  skills/design-thinking:
+    purpose: Orchestrate 6-task design thinking flow
+    uses: [TaskCreate, TaskUpdate, TaskList, TaskGet]
+
+  skills/add-feature:
+    purpose: Break down complex features into implementation plan
+    outputs: Plan, not code
+
+  skills/contribute-to-opensource:
+    purpose: Configure framework to match external project patterns
+    creates: [PROJECT-STATE.md, matching specs]
+
+  # ---- AGENTS ----
+
+  agents/context-agent.md:
+    purpose: Strategic advisor at session start
+    trigger: Spawned by spawn-context-agent.cjs
+    model: haiku
+    tools: [Read, Bash, Grep, Glob, TaskList, TaskGet]
+    must_not_read: [project-definition.yaml, session-state.json]
+    output: Plain text under 500 words
+
+  agents/phase-evaluator.md:
+    purpose: Strategic advisor after commits
+    trigger: Spawned by spawn-phase-evaluator.cjs
+    model: haiku
+    tools: [Read, Bash, Grep, Glob, WebSearch]
+    writes: [GitHub issues, comments, phase-evaluation.json]
+    output: JSON only
+
+# ============================================
+# SECTION 4: DATA STORES
+# ============================================
+
+data_stores:
+  project_local:
+    session-state.json:
+      purpose: Per-prompt enforcement flags
+      flow: "session-init creates → clear-pending resets each prompt → enforcement hooks read"
+
+    phase-evaluation.json:
+      purpose: Phase eval from last commit (consumed once)
+      flow: "phase-evaluator writes → inject-utils reads + marks delivered (10-min expiry)"
+
+    phase-evaluation-history.jsonl:
+      purpose: Append-only history of all evaluations
+      read_by: /analyze
+
+    session-changes.json:
+      purpose: Files modified this session
+      flow: "track-changes writes → verify-before-stop reads"
+
+  per_project:
+    base: "~/.claude/projects/{workspace-key}/"
+
+    "tracking/{session-id}.json":
+      purpose: Complete session telemetry
+      written_by: [all tracking hooks]
+      read_by: [awareness, verify-before-stop, pre-compact, daemon]
+      cleanup: "session-init deletes files > 7 days old"
+
+    "memory/MEMORY.md":
+      purpose: Memory index (auto-loaded by Claude Code)
+      written_by: [handoff skill, manual saves]
+
+    "memory/*.md":
+      purpose: Individual memories (feedback, project, user, reference)
+      written_by: [handoff skill, manual saves]
+
+  legacy:
+    "~/.gemini/antigravity/brain/learnings.md":
+      purpose: Legacy learnings — see #36
+      read_by: [session-context.js, post-compact-recovery.js]
+
+# ============================================
+# SECTION 5: CHANGE IMPACT RULES
+# ============================================
+# "If you change X, also do Y."
+
+change_rules:
+
+  # FIRST RULE — applies to ALL changes below
+  project_agnostic:
+    - "EVERY change must work in ANY project, not just this repo"
+    - "Ask: Will this work in voir? In airedteaming-site? In a brand new project?"
+    - "No hardcoded paths that only exist in this repo"
+    - "No assumptions about tech stack — read stack-config.yaml to learn it"
+    - "No project-specific context in framework-owned files"
+    - "The framework is an engine. It doesn't know what project it's in."
+
+  adding_hook:
+    - Register in ~/.claude/settings.json (correct event + matcher)
+    - If tracking hook — import session-utils.cjs
+    - If blocking (exit 2) — do NOT add "|| true" to settings.json
+    - If non-critical — DO add "|| true"
+    - Add to this system map
+    - Read specs/claude-code/hooks.md first
+
+  adding_spec:
+    - Create file in .claude/specs/{category}/
+    - Add to stack-config.yaml with applies_to patterns
+    - If auto-load on keywords — add to spec-triggers.cjs (until #31 done)
+    - Add to this system map
+
+  adding_skill:
+    - Create .claude/skills/{name}/SKILL.md
+    - If bypassing enforcement hook — set appropriate flag (SKILL_ACTIVE=1, pendingIssue, etc.)
+    - Read specs/claude-code/skills.md first
+    - Add to this system map
+
+  adding_command:
+    - Create .claude/commands/{category}/{name}.md
+    - Read specs/claude-code/tools.md first
+    - Add to this system map
+
+  changing_enforce_specs:
+    - Test with actual file edits
+    - Verify stack-config.yaml patterns still match
+    - Verify session-state.json field names
+    - Affects ALL spec enforcement across ALL projects
+
+  changing_session_utils:
+    - Test ALL tracking hooks
+    - Verify workspace key format unchanged
+    - Verify session ID format unchanged
+
+  changing_inject_context:
+    - Verify all 5 sub-module imports resolve
+    - Test response format reminder fires (line 85)
+    - Runs every prompt — performance matters
+
+  changing_settings_json:
+    - Verify paths resolve from git root
+    - Test in new session
+    - Blocking hooks must NOT have "|| true"
+
+  changing_system_prompt:
+    - Affects ALL sessions across ALL projects
+    - Test in new session
+    - Do NOT change without user approval
+
+  changing_stack_config:
+    - enforce-specs reads this — test enforcement
+    - start-task reads this — test spec loading
+    - sync-stack reads AND writes this
+
+  syncing_to_downstream:
+    - Copy ONLY framework-owned files
+    - Do NOT copy specs/ — run /sync-stack instead
+    - Do NOT overwrite settings.local.json
+    - Test hooks in downstream project
+    - Downstream projects listed in root CLAUDE.md
+
+  removing_component:
+    - Remove the file
+    - Remove from settings.json
+    - Remove imports from other files
+    - Check if anything reads files this component wrote
+    - Update this system map
+    - Check for dead references in commands/skills

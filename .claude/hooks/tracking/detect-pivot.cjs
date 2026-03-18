@@ -51,9 +51,9 @@ function handleHook(data) {
   const isInstallCommand = installPatterns.some(pattern => pattern.test(command));
 
   if (isInstallCommand && tool_response?.exitCode === 0) {
-    // Dependency was added - notify about potential wiring changes
+    // Dependency was added - notify about potential spec/map changes
     console.error('\n[PIVOT DETECTED] Dependencies changed.');
-    console.error('Consider running /sync-stack to update wiring and specs.\n');
+    console.error('Consider running /sync-stack to update specs and system map.\n');
   }
 
   process.exit(0);

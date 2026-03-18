@@ -68,7 +68,7 @@ function checkForChanges() {
     if (hasPackageJson) {
       return {
         changed: true,
-        reason: 'Project has never been synced. Run /sync-stack to set up specs and wiring.'
+        reason: 'Project has never been synced. Run /sync-stack to set up specs and system map.'
       };
     }
     return { changed: false };
@@ -155,7 +155,7 @@ function handleHook(data) {
     if (result.lastSync) {
       console.log(`Last sync: ${result.lastSync}`);
     }
-    console.log('\nConsider running /sync-stack to update wiring and specs.');
+    console.log('\nConsider running /sync-stack to update specs and system map.');
     console.log('========================================\n');
   }
 

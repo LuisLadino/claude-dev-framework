@@ -67,10 +67,14 @@ specs:
       description: "Known failures and mistakes"
 
   architecture:
-    - name: wiring
-      file: architecture/wiring.md
-      applies_to: []
-      description: "How framework components connect"
+    - name: system-map
+      file: architecture/system-map.yaml
+      applies_to:
+        - ".claude/hooks/**/*.cjs"
+        - ".claude/skills/**/*.md"
+        - ".claude/agents/**/*.md"
+        - ".claude/commands/**/*.md"
+      description: "How project components connect — dependency graph and change impact guide"
 
   config:
     - name: version-control

@@ -6,7 +6,7 @@ description: Define product requirements before execution. Creates project-brief
 
 **Define WHAT you're building before you build it.**
 
-This command establishes the product vision, architecture decisions, and design system. Run `/sync-stack` after to handle the technical wiring (HOW).
+This command establishes the product vision, architecture decisions, and design system. Run `/sync-stack` after to handle the technical setup (HOW).
 
 ---
 
@@ -472,4 +472,4 @@ Run `/sync-stack` to:
 1. Install dependencies based on your tech direction
 2. Wire configs together properly
 3. Generate coding specs from official docs
-4. Create wiring diagram showing how everything connects
+4. Create system map showing how everything connects
