@@ -6,8 +6,8 @@
  * Event: PostToolUse (Bash)
  * Purpose: Logs all bash commands executed during session
  *
- * Stores tracking in global brain:
- * ~/.gemini/antigravity/brain/tracking/sessions/{session-id}.json
+ * Stores tracking in:
+ * ~/.claude/projects/{workspace-key}/tracking/{session-id}.json
  */
 
 const fs = require('fs');

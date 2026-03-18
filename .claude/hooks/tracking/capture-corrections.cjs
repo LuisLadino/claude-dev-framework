@@ -3,18 +3,11 @@
 /**
  * Capture Corrections Hook (UserPromptSubmit)
  *
- * Detects when user is correcting Claude and immediately captures to learnings.md.
+ * Detects when user is correcting Claude.
+ * Outputs a reminder so Claude captures the correction as a memory.
  * Runs on every user message, exits 0 (never blocks).
  */
 
-const fs = require('fs');
-const path = require('path');
-
-const HOME = process.env.HOME || process.env.USERPROFILE;
-const LEARNINGS_PATH = path.join(HOME, '.gemini/antigravity/brain/learnings.md');
-
-// Patterns indicating user is correcting Claude
-// Tightened to reduce false positives - must be about Claude's behavior being wrong
 const CORRECTION_PATTERNS = [
   // Direct corrections about Claude's behavior
   /you('re| are) not (following|doing|applying|listening)/i,
@@ -75,30 +68,13 @@ async function main() {
     process.exit(0);
   }
 
-  // Correction detected - capture to learnings.md
-  const date = new Date().toISOString().split('T')[0];
-  const time = new Date().toISOString().split('T')[1].slice(0, 5);
-
-  // Truncate message for logging (keep it concise)
+  // Correction detected - output reminder for Claude to save as memory
   const truncatedMessage = message.length > 200
     ? message.slice(0, 200) + '...'
     : message;
 
-  const entry = `
-### [${date} ${time}] (real-time capture)
-- User correction: "${truncatedMessage}"
-- Pattern matched: ${matches[0]}
-- Action: Review and apply this feedback
-`;
+  console.log(`[CORRECTION DETECTED] The user is correcting you. Save this as a feedback memory so you don't repeat this mistake. User said: "${truncatedMessage}"`);
 
-  try {
-    fs.appendFileSync(LEARNINGS_PATH, entry);
-    console.log(`[CORRECTION CAPTURED] "${truncatedMessage.slice(0, 50)}..."`);
-  } catch (err) {
-    console.error(`[CAPTURE ERROR] ${err.message}`);
-  }
-
-  // Always allow - this is tracking, not blocking
   process.exit(0);
 }
 

@@ -11,7 +11,7 @@ allowed-tools: Read, Write, Bash
 
 You are capturing session context so the next session can resume seamlessly.
 
-**Output:** Write `handoff.md` to the brain folder from your session context.
+**Output:** Write a project memory to `.claude/projects/` memory directory.
 
 ---
 
@@ -27,19 +27,30 @@ Answer these questions concisely:
 
 ## Steps
 
-### 1. Find Brain Path
+### 1. Find Memory Path
 
-Your session context (from SessionStart) includes:
+The memory directory for this project lives at:
 ```
-Brain: ~/.gemini/antigravity/brain/{uuid}/
+~/.claude/projects/{workspace-key}/memory/
 ```
 
-Use that exact path.
+To get the workspace key, convert the git root path: replace `/` with `-` and prefix with `-`.
 
-### 2. Write handoff.md
+Example: `/Users/luisladino/Repositories/Personal/my-project` becomes `-Users-luisladino-Repositories-Personal-my-project`
 
-```bash
-cat > ~/.gemini/antigravity/brain/{uuid}/handoff.md << 'EOF'
+### 2. Write handoff as project memory
+
+Use the Write tool to create/overwrite the handoff file:
+
+**File:** `~/.claude/projects/{workspace-key}/memory/project_handoff.md`
+
+```markdown
+---
+name: session-handoff
+description: Handoff context from {date} session — {brief description}
+type: project
+---
+
 # Session Handoff - {Brief Title}
 
 **Created:** {YYYY-MM-DD}
@@ -53,17 +64,28 @@ cat > ~/.gemini/antigravity/brain/{uuid}/handoff.md << 'EOF'
 
 {Bullet points: key decisions, problems solved, things that failed}
 
-## Next Steps
+## What Needs Testing in New Session
 
-{Clear actions for resuming}
+{Things that can only be verified in a fresh session}
+
+## Still Open
+
+{Issues, blockers, unfinished items}
 
 ## Related
 
-{Links to issues, PRs, files if relevant}
-EOF
+{Commits, issues, PRs, files if relevant}
 ```
 
-### 3. Confirm
+### 3. Update MEMORY.md
+
+Add or update the handoff entry in `~/.claude/projects/{workspace-key}/memory/MEMORY.md`:
+
+```markdown
+- [Session handoff](project_handoff.md) — {brief description of what was done}
+```
+
+### 4. Confirm
 
 Tell the user what was captured.
 
@@ -74,4 +96,5 @@ Tell the user what was captured.
 - **Keep it short.** Next session needs context, not documentation.
 - **Focus on resumption.** What does the next session need to know?
 - **Don't duplicate.** Task lists belong in GitHub issues, not here.
-- **Overwrite is OK.** Each handoff replaces the previous (archived on read).
+- **Overwrite is OK.** Each handoff replaces the previous.
+- **Use the memory frontmatter.** The `description` field helps future sessions decide if this memory is relevant.

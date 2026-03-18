@@ -142,9 +142,9 @@ success:
     - metric: "User corrections captured"
       target: "Decreasing trend over 30 days"
       measurement: "capture-corrections hook data"
-    - metric: "Learnings written to brain"
-      target: "Growing learnings.md with actionable entries"
-      measurement: "File growth and quality audit"
+    - metric: "Learnings written to memory"
+      target: "Growing memory/ files with actionable entries"
+      measurement: "Memory file growth and quality audit"
     - metric: "Session continuity success"
       target: "90% of sessions resume without re-explaining"
       measurement: "Task.md continuation rate"
@@ -219,7 +219,7 @@ risks:
     category: "technical"
     likelihood: "medium"
     impact: "medium"
-    mitigation: "Be selective about what loads at SessionStart, use brain hierarchy"
+    mitigation: "Be selective about what loads at SessionStart, use memory/ hierarchy"
     owner: "Luis"
 
   - risk: "Framework complexity exceeds value"
@@ -263,7 +263,7 @@ ai:
       - "Telemetry must not include sensitive content"
     privacy_considerations:
       - "All data stays local (no cloud sync)"
-      - "Brain files in ~/.gemini/antigravity/ not committed"
+      - "Persistence in ~/.claude/projects/ not committed to project repos"
 
   model:
     approach: "Prompt engineering via system rules, context injection, and command instructions"
@@ -378,7 +378,7 @@ milestones:
     success_criteria:
       - "capture-corrections hook reliably detects corrections"
       - "Corrections prompt for learning capture"
-      - "Learnings written to brain"
+      - "Learnings written to memory"
     blockers:
       - "Need reliable correction detection heuristics"
 

@@ -3,69 +3,65 @@
 /**
  * Shared utilities for session tracking hooks
  *
- * Session tracking is GLOBAL (framework telemetry):
- * ~/.gemini/antigravity/brain/tracking/sessions/{session-id}.json
+ * All persistence goes to ~/.claude/projects/{workspace-key}/
+ * This is Claude Code's native per-project directory.
  *
- * Project context is per-workspace:
- * ~/.gemini/antigravity/brain/{workspace-uuid}/task.md, decisions.md, etc.
+ * Tracking data: ~/.claude/projects/{workspace-key}/tracking/{session-id}.json
+ * Workspace state: ~/.claude/projects/{workspace-key}/ (handoff, session state, etc.)
  */
 
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { execSync } = require('child_process');
 
 const HOME = process.env.HOME || process.env.USERPROFILE;
-const BRAIN_DIR = path.join(HOME, '.gemini/antigravity/brain');
-const TRACKING_DIR = path.join(BRAIN_DIR, 'tracking/sessions');
+const PROJECTS_DIR = path.join(HOME, '.claude/projects');
 
 /**
- * Find the brain folder for a workspace
- * Same logic as session-context.js
+ * Get the workspace key for the current directory.
+ * Uses git root when available, falls back to cwd.
+ * Matches Claude Code's native convention: path with / replaced by -
  */
-function findWorkspaceBrain(workspacePath) {
-  if (!fs.existsSync(BRAIN_DIR)) {
-    fs.mkdirSync(BRAIN_DIR, { recursive: true });
+function getWorkspaceKey(workspacePath) {
+  let root = workspacePath || process.cwd();
+
+  // Normalize to git root when possible
+  try {
+    root = execSync('git rev-parse --show-toplevel', {
+      encoding: 'utf8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+      cwd: root
+    }).trim();
+  } catch (e) {
+    // Not a git repo, use cwd
   }
 
-  // Look for existing session folder matching this workspace
-  const sessions = fs.readdirSync(BRAIN_DIR).filter(f => {
-    const fullPath = path.join(BRAIN_DIR, f);
-    return fs.statSync(fullPath).isDirectory() && f !== 'tempmediaStorage';
-  });
+  // Claude Code convention: leading - then path separators become -
+  return '-' + root.replace(/\//g, '-').slice(1);
+}
 
-  for (const uuid of sessions) {
-    const statePath = path.join(BRAIN_DIR, uuid, 'session_state.json');
-    if (fs.existsSync(statePath)) {
-      try {
-        const state = JSON.parse(fs.readFileSync(statePath, 'utf8'));
-        const storedPath = (state.workspace || '').split(' -> ')[0];
-        if (storedPath === workspacePath || workspacePath.startsWith(storedPath)) {
-          return path.join(BRAIN_DIR, uuid);
-        }
-      } catch (e) {}
-    }
-  }
+/**
+ * Get the project directory for a workspace.
+ * This is where all persistence lives.
+ */
+function getProjectDir(workspacePath) {
+  const key = getWorkspaceKey(workspacePath);
+  return path.join(PROJECTS_DIR, key);
+}
 
-  // No existing folder, create new one
-  const newUuid = crypto.randomUUID();
-  const newPath = path.join(BRAIN_DIR, newUuid);
-  fs.mkdirSync(newPath, { recursive: true });
-
-  // Initialize session_state.json with workspace
-  fs.writeFileSync(
-    path.join(newPath, 'session_state.json'),
-    JSON.stringify({ workspace: workspacePath, type: 'auto-created' }, null, 2)
-  );
-
-  return newPath;
+/**
+ * Get the tracking directory for a workspace.
+ */
+function getTrackingDir(workspacePath) {
+  const projectDir = getProjectDir(workspacePath);
+  return path.join(projectDir, 'tracking');
 }
 
 /**
  * Generate a session ID
- * Uses process start time + pid for uniqueness within a Claude session
  */
 function generateSessionId() {
-  // Use timestamp + random for uniqueness
   const timestamp = Date.now();
   const random = crypto.randomBytes(4).toString('hex');
   return `${timestamp}-${random}`;
@@ -74,34 +70,30 @@ function generateSessionId() {
 /**
  * Get session ID - prefer Claude Code's session_id from hook input
  * Falls back to generating our own if not provided
- *
- * @param {string} [claudeSessionId] - Claude Code's session_id from hook input
  */
 function getSessionId(claudeSessionId) {
-  if (!fs.existsSync(TRACKING_DIR)) {
-    fs.mkdirSync(TRACKING_DIR, { recursive: true });
-  }
-
-  // Use Claude Code's session_id if provided (preferred - eliminates fragmentation)
   if (claudeSessionId) {
     return claudeSessionId;
   }
 
+  const trackingDir = getTrackingDir();
+  if (!fs.existsSync(trackingDir)) {
+    fs.mkdirSync(trackingDir, { recursive: true });
+  }
+
   // Fallback: use our own session ID with timeout logic
-  const activeSessionFile = path.join(TRACKING_DIR, '.active-session');
+  const activeSessionFile = path.join(trackingDir, '.active-session');
 
   if (fs.existsSync(activeSessionFile)) {
     try {
       const data = JSON.parse(fs.readFileSync(activeSessionFile, 'utf8'));
       const age = Date.now() - data.createdAt;
-      // If less than 5 minutes old, same session (increased from 30s)
       if (age < 300000) {
         return data.sessionId;
       }
     } catch (e) {}
   }
 
-  // Generate new session ID
   const sessionId = generateSessionId();
   fs.writeFileSync(activeSessionFile, JSON.stringify({
     sessionId,
@@ -112,17 +104,18 @@ function getSessionId(claudeSessionId) {
 }
 
 /**
- * Get path to session tracking file (global tracking dir)
+ * Get path to session tracking file
  */
-function getSessionTrackingPath(sessionId) {
-  return path.join(TRACKING_DIR, `${sessionId}.json`);
+function getSessionTrackingPath(sessionId, workspacePath) {
+  const trackingDir = getTrackingDir(workspacePath);
+  return path.join(trackingDir, `${sessionId}.json`);
 }
 
 /**
  * Load session tracking data
  */
-function loadSessionTracking(sessionId) {
-  const trackingPath = getSessionTrackingPath(sessionId);
+function loadSessionTracking(sessionId, workspacePath) {
+  const trackingPath = getSessionTrackingPath(sessionId, workspacePath);
   try {
     const content = fs.readFileSync(trackingPath, 'utf8');
     return JSON.parse(content);
@@ -130,7 +123,7 @@ function loadSessionTracking(sessionId) {
     return {
       sessionId,
       sessionStart: new Date().toISOString(),
-      workspace: process.cwd(),
+      workspace: workspacePath || process.cwd(),
       filesModified: [],
       filesCreated: [],
       operations: [],
@@ -142,62 +135,63 @@ function loadSessionTracking(sessionId) {
 /**
  * Save session tracking data
  */
-function saveSessionTracking(sessionId, data) {
-  if (!fs.existsSync(TRACKING_DIR)) {
-    fs.mkdirSync(TRACKING_DIR, { recursive: true });
+function saveSessionTracking(sessionId, data, workspacePath) {
+  const trackingDir = getTrackingDir(workspacePath);
+  if (!fs.existsSync(trackingDir)) {
+    fs.mkdirSync(trackingDir, { recursive: true });
   }
 
-  const trackingPath = getSessionTrackingPath(sessionId);
+  const trackingPath = getSessionTrackingPath(sessionId, workspacePath);
   fs.writeFileSync(trackingPath, JSON.stringify(data, null, 2));
 }
 
 /**
  * Initialize a new session
  */
-function initSession() {
+function initSession(workspacePath) {
   const sessionId = generateSessionId();
+  const trackingDir = getTrackingDir(workspacePath);
 
-  if (!fs.existsSync(TRACKING_DIR)) {
-    fs.mkdirSync(TRACKING_DIR, { recursive: true });
+  if (!fs.existsSync(trackingDir)) {
+    fs.mkdirSync(trackingDir, { recursive: true });
   }
 
-  // Write active session marker
-  const activeSessionFile = path.join(TRACKING_DIR, '.active-session');
+  const activeSessionFile = path.join(trackingDir, '.active-session');
   fs.writeFileSync(activeSessionFile, JSON.stringify({
     sessionId,
     createdAt: Date.now()
   }));
 
-  // Initialize tracking data
   const trackingData = {
     sessionId,
     sessionStart: new Date().toISOString(),
-    workspace: process.cwd(),
+    workspace: workspacePath || process.cwd(),
     filesModified: [],
     filesCreated: [],
     operations: [],
     commands: []
   };
 
-  saveSessionTracking(sessionId, trackingData);
+  saveSessionTracking(sessionId, trackingData, workspacePath);
 
   return sessionId;
 }
 
 /**
- * Clean up old session files (older than 7 days)
+ * Clean up old session tracking files (older than 7 days)
  */
-function cleanupOldSessions() {
-  if (!fs.existsSync(TRACKING_DIR)) return;
+function cleanupOldSessions(workspacePath) {
+  const trackingDir = getTrackingDir(workspacePath);
+  if (!fs.existsSync(trackingDir)) return;
 
-  const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days
+  const maxAge = 7 * 24 * 60 * 60 * 1000;
   const now = Date.now();
 
-  const files = fs.readdirSync(TRACKING_DIR);
+  const files = fs.readdirSync(trackingDir);
   for (const file of files) {
     if (file === '.active-session') continue;
 
-    const filePath = path.join(TRACKING_DIR, file);
+    const filePath = path.join(trackingDir, file);
     try {
       const stat = fs.statSync(filePath);
       if (now - stat.mtime.getTime() > maxAge) {
@@ -207,13 +201,39 @@ function cleanupOldSessions() {
   }
 }
 
+/**
+ * Get the error log path for this workspace
+ */
+function getErrorLogPath(workspacePath) {
+  const projectDir = getProjectDir(workspacePath);
+  return path.join(projectDir, 'hook-errors.log');
+}
+
+/**
+ * Log an error to the workspace error log
+ */
+function logError(hook, message, workspacePath) {
+  const errorLogPath = getErrorLogPath(workspacePath);
+  const entry = `[${new Date().toISOString()}] ${hook}: ${message}\n`;
+  try {
+    const dir = path.dirname(errorLogPath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.appendFileSync(errorLogPath, entry);
+  } catch (e) {}
+}
+
 module.exports = {
-  findWorkspaceBrain,
+  getWorkspaceKey,
+  getProjectDir,
+  getTrackingDir,
   getSessionId,
   loadSessionTracking,
   saveSessionTracking,
   initSession,
   cleanupOldSessions,
-  BRAIN_DIR,
-  TRACKING_DIR
+  getErrorLogPath,
+  logError,
+  PROJECTS_DIR
 };

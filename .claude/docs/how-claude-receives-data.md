@@ -1,5 +1,7 @@
 # How Claude Receives Data
 
+> **OUTDATED:** Brain paths in this document reference `~/.gemini/antigravity/brain/` which has been migrated to `~/.claude/projects/{workspace-key}/` as of 2026-03-18. See #36 for details. The architectural concepts (how data flows to Claude) are still accurate.
+
 **Purpose:** Explain the fundamental architecture of how data flows from your system to Claude's context window. This is the ground truth for understanding and improving the framework.
 
 **Last updated:** 2026-03-16

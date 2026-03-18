@@ -14,26 +14,26 @@
 const fs = require('fs');
 const path = require('path');
 
-const HOME = process.env.HOME || process.env.USERPROFILE;
-const BRAIN_DIR = path.join(HOME, '.gemini/antigravity/brain');
-const TRACKING_DIR = path.join(BRAIN_DIR, 'tracking/sessions');
+const {
+  getTrackingDir
+} = require('../lib/session-utils.cjs');
 
 function getRecentSessionTracking() {
   try {
-    if (!fs.existsSync(TRACKING_DIR)) return null;
+    const trackingDir = getTrackingDir();
+    if (!fs.existsSync(trackingDir)) return null;
 
-    const files = fs.readdirSync(TRACKING_DIR)
+    const files = fs.readdirSync(trackingDir)
       .filter(f => f.endsWith('.json'))
       .map(f => ({
         name: f,
-        path: path.join(TRACKING_DIR, f),
-        mtime: fs.statSync(path.join(TRACKING_DIR, f)).mtime.getTime()
+        path: path.join(trackingDir, f),
+        mtime: fs.statSync(path.join(trackingDir, f)).mtime.getTime()
       }))
       .sort((a, b) => b.mtime - a.mtime);
 
     if (files.length === 0) return null;
 
-    // Get most recent session (within last hour)
     const oneHourAgo = Date.now() - (60 * 60 * 1000);
     const recent = files.find(f => f.mtime > oneHourAgo);
     if (!recent) return null;

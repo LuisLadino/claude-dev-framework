@@ -1,6 +1,6 @@
 # System Audit: Context Injection & Data Flow
 
-> **OUTDATED:** This document predates the pipeline overhaul (2026-03-17). Key changes: system-rules.md renamed to system-prompt.md, identity moved from my-brain to system-prompt.md, session-context.js no longer reads my-brain, voice rules moved to CLAUDE.md, methodology.cjs and route-commands.cjs removed. See `pipeline-decisions.md` for current state.
+> **OUTDATED:** This document predates the persistence migration (2026-03-18). Key changes: all persistence moved from `~/.gemini/antigravity/brain/` to `~/.claude/projects/{workspace-key}/`. Brain UUIDs eliminated. Tracking writes to `tracking/`, memories to `memory/`. Session-context.js no longer reads brain. See #36 and `pipeline-decisions.md` for current state.
 
 **Purpose:** Map what files exist, when they're read, when they're written, and what triggers what.
 

@@ -106,8 +106,9 @@ sequenceDiagram
 | File | Purpose | Updated By |
 |------|---------|------------|
 | `.claude/session-state.json` | Per-prompt flags (pendingEdit, pendingIssue) | enforce-specs, track-spec-reads, clear-pending |
-| `brain/{uuid}/session_state.json` | Cross-session state | pre-compact.js |
-| `brain/learnings.md` | Persistent learnings | pre-compact.js |
+| `~/.claude/projects/{key}/tracking/` | Session tracking data | session-utils.cjs, pre-compact.js |
+| `~/.claude/projects/{key}/memory/` | Persistent memories | Claude auto-memory, handoff skill |
+| `~/.gemini/antigravity/brain/learnings.md` | Legacy learnings (migrating to memory/) | capture-corrections.cjs |
 
 ---
 
@@ -157,4 +158,4 @@ Edits allowed for this prompt
 | track-spec-reads.cjs | FILE_TO_SPEC mapping | PostToolUse (Read) |
 | clear-pending.cjs | session-state.json | UserPromptSubmit |
 | session-init.cjs | session-utils.cjs | SessionStart |
-| tool-tracker.cjs | brain/tracking/sessions/ | PostToolUse (*) |
+| tool-tracker.cjs | ~/.claude/projects/{key}/tracking/ | PostToolUse (*) |

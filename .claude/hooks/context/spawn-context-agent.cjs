@@ -31,7 +31,7 @@ Use the Agent tool with these exact parameters:
 - description: "Establish project context"
 - subagent_type: "context-agent"
 - model: "haiku"
-- prompt: "Evaluate the current project state. Read .claude/specs/project-definition.yaml for project context, check GitHub issues and milestones, and determine the current design thinking phase. Output your evaluation as JSON."
+- prompt: "Evaluate the current project state. Check GitHub issues, milestones, and PRs. Check recent git activity. Determine the design thinking phase from activity signals. Do NOT read project-definition.yaml — the main session already has it."
 - run_in_background: true
 
 Do NOT skip this. Do NOT wait for the user to ask for it.`);

@@ -6,8 +6,8 @@
  * Event: PostToolUse (Edit|Write)
  * Purpose: Maintains a session log of all files modified
  *
- * Stores tracking in global brain:
- * ~/.gemini/antigravity/brain/tracking/sessions/{session-id}.json
+ * Stores tracking in:
+ * ~/.claude/projects/{workspace-key}/tracking/{session-id}.json
  */
 
 const fs = require('fs');

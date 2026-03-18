@@ -234,47 +234,44 @@ ${skillContent}
   }
 
   if (workflowName === 'handoff') {
-    const brainDir = path.join(HOME, '.gemini/antigravity/brain');
-    let brainPath = brainDir;
-
+    // Get the .claude/projects/ memory path for this workspace
+    const { execSync } = require('child_process');
+    let root = cwd;
     try {
-      const sessions = fs.readdirSync(brainDir).filter(f => {
-        const fullPath = path.join(brainDir, f);
-        return fs.statSync(fullPath).isDirectory() && f !== 'tempmediaStorage' && f !== 'tracking';
-      });
-
-      for (const uuid of sessions) {
-        const statePath = path.join(brainDir, uuid, 'session_state.json');
-        if (fs.existsSync(statePath)) {
-          try {
-            const state = JSON.parse(fs.readFileSync(statePath, 'utf8'));
-            const workspacePath = (state.workspace || '').split(' -> ')[0];
-            if (workspacePath === cwd || cwd.startsWith(workspacePath)) {
-              brainPath = path.join(brainDir, uuid);
-              break;
-            }
-          } catch {}
-        }
-      }
-    } catch {}
+      root = execSync('git rev-parse --show-toplevel', {
+        encoding: 'utf8',
+        stdio: ['pipe', 'pipe', 'pipe'],
+        cwd
+      }).trim();
+    } catch (e) {}
+    const workspaceKey = '-' + root.replace(/\//g, '-').slice(1);
+    const memoryDir = path.join(HOME, '.claude/projects', workspaceKey, 'memory');
 
     const today = new Date().toISOString().split('T')[0];
 
     return `[HANDOFF WORKFLOW - AUTO-LOADED]
 
-**Brain path:** ${brainPath}
-**Output file:** ${brainPath}/handoff.md
+**Memory path:** ${memoryDir}
 
 ---
 
 **HANDOFF WORKFLOW:**
 
+Save a project memory with the handoff context. This will be auto-loaded next session via MEMORY.md.
+
 1. **Review the session:** What did we work on? What did we discover?
 
-2. **Write handoff.md** (use cat with heredoc):
+2. **Write handoff as a project memory** using the Write tool:
 
-\`\`\`bash
-cat > "${brainPath}/handoff.md" << 'EOF'
+File: \`${memoryDir}/project_handoff.md\`
+
+\`\`\`markdown
+---
+name: session-handoff
+description: Handoff context from ${today} session
+type: project
+---
+
 # Session Handoff - {Brief Title}
 
 **Created:** ${today}
@@ -295,10 +292,11 @@ cat > "${brainPath}/handoff.md" << 'EOF'
 ## Related
 
 {Links to issues, PRs, files}
-EOF
 \`\`\`
 
-3. **Confirm** what was captured.
+3. **Update MEMORY.md** to include a pointer to the handoff file.
+
+4. **Confirm** what was captured.
 
 **Keep it short.** Focus on what the next session needs to resume.`;
   }

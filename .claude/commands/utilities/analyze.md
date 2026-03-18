@@ -61,8 +61,8 @@ You need BOTH to know if the framework is actually helping Luis.
 ## On Startup
 
 1. Read the most recent session tracking file for this workspace to see what's happening
-2. Read learnings.md for accumulated patterns and corrections
-3. Read framework-issues.md for known issues
+2. Read memory files in `~/.claude/projects/{workspace-key}/memory/` for persistent context
+3. Read learnings.md (legacy, at `~/.gemini/antigravity/brain/learnings.md`) for accumulated patterns
 4. **CRITICAL: For any "fix needed" notes, verify current state before reporting:**
    - Check git log for recent changes that may have addressed it
    - Read the actual hook/command code to see current implementation
@@ -73,7 +73,7 @@ Then wait for Luis to direct you. He may:
 - Ask you to watch the active session and comment on what you see
 - Paste specific feedback ("I didn't like this response because...")
 - Ask you to investigate a specific issue
-- Ask you to make changes to hooks, commands, or brain files
+- Ask you to make changes to hooks, commands, or memory files
 
 ## Live Session Monitoring
 
@@ -81,7 +81,7 @@ When Luis asks you to monitor his working session:
 
 1. Find the active session tracking file:
    ```
-   ~/.gemini/antigravity/brain/{workspace-uuid}/sessions/
+   ~/.claude/projects/{workspace-key}/tracking/
    ```
    Look for the most recently modified .json file.
 
@@ -111,11 +111,12 @@ You're not automatically watching - Luis tells you when to look and what to focu
    - Any gaps in the data?
 
 3. **Context Loading**
-   - Is session-context.js loading the right identity/task/learnings?
+   - Is session-context.js loading the right context?
    - Is inject-context.cjs adding useful context or noise?
+   - Are memory files being loaded correctly?
 
 4. **System Health**
-   - Are brain files getting too large?
+   - Are memory files getting too large?
    - Any hook errors in hook-errors.log?
    - Is daemon.js running and producing useful output?
 
@@ -152,8 +153,7 @@ Tell the STORY, not the metrics:
 
 **Technical (fix the system):**
 - Hook code (patterns, triggers, logic)
-- learnings.md (consolidate, address, add)
-- framework-issues.md (track bugs, improvements)
+- Memory files (consolidate, address, add feedback memories)
 - Create new hooks or commands
 - Clean up files (remove noise, consolidate)
 
@@ -172,7 +172,8 @@ Understand the full system before analyzing:
 
 ### Data Flow
 ```
-SessionStart ─► session-context.js loads identity, task, learnings
+SessionStart ─► session-context.js loads project definition, learnings
+             ─► MEMORY.md auto-loaded by Claude Code (memories)
      │
      ▼
 UserPromptSubmit ─► inject-context.cjs suggests commands, loads voice
@@ -189,13 +190,13 @@ PostToolUse ─► tool-tracker.cjs logs ALL tool calls
            ─► command-log.cjs logs bash commands
      │
      ▼
-PreCompact ─► pre-compact.js saves task.md, session_state.json
+PreCompact ─► pre-compact.js saves handoff to tracking/
      │
      ▼
 SessionEnd ─► session-end.cjs writes summary (often doesn't fire)
      │
      ▼
-Background ─► daemon.js watches sessions, generates overview.txt
+Background ─► daemon.js watches tracking/, generates overview.txt
 ```
 
 ### Component Purposes (what to evaluate)
@@ -207,26 +208,27 @@ Background ─► daemon.js watches sessions, generates overview.txt
 | `awareness.cjs` | System health checks | Are thresholds right? Too noisy? |
 | `tool-tracker.cjs` | Log all tool calls | Is data structure useful? |
 | `enforce-specs.cjs` | DENY code edits until specs read | Is it blocking appropriately? |
-| `session-context.js` | Load identity, task, learnings at start | Is the right context loading? |
-| `pre-compact.js` | Save state before compaction | Is it capturing what matters? |
-| `daemon.js` | Synthesize session data | Is overview.txt useful? |
+| `session-context.js` | Load project definition, learnings at start | Is the right context loading? |
+| `pre-compact.js` | Save handoff before compaction | Is it capturing what matters? |
+| `daemon.js` | Synthesize tracking data | Is overview.txt useful? |
 
 ## Files to Read
 
 ### Data (what's been captured)
 ```
-~/.gemini/antigravity/brain/{workspace-uuid}/
-├── task.md                 # Task history
-├── session_state.json      # Current state, accomplished, open issues
-├── decisions.md            # Architecture choices
-├── patterns.md             # Technical patterns
-├── sessions/               # Per-session tracking files (watch for live monitoring)
-└── overview.txt            # Daemon-generated summary
+~/.claude/projects/{workspace-key}/
+├── memory/                # Persistent memories (feedback, project, handoff)
+│   ├── MEMORY.md          # Index (auto-loaded every session)
+│   └── *.md               # Individual memory files
+├── tracking/              # Per-session tracking files
+│   ├── {session-id}.json  # Hook-captured data
+│   └── pre-compact-handoff.md  # Auto-captured before compaction
+├── overview.txt           # Daemon-generated synthesis
+├── hook-errors.log        # Debug log
+└── sessions-index.json    # Claude Code native session index
 
 ~/.gemini/antigravity/brain/
-├── learnings.md            # Persistent learnings, captured corrections
-├── voice-profile.md        # Voice rules
-└── framework-issues.md     # Known bugs, improvements needed
+└── learnings.md           # Legacy learnings (migrating to memory/)
 ```
 
 ### Framework (what gets distributed to projects)
@@ -234,33 +236,21 @@ Background ─► daemon.js watches sessions, generates overview.txt
 ~/Repositories/Personal/claude-dev-framework/
 ├── .claude/CLAUDE.md                    # Instructions for Claude
 ├── .claude/hooks/
-│   ├── tracking/
-│   │   ├── tool-tracker.cjs             # ALL tool calls
-│   │   ├── track-changes.cjs            # File modifications
-│   │   ├── command-log.cjs              # Bash commands
-│   │   ├── capture-corrections.cjs      # User corrections
-│   │   ├── awareness.cjs                # System health
-│   │   ├── session-end.cjs              # Session summary
-│   │   └── subagent-tracker.cjs         # Subagent spawns
-│   ├── context/
-│   │   ├── inject-context.cjs           # Command routing, methodology
-│   │   ├── enforce-specs.cjs            # DENY code edits until specs read
-│   │   └── session-init.cjs             # Session setup
-│   ├── safety/
-│   │   └── block-dangerous.cjs          # Block destructive commands
-│   └── quality/
-│       └── verify-before-stop.cjs       # Check for debug statements
+│   ├── tracking/                        # Observability hooks
+│   ├── context/                         # Context injection hooks
+│   ├── safety/                          # Safety hooks
+│   └── quality/                         # Quality hooks
 ├── .claude/commands/                    # Slash commands
 └── .claude/specs/                       # Project patterns
 ```
 
-### Global Scripts (Antigravity layer)
+### Global Scripts
 ```
 ~/.gemini/antigravity/scripts/
-├── session-context.js      # SessionStart: loads identity, task, learnings
-├── pre-compact.js          # PreCompact: saves state before compaction
-├── daemon.js               # Background: synthesizes session data
-└── post-compact-recovery.js # After compact: restores critical context
+├── session-context.js      # SessionStart: loads project definition, learnings
+├── pre-compact.js          # PreCompact: saves handoff to tracking/
+├── daemon.js               # Background: synthesizes tracking data into overview.txt
+└── post-compact-recovery.js # After compact: restores handoff + learnings
 ```
 
 ### Configuration
@@ -276,9 +266,8 @@ Background ─► daemon.js watches sessions, generates overview.txt
 | Commands | `~/Repositories/Personal/claude-dev-framework/.claude/commands/` |
 | Global scripts | `~/.gemini/antigravity/scripts/` |
 | Hook registration | `~/.claude/settings.json` |
-| Learnings | `~/.gemini/antigravity/brain/learnings.md` |
-| Framework issues | `~/.gemini/antigravity/brain/framework-issues.md` |
-| Workspace decisions | `~/.gemini/antigravity/brain/{uuid}/decisions.md` |
+| Persistent memories | `~/.claude/projects/{workspace-key}/memory/` |
+| Learnings (legacy) | `~/.gemini/antigravity/brain/learnings.md` |
 
 ## Luis's Goals (for alignment checks)
 - **Target**: AI product roles (PM, product analyst)

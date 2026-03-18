@@ -4,12 +4,12 @@
  * Session Init Hook
  *
  * Event: SessionStart
- * Purpose: Initialize session tracking in brain and check for changes
+ * Purpose: Initialize session tracking and check for project changes
  *
  * Does:
- * - Creates session tracking file in brain
+ * - Creates session tracking file
  * - Checks sync state for project changes
- * - Cleans up old session files
+ * - Cleans up old session tracking files
  */
 
 const fs = require('fs');
@@ -17,7 +17,6 @@ const path = require('path');
 const crypto = require('crypto');
 
 const {
-  findWorkspaceBrain,
   initSession,
   cleanupOldSessions
 } = require('../lib/session-utils.cjs');
@@ -64,7 +63,6 @@ function checkForChanges() {
   const cwd = process.cwd();
   const syncState = loadSyncState();
 
-  // No sync state = never synced
   if (!syncState) {
     const hasPackageJson = fs.existsSync(path.join(cwd, 'package.json'));
     if (hasPackageJson) {
@@ -76,7 +74,6 @@ function checkForChanges() {
     return { changed: false };
   }
 
-  // Compare current hashes to stored hashes
   const changes = [];
   for (const file of WATCHED_FILES) {
     const filePath = path.join(cwd, file);
@@ -106,19 +103,11 @@ const LOCAL_SESSION_STATE = '.claude/session-state.json';
 
 function resetLocalSessionState() {
   try {
-    // Reset per-prompt flags at session start
-    // pendingEdit: cleared, must read spec before editing
-    // pendingIssue: cleared, must read plan skill before creating issues
-    // These are also cleared at each UserPromptSubmit by clear-pending.cjs
     const state = {
       sessionStart: new Date().toISOString()
-      // pendingEdit and pendingIssue intentionally not set
-      // Their absence means "must read spec first"
     };
     fs.writeFileSync(LOCAL_SESSION_STATE, JSON.stringify(state, null, 2));
-  } catch (e) {
-    // Ignore errors
-  }
+  } catch (e) {}
 }
 
 // Read hook input from stdin
@@ -130,11 +119,6 @@ process.stdin.on('end', () => {
     const data = JSON.parse(input);
     handleHook(data);
   } catch (e) {
-    // Still try to init even if parsing fails
-    try {
-      const brainPath = findWorkspaceBrain(process.cwd());
-      initSession(brainPath);
-    } catch (e2) {}
     process.exit(0);
   }
 });
@@ -143,15 +127,10 @@ function handleHook(data) {
   const { source } = data;
   const cwd = process.cwd();
 
-  // Find brain folder for this workspace
-  const brainPath = findWorkspaceBrain(cwd);
-
-  // Initialize session tracking in brain (global — always runs)
+  // Initialize session tracking
   if (source === 'startup' || source === 'clear') {
-    const sessionId = initSession(brainPath);
-
-    // Clean up old sessions (7+ days old)
-    cleanupOldSessions(brainPath);
+    initSession(cwd);
+    cleanupOldSessions(cwd);
   }
 
   // Project-specific work — only run inside a framework project
