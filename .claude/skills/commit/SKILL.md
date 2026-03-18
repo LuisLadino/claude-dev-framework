@@ -57,7 +57,41 @@ CHANGELOG.md: added entry
 README.md: still accurate
 ```
 
-### 4. Stage and Commit
+### 4. Update the GitHub Issue
+
+If this work addresses a GitHub issue, update it before committing. The issue is the persistent record of the design thinking journey. Conversation gets compacted; issue comments survive.
+
+**Find the issue number:**
+```bash
+git branch --show-current | grep -oE '[0-9]+' | head -1
+```
+
+**Review what's already documented** on the issue, then post comments for anything that happened during this session but isn't captured yet:
+
+| What happened | Comment format |
+|---------------|----------------|
+| Chose between options | `## Decision: [title]` with Context, Options, Chosen, Rationale, Trade-offs |
+| Learned something significant | `## Discovery: [what found]` with Source, Implication, Action |
+| Moved between phases | `## Phase: [FROM] → [TO]` with Completed, Moving to, Questions |
+| Went back to earlier phase | `## Iteration: [FROM] → [TO]` with Trigger, Discovery, Questions |
+
+```bash
+gh issue comment {number} --body "## Decision: ...
+
+**Context:** ...
+**Options considered:**
+1. ...
+
+**Chosen:** ...
+**Rationale:** ...
+**Trade-offs:** ..."
+```
+
+Full templates are in the plan skill under "Maintaining Issues During Work."
+
+**Skip this step** if: no linked issue, or the issue already reflects what happened.
+
+### 5. Stage and Commit
 
 ```bash
 git add path/to/files
@@ -68,13 +102,13 @@ Prefer specific files over `git add -A`.
 
 **Note:** `SKILL_ACTIVE=1` bypasses the enforce-skills hook. Only use within this skill.
 
-### 5. Push
+### 6. Push
 
 ```bash
 git push -u origin $(git branch --show-current)
 ```
 
-### 6. Create PR with Auto-merge
+### 7. Create PR with Auto-merge
 
 Extract issue number from branch name if present:
 
@@ -112,7 +146,7 @@ Addresses #X
 
 **Default to `Addresses`** - issues close when fixes are VERIFIED, not when code merges. Only use `Closes` when you've actually tested the fix works.
 
-### 7. Enable Auto-merge
+### 8. Enable Auto-merge
 
 ```bash
 gh pr merge --auto --squash --delete-branch
@@ -120,7 +154,7 @@ gh pr merge --auto --squash --delete-branch
 
 This queues the PR to merge automatically after CI checks pass.
 
-### 8. Done
+### 9. Done
 
 Show the PR URL. GitHub handles the rest:
 - CI runs checks
