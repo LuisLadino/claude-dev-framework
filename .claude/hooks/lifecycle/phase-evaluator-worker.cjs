@@ -20,7 +20,7 @@ const path = require('path');
 const PROJECT_DEFINITION_PATH = '.claude/specs/project-definition.yaml';
 const PHASE_EVAL_OUTPUT_PATH = '.claude/phase-evaluation.json';
 const PHASE_EVAL_HISTORY_PATH = '.claude/phase-evaluation-history.jsonl';
-const MODEL = 'haiku';
+const MODEL = 'sonnet';
 const ALLOWED_TOOLS = 'Read,Bash,Glob,Grep';
 
 // Read input from file (path passed as argv[2])

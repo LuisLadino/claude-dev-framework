@@ -138,16 +138,13 @@ ${currentBranch}
     commitInfo = '\n[Could not get commit info]\n';
   }
 
-  // Check for project definition
-  let projectPhase = '';
+  // Read full project definition (not just phase)
+  let projectDef = '';
   const projectDefPath = path.join(cwd, PROJECT_DEFINITION_PATH);
   if (fs.existsSync(projectDefPath)) {
     try {
       const yamlContent = fs.readFileSync(projectDefPath, 'utf8');
-      const phaseMatch = yamlContent.match(/current_phase:\s*(\w+)/);
-      if (phaseMatch) {
-        projectPhase = `\nCURRENT RECORDED PHASE: ${phaseMatch[1]}\n`;
-      }
+      projectDef = `\nPROJECT DEFINITION:\n${yamlContent}\n`;
     } catch (e) {
       // Ignore
     }
@@ -156,7 +153,7 @@ ${currentBranch}
   // Get open issues for context
   let openIssues = '';
   try {
-    openIssues = execSync('gh issue list --state open --limit 5 --json number,title 2>/dev/null || echo "[]"', {
+    openIssues = execSync('gh issue list --state open --limit 10 --json number,title,labels 2>/dev/null || echo "[]"', {
       encoding: 'utf8',
       cwd: cwd,
       timeout: 10000
@@ -170,13 +167,27 @@ ${currentBranch}
     openIssues = '';
   }
 
+  // Get recent evaluation history for trend detection
+  let evalHistory = '';
+  const historyPath = path.join(cwd, '.claude/phase-evaluation-history.jsonl');
+  if (fs.existsSync(historyPath)) {
+    try {
+      const lines = fs.readFileSync(historyPath, 'utf8').trim().split('\n');
+      const recent = lines.slice(-5); // Last 5 evaluations
+      evalHistory = `\nRECENT EVALUATIONS (for trend detection):\n${recent.join('\n')}\n`;
+    } catch (e) {
+      // Ignore
+    }
+  }
+
   // Build the prompt for claude -p
   const prompt = `You are the Phase Evaluator. A commit was just made. Evaluate the project and take action.
 
 WORKSPACE: ${cwd}
 ${commitInfo}
-${projectPhase}
+${projectDef}
 ${openIssues}
+${evalHistory}
 
 YOUR ROLE: Project-level strategic advisor. You:
 - Evaluate project health and rhythm at the macro level
@@ -188,12 +199,9 @@ YOUR ROLE: Project-level strategic advisor. You:
 INSTRUCTIONS:
 ${instructions}
 
-IMPORTANT: Do your research FIRST using the tools available to you:
-1. Read relevant files to understand context
-2. Search for patterns in the codebase (Grep/Glob)
-3. Check GitHub for related issues or discussions
+IMPORTANT: Use the context provided above as your primary source. You may also use tools to read additional files or check GitHub for more context if needed.
 
-THEN, after your research, output your findings as JSON.
+THEN output your findings as JSON.
 Your JSON output MUST be the LAST thing you output, wrapped in a markdown code fence:
 
 \`\`\`json

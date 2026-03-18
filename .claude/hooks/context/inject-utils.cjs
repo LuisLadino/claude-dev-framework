@@ -14,7 +14,11 @@ const PHASE_EVAL_PATH = '.claude/phase-evaluation.json';
 const sessionUtils = require('../lib/session-utils.cjs');
 
 /**
- * Load and consume phase evaluation from last commit
+ * Load phase evaluation from last commit
+ *
+ * Instead of consuming (deleting) on first read, we mark it as delivered.
+ * This way if the file arrives after the first prompt, it still gets
+ * picked up on the next prompt. The 10-minute expiry handles cleanup.
  */
 function loadAndConsumePhaseEvaluation() {
   const evalPath = path.join(process.cwd(), PHASE_EVAL_PATH);
@@ -26,6 +30,18 @@ function loadAndConsumePhaseEvaluation() {
     const content = fs.readFileSync(evalPath, 'utf8');
     const data = JSON.parse(content);
 
+    // Skip if already delivered
+    if (data.delivered) {
+      // Check expiry — clean up after 10 minutes
+      const timestamp = new Date(data.timestamp);
+      const now = new Date();
+      const ageMinutes = (now - timestamp) / 1000 / 60;
+      if (ageMinutes > 10) {
+        fs.unlinkSync(evalPath);
+      }
+      return null;
+    }
+
     // Check if it's recent (within last 10 minutes)
     const timestamp = new Date(data.timestamp);
     const now = new Date();
@@ -36,8 +52,10 @@ function loadAndConsumePhaseEvaluation() {
       return null;
     }
 
-    // Delete after reading (consume it)
-    fs.unlinkSync(evalPath);
+    // Mark as delivered instead of deleting
+    data.delivered = true;
+    fs.writeFileSync(evalPath, JSON.stringify(data, null, 2));
+
     return data.content;
   } catch {
     try { fs.unlinkSync(evalPath); } catch {}

@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Phase evaluator delivery** — Fixed race condition where evaluation output was consumed (deleted) before Claude could read it. Now marks as `delivered` instead of deleting. Also pre-gathers full project definition, evaluation history, and expanded issue list in spawn hook so sonnet has richer context upfront.
+
 ### Changed
 
 - **Context pipeline overhaul** — Full audit and rewrite of context injection pipeline:
