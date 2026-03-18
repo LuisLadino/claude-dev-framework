@@ -92,10 +92,14 @@ Flag from GitHub and git state:
 | Gap Type | Check | Severity |
 |----------|-------|----------|
 | Open blockers | Issues labeled "blocker" | high |
+| Overlapping issues | Two issues with similar scope or title | high |
 | Stale milestones | Target date passed, still open | medium |
 | Stale issues | No activity in 30+ days | low |
 | Unreviewed PRs | Open PRs with no review | medium |
 | Divergent branches | Branches far ahead of main | low |
+| Issue count high | More than 20 open issues | medium |
+
+When flagging overlapping issues, name both issue numbers and suggest which to merge or close.
 
 ### Step 6: Determine Lens
 
