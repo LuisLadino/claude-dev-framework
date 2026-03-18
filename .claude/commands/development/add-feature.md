@@ -1,5 +1,5 @@
 ---
-description: Plan a complex feature before building. Creates PRD, breaks into tasks. Use when feature needs multiple components or design decisions.
+description: Plan a complex outcome before executing. Breaks into tasks, identifies decisions. Use when work needs multiple components or design decisions.
 ---
 
 # /add-feature - Plan a Complex Feature

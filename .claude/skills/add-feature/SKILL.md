@@ -1,32 +1,32 @@
 ---
 name: add-feature
 description: >
-  Plan a complex feature before building. Use when: the user says "plan",
+  Plan a complex outcome before working on it. Use when: the user says "plan",
   "design", "break down", "complex feature", "needs planning", "figure out
   how to build", "architect", or describes something that needs multiple
-  components, design decisions, or would benefit from thinking before coding.
+  components, design decisions, or would benefit from thinking before executing.
 allowed-tools: Read, Grep, Glob, Bash
 ---
 
-# Add Feature (Planning)
+# Plan Before Executing
 
-You're planning a feature before building it. This is a PLANNING step, not execution.
+You're planning an outcome before working on it. This is a PLANNING step, not execution.
 
-Use this when a feature is complex enough that jumping straight to code would be a mistake.
+Use this when work is complex enough that jumping straight to execution would be a mistake.
 
 ---
 
 ## When to Use This vs Start Task
 
 **Use add-feature when:**
-- Multiple components needed
+- Multiple pieces needed
 - Design decisions to make
 - Unclear how pieces fit together
 - Would benefit from breaking down first
 
 **Use start-task when:**
-- Clear what needs to be built
-- Single component or well-defined change
+- Clear what needs to be done
+- Single well-defined change
 - Requirements are understood
 
 ---
@@ -35,7 +35,7 @@ Use this when a feature is complex enough that jumping straight to code would be
 
 ### 1. Understand What They Want
 
-Ask: "Describe the feature you want to build."
+Ask: "Describe what you want to accomplish."
 
 Listen for:
 - What problem it solves
@@ -84,7 +84,7 @@ Create one issue per logical piece, or one parent issue with a checklist.
 
 Once the plan is approved:
 
-"Ready to start building? Pick which piece to work on first."
+"Ready to start? Pick which piece to work on first."
 
 Then follow the start-task workflow for each piece.
 
@@ -93,13 +93,13 @@ Then follow the start-task workflow for each piece.
 ## Output
 
 This skill produces:
-- A clear breakdown of what needs to be built
+- A clear breakdown of what needs to be done
 - Optionally: GitHub issues for tracking
-- Understanding of the approach before coding starts
+- Understanding of the approach before execution starts
 
 It does NOT produce:
-- Actual code
+- Actual implementation
 - PRD documents (unless specifically requested)
 - Task files in `.claude/tasks/`
 
-Keep it simple. Plan, then build.
+Keep it simple. Plan, then execute.

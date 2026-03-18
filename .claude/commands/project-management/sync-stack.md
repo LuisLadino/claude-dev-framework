@@ -1,5 +1,5 @@
 ---
-description: Wire project together, verify setup, generate coding specs. Handles the HOW after /init-project defines the WHAT.
+description: Wire project together, verify setup, generate project specs. Handles the HOW after /init-project defines the WHAT.
 ---
 
 # /sync-stack

@@ -1,5 +1,5 @@
 ---
-description: Define product requirements before coding. Creates project-brief, architecture decisions, design system. For complex projects needing upfront planning.
+description: Define product requirements before execution. Creates project-brief, architecture decisions, design system. For complex projects needing upfront planning.
 ---
 
 # /init-project

@@ -1,5 +1,5 @@
 ---
-description: Start any coding task. Loads stack config and specs, gathers requirements interactively, then executes.
+description: Start any task. Loads project config and specs, gathers requirements interactively, then executes.
 ---
 
 # /start-task - Interactive Task Builder

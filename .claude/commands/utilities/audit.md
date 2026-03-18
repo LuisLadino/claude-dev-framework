@@ -1,5 +1,5 @@
 ---
-description: Deep code review using parallel agents. Security, performance, tests, architecture reviewed simultaneously.
+description: Deep review using parallel agents. Security, performance, tests, architecture reviewed simultaneously.
 ---
 
 # /audit - Deep Parallel Code Review
