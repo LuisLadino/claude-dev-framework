@@ -44,7 +44,7 @@ The `system` field. Instructions that shape Claude's behavior.
 
 **What goes here:**
 - Anthropic's built-in Claude Code instructions (~110 conditional fragments)
-- Your `--append-system-prompt` content (system-rules.md)
+- Your `--append-system-prompt` content (system-prompt.md)
 - Tool policies and behavioral rules
 
 **Key fact:** This is the ONLY part that has "authority" over Claude's behavior. Everything else is just context Claude reads.
@@ -89,7 +89,7 @@ flowchart TB
 
         subgraph System["system (string)"]
             S1["Claude Code base prompt<br/>~110 conditional fragments"]
-            S2["--append-system-prompt<br/>system-rules.md"]
+            S2["--append-system-prompt<br/>system-prompt.md"]
         end
 
         subgraph Messages["messages (array)"]
@@ -130,7 +130,7 @@ sequenceDiagram
 
     Note over CC: Build system prompt
     CC->>CC: Assemble 110+ fragments
-    CC->>CC: Append system-rules.md
+    CC->>CC: Append system-prompt.md
 
     Note over CC: Fire SessionStart hooks
     CC->>Hooks: session-context.js
@@ -165,7 +165,7 @@ flowchart TD
     subgraph Invisible["INVISIBLE TO HOOKS (System Prompt)"]
         SP1["Claude Code base instructions"]
         SP2["Tool usage policies"]
-        SP3["Your system-rules.md<br/>(methodology, lenses, format)"]
+        SP3["Your system-prompt.md<br/>(methodology, lenses, format)"]
     end
 
     subgraph Visible["VISIBLE (User Messages)"]
@@ -338,7 +338,7 @@ flowchart LR
 | 1 | Load managed settings | MDM/registry | Config |
 | 2 | Load user settings | ~/.claude/settings.json | Config |
 | 3 | Load project settings | .claude/settings.json | Config |
-| 4 | Build system prompt | 110+ fragments + system-rules.md | System field |
+| 4 | Build system prompt | 110+ fragments + system-prompt.md | System field |
 | 5 | Fire SessionStart hooks | Your hooks run in parallel | additionalContext |
 | 6 | Load CLAUDE.md files | Walk up directory tree | User messages |
 | 7 | Load rules | .claude/rules/*.md | User messages |
@@ -363,7 +363,7 @@ flowchart LR
 ### 1. CLAUDE.md Has Less Authority Than You Think
 
 It's loaded as a user message, not system prompt. Claude reads it as context, not as enforced rules. If you want something enforced, it needs to be in:
-- The system prompt (system-rules.md)
+- The system prompt (system-prompt.md)
 - A hook that blocks actions (exit code 2)
 
 ### 2. Everything Is Text
@@ -389,7 +389,7 @@ When context gets too big (~75%), Claude Code summarizes older parts. Details ca
 | File | What It Does | When Loaded |
 |------|--------------|-------------|
 | `~/.claude/settings.json` | Hook configuration | Session start |
-| `~/.claude/system-rules.md` | Your methodology/rules | Session start (system prompt) |
+| `~/.claude/system-prompt.md` | Your methodology/rules | Session start (system prompt) |
 | `~/.gemini/antigravity/scripts/session-context.js` | Identity, learnings, handoff | Session start (hook) |
 | `CLAUDE.md` | Project context | Session start (user message) |
 | `.claude/CLAUDE.md` | Project rules | Session start (user message) |

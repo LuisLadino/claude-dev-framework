@@ -6,7 +6,7 @@ Tracking what stays, moves, or gets cut as we walk the pipeline in order.
 
 | Destination | Scope | How it arrives |
 |---|---|---|
-| `system-rules.md` | Universal — all projects, all contexts | System prompt via --append-system-prompt |
+| `system-prompt.md` | Universal — all projects, all contexts | System prompt via --append-system-prompt |
 | `.claude/CLAUDE.md` | All framework projects — synced from claude-dev-framework | Auto-loaded in user message |
 | Conditional injection | Specific situations only | Hook fires on trigger |
 | Deleted | Not needed | — |
@@ -16,19 +16,19 @@ Tracking what stays, moves, or gets cut as we walk the pipeline in order.
 ## Source 1-4: Claude Code native (tool defs, base instructions, auto memory, environment)
 **Status:** Can't control. No action.
 
-## Source 5: system-rules.md
+## Source 5: system-prompt.md
 **Status:** Draft v2 in progress at `.claude/docs/system-rules-v2-draft.md`
 
 | Content | Decision | Destination |
 |---|---|---|
-| Identity / who Luis is | KEEP — rewritten, passes "changes behavior" test | system-rules.md |
-| "Why this matters" + don't assume knowledge | KEEP — added back, calibrates teaching level | system-rules.md |
-| How to work with Luis | KEEP — from my-brain/CLAUDE.md | system-rules.md |
-| Response format (Lens/Refine/Phase/Teach) | KEEP — consolidated to one spec with `<example>` tag | system-rules.md |
-| 12 lenses with CPMAI folded in | KEEP — enriched with CPMAI domain questions | system-rules.md |
-| Design thinking rhythm | KEEP — expanded, now behavioral constraint not just reference | system-rules.md |
-| Non-negotiables | KEEP | system-rules.md |
-| Teaching mode | KEEP | system-rules.md |
+| Identity / who Luis is | KEEP — rewritten, passes "changes behavior" test | system-prompt.md |
+| "Why this matters" + don't assume knowledge | KEEP — added back, calibrates teaching level | system-prompt.md |
+| How to work with Luis | KEEP — from my-brain/CLAUDE.md | system-prompt.md |
+| Response format (Lens/Refine/Phase/Teach) | KEEP — consolidated to one spec with `<example>` tag | system-prompt.md |
+| 12 lenses with CPMAI folded in | KEEP — enriched with CPMAI domain questions | system-prompt.md |
+| Design thinking rhythm | KEEP — expanded, now behavioral constraint not just reference | system-prompt.md |
+| Non-negotiables | KEEP | system-prompt.md |
+| Teaching mode | KEEP | system-prompt.md |
 | Task management (TaskCreate/TaskUpdate specifics) | CUT — needs separate design work | TBD |
 | Issue scope rules (when to create vs continue GitHub issues) | MOVE | .claude/CLAUDE.md |
 | Agents as Strategic Advisors section | CUT — orphaned, agents need redesign | Deleted |
@@ -43,14 +43,14 @@ Tracking what stays, moves, or gets cut as we walk the pipeline in order.
 
 | Content | Decision | Destination |
 |---|---|---|
-| Identity (name, background, values, approach) | STOP INJECTING — now in system-rules.md permanently | system-rules.md |
-| "How to work with Luis" | STOP INJECTING — now in system-rules.md | system-rules.md |
-| Projects list | STOP INJECTING — now in system-rules.md | system-rules.md |
+| Identity (name, background, values, approach) | STOP INJECTING — now in system-prompt.md permanently | system-prompt.md |
+| "How to work with Luis" | STOP INJECTING — now in system-prompt.md | system-prompt.md |
+| Projects list | STOP INJECTING — now in system-prompt.md | system-prompt.md |
 | System architecture description | STOP INJECTING — project-specific, goes in CLAUDE.md or project-definition | .claude/CLAUDE.md |
 | Project-definition.yaml content | INJECT — session-context.js reads `.claude/specs/project-definition.yaml` from workspace and injects the content at session start | session-context.js |
 | Handoff.md | INJECT — critical for session continuity | session-context.js |
 | Brain path | INJECT — Claude needs to know where to write | session-context.js |
-| Learnings (staging area) | INJECT — but small, entries get promoted to system-rules.md then removed | session-context.js |
+| Learnings (staging area) | INJECT — but small, entries get promoted to system-prompt.md then removed | session-context.js |
 | Artifacts list with triggers | STOP INJECTING — not providing real value | stays on disk |
 | Previous session state (accomplished, open_issues) | STOP INJECTING — garbled data, not useful | stays on disk for observability |
 | Framework issues | STOP INJECTING — use GitHub issues directly | stays on disk |
@@ -59,7 +59,7 @@ Tracking what stays, moves, or gets cut as we walk the pipeline in order.
 **Learnings promotion pipeline:**
 1. Observation captured in learnings.md during session
 2. Over time, evaluate if it's a confirmed pattern
-3. If confirmed → add a line to system-rules.md addressing it permanently
+3. If confirmed → add a line to system-prompt.md addressing it permanently
 4. Remove from learnings.md (keeps it small)
 
 ## Source 7: session-init.cjs (SessionStart hook)
@@ -96,10 +96,10 @@ This file is specific to claude-dev-framework only. It does NOT go to other proj
 | Hooks | KEEP | .claude/CLAUDE.md |
 | Skills list | CUT — already auto-loaded by Claude Code | Deleted |
 | GitHub issues as design thinking records | ADD — rich qualitative documentation requirement | .claude/CLAUDE.md |
-| Issue scope rules (when to create new vs continue) | ADD — moved from system-rules.md | .claude/CLAUDE.md |
+| Issue scope rules (when to create new vs continue) | ADD — moved from system-prompt.md | .claude/CLAUDE.md |
 | Voice/writing rules for content | ADD — from voice-profile.md, always available | .claude/CLAUDE.md |
 
-**Also added to system-rules.md draft:**
+**Also added to system-prompt.md draft:**
 - Encoding rule for discussing own XML tags (use «» not <>)
 
 ## Source 11: Skills list (auto-loaded)
@@ -110,7 +110,7 @@ Claude Code auto-loads this. Can't control. Skills section in CLAUDE.md is redun
 ## Source 12: inject-context.cjs + 7 modules (per-prompt)
 **Status:** Not yet audited
 - methodology.cjs — CPMAI domains folded into lenses. Career context to evaluate.
-- route-commands.cjs — design thinking fallback content redundant with system-rules.md
+- route-commands.cjs — design thinking fallback content redundant with system-prompt.md
 - voice-identity.cjs — voice rules moving to CLAUDE.md, injection may become unnecessary
 - capture.cjs — TBD
 - reasoning-checkpoints.cjs — TBD

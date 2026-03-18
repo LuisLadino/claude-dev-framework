@@ -13,7 +13,7 @@ Claude Code sends input to the Claude API in this structure:
 │ SYSTEM MESSAGE                                          │
 │    - Tool definitions (JSON Schema in XML tags)         │
 │    - Base behavioral instructions (Markdown)            │
-│    - Your appended content (system-rules.md)            │
+│    - Your appended content (system-prompt.md)            │
 ├─────────────────────────────────────────────────────────┤
 │ CONVERSATION (array of messages)                        │
 │    - Previous user messages                             │
@@ -95,7 +95,7 @@ You are Claude Code, Anthropic's official CLI for Claude.
 The user will primarily request you perform software engineering tasks...
 ```
 
-**Your `system-rules.md` gets appended here** via `--append-system-prompt`. It becomes part of the system message, not wrapped in any tags.
+**Your `system-prompt.md` gets appended here** via `--append-system-prompt`. It becomes part of the system message, not wrapped in any tags.
 
 ---
 
@@ -225,7 +225,7 @@ Bad: "fixed stuff"
 
 ## How to Write Instructions
 
-### For system-rules.md
+### For system-prompt.md
 
 Plain Markdown. Appended directly to system message (no wrapper).
 
@@ -266,11 +266,11 @@ Current task: ${task.description}`);
 
 | Content | Put In | Arrives As |
 |---------|--------|------------|
-| High-priority rules | system-rules.md | Raw text in system message |
+| High-priority rules | system-prompt.md | Raw text in system message |
 | Project-specific rules | CLAUDE.md | `<system-reminder>` in user message |
 | Session context | Hook stdout | `<system-reminder>` in user message |
 
-**Practical implication:** If something is critical and you want it in the system prompt itself, put it in `system-rules.md`. CLAUDE.md content arrives in the user message.
+**Practical implication:** If something is critical and you want it in the system prompt itself, put it in `system-prompt.md`. CLAUDE.md content arrives in the user message.
 
 ---
 
@@ -307,7 +307,7 @@ Never skip steps the user explicitly asks for.
 ### Don't use custom terminology without explanation
 
 ```
-[ANTIGRAVITY SESSION CONTEXT]
+[SESSION CONTEXT]
 ```
 
 Claude doesn't know what "Antigravity" means. Either:
@@ -340,7 +340,7 @@ Clearer than paragraphs describing the format.
 
 ### Avoid redundancy
 
-Don't repeat the same instruction in system-rules.md, CLAUDE.md, and hook output.
+Don't repeat the same instruction in system-prompt.md, CLAUDE.md, and hook output.
 
 ---
 

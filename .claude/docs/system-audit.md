@@ -1,5 +1,7 @@
 # System Audit: Context Injection & Data Flow
 
+> **OUTDATED:** This document predates the pipeline overhaul (2026-03-17). Key changes: system-rules.md renamed to system-prompt.md, identity moved from my-brain to system-prompt.md, session-context.js no longer reads my-brain, voice rules moved to CLAUDE.md, methodology.cjs and route-commands.cjs removed. See `pipeline-decisions.md` for current state.
+
 **Purpose:** Map what files exist, when they're read, when they're written, and what triggers what.
 
 **Last updated:** 2026-03-15
@@ -172,7 +174,7 @@ See Hook Registry above for full details.
 |------|---------|------------|---------|
 | `~/Repositories/Personal/my-brain/CLAUDE.md` | `session-context.js` | Manual | Luis's identity |
 | `~/Repositories/Personal/my-brain/personal/methodology.md` | `post-compact-recovery.js` | Manual | Operating methodology |
-| `~/.claude/system-rules.md` | Claude Code (via `--append-system-prompt`) | Manual | System prompt layer |
+| `~/.claude/system-prompt.md` | Claude Code (via `--append-system-prompt`) | Manual | System prompt layer |
 
 ---
 

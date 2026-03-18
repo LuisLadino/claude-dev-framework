@@ -1,5 +1,7 @@
 # System Architecture Diagram
 
+> **OUTDATED:** This document predates the pipeline overhaul (2026-03-17). Diagrams reference my-brain/CLAUDE.md (dependency removed), system-rules.md (renamed to system-prompt.md), and removed modules (methodology.cjs, route-commands.cjs). See `pipeline-decisions.md` for current architecture decisions.
+
 **When to read this:** Before modifying hooks, scripts, or data flow.
 **When to update:** After adding/removing hooks, changing what files are read/written, or modifying lifecycle.
 

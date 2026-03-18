@@ -1,5 +1,7 @@
 # Context Injection Audit
 
+> **OUTDATED:** This audit predates the pipeline overhaul (2026-03-17). See `pipeline-decisions.md` for the current audit and decisions. Key changes: identity moved to system-prompt.md, my-brain dependency removed, methodology.cjs and route-commands.cjs removed, voice rules moved to CLAUDE.md.
+
 **Issue:** #19 - Audit and document full context injection pipeline
 **Created:** 2026-03-15
 **Phase:** UNDERSTAND → DEFINE
@@ -24,7 +26,7 @@ Claude receives context from **8 distinct injection points** across the session 
 SESSION START
 │
 ├─ [1] System Prompt Layer (always present)
-│   └─ ~/.claude/system-rules.md (250 lines)
+│   └─ ~/.claude/system-prompt.md (250 lines)
 │   └─ Survives compaction: YES (in system prompt)
 │
 ├─ [2] CLAUDE.md Files (always loaded by Claude Code)
@@ -78,11 +80,11 @@ BEFORE COMPACTION
 
 | Context | Source File | Injected By | When | Survives Compaction |
 |---------|-------------|-------------|------|---------------------|
-| Core methodology | `~/.claude/system-rules.md` | `--append-system-prompt` | Always | YES |
-| Design thinking phases | `~/.claude/system-rules.md` | `--append-system-prompt` | Always | YES |
-| Lenses (PM, UX, etc.) | `~/.claude/system-rules.md` | `--append-system-prompt` | Always | YES |
-| Response format (Lens/Refine/Phase/Teach) | `~/.claude/system-rules.md` | `--append-system-prompt` | Always | YES |
-| Non-negotiables | `~/.claude/system-rules.md` | `--append-system-prompt` | Always | YES |
+| Core methodology | `~/.claude/system-prompt.md` | `--append-system-prompt` | Always | YES |
+| Design thinking phases | `~/.claude/system-prompt.md` | `--append-system-prompt` | Always | YES |
+| Lenses (PM, UX, etc.) | `~/.claude/system-prompt.md` | `--append-system-prompt` | Always | YES |
+| Response format (Lens/Refine/Phase/Teach) | `~/.claude/system-prompt.md` | `--append-system-prompt` | Always | YES |
+| Non-negotiables | `~/.claude/system-prompt.md` | `--append-system-prompt` | Always | YES |
 | Project architecture | `CLAUDE.md` | Claude Code native | Always | YES |
 | Framework overview | `.claude/CLAUDE.md` | Claude Code native | Always | YES |
 | Luis's identity | `my-brain/CLAUDE.md` | `session-context.js` | SessionStart | NO |
@@ -124,7 +126,7 @@ BEFORE COMPACTION
 
 | Source | Lines | Est. Tokens |
 |--------|-------|-------------|
-| system-rules.md | 250 | ~2,000 |
+| system-prompt.md | 250 | ~2,000 |
 | CLAUDE.md (root) | 326 | ~2,600 |
 | .claude/CLAUDE.md | 101 | ~800 |
 | session-context.js output | ~100 | ~800 |
@@ -174,7 +176,7 @@ After 20 prompts:   ~6,200 + (20 × 600) = ~18,200 tokens
 
 | Context | Why |
 |---------|-----|
-| system-rules.md | In system prompt, not in conversation |
+| system-prompt.md | In system prompt, not in conversation |
 | CLAUDE.md files | Auto-loaded by Claude Code after compaction |
 
 ### Survives via Re-Injection (SessionStart)
@@ -210,7 +212,7 @@ After 20 prompts:   ~6,200 + (20 × 600) = ~18,200 tokens
 ### Issue: Methodology Loaded Multiple Times
 
 The design thinking methodology appears in:
-1. `system-rules.md` (system prompt) - 250 lines
+1. `system-prompt.md` (system prompt) - 250 lines
 2. `session-context.js` output - via learnings
 3. `inject-context.cjs` - methodology enforcement reminders
 4. `/design-thinking` skill content - when auto-loaded
@@ -234,7 +236,7 @@ const interactionReminder = `[MANDATORY FRAMING]
 **Problem:**
 - This is ~240 tokens per prompt, regardless of need
 - The Stop hooks (check-teaching-format.cjs, enforce-framing.cjs) already enforce this
-- Redundant with system-rules.md methodology
+- Redundant with system-prompt.md methodology
 
 **Recommendation:** Remove the mandatory framing reminder from inject-context.cjs. The Stop hooks enforce behavior; the system prompt defines methodology.
 
@@ -325,7 +327,7 @@ This single file handles:
                                     ▼
 ┌─────────────────────────────────────────────────────────────────────────┐
 │ SYSTEM PROMPT LAYER (Highest Primacy)                                   │
-│ ~/.claude/system-rules.md                                               │
+│ ~/.claude/system-prompt.md                                               │
 │ - Methodology, lenses, teaching mode, non-negotiables                   │
 │ - Response format (Lens/Refine/Phase/Teach)                            │
 │ Tokens: ~2,000 | Survives: YES                                         │
