@@ -26,7 +26,7 @@ lifecycle:
     - session-context.js         # Global: loads project-definition.yaml
     - session-init.cjs           # Framework: creates session tracking, detects config changes
     - spawn-context-agent.cjs    # Framework: injects instruction to spawn context-agent
-    - post-compact-recovery.js   # Global: restores handoff (only after compaction)
+    # post-compact-recovery.js — REMOVED (Claude Code natively reloads system-prompt, CLAUDE.md, memory/)
 
   UserPromptSubmit:
     # Fires on EVERY user message, before Claude processes it
@@ -65,11 +65,8 @@ lifecycle:
     - verify-before-stop.cjs     # Blocks if debug statements in modified files
     # DISABLED: check-teaching-format.cjs, enforce-framing.cjs (#14)
 
-  PreCompact:
-    - pre-compact.js             # Global: saves handoff to tracking/
-
-  SessionEnd:
-    - session-end.cjs            # Finalizes session tracking (unreliable)
+  # PreCompact — REMOVED (pre-compact.js deleted, Claude Code handles compaction natively)
+  # SessionEnd — REMOVED (session-end.cjs deleted, event is unreliable)
 
   SubagentStart_SubagentStop:
     - subagent-tracker.cjs       # Tracks agent spawns/completions
@@ -89,7 +86,7 @@ shared_resources:
       - tool-failure.cjs
       - track-changes.cjs
       - command-log.cjs
-      - session-end.cjs
+      # session-end.cjs — REMOVED
       - subagent-tracker.cjs
       - awareness.cjs
       - verify-before-stop.cjs
@@ -280,11 +277,7 @@ components:
     trigger: PostToolUse (Bash)
     outputs: "stderr message suggesting /sync-stack"
 
-  hooks/tracking/session-end.cjs:
-    purpose: Finalizes session with duration and summary
-    trigger: SessionEnd
-    writes: "sessionEnd, durationMinutes, summary"
-    known_issue: "Unreliable — doesn't fire on terminal close"
+  # hooks/tracking/session-end.cjs — REMOVED (SessionEnd unreliable, event often doesn't fire)
 
   hooks/tracking/subagent-tracker.cjs:
     purpose: Tracks agent spawns/completions with duration
@@ -338,17 +331,8 @@ components:
     reads: [project-definition.yaml]
     outputs: "[SESSION CONTEXT] block with project definition"
 
-  scripts/pre-compact.js:
-    path: ~/.gemini/antigravity/scripts/pre-compact.js
-    trigger: PreCompact
-    reads: [transcript, "tracking/{session-id}.json"]
-    writes: "tracking/pre-compact-handoff.md"
-
-  scripts/post-compact-recovery.js:
-    path: ~/.gemini/antigravity/scripts/post-compact-recovery.js
-    trigger: SessionStart (only source="compact")
-    reads: ["tracking/pre-compact-handoff.md", learnings.md]
-    outputs: "[POST-COMPACT RECOVERY] block"
+  # scripts/pre-compact.js — REMOVED (Claude Code handles compaction natively + memory/ persists)
+  # scripts/post-compact-recovery.js — REMOVED (same reason, session-context.js reloads project definition)
 
   # ---- COMMANDS ----
 
@@ -471,7 +455,7 @@ data_stores:
     "tracking/{session-id}.json":
       purpose: Complete session telemetry
       written_by: [all tracking hooks]
-      read_by: [awareness, verify-before-stop, pre-compact, daemon]
+      read_by: [awareness, verify-before-stop]
       cleanup: "session-init deletes files > 7 days old"
 
     "memory/MEMORY.md":

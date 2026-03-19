@@ -14,7 +14,6 @@ hooks/
 │   ├── track-changes.cjs     # Log file modifications
 │   ├── command-log.cjs       # Log bash commands
 │   ├── detect-pivot.cjs      # Detect dependency changes
-│   ├── session-end.cjs       # Final session cleanup
 │   ├── subagent-tracker.cjs  # Track subagent spawn/finish
 │   └── awareness.cjs         # Detect when /analyze is needed
 ├── quality/             # Enforce standards
@@ -40,7 +39,6 @@ All tracking data lives in Claude Code's native per-project directory:
 ├── tracking/        # Session tracking files (our hooks write here)
 │   ├── {session-id}.json   # Per-session tracking data
 │   ├── .active-session     # Current session marker
-│   └── pre-compact-handoff.md  # Auto-captured context before compaction
 ├── overview.txt     # Daemon-generated synthesis of tracking data
 └── hook-errors.log  # Debug log for hook failures
 ```
@@ -59,7 +57,6 @@ The tracking system captures everything that happens for debugging and verificat
 | Bash commands | command-log.cjs | `commands[]` |
 | Context injections | inject-context.cjs | `injections[]` |
 | Subagents | subagent-tracker.cjs | `subagents[]` |
-| Session end | session-end.cjs | `summary{}` |
 | System health | awareness.cjs | prompts for /analyze |
 
 **To verify the system is working:**
@@ -117,16 +114,6 @@ Note: PostToolUse only fires for successful commands. Failed commands go to tool
 
 Triggers on `npm install`, `yarn add`, `pnpm add`, `bun add`.
 Notifies: "Dependencies changed. Consider running /sync-stack."
-
-#### session-end.cjs
-**Event:** SessionEnd
-**Purpose:** Final cleanup when session terminates
-
-Records:
-- Session duration
-- Summary of what happened (files modified, tools used, failures)
-
-Note: SessionEnd is unreliable (doesn't fire on terminal close).
 
 #### subagent-tracker.cjs
 **Event:** SubagentStart, SubagentStop

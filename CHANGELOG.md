@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **add-feature skill + command** — Planning work split between `/define` and `/ideate`.
 - **route-commands.cjs** — Dead code (379 lines). Opus 4.6 handles skill routing natively via system-reminder.
 - **TaskCreate/TaskUpdate references** — Removed from all skills and inject-context.cjs. Phase mindset remains without tool dependency.
+- **pre-compact.js + post-compact-recovery.js** — Removed. Claude Code natively reloads system-prompt.md, CLAUDE.md, and memory/ after compaction. session-context.js reloads project definition. No unique value from these scripts.
+- **session-end.cjs** — Removed. SessionEnd event is unreliable (doesn't fire on terminal close). Use /handoff for session context persistence.
 
 ### Changed
 

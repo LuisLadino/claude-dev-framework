@@ -34,7 +34,7 @@ const { stdout, exitCode } = tool_response;
 SessionEnd hook → save important state
 ```
 
-**Fix:** Use string patterns. SessionEnd is unreliable (doesn't fire on terminal close). Use PreCompact for state saving.
+**Fix:** Use string patterns. SessionEnd is unreliable (doesn't fire on terminal close) — removed from framework. Use memory/ and /handoff for state persistence.
 
 ### Inventing Configuration Options
 ```yaml

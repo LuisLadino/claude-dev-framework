@@ -190,12 +190,6 @@ PostToolUse ─► tool-tracker.cjs logs ALL tool calls
            ─► command-log.cjs logs bash commands
      │
      ▼
-PreCompact ─► pre-compact.js saves handoff to tracking/
-     │
-     ▼
-SessionEnd ─► session-end.cjs writes summary (often doesn't fire)
-     │
-     ▼
 Background ─► daemon.js watches tracking/, generates overview.txt
 ```
 
@@ -209,7 +203,6 @@ Background ─► daemon.js watches tracking/, generates overview.txt
 | `tool-tracker.cjs` | Log all tool calls | Is data structure useful? |
 | `enforce-specs.cjs` | DENY code edits until specs read | Is it blocking appropriately? |
 | `session-context.js` | Load project definition, learnings at start | Is the right context loading? |
-| `pre-compact.js` | Save handoff before compaction | Is it capturing what matters? |
 | `daemon.js` | Synthesize tracking data | Is overview.txt useful? |
 
 ## Files to Read
@@ -222,7 +215,6 @@ Background ─► daemon.js watches tracking/, generates overview.txt
 │   └── *.md               # Individual memory files
 ├── tracking/              # Per-session tracking files
 │   ├── {session-id}.json  # Hook-captured data
-│   └── pre-compact-handoff.md  # Auto-captured before compaction
 ├── overview.txt           # Daemon-generated synthesis
 ├── hook-errors.log        # Debug log
 └── sessions-index.json    # Claude Code native session index
@@ -247,10 +239,8 @@ Background ─► daemon.js watches tracking/, generates overview.txt
 ### Global Scripts
 ```
 ~/.gemini/antigravity/scripts/
-├── session-context.js      # SessionStart: loads project definition, learnings
-├── pre-compact.js          # PreCompact: saves handoff to tracking/
-├── daemon.js               # Background: synthesizes tracking data into overview.txt
-└── post-compact-recovery.js # After compact: restores handoff + learnings
+├── session-context.js      # SessionStart: loads project definition
+└── daemon.js               # Background: synthesizes tracking data into overview.txt
 ```
 
 ### Configuration
