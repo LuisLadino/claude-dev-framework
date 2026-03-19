@@ -207,7 +207,7 @@ After compaction:
   messages: [summary of older turns (~5k tokens)] + [recent turns kept intact]
 ```
 
-Details can be lost. Your PreCompact hook (`pre-compact.js`) saves state to brain files before this happens.
+Details can be lost. Claude Code natively reloads system-prompt.md, CLAUDE.md, and memory/ after compaction. Use /handoff before long breaks to capture richer context.
 
 ---
 

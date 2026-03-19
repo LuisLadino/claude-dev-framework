@@ -17,7 +17,7 @@ Tracking what stays, moves, or gets cut as we walk the pipeline in order.
 **Status:** Can't control. No action.
 
 ## Source 5: system-prompt.md
-**Status:** Draft v2 in progress at `.claude/docs/system-rules-v2-draft.md`
+**Status:** Live at `~/.claude/system-prompt.md`
 
 | Content | Decision | Destination |
 |---|---|---|

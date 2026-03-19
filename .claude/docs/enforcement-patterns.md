@@ -32,7 +32,7 @@ Claude doesn't reliably follow instructions. Soft enforcement (reminders, sugges
 | `enforce-skills.cjs` | `git commit` | `SKILL_ACTIVE=1` in command |
 | `block-dangerous.cjs` | `rm -rf /`, force push | None (no bypass) |
 
-**Constraint this solves:** Skills undertrigger ~80% of the time. Blocking the raw action forces skill invocation.
+**Constraint this solves:** Critical workflows (like commit) need guaranteed skill invocation. Blocking the raw action forces it.
 
 ---
 
@@ -148,47 +148,8 @@ Update this file with the new pattern.
 | Use commit skill | Marker-based | `enforce-skills.cjs` | Skills undertrigger 80% |
 | Read plan before issues | State-based | `enforce-plan.cjs` | Issues need proper context |
 | Block dangerous commands | Marker-based (no bypass) | `block-dangerous.cjs` | Safety |
-| Teaching format in responses | Marker-based | `check-teaching-format.cjs` | Claude ignores format instructions |
-| Task tracking for tool use | Marker-based | `enforce-framing.cjs` | Claude ignores task reminders |
 
-### Task Tracking Enforcement
-
-**Type:** Marker-based (checks transcript for TaskCreate/TaskUpdate at Stop)
-**Gate:** `enforce-framing.cjs`
-**Event:** Stop
-**Constraint:** Claude ignores task tracker reminders, does work without tracking decisions
-
-**Logic:**
-- Checks if response included tool use (any tool = changes = decisions)
-- Checks if TaskCreate/TaskUpdate was also used
-- If tool use without task usage → EXIT 2 (block)
-
-**Why any tool use:** Tool use means changes are being made. Changes mean decisions are being made. Decisions need to be tracked in design thinking phases tied to GitHub Issues.
-
-**Exit codes:**
-- EXIT 0 if task usage present OR no tool use
-- EXIT 2 if tool use without task usage (blocks response)
-
----
-
-### Teaching Format Enforcement
-
-**Type:** Marker-based (checks response content at Stop)
-**Gate:** `check-teaching-format.cjs`
-**Event:** Stop
-**Constraint:** Claude doesn't reliably follow the Lens/Refine/Phase/Teach format
-
-**Required markers:**
-- `**Lens:**`
-- `**Refine:**`
-- `**Phase:**`
-- `**Teach:**`
-
-**No escape hatches.** Every response needs the format. The format keeps Claude grounded in design thinking framing at all times - there are no "trivial" responses when we're always working on something.
-
-**Exit codes:**
-- EXIT 0 if all markers present
-- EXIT 2 if any marker missing (blocks response)
+Note: `check-teaching-format.cjs` and `enforce-framing.cjs` were removed. Format enforcement is now handled by system-prompt.md (primacy effect) + inject-context.cjs per-prompt reminder (recency effect). Phase tracking is embedded in the phase skills (/research, /define, /ideate, /build, /test), not enforced via TaskCreate/TaskUpdate gates.
 
 ---
 
