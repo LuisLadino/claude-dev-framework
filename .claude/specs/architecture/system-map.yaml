@@ -218,9 +218,7 @@ components:
 
   # ---- UNUSED CONTEXT MODULES ----
 
-  hooks/context/methodology.cjs:
-    status: UNUSED — CPMAI folded into system-prompt.md lenses
-
+  # hooks/context/methodology.cjs — REMOVED (CPMAI folded into system-prompt.md lenses)
   # hooks/context/route-commands.cjs — REMOVED (Opus 4.6 handles skill routing natively)
 
   # ---- SAFETY HOOKS ----
@@ -291,8 +289,9 @@ components:
     threshold: "failures >= 5 (30-min cooldown)"
 
   hooks/tracking/capture-corrections.cjs:
-    status: NOT REGISTERED in settings.json
-    purpose: Available but not wired — detects user correction patterns
+    purpose: Detects user corrections and prompts for feedback memory capture
+    trigger: UserPromptSubmit
+    outputs: "[CORRECTION DETECTED] reminder to save as feedback memory"
 
   # ---- LIFECYCLE HOOKS ----
 
@@ -302,11 +301,9 @@ components:
     reads: ".claude/last-evaluated-commit, git log"
     outputs: "Plain text instruction to spawn via Agent tool"
 
-  hooks/lifecycle/phase-evaluator-worker.cjs:
-    purpose: Background worker for phase evaluation via claude -p
-    status: "Possibly dead code — phase evaluator rewritten to Agent tool (commit 13fb4a7). Verify before modifying."
-    reads: [project-definition.yaml, git history]
-    writes: [phase-evaluation.json, phase-evaluation-history.jsonl, GitHub issues]
+  # hooks/lifecycle/phase-evaluator-worker.cjs — REMOVED (replaced by Agent tool spawning)
+  # hooks/quality/check-teaching-format.cjs — REMOVED (system prompt handles format enforcement)
+  # hooks/test/test-agent-spawn.cjs — REMOVED (test artifact)
 
   # ---- QUALITY HOOKS ----
 

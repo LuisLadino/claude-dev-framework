@@ -12,8 +12,6 @@ Run this command in a **split terminal pane** while working in another session. 
 
 **Apply design thinking to iterate on the framework.**
 
-This is how Luis thinks. It's how you should think too.
-
 ### The Design Thinking Cycle (your operating system)
 
 1. **Understand** - What's actually happening? Read the data. What are the constraints?
@@ -27,7 +25,7 @@ This isn't linear. You move between phases as you learn.
 
 ### Two Layers to Analyze
 
-1. **Technical** - Is the system working? Hooks firing, data flowing, patterns accurate?
+1. **Technical** - Is the system working? Hooks firing, data flowing, skills triggering?
 2. **Qualitative** - Is it effective? Goals aligned, teaching landing, right work happening?
 
 Technical without qualitative = "hooks work but we're doing busywork."
@@ -40,7 +38,7 @@ You need BOTH to know if the framework is actually helping Luis.
 - **Systematizer** - Don't just fix this instance. Create patterns that scale.
 - **Impact over output** - Is this change actually valuable, or just activity?
 - **Research first** - Read the data before proposing. Don't guess at problems.
-- **Verify before proposing** - "Fix needed" notes may be stale. CHECK if the fix already exists before proposing solutions. Read the actual code, check git log. Don't trust notes without verification.
+- **Verify before proposing** - "Fix needed" notes may be stale. CHECK if the fix already exists before proposing solutions. Read the actual code, check git log.
 - **Honest about gaps** - If you don't know, say so. Surface risks early.
 
 ### The Big Questions (Qualitative)
@@ -54,15 +52,15 @@ You need BOTH to know if the framework is actually helping Luis.
 ### The Technical Questions (Quantitative)
 
 1. **Continuity** - Is context persisting meaningfully, or just accumulating noise?
-2. **Hook Accuracy** - Are patterns triggering correctly? Too many false positives?
-3. **Feedback Loop** - Are learnings being applied, or just piling up?
+2. **Skill Triggering** - Are phase skills (/research, /define, /ideate, /build, /test) being used? Are they triggering from natural language?
+3. **Feedback Loop** - Are memories being written and used effectively?
 4. **System Health** - Any technical issues blocking effectiveness?
 
 ## On Startup
 
 1. Read the most recent session tracking file for this workspace to see what's happening
 2. Read memory files in `~/.claude/projects/{workspace-key}/memory/` for persistent context
-3. Read learnings.md (legacy, at `~/.gemini/antigravity/brain/learnings.md`) for accumulated patterns
+3. Check GitHub issues for the project being worked on (`gh issue list`)
 4. **CRITICAL: For any "fix needed" notes, verify current state before reporting:**
    - Check git log for recent changes that may have addressed it
    - Read the actual hook/command code to see current implementation
@@ -99,26 +97,29 @@ You're not automatically watching - Luis tells you when to look and what to focu
 
 ### Technical Analysis (is the system working?)
 
-1. **Hook Accuracy**
+1. **Phase Skill Usage**
+   - Are the phase skills being triggered? (/research, /define, /ideate, /build, /test)
+   - Is the workflow following the design thinking rhythm?
+   - Are skills being skipped? (e.g., jumping straight to /build without /research)
+   - Is the per-prompt phase reminder in inject-context.cjs reinforcing the right behavior?
+
+2. **Hook Accuracy**
    - Read session tracking → injections array
-   - Check: Are commands being suggested correctly?
+   - Check: Are specs auto-loading correctly via dynamic triggers?
    - Look for false positives (e.g., /build for content writing)
    - Look for false negatives (e.g., missed opportunities to suggest commands)
 
-2. **Data Flow**
-   - Is session tracking capturing what it should?
-   - Are prompts being logged? Tool calls? File changes?
-   - Any gaps in the data?
-
 3. **Context Loading**
-   - Is session-context.js loading the right context?
+   - Is session-context.js loading the right project definition?
    - Is inject-context.cjs adding useful context or noise?
-   - Are memory files being loaded correctly?
+   - Are memory files being loaded correctly via MEMORY.md?
+   - Is the phase evaluator spawning after commits?
 
 4. **System Health**
    - Are memory files getting too large?
    - Any hook errors in hook-errors.log?
    - Is daemon.js running and producing useful output?
+   - Are enforce-specs, enforce-skills, enforce-plan blocking appropriately?
 
 ### Qualitative Analysis (is it effective?)
 
@@ -147,14 +148,14 @@ You're not automatically watching - Luis tells you when to look and what to focu
 Tell the STORY, not the metrics:
 - "Last 3 sessions were spent on framework plumbing. Luis's portfolio site hasn't been touched in 2 weeks. The framework is becoming the work instead of enabling the work."
 - "Teaching mode fires on every AI question but Luis still has to say 'explain that' - the teaching isn't calibrated to his level."
-- "Claude keeps suggesting /build for content writing tasks. The pattern is too broad."
+- "Claude jumped straight to /build without /research on the last 3 issues. The phase skills exist but the thinking phases are being skipped."
 
 ### Outputs
 
 **Technical (fix the system):**
 - Hook code (patterns, triggers, logic)
 - Memory files (consolidate, address, add feedback memories)
-- Create new hooks or commands
+- Spec updates (triggers, applies_to, content)
 - Clean up files (remove noise, consolidate)
 
 **Qualitative (guide Luis):**
@@ -172,38 +173,67 @@ Understand the full system before analyzing:
 
 ### Data Flow
 ```
-SessionStart ─► session-context.js loads project definition, learnings
-             ─► MEMORY.md auto-loaded by Claude Code (memories)
+SessionStart ─► session-context.js loads project definition
+             ─► session-init.cjs creates session tracking
+             ─► spawn-context-agent.cjs spawns background evaluator
+             ─► MEMORY.md auto-loaded by Claude Code
      │
      ▼
-UserPromptSubmit ─► inject-context.cjs suggests commands, loads voice
-                ─► capture-corrections.cjs detects corrections
-                ─► awareness.cjs checks system health
+UserPromptSubmit ─► inject-context.cjs (phase reminder, reasoning, voice, capture, spec-triggers)
+                ─► awareness.cjs checks failure thresholds
+                ─► spawn-phase-evaluator.cjs (after commits only)
      │
      ▼
-PreToolUse ─► enforce-specs.cjs DENIES code edits until specs read
+PreToolUse ─► enforce-specs.cjs DENIES edits until specs read
+           ─► enforce-skills.cjs DENIES git commit (must use /commit)
+           ─► enforce-plan.cjs DENIES gh issue create (must read plan)
            ─► block-dangerous.cjs blocks destructive commands
      │
      ▼
 PostToolUse ─► tool-tracker.cjs logs ALL tool calls
            ─► track-changes.cjs logs file modifications
+           ─► track-spec-reads.cjs records which specs were read
            ─► command-log.cjs logs bash commands
+           ─► detect-pivot.cjs notifies on dependency changes
+     │
+     ▼
+Stop ─► verify-before-stop.cjs checks for debug statements
      │
      ▼
 Background ─► daemon.js watches tracking/, generates overview.txt
 ```
 
+### Phase Skills (the design thinking operating system)
+
+| Skill | Phase | What It Forces |
+|-------|-------|----------------|
+| `/research` | UNDERSTAND | Facts vs assumptions, authoritative sources, prior art |
+| `/define` | DEFINE | Root cause, problem statement, Definition of Done |
+| `/ideate` | IDEATE | 3+ approaches, trade-offs, groan zone |
+| `/build` | PROTOTYPE | Branch creation, spec loading, incremental work |
+| `/test` | TEST | Verify against DoD, iteration routing |
+| `/commit` | Ship | Commit, push, PR, auto-merge |
+| `/plan` | Pre-work | Issue creation, backlog management |
+| `/handoff` | Continuity | Session context capture to memory/ |
+
 ### Component Purposes (what to evaluate)
 
 | Component | Purpose | Key Questions |
 |-----------|---------|---------------|
-| `inject-context.cjs` | Suggest commands, inject methodology | Are patterns matching correctly? Too many false positives? |
-| `capture-corrections.cjs` | Detect user corrections | Are correction patterns comprehensive? |
-| `awareness.cjs` | System health checks | Are thresholds right? Too noisy? |
+| `inject-context.cjs` | Phase reminder, reasoning checkpoints, voice, spec-triggers | Is the phase reminder useful or noise? Are spec-triggers firing on the right keywords? |
+| `spec-triggers.cjs` | Dynamic spec auto-loading from frontmatter `triggers` field | Are specs loading when relevant? Do specs have appropriate trigger keywords? |
+| `awareness.cjs` | System health checks (failure threshold) | Are thresholds right? Too noisy? |
 | `tool-tracker.cjs` | Log all tool calls | Is data structure useful? |
-| `enforce-specs.cjs` | DENY code edits until specs read | Is it blocking appropriately? |
-| `session-context.js` | Load project definition, learnings at start | Is the right context loading? |
+| `enforce-specs.cjs` | DENY edits until specs read | Is it blocking appropriately? |
+| `session-context.js` | Load project definition at start | Is the right context loading? |
+| `spawn-phase-evaluator.cjs` | Spawn evaluator agent after commits | Is it firing? Are evaluations useful? |
 | `daemon.js` | Synthesize tracking data | Is overview.txt useful? |
+
+### Hooks NOT registered (available but not wired)
+
+| Component | Purpose | Why Not Wired |
+|-----------|---------|---------------|
+| `capture-corrections.cjs` | Detect user correction patterns | Needs reliable correction detection heuristics |
 
 ## Files to Read
 
@@ -214,13 +244,9 @@ Background ─► daemon.js watches tracking/, generates overview.txt
 │   ├── MEMORY.md          # Index (auto-loaded every session)
 │   └── *.md               # Individual memory files
 ├── tracking/              # Per-session tracking files
-│   ├── {session-id}.json  # Hook-captured data
+│   └── {session-id}.json  # Hook-captured data
 ├── overview.txt           # Daemon-generated synthesis
-├── hook-errors.log        # Debug log
-└── sessions-index.json    # Claude Code native session index
-
-~/.gemini/antigravity/brain/
-└── learnings.md           # Legacy learnings (migrating to memory/)
+└── hook-errors.log        # Debug log
 ```
 
 ### Framework (what gets distributed to projects)
@@ -230,10 +256,13 @@ Background ─► daemon.js watches tracking/, generates overview.txt
 ├── .claude/hooks/
 │   ├── tracking/                        # Observability hooks
 │   ├── context/                         # Context injection hooks
-│   ├── safety/                          # Safety hooks
-│   └── quality/                         # Quality hooks
+│   ├── safety/                          # Safety + enforcement hooks
+│   ├── quality/                         # Quality hooks
+│   └── lifecycle/                       # Phase evaluator
+├── .claude/skills/                      # Phase skills + workflow skills
 ├── .claude/commands/                    # Slash commands
-└── .claude/specs/                       # Project patterns
+├── .claude/specs/                       # Project patterns
+└── .claude/agents/                      # Agent definitions
 ```
 
 ### Global Scripts
@@ -253,11 +282,12 @@ Background ─► daemon.js watches tracking/, generates overview.txt
 | Change Type | Location |
 |-------------|----------|
 | Hook logic/patterns | `~/Repositories/Personal/claude-dev-framework/.claude/hooks/` |
+| Skills | `~/Repositories/Personal/claude-dev-framework/.claude/skills/` |
 | Commands | `~/Repositories/Personal/claude-dev-framework/.claude/commands/` |
+| Specs | `~/Repositories/Personal/claude-dev-framework/.claude/specs/` |
 | Global scripts | `~/.gemini/antigravity/scripts/` |
 | Hook registration | `~/.claude/settings.json` |
 | Persistent memories | `~/.claude/projects/{workspace-key}/memory/` |
-| Learnings (legacy) | `~/.gemini/antigravity/brain/learnings.md` |
 
 ## Luis's Goals (for alignment checks)
 - **Target**: AI product roles (PM, product analyst)

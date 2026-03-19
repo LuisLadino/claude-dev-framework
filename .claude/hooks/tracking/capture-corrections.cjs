@@ -50,7 +50,7 @@ async function getInput() {
 
 async function main() {
   const input = await getInput();
-  const message = input.message || '';
+  const message = input.prompt || input.message || '';
 
   if (!message) {
     process.exit(0);
