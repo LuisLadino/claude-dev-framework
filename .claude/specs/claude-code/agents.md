@@ -1,7 +1,7 @@
 ---
 name: agents
 description: >
-  Configuration and behavior for Claude Code agents: file format, frontmatter fields, triggering via hooks or Task tool, model selection, tool permissions, and output patterns.
+  Configuration and behavior for Claude Code agents: file format, frontmatter fields, triggering via hooks or Agent tool, model selection, tool permissions, and output patterns.
 applies_to:
   - ".claude/agents/**/*.md"
 category: claude-code
@@ -9,19 +9,18 @@ category: claude-code
 
 # Claude Code Agents Reference
 
-Agents are specialized subprocesses that handle complex tasks. They can be invoked via hooks or the Task tool. This spec documents agent configuration and behavior.
+Agents are specialized subprocesses that handle complex tasks. They are spawned via hooks that inject instructions for the main session to invoke the Agent tool.
 
 ---
 
 ## Agent Location
 
-Agent hooks are defined in `.claude/agents/{agent-name}.md`.
+Agent definitions live in `.claude/agents/{agent-name}.md`.
 
 ```
 .claude/
 └── agents/
     ├── context-agent.md
-    ├── task-agent.md
     └── phase-evaluator.md
 ```
 
@@ -34,7 +33,7 @@ Agent hooks are defined in `.claude/agents/{agent-name}.md`.
 name: agent-name
 description: What this agent does and when to use it
 tools: Tool1, Tool2, Tool3
-model: sonnet
+model: haiku
 ---
 
 # Agent Title
@@ -57,48 +56,51 @@ Instructions for the agent...
 
 ## Triggering Agents
 
-### Via Settings.json Hook
-```json
-{
-  "hooks": {
-    "SessionStart": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "agent",
-            "agent": ".claude/agents/context-agent.md"
-          }
-        ]
-      }
-    ]
-  }
-}
+### Via Command Hook + Agent Tool (Current Pattern)
+
+Hooks inject an instruction telling the main session to spawn the agent via the Agent tool. This avoids the broken `type: "agent"` pattern.
+
+```javascript
+// Hook outputs instruction text
+console.log(`IMPORTANT: Spawn the context agent in the background.
+
+Use the Agent tool with these exact parameters:
+- description: "Establish project context"
+- subagent_type: "context-agent"
+- model: "haiku"
+- prompt: "Evaluate the current project state."
+- run_in_background: true`);
 ```
 
-### Via Task Tool
-```yaml
-Task(
-  prompt: "Analyze project structure",
-  description: "Explore codebase",
-  subagent_type: "Explore"
-)
+### Via Agent Tool Directly
+
+```javascript
+Agent({
+  description: "Establish project context",
+  subagent_type: "context-agent",
+  model: "haiku",
+  prompt: "Evaluate the current project state.",
+  run_in_background: true
+})
 ```
 
-Note: Task tool uses built-in subagent types, not custom agent files.
+### DO NOT use type: "agent" hooks
+
+The `type: "agent"` hook pattern in settings.json is unreliable. Use command hooks that inject Agent tool instructions instead.
 
 ---
 
 ## Built-in Subagent Types
 
-Available via the Task tool:
+Available via the Agent tool:
 
 | Type | Purpose | Tools |
 |------|---------|-------|
-| `Bash` | Command execution | Bash |
 | `Explore` | Codebase exploration | Read, Grep, Glob, etc. (no Edit/Write) |
 | `Plan` | Implementation planning | Read, Grep, Glob, etc. (no Edit/Write) |
 | `general-purpose` | Multi-step research | All tools |
+| `context-agent` | Custom: project context at session start | Per agent definition |
+| `phase-evaluator` | Custom: evaluate commits | Per agent definition |
 
 ---
 
@@ -132,25 +134,11 @@ Choose based on task complexity:
 
 ## Agent Output
 
-Agents typically write to files rather than returning text:
+Agents return their output as text to the main session. The main session receives the agent's final message directly.
 
-```markdown
-## Output
+**Context Agent:** Returns plain text evaluation (phase, GitHub state, gaps, focus recommendation). Under 500 words.
 
-Write to `.claude/current-context.json`:
-
-```json
-{
-  "timestamp": "2026-03-14T12:00:00Z",
-  "phase": "prototype",
-  ...
-}
-```
-
-Then return: `{ "ok": true }`
-```
-
-This pattern allows other agents/hooks to read the output.
+**Phase Evaluator:** Returns JSON with phase assessment, observations, issues to create, and reflection prompts. The spawn hook writes this to `.claude/phase-evaluation.json` for inject-context.cjs to pick up on the next prompt.
 
 ---
 
@@ -159,87 +147,16 @@ This pattern allows other agents/hooks to read the output.
 | Event | When to Use | Example Agent |
 |-------|-------------|---------------|
 | `SessionStart` | Initialize context | Context Agent |
-| `UserPromptSubmit` | Evaluate each request | Task Agent |
-| `PostToolUse` | React to tool completion | Phase Evaluator |
-| `PreCompact` | Save state before compaction | State Saver |
+| `PostToolUse` | React to tool completion | Phase Evaluator (on git commit) |
 
 ---
 
 ## Common Issues
 
-1. **Agent doesn't run** - Missing frontmatter fields
-2. **Agent can't use tool** - Tool not in `tools` list
-3. **Output not visible** - Agent results go to calling context, not user
-4. **Wrong model** - Using opus for simple tasks wastes tokens
-
----
-
-## Example: Minimal Agent
-
-```yaml
----
-name: simple-checker
-description: Checks for TODO comments in codebase
-tools: Grep
-model: haiku
----
-
-# Simple Checker
-
-Find all TODO comments:
-
-```bash
-grep -r "TODO" --include="*.ts" --include="*.js"
-```
-
-Return count and locations.
-```
-
----
-
-## Example: Complex Agent
-
-```yaml
----
-name: context-agent
-description: Establishes project context and design thinking phase at session start
-tools: Read, Bash, Grep, Glob, TaskList, TaskGet
-model: sonnet
----
-
-# Context Agent
-
-You are the Context Agent. Your job is to establish the big picture before any work begins.
-
-## Trigger
-
-SessionStart - runs once when a new session begins.
-
-## Your Purpose
-
-Read the project state and determine:
-1. Where are we in the project lifecycle?
-2. What's been accomplished?
-3. What's the current focus?
-4. Are there gaps that need attention?
-
-## Tools Available
-
-- Read (project-definition.yaml, session state, brain files)
-- Bash (gh commands for GitHub state)
-- Grep, Glob (for codebase state)
-- TaskList, TaskGet (for design thinking task state)
-
-## Evaluation Steps
-
-### Step 1: Load Project Definition
-...
-
-## Output
-
-Write to `.claude/current-context.json`:
-...
-```
+1. **Agent doesn't run** — Hook output not acted on (main session ignores the instruction)
+2. **Agent can't use tool** — Tool not in `tools` list
+3. **Output not visible** — Background agents return results asynchronously
+4. **Wrong model** — Using opus for simple tasks wastes tokens
 
 ---
 
@@ -247,6 +164,5 @@ Write to `.claude/current-context.json`:
 
 | Agent | Trigger | Purpose |
 |-------|---------|---------|
-| `context-agent` | SessionStart | Establish project context and phase |
-| `task-agent` | UserPromptSubmit | Evaluate task through design thinking |
-| `phase-evaluator` | PostToolUse (git commit) | Check if phase should transition |
+| `context-agent` | SessionStart | Strategic advisor: GitHub state, phase assessment, gaps, focus recommendation |
+| `phase-evaluator` | PostToolUse (git commit) | Strategic advisor: evaluate commits, create issues, flag system map staleness |
