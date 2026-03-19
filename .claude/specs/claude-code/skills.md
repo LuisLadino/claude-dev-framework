@@ -25,7 +25,8 @@ Skills are stored in `.claude/skills/{skill-name}/SKILL.md`.
     ├── ideate/         # IDEATE phase
     ├── build/          # PROTOTYPE phase (commitment point)
     ├── test/           # TEST phase
-    ├── commit/         # Ship (commit → push → PR)
+    ├── review/         # Quality gate (multi-agent code review)
+    ├── commit/         # Ship (docs check → commit → push → PR)
     ├── plan/           # Backlog management
     ├── handoff/        # Session continuity
     └── contribute-to-opensource/
@@ -213,6 +214,8 @@ Use commands for explicit-only operations or complex multi-file content.
 | `ideate` | IDEATE | "options", "approaches", "what if" | Generate 3+ approaches, trade-offs, recommend |
 | `build` | PROTOTYPE | "build it", "implement", "code it" | Create branch, load specs, incremental work |
 | `test` | TEST | "does it work", "verify", "test it" | Verify against DoD, iteration routing |
-| `commit` | Ship | "commit", "save this", "done" | Commit + Push + PR + Auto-merge |
+| `review` | Quality gate | "review this", "code review", "check the code" | Multi-agent diff review (security, performance, patterns, architecture) |
+| `commit` | Ship | "commit", "save this", "done" | Docs check + Commit + Push + PR + Auto-merge |
 | `plan` | Pre-work | "what's next", "add to backlog", "create issue" | Manage GitHub issues/milestones |
 | `handoff` | Continuity | "handoff", "end session", "save context" | Capture context for next session |
+| `contribute-to-opensource` | Setup | "contribute to", "OSS", "open source", "fork" | Clone repo, match patterns, set up contribution framework |

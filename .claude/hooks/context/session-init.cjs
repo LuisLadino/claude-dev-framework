@@ -24,6 +24,7 @@ const {
 const SYNC_STATE_PATH = '.claude/specs/.sync-state.json';
 
 const WATCHED_FILES = [
+  // JavaScript/TypeScript
   'package.json',
   'package-lock.json',
   'yarn.lock',
@@ -38,7 +39,39 @@ const WATCHED_FILES = [
   'next.config.ts',
   'next.config.mjs',
   'astro.config.mjs',
-  'astro.config.ts'
+  'astro.config.ts',
+  // Python
+  'pyproject.toml',
+  'setup.py',
+  'setup.cfg',
+  'requirements.txt',
+  'Pipfile',
+  'Pipfile.lock',
+  'poetry.lock',
+  // Rust
+  'Cargo.toml',
+  'Cargo.lock',
+  // Go
+  'go.mod',
+  'go.sum',
+  // Swift
+  'Package.swift',
+  'Package.resolved',
+  // Ruby
+  'Gemfile',
+  'Gemfile.lock',
+  // PHP
+  'composer.json',
+  'composer.lock',
+  // Java/Kotlin
+  'build.gradle',
+  'build.gradle.kts',
+  'pom.xml',
+  // .NET
+  'Directory.Build.props',
+  // Elixir
+  'mix.exs',
+  'mix.lock'
 ];
 
 function getFileHash(filePath) {
@@ -64,8 +97,10 @@ function checkForChanges() {
   const syncState = loadSyncState();
 
   if (!syncState) {
-    const hasPackageJson = fs.existsSync(path.join(cwd, 'package.json'));
-    if (hasPackageJson) {
+    // Check for any dependency manifest, not just package.json
+    const manifests = ['package.json', 'pyproject.toml', 'Cargo.toml', 'go.mod', 'Package.swift', 'Gemfile', 'composer.json', 'build.gradle', 'pom.xml', 'mix.exs'];
+    const hasManifest = manifests.some(m => fs.existsSync(path.join(cwd, m)));
+    if (hasManifest) {
       return {
         changed: true,
         reason: 'Project has never been synced. Run /sync-stack to set up specs and system map.'

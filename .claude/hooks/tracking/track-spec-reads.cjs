@@ -13,7 +13,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const yaml = require('yaml');
 
 const STACK_CONFIG_PATH = '.claude/specs/stack-config.yaml';
 const SESSION_STATE_FILE = '.claude/session-state.json';
@@ -83,10 +82,73 @@ function handleHook(data) {
 function loadStackConfig() {
   try {
     const content = fs.readFileSync(STACK_CONFIG_PATH, 'utf8');
-    return yaml.parse(content);
+    return parseStackConfigYaml(content);
   } catch {
     return null;
   }
+}
+
+/**
+ * Purpose-built parser for stack-config.yaml's spec structure.
+ * Extracts specs: { category: [{ name, file }, ...] }
+ * No external yaml package needed.
+ */
+function parseStackConfigYaml(content) {
+  const result = { specs: {} };
+  const lines = content.split('\n');
+
+  let inSpecs = false;
+  let currentCategory = null;
+  let currentItem = null;
+
+  for (const line of lines) {
+    // Top-level "specs:" section
+    if (/^specs:\s*$/.test(line)) {
+      inSpecs = true;
+      continue;
+    }
+
+    // Exit specs section on next top-level key
+    if (inSpecs && /^\S/.test(line) && !line.startsWith('#')) {
+      inSpecs = false;
+      continue;
+    }
+
+    if (!inSpecs) continue;
+
+    // Category key (2-space indent): "  claude-code:"
+    const catMatch = line.match(/^  (\S[^:]+):\s*$/);
+    if (catMatch) {
+      currentCategory = catMatch[1];
+      result.specs[currentCategory] = [];
+      currentItem = null;
+      continue;
+    }
+
+    if (!currentCategory) continue;
+
+    // Array item start: "    - name: value"
+    const itemMatch = line.match(/^\s{4}-\s+name:\s*(.+)/);
+    if (itemMatch) {
+      currentItem = { name: itemMatch[1].trim().replace(/^"|"$/g, '') };
+      result.specs[currentCategory].push(currentItem);
+      continue;
+    }
+
+    // Properties of current item: "      file: value"
+    if (currentItem) {
+      const propMatch = line.match(/^\s{6}(\w+):\s*(.+)/);
+      if (propMatch) {
+        const key = propMatch[1];
+        const val = propMatch[2].trim().replace(/^"|"$/g, '');
+        if (key === 'file') {
+          currentItem.file = val;
+        }
+      }
+    }
+  }
+
+  return result;
 }
 
 function findSpecName(filePath) {

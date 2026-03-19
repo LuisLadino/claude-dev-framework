@@ -6,80 +6,28 @@
  * Event: PreToolUse (Bash)
  * Purpose: Prevents execution of dangerous commands
  *
- * Blocks:
- * - rm -rf with broad paths
- * - Force pushes to main/master
- * - Database drops
- * - Credential exposure
+ * Reads patterns from config/security-patterns.json (dangerous_commands section).
+ * Blocks destructive file ops, force pushes, database drops,
+ * credential exposure, and system damage commands.
  */
 
-const DANGEROUS_PATTERNS = [
-  // Destructive file operations
-  {
-    pattern: /rm\s+(-[rf]+\s+)*[\/~]\s*$/i,
-    reason: 'Refusing to delete root or home directory'
-  },
-  {
-    pattern: /rm\s+-rf?\s+\*|rm\s+-rf?\s+\.(?!\w)/i,
-    reason: 'Refusing to delete all files or hidden files recursively'
-  },
+const fs = require('fs');
+const path = require('path');
 
-  // Dangerous git operations
-  {
-    pattern: /git\s+push\s+.*--force.*\s+(main|master)\b/i,
-    reason: 'Refusing to force push to main/master branch'
-  },
-  {
-    pattern: /git\s+push\s+-f\s+.*\s+(main|master)\b/i,
-    reason: 'Refusing to force push to main/master branch'
-  },
-  {
-    pattern: /git\s+reset\s+--hard\s+origin\/(main|master)/i,
-    reason: 'Refusing to hard reset to remote main/master - this discards local changes'
-  },
-  {
-    pattern: /git\s+clean\s+-fd/i,
-    reason: 'Refusing git clean -fd - this removes untracked files permanently'
-  },
-
-  // Database operations
-  {
-    pattern: /drop\s+database/i,
-    reason: 'Refusing to drop database'
-  },
-  {
-    pattern: /drop\s+table\s+(?!if\s+exists)/i,
-    reason: 'Refusing to drop table without IF EXISTS'
-  },
-  {
-    pattern: /truncate\s+table/i,
-    reason: 'Refusing to truncate table'
-  },
-
-  // Credential exposure
-  {
-    pattern: /cat\s+.*\.(env|pem|key|secret)/i,
-    reason: 'Refusing to cat credential files - use secure methods'
-  },
-  {
-    pattern: /echo\s+.*\$[A-Z_]*(KEY|SECRET|PASSWORD|TOKEN)/i,
-    reason: 'Refusing to echo potential credentials'
-  },
-
-  // System damage
-  {
-    pattern: /:(){ :|:& };:/,
-    reason: 'Refusing fork bomb'
-  },
-  {
-    pattern: /mkfs\./i,
-    reason: 'Refusing filesystem format command'
-  },
-  {
-    pattern: /dd\s+if=.*of=\/dev\//i,
-    reason: 'Refusing to write directly to device'
+function loadPatterns() {
+  const configPath = path.join(__dirname, '..', 'config', 'security-patterns.json');
+  try {
+    const raw = fs.readFileSync(configPath, 'utf8');
+    const config = JSON.parse(raw);
+    return (config.dangerous_commands || []).map(entry => ({
+      pattern: new RegExp(entry.pattern, entry.flags || ''),
+      reason: entry.reason
+    }));
+  } catch (e) {
+    // Config missing or invalid — fail open, don't break the session
+    return [];
   }
-];
+}
 
 // Read hook input from stdin
 let input = '';
@@ -102,18 +50,29 @@ function handleHook(data) {
     process.exit(0);
   }
 
-  // Check against dangerous patterns
-  for (const { pattern, reason } of DANGEROUS_PATTERNS) {
-    if (pattern.test(command)) {
-      // Output denial to stderr (shown to Claude)
+  // Strip heredoc/body content to avoid false positives on embedded examples.
+  // Matches: <<'EOF' ... EOF, <<"EOF" ... EOF, << EOF ... EOF
+  const commandToCheck = stripHeredocs(command);
+
+  const patterns = loadPatterns();
+
+  for (const { pattern, reason } of patterns) {
+    if (pattern.test(commandToCheck)) {
       console.error(`[BLOCKED] ${reason}`);
       console.error(`Command: ${command}`);
-
-      // Exit code 2 = deny the tool call
       process.exit(2);
     }
   }
 
-  // Command is safe, allow it
   process.exit(0);
+}
+
+/**
+ * Strip heredoc content from commands to avoid false positives.
+ * Body text in gh issue create, git commit, etc. may contain
+ * example dangerous commands that shouldn't trigger blocks.
+ */
+function stripHeredocs(cmd) {
+  // Match heredoc: <<'DELIM' or <<"DELIM" or <<DELIM through closing DELIM
+  return cmd.replace(/<<-?\s*['"]?(\w+)['"]?[\s\S]*?\n\1(?:\s*\).*)?$/gm, '<<HEREDOC_STRIPPED');
 }

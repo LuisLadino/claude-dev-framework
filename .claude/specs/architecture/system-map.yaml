@@ -12,7 +12,7 @@
 #   category: architecture
 #
 # Generated: 2026-03-18
-# Last verified: 2026-03-18
+# Last verified: 2026-03-19
 
 # ============================================
 # SECTION 1: EVENT LIFECYCLE
@@ -37,11 +37,15 @@ lifecycle:
   PreToolUse:
     # Fires before tool execution — can BLOCK (exit 2 = deny)
     Bash:
-      - block-dangerous.cjs      # Blocks rm -rf, force push, credential exposure
-      - enforce-skills.cjs       # Blocks git commit (must use /commit skill)
+      - block-dangerous.cjs      # Blocks rm -rf, force push, credential exposure (reads config/security-patterns.json)
+      - enforce-skills.cjs       # Blocks git commit (must use /commit skill with SKILL_ACTIVE=1 DOCS_CHECKED=1)
       - enforce-plan.cjs         # Blocks gh issue create (must read plan skill)
     "Edit|Write":
       - enforce-specs.cjs        # Blocks edits until required spec is read
+    Agent:
+      - subagent-context.cjs     # Injects project context into spawned sub-agents
+    "mcp__":
+      - mcp-security-scan.cjs    # Scans outbound MCP calls for secrets (reads config/security-patterns.json)
 
   PostToolUse:
     # Fires after SUCCESSFUL tool execution only
@@ -86,10 +90,11 @@ shared_resources:
       - tool-failure.cjs
       - track-changes.cjs
       - command-log.cjs
-      # session-end.cjs — REMOVED
       - subagent-tracker.cjs
       - awareness.cjs
       - verify-before-stop.cjs
+      - session-init.cjs
+      - inject-utils.cjs
     provides:
       - "getWorkspaceKey() — converts path to persistence key"
       - "getProjectDir() — returns ~/.claude/projects/{key}/"
@@ -101,6 +106,22 @@ shared_resources:
       - Changing workspace key format breaks ALL persistence paths
       - Changing session ID format breaks tracking file lookup
       - Test every hook that imports this
+
+  hooks/config/security-patterns.json:
+    path: .claude/hooks/config/security-patterns.json
+    purpose: Shared security patterns for block-dangerous and mcp-security-scan
+    used_by:
+      - block-dangerous.cjs (dangerous_commands section)
+      - mcp-security-scan.cjs (secret_patterns, sensitive_files, whitelist sections)
+    provides:
+      - "14 dangerous command patterns"
+      - "21 secret detection patterns (API keys, tokens, credentials, connection strings)"
+      - "19 sensitive file patterns (.env, .pem, id_rsa, etc.)"
+      - "14 whitelist entries (placeholders that aren't real secrets)"
+    if_changed:
+      - Adding patterns — test both hooks
+      - Changing whitelist — verify no false negatives
+      - Downstream projects can customize for their context
 
   settings.json:
     path: ~/.claude/settings.json
@@ -183,9 +204,8 @@ components:
     low_blast_radius: true
 
   hooks/context/spec-triggers.cjs:
-    purpose: Auto-loads specs based on prompt keywords
-    reads: ".claude/specs/** (5 hardcoded specs)"
-    known_issue: "Hardcoded list — new specs invisible. See #31."
+    purpose: Auto-loads specs dynamically based on frontmatter triggers field
+    reads: ".claude/specs/**/*.md (scans all spec frontmatter at runtime)"
 
   hooks/context/session-init.cjs:
     purpose: Initialize session tracking, detect config changes
@@ -198,6 +218,13 @@ components:
     trigger: SessionStart
     stateless: true
     low_blast_radius: true
+
+  hooks/context/subagent-context.cjs:
+    purpose: Injects project context into every spawned sub-agent
+    trigger: PreToolUse (Agent)
+    reads: [CLAUDE.md (root), project-definition.yaml, stack-config.yaml]
+    outputs: "Modified tool_input with prepended context block (~200 tokens)"
+    note: "Never blocks. Reads whatever project files exist, skips missing ones."
 
   hooks/context/clear-pending.cjs:
     purpose: Reset enforcement flags each new user message
@@ -226,14 +253,21 @@ components:
   hooks/safety/block-dangerous.cjs:
     purpose: Blocks destructive bash commands
     trigger: PreToolUse (Bash)
-    stateless: true
+    reads: config/security-patterns.json (dangerous_commands section)
     blocks: "rm -rf, force push main, git reset --hard, DROP DATABASE, credentials, fork bombs"
 
+  hooks/safety/mcp-security-scan.cjs:
+    purpose: Scans outbound MCP calls for secrets before they leave the machine
+    trigger: PreToolUse (mcp__*)
+    reads: config/security-patterns.json (secret_patterns, sensitive_files, whitelist)
+    blocks: "API keys, AWS creds, GitHub tokens, private keys, DB connection strings, sensitive files"
+    note: "Recursive scan of all string values in tool_input. Per-match whitelist (fixes CDK bug)."
+
   hooks/safety/enforce-skills.cjs:
-    purpose: Blocks git commit — must use /commit skill
+    purpose: Blocks git commit — must use /commit skill with docs check
     trigger: PreToolUse (Bash)
-    bypass: "SKILL_ACTIVE=1 prefix in command"
-    connected_to: "commit skill sets SKILL_ACTIVE=1"
+    bypass: "SKILL_ACTIVE=1 DOCS_CHECKED=1 prefix in command (both required)"
+    connected_to: "commit skill sets SKILL_ACTIVE=1 DOCS_CHECKED=1 after Step 3 (documentation check)"
 
   hooks/safety/enforce-plan.cjs:
     purpose: Blocks gh issue create — must read plan skill first
@@ -271,8 +305,9 @@ components:
     writes: "commands[]"
 
   hooks/tracking/detect-pivot.cjs:
-    purpose: Notifies when dependencies change (npm install, etc.)
+    purpose: Notifies when dependencies or structure change (language-agnostic)
     trigger: PostToolUse (Bash)
+    detects: "Package installs (Node, Python, Rust, Go, Ruby, PHP, Java, Swift, .NET), config file changes, new directory creation"
     outputs: "stderr message suggesting /sync-stack"
 
   # hooks/tracking/session-end.cjs — REMOVED (SessionEnd unreliable, event often doesn't fire)
@@ -308,17 +343,14 @@ components:
   # ---- QUALITY HOOKS ----
 
   hooks/quality/verify-before-stop.cjs:
-    purpose: Blocks if debug statements in modified files
+    purpose: Blocks if debug statements in modified files (multi-language)
     trigger: Stop
     reads: [session-changes.json, "tracking/{session-id}.json", modified files]
-    checks: "console.log/debug, debugger, TODO/FIXME: REMOVE, XXX:"
+    checks: "JS: console.log/debugger, Python: breakpoint/pdb, Swift: print, Go: fmt.Print, Rust: dbg!, Ruby: binding.pry, All: TODO/FIXME: REMOVE, XXX:"
+    excludes: ".claude/hooks/ (legitimate console.log usage)"
 
-  hooks/quality/check-teaching-format.cjs:
-    status: NOT REGISTERED (disabled)
-    purpose: Blocks responses missing Lens/Refine/Phase/Teach
-
-  hooks/quality/enforce-framing.cjs:
-    status: REMOVED — replaced by per-prompt grounding reminder in inject-context.cjs
+  # hooks/quality/check-teaching-format.cjs — REMOVED (system prompt handles format enforcement)
+  # hooks/quality/enforce-framing.cjs — REMOVED (replaced by per-prompt grounding reminder in inject-context.cjs)
 
   # ---- GLOBAL SCRIPTS (outside this repo) ----
 
@@ -355,14 +387,16 @@ components:
     reads: [tracking files, memory files]
 
   commands/utilities/audit.md:
-    purpose: Deep parallel code review (3 agents)
+    purpose: Deep parallel codebase audit (4 agents — security, performance, tests, architecture)
+    note: "For pre-commit diff review, use /review skill. /audit is for full codebase audits before releases."
 
   # ---- SKILLS ----
 
   skills/commit:
-    purpose: Full commit workflow (stage → commit → push → PR → auto-merge)
-    sets: SKILL_ACTIVE=1 to bypass enforce-skills
+    purpose: Full commit workflow (docs check → stage → commit → push → PR → auto-merge)
+    sets: "SKILL_ACTIVE=1 DOCS_CHECKED=1 to bypass enforce-skills"
     connected_to: enforce-skills.cjs
+    mandatory_step: "Step 3 — documentation check (CHANGELOG, README, component specs). Hook blocks without DOCS_CHECKED=1."
     issue_linking: "'Closes #X' only when verified working"
 
   skills/plan:
@@ -394,6 +428,12 @@ components:
   skills/handoff:
     purpose: Capture session context for next session
     writes: ["memory/project_handoff.md", "memory/MEMORY.md"]
+
+  skills/review:
+    purpose: "Pre-commit code review with parallel agents (security, performance, patterns, architecture)"
+    spawns: "2-4 agents scaled to diff size"
+    slot: "Between /test and /commit in workflow"
+    outputs: "PASS/ISSUES verdict"
 
   skills/contribute-to-opensource:
     purpose: Configure framework to match external project patterns

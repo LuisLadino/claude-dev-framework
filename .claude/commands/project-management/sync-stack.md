@@ -612,7 +612,191 @@ export async function getUser(userId: string): Promise<User | null> {
 
 ---
 
-## STEP 9: Generate System Map
+## STEP 9: Generate Component-Scoped Specs
+
+**Detect distinct modules in the project and generate component-level specs for each one.**
+
+Technology specs (Step 8) tell Claude HOW to write code in a language or framework. Component specs tell Claude HOW THIS MODULE works — its architecture, patterns, decisions, and integration points.
+
+### 9a: Detect component boundaries
+
+Scan for top-level directories that represent distinct modules:
+
+```bash
+# Check for common component directory patterns
+ls -d */ 2>/dev/null | head -20
+
+# Look for distinct source modules
+ls -d src/*/ 2>/dev/null | head -20
+
+# Check for monorepo packages
+ls -d packages/*/ apps/*/ 2>/dev/null | head -20
+```
+
+**Component indicators** — a directory is a component if it has:
+- Its own entry point (index.ts, main.ts, app.ts, server.ts)
+- A distinct concern (api/, frontend/, workers/, lib/, shared/)
+- Its own config files (package.json in monorepos)
+- Enough files to represent a module (not just 1-2 utility files)
+
+**Common patterns to detect:**
+
+| Pattern | What to look for |
+|---------|-----------------|
+| **Backend/Frontend split** | `backend/`, `frontend/`, `client/`, `server/` |
+| **API layer** | `api/`, `src/api/`, `routes/`, `src/routes/` |
+| **Worker/job services** | `workers/`, `jobs/`, `queues/`, `cron/` |
+| **Shared libraries** | `lib/`, `shared/`, `common/`, `packages/shared/` |
+| **Monorepo packages** | `packages/*/`, `apps/*/` |
+| **Database layer** | `db/`, `prisma/`, `drizzle/`, `migrations/` |
+| **Infrastructure** | `infra/`, `deploy/`, `terraform/` |
+
+**If no distinct components found** (flat project structure like a simple Next.js app): skip this step. The technology specs from Step 8 are sufficient.
+
+**If components found, show the user:**
+
+```
+COMPONENT BOUNDARIES DETECTED
+
+Your project has distinct modules that benefit from component-scoped specs:
+
+1. backend/     — API server (Express, 47 files)
+2. frontend/    — React SPA (92 files)
+3. workers/     — Background jobs (12 files)
+4. shared/      — Shared types and utilities (8 files)
+
+Generate component specs? (yes / customize / skip)
+```
+
+**WAIT FOR USER RESPONSE**
+
+### 9b: Analyze each component
+
+For each confirmed component, scan to understand its internals:
+
+```bash
+# Entry points
+find {component}/ -maxdepth 2 -name "index.*" -o -name "main.*" -o -name "app.*" -o -name "server.*" | head -5
+
+# Key patterns — what frameworks/libraries does this component use?
+grep -r "^import" {component}/ --include="*.ts" --include="*.tsx" | \
+  grep -oP 'from ["\x27]([^"\x27]+)' | sort | uniq -c | sort -rn | head -15
+
+# Architecture patterns — how is it structured?
+find {component}/ -type d | head -15
+
+# Integration points — what does it import from other components?
+grep -r "from ['\"].*\.\./\.\." {component}/ --include="*.ts" | head -10
+```
+
+Also check:
+- Does it have its own config files? (tsconfig, package.json, etc.)
+- Does it have its own test structure?
+- What ORM/DB patterns does it use?
+- What state management approach? (frontend)
+- What routing pattern? (API)
+
+### 9c: Generate component specs
+
+For each component, create `.claude/specs/components/{name}.md`:
+
+```markdown
+---
+name: {component-name}
+description: >
+  Architecture and patterns for the {name} module.
+  Required reading before editing files in {path}.
+applies_to:
+  - "{path}/**/*.ts"
+  - "{path}/**/*.tsx"
+category: components
+---
+
+# {Component Name}
+
+## Purpose
+
+{What this component does in the system. One paragraph.}
+
+## Architecture
+
+### Directory Structure
+
+{scanned directory layout}
+
+### Key Entry Points
+- `{path}/index.ts` — {what it exports}
+- `{path}/server.ts` — {what it starts}
+
+### Core Patterns
+
+{Patterns discovered from scanning the code. Examples:}
+
+**Data Access:**
+- Uses repository pattern via `{path}/repositories/`
+- All DB queries go through repositories, never direct ORM calls in routes
+
+**Routing:**
+- Express router in `{path}/routes/`
+- Route handlers delegate to services in `{path}/services/`
+
+**State Management:** (frontend)
+- Zustand stores in `{path}/stores/`
+- Server state via React Query in `{path}/hooks/`
+
+### Integration Points
+
+- Imports from `shared/` for types and utilities
+- Exposes API consumed by `frontend/` via REST endpoints
+- Publishes events consumed by `workers/`
+
+## Anti-Patterns
+
+- Don't put business logic in route handlers — use services
+- Don't import directly from other components' internals — use their public API
+- Don't duplicate types that exist in `shared/`
+
+## Architecture Decisions
+
+{Any decisions discoverable from the code structure. If not obvious, leave this section for the user to fill in.}
+```
+
+### 9d: Add to stack-config.yaml
+
+For each generated component spec, add an entry:
+
+```yaml
+specs:
+  components:
+    - name: backend
+      file: components/backend.md
+      applies_to:
+        - "backend/**/*.ts"
+      description: "Backend API architecture and patterns"
+
+    - name: frontend
+      file: components/frontend.md
+      applies_to:
+        - "frontend/**/*.tsx"
+        - "frontend/**/*.ts"
+      description: "Frontend SPA architecture and patterns"
+```
+
+### 9e: Verify enforcement
+
+After generating, verify enforce-specs will pick them up:
+
+```bash
+# Test: does a backend file trigger the backend spec?
+echo '{"tool_name":"Edit","tool_input":{"file_path":"backend/src/routes/users.ts"}}' | \
+  node .claude/hooks/context/enforce-specs.cjs
+```
+
+If enforcement works, Claude will be required to read `components/backend.md` before editing any file in `backend/`.
+
+---
+
+## STEP 10: Generate System Map
 
 Generate `.claude/specs/architecture/system-map.yaml` — a structured YAML document that maps how the project's components connect.
 
@@ -730,7 +914,7 @@ architecture:
 
 ---
 
-## STEP 10: Generate CI Workflow
+## STEP 11: Generate CI Workflow
 
 **Generate GitHub Actions CI workflow based on detected stack.**
 
@@ -837,11 +1021,11 @@ This allows the commit skill's `gh pr merge --auto` to work.
 
 ---
 
-## STEP 11: Verify Wiring
+## STEP 12: Verify Wiring
 
 **Check that all configs are actually connected properly.**
 
-### 10a: TypeScript paths
+### 12a: TypeScript paths
 
 ```bash
 # Check tsconfig paths exist
@@ -849,7 +1033,7 @@ cat tsconfig.json | jq '.compilerOptions.paths'
 # Verify those paths resolve to actual directories
 ```
 
-### 10b: Tailwind content
+### 12b: Tailwind content
 
 ```bash
 # Check tailwind content array
@@ -857,14 +1041,14 @@ cat tailwind.config.* | grep -A5 "content"
 # Verify patterns match actual file locations
 ```
 
-### 10c: Build script
+### 12c: Build script
 
 ```bash
 # Try a build
 npm run build 2>&1 | head -20
 ```
 
-### 10d: Peer dependencies
+### 12d: Peer dependencies
 
 ```bash
 # Check for peer dep warnings
@@ -892,7 +1076,7 @@ Fix these issues? (yes/no)
 
 ---
 
-## STEP 12: Update stack-config.yaml
+## STEP 13: Update stack-config.yaml
 
 Update `.claude/specs/stack-config.yaml` with:
 
@@ -972,7 +1156,7 @@ Only include categories that have specs. Don't add empty categories.
 
 ---
 
-## STEP 13: Summary
+## STEP 14: Summary
 
 Show what was created/updated:
 

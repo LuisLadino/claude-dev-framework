@@ -39,34 +39,56 @@ If not found, use conventional commits: `type(scope): description`
 
 Types: feat, fix, refactor, test, docs, chore
 
-### 3. Update Documentation
+### 3. Documentation Check (MANDATORY — do not skip)
 
-Before committing, ensure docs reflect the changes.
+Before committing, verify documentation reflects the changes.
 
-**Check and update if needed:**
-- `CHANGELOG.md` - Add entry for features or fixes
-- `README.md` - Update if structure, API, or features changed
-- Component/module docs - Update if interface changed
+**Step 3a: Determine what changed.**
 
-**Do not update:**
-- `CLAUDE.md` - Only the user edits this
+From the diff, classify the change:
+- Feature or fix → CHANGELOG.md MUST have an entry
+- Structural change (new dirs, renamed modules) → README.md likely needs updating
+- API/interface change → component specs may be stale
+- New component/module → component spec may be needed (see /sync-stack Step 9)
 
-**Report what you did:**
+**Step 3b: Read and check each file.**
+
+MUST read each file that exists. Do not assume "still accurate" without reading.
+
+```bash
+# Check if these exist and read them
+cat CHANGELOG.md 2>/dev/null | head -30
+cat README.md 2>/dev/null | head -40
+ls .claude/specs/components/ 2>/dev/null
 ```
-CHANGELOG.md: added entry
-README.md: still accurate
+
+**Step 3c: Update what's stale.**
+
+Document current state only. NEVER describe what changed — only what IS.
+
+**Do not update:** `CLAUDE.md` — only the user edits this.
+
+**Step 3d: If a file should exist but doesn't** (e.g., no CHANGELOG.md in a project with features), create it.
+
+**Step 3e: Report.** You MUST output a documentation check report before proceeding to Step 4:
+
+```
+DOCUMENTATION CHECK:
+- CHANGELOG.md: [added entry / still accurate / created / N/A]
+- README.md: [updated / still accurate / N/A]
+- Component specs: [updated X / still accurate / N/A]
 ```
 
 ### 4. Stage and Commit
 
 ```bash
 git add path/to/files
-SKILL_ACTIVE=1 git commit -m "type(scope): description"
+SKILL_ACTIVE=1 DOCS_CHECKED=1 git commit -m "type(scope): description"
 ```
 
 Prefer specific files over `git add -A`.
 
-**Note:** `SKILL_ACTIVE=1` bypasses the enforce-skills hook. Only use within this skill.
+**Note:** `SKILL_ACTIVE=1 DOCS_CHECKED=1` bypasses the enforce-skills hook. BOTH markers are required — the hook verifies you completed Step 3 (documentation check) before allowing the commit. Only use within this skill after completing Step 3.
 
 ### 5. Push
 

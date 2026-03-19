@@ -1,294 +1,219 @@
-# Claude Development Framework
+# Claude Kit
 
-**Make Claude a better work partner through context persistence and pattern enforcement.**
+**Make Claude a better work partner through persistent context, pattern enforcement, and self-improvement.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2.4.0-brightgreen.svg)](CHANGELOG.md)
 
 ---
 
 ## What Is This?
 
-A framework that makes Claude Code:
+A toolkit that makes Claude Code:
 
-1. **Remember across sessions** - Context persists. What Claude learns today carries forward.
+1. **Remember across sessions** - Memory persists. What Claude learns today carries forward.
 2. **Work your way** - Your preferences, patterns, and voice are enforced consistently.
-3. **Improve over time** - Feedback loop captures data, detects issues, reflects on what to change.
+3. **Follow design thinking** - Skills map to phases: research, define, ideate, build, test, commit.
+4. **Stay safe** - Hooks block dangerous commands, enforce specs, and scan for secrets.
 
-Without this, every Claude session starts blank. With it, Claude has history, learnings, and awareness.
+Without this, every Claude session starts blank. With it, Claude has continuity, awareness, and structure.
 
 ### How It Works
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    SESSION LIFECYCLE                         │
-├─────────────────────────────────────────────────────────────┤
-│                                                              │
-│  SessionStart → Loads identity, task, learnings from brain  │
-│       ↓                                                      │
-│  During Session → Hooks track everything (tools, files,     │
-│                   commands, failures)                        │
-│       ↓                                                      │
-│  PreCompact → Saves state to brain                          │
-│       ↓                                                      │
-│  SessionEnd → Writes summary for next session               │
-│                                                              │
-└─────────────────────────────────────────────────────────────┘
+SessionStart
+  ├── session-context.js loads project definition
+  ├── session-init.cjs creates session tracking, detects config changes
+  ├── spawn-context-agent.cjs evaluates project state in background
+  └── MEMORY.md auto-loaded (persistent memories)
+       │
+       ▼
+During Session
+  ├── inject-context.cjs (phase reminders, spec triggers, voice)
+  ├── enforce-specs.cjs BLOCKS edits until specs are read
+  ├── enforce-skills.cjs BLOCKS git commit (must use /commit)
+  ├── block-dangerous.cjs blocks destructive commands + secrets
+  └── tracking hooks log tool calls, file changes, commands
+       │
+       ▼
+Handoff
+  └── /handoff captures context to memory/ for next session
 ```
 
-### The Feedback Loop
+### Three Layers
 
-```
-CAPTURE ──► DETECT ──► DECIDE ──► ACT
-   │           │          │        │
-   │           │          │        └─► Write to brain files
-   │           │          │
-   │           │          └─► /analyze investigates, suggests changes
-   │           │
-   │           └─► awareness.js notices issues (large files,
-   │               failures, long sessions)
-   │
-   └─► Tracking hooks log everything
-```
+**System Prompt Layer** (`~/.claude/system-prompt.md`):
+- Identity, methodology, lenses, teaching mode
+- Appended to system prompt for primacy effect
 
-### Two Layers
+**Global Layer** (`~/.claude/projects/` + `~/.gemini/antigravity/scripts/`):
+- Per-project persistence (memory/, tracking/)
+- SessionStart script loads project definition
 
-**Global Layer** (Antigravity - `~/.gemini/antigravity/`):
-- Brain storage for persistent context (learnings, patterns, decisions)
-- SessionStart/PreCompact scripts that load and save state
-- Shared with Gemini for cross-agent context
+**Kit Layer** (this repo, synced to all projects):
+- Skills, commands, hooks, specs, agents
 
-**Framework Layer** (this repo - copied to projects):
-- Slash commands for workflows
-- Hooks for safety, tracking, context injection
-- Specs for pattern enforcement
-
-Works with any stack: React, Vue, Svelte, Next.js, Python, Rust, Go, etc.
+Works with any stack: JavaScript, Python, Rust, Go, Swift, Ruby, and more.
 
 ---
 
 ## Quick Start
 
 ```bash
-# 1. Fork this repo, then clone your fork
-git clone https://github.com/YOUR-USERNAME/claude-kit.git
+# 1. Clone
+git clone https://github.com/LuisLadino/claude-kit.git
 
-# 2. Copy .claude/ to your project
+# 2. Copy kit files to your project
 cp -r claude-kit/.claude your-project/.claude
 
 # 3. In your project, run
-/sync-stack
+/init-project    # Define requirements
+/sync-stack      # Detect stack, generate specs
 ```
-
-That's it. Claude now follows your patterns.
 
 ---
 
-## Development Workflow
-
-Skills trigger automatically from natural language. You can also invoke explicitly.
+## Workflow
 
 ### Setup (once per project)
-
 ```
-Discuss → Document → Create repo → Copy framework → /init-project → /sync-stack → Set up GitHub
+Discuss → Document → Create repo → Copy kit → /init-project → /sync-stack → /plan
 ```
 
 ### Development (repeatable)
-
 ```
-GitHub Issue → Branch → "let's build" → Build + Test → "commit" → Push → "create PR" → Merge
+GitHub Issue → /research → /define → /ideate → /build → /test → /commit → Merge
 ```
 
-Just talk naturally:
-- "Let's work on issue #12" → loads specs, starts work
-- "Let's commit" → updates docs, commits
-- "Create a PR" → creates PR linked to issue
+Skills trigger from natural language:
+- "Let's work on issue #12" → /research
+- "What are our options?" → /ideate
+- "Build it" → /build
+- "Commit" → /commit (push + PR)
 
 ### Planning
-
 ```
-"Add this to backlog"    # Creates GitHub issue
-"What's next?"           # Reviews backlog, recommends
-"Let's plan"             # Organize and prioritize
+"Add this to backlog"    → /plan (creates issue)
+"What's next?"           → /plan (reviews backlog)
 ```
 
 ---
 
 ## Skills
 
-Skills auto-trigger from natural language. Source of truth in `.claude/skills/`.
+Skills auto-trigger from natural language. They map to design thinking phases.
 
-### Development
+| Skill | Phase | Triggers On |
+|-------|-------|-------------|
+| `research` | UNDERSTAND | "work on #X", "look into", "investigate" |
+| `define` | DEFINE | "what are we solving", "root cause", "scope" |
+| `ideate` | IDEATE | "options", "approaches", "what if" |
+| `build` | PROTOTYPE | "build it", "implement", "code it" |
+| `test` | TEST | "does it work", "verify", "test it" |
+| `review` | Quality | "review this", "code review" |
+| `commit` | Ship | "commit", "save this", "done" |
+| `plan` | Pre-work | "what's next", "create issue", "backlog" |
+| `handoff` | Continuity | "handoff", "end session" |
+| `contribute-to-opensource` | Setup | "contribute to", "open source" |
 
-| Skill | Triggers On | What It Does |
-|-------|-------------|--------------|
-| `start-task` | "work on issue #X", "implement", "build" | Load specs, execute with tests |
-| `commit` | "commit", "save this", "checkpoint" | Update docs, commit changes |
-| `pr` | "create PR", "ready for review" | Create PR linked to issue |
-| `add-feature` | "plan", "design", "break down" | Plan complex features |
-
-### Planning
-
-| Skill | Triggers On | What It Does |
-|-------|-------------|--------------|
-| `plan` | "add to backlog", "what's next", "prioritize" | Manage GitHub issues, milestones |
-
-### Setup (explicit only)
+### Commands (explicit only)
 
 | Command | What It Does |
 |---------|--------------|
 | `/init-project` | Define product requirements |
 | `/sync-stack` | Detect stack, generate specs |
-
-### Quality
-
-| Command | Description |
-|---------|-------------|
-| `/audit` | Deep code review using parallel agents. Security, performance, tests, architecture reviewed simultaneously. |
-
-### Utilities
-
-| Command | Description |
-|---------|-------------|
-| `/learn` | Explain any topic using ELI5 style. Analogies, foundations first, no jargon. Use for ALL explanations. |
-| `/analyze` | Run as framework analyst. Evaluates framework health, analyzes session data, iterates on the system. Run in a split terminal pane alongside your working session. |
-
----
-
-## How It Works
-
-```
-/sync-stack
-    ↓
-Reads existing specs → Detects stack → Researches docs → Scans your code
-    ↓
-Generates specs in .claude/specs/coding/
-Updates stack-config.yaml
-    ↓
-/start-task
-    ↓
-Loads stack-config.yaml → Reads all listed specs → Shows what will be enforced
-    ↓
-You approve → Claude implements → Runs quality gates → Done
-```
-
-**Your specs become the rules.** Claude won't deviate from them.
+| `/audit` | Deep codebase review (4 parallel agents) |
+| `/learn` | Explain any topic ELI5 style |
+| `/analyze` | Kit health analysis (run in split pane) |
 
 ---
 
 ## Structure
 
-### Framework (copied to each project)
-
 ```
 .claude/
-├── CLAUDE.md              # Core instructions for Claude
-├── commands/              # Slash commands
-│   ├── development/       # start-task, add-feature, commit, pr
-│   ├── project-management/# sync-stack, init-project
-│   └── utilities/         # learn, analyze, audit
-├── hooks/                 # Automation hooks
-│   ├── safety/            # block-dangerous.js
+├── CLAUDE.md              # Project instructions (synced to all projects)
+├── skills/                # Design thinking phase skills
+│   ├── research/          # UNDERSTAND
+│   ├── define/            # DEFINE
+│   ├── ideate/            # IDEATE
+│   ├── build/             # PROTOTYPE
+│   ├── test/              # TEST
+│   ├── review/            # Quality gate
+│   ├── commit/            # Ship
+│   ├── plan/              # Backlog
+│   ├── handoff/           # Continuity
+│   └── contribute-to-opensource/
+├── hooks/
+│   ├── safety/            # block-dangerous.cjs, enforce-specs.cjs, enforce-skills.cjs, mcp-security-scan.cjs
 │   ├── tracking/          # tool-tracker, track-changes, command-log, awareness
-│   ├── quality/           # verify-before-stop.js
-│   └── context/           # inject-context.js (command routing, voice profile)
-├── skills/                # Auto-routing (you don't call these directly)
-└── specs/                 # YOUR project's specs
-    ├── stack-config.yaml  # Stack + active specs list + quality gates
-    ├── config/            # Git, deploy, env, testing templates
-    └── coding/            # Created by /sync-stack for your dependencies
-```
-
-### Brain (global, persistent across all projects)
-
-```
-~/.gemini/antigravity/brain/
-├── learnings.md              # What Claude has learned (loaded every session)
-├── voice-profile.md          # Writing style rules
-├── framework-issues.md       # Framework bugs/gaps (loaded in claude-kit)
-├── tracking/sessions/        # Global session tracking (framework telemetry)
-└── {workspace-uuid}/         # Per-project context
-    ├── task.md               # Task history
-    ├── session_state.json    # Current state for resuming
-    ├── decisions.md          # Design decisions
-    ├── patterns.md           # Technical patterns
-    ├── research/             # Research findings
-    └── overview.txt          # Daemon-generated summary
+│   ├── context/           # inject-context, session-init, spawn-context-agent, subagent-context
+│   ├── quality/           # verify-before-stop.cjs
+│   └── lifecycle/         # spawn-phase-evaluator.cjs
+├── commands/
+│   ├── project-management/# init-project, sync-stack
+│   └── utilities/         # learn, analyze, audit
+├── agents/                # context-agent, phase-evaluator
+├── specs/                 # Project rules and patterns
+│   ├── stack-config.yaml  # Stack + active specs + quality gates
+│   ├── claude-code/       # Hooks, skills, agents, tools specs
+│   ├── architecture/      # System map
+│   └── config/            # Git, deploy, env, testing
+└── hooks/config/          # security-patterns.json
 ```
 
 ---
 
 ## Hooks
 
-Hooks automate safety, tracking, and context injection. They fire automatically.
+Hooks fire automatically. They enforce behavior without manual reminders.
 
 ### Safety
-- **block-dangerous.js** - Blocks `rm -rf /`, force push to main, credential exposure
+- **block-dangerous.cjs** - Blocks `rm -rf /`, force push to main, credential exposure. Reads patterns from `security-patterns.json`.
+- **enforce-specs.cjs** - Blocks edits until relevant spec is read
+- **enforce-skills.cjs** - Blocks `git commit` (must use /commit skill)
+- **enforce-plan.cjs** - Blocks `gh issue create` (must read plan skill)
+- **mcp-security-scan.cjs** - Scans outbound MCP calls for secrets and sensitive files
 
 ### Tracking
-- **tool-tracker.js** - Logs ALL tool calls (universal tracking)
-- **track-changes.js** - Logs file modifications to brain
-- **command-log.js** - Logs bash commands
-- **tool-failure.js** - Logs failed tool calls
-- **session-end.js** - Writes session summary
-- **awareness.js** - Detects issues (large files, failures, long sessions), prompts for /reflect
+- **tool-tracker.cjs** - Logs all tool calls
+- **track-changes.cjs** - Logs file modifications
+- **track-spec-reads.cjs** - Records which specs were read (enables enforce-specs)
+- **command-log.cjs** - Logs bash commands
+- **awareness.cjs** - Detects accumulating issues, prompts for /analyze
 
 ### Context
-- **inject-context.js** - Suggests commands from natural language, loads voice profile for writing
-- **detect-pivot.js** - Prompts for /sync-stack when dependencies change
+- **inject-context.cjs** - Phase reminders, spec auto-loading, voice profile
+- **session-init.cjs** - Session tracking, config change detection
+- **spawn-context-agent.cjs** - Background project evaluation at session start
+- **subagent-context.cjs** - Injects project context into sub-agents
+- **detect-pivot.cjs** - Prompts for /sync-stack when dependencies change
 
-### Global (in ~/.claude/settings.json)
-- **SessionStart** - Loads identity, task, learnings from brain
-- **PreCompact** - Saves state before context compaction
-
----
-
-## Configuration
-
-### stack-config.yaml
-
-```yaml
-stack:
-  framework: "Next.js"
-  language: "TypeScript"
-  styling: "Tailwind CSS"
-  testing: "Vitest"
-  package_manager: "pnpm"
-
-specs:
-  coding:
-    - nextjs-specs
-    - typescript-specs
-  config:
-    - version-control
-    - testing
-
-project:
-  import_alias: "@/"
-  components_dir: "src/components"
-
-quality:
-  - format
-  - lint
-  - type_check
-  # - test    # Uncomment to require tests pass
-  # - build   # Uncomment to require build pass
-```
-
-### Quality Gates
-
-Listed under `quality:` in stack-config.yaml. Commands are detected from package.json scripts. Only enabled gates run.
+### Quality
+- **verify-before-stop.cjs** - Checks for debug statements (multi-language: JS, Python, Swift, Go, Rust, Ruby)
 
 ---
 
-## Customization
+## Specs
 
-Everything in `specs/` is yours. Edit any file to match your patterns.
+Specs define project rules and patterns. Claude reads them before editing relevant files.
 
-- **Framework updates never touch specs/** - Your customizations are safe
-- **Add custom specs** with `/sync-stack --custom`
-- **Create custom directories** - Just add them to specs/ and list in stack-config.yaml
+Generated by `/sync-stack`. Custom rules via `/sync-stack --custom api-conventions`.
+
+Kit updates never overwrite specs. Your customizations are safe.
+
+---
+
+## Downstream Projects
+
+This is the source repo. Changes sync to downstream projects:
+
+| Project | Path |
+|---------|------|
+| my-brain | `~/Repositories/Personal/my-brain/` |
+| voir | `~/Repositories/Personal/voir/` |
+| airedteaming-site | `~/Repositories/Personal/airedteaming-site/` |
+| adversarial-design-thinking | `~/Repositories/Personal/adversarial-design-thinking/` |
+| PortfolioSite | `~/Repositories/Personal/design/PortfolioSite/site/` |
 
 ---
 

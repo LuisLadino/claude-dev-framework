@@ -1,4 +1,4 @@
-# Contributing to Claude Development Framework
+# Contributing to Claude Kit
 
 Thank you for your interest in contributing.
 
@@ -14,7 +14,6 @@ Include:
 - Clear description of the problem
 - Steps to reproduce (for bugs)
 - Expected vs actual behavior
-- Your environment (OS, Claude version, etc.)
 
 ### Suggest Features
 
@@ -23,35 +22,37 @@ Open an issue with:
 - **Proposed solution** - How should it work?
 - **Alternatives** - What other approaches did you consider?
 
-### Improve Commands
+### Improve Skills or Commands
 
-Commands live in `.claude/commands/` organized by category:
-- `development/` - start-task, add-feature, commit, pr
-- `project-management/` - init-project, sync-stack
-- `utilities/` - learn, analyze, audit
+Skills live in `.claude/skills/{skill-name}/SKILL.md`. Commands in `.claude/commands/`.
 
-### Improve Documentation
+Current skills: research, define, ideate, build, test, review, commit, plan, handoff, contribute-to-opensource.
 
-- Fix typos or unclear explanations
-- Add examples
-- Improve existing docs
+Current commands: init-project, sync-stack, learn, analyze, audit.
+
+### Improve Hooks
+
+Hooks live in `.claude/hooks/` organized by purpose:
+- `safety/` - Security, enforcement
+- `tracking/` - Observability
+- `context/` - Context injection
+- `quality/` - Quality checks
+- `lifecycle/` - Phase evaluation
+
+All hooks use `.cjs` extension (CommonJS, works regardless of package.json `type`).
 
 ---
 
 ## Getting Started
 
-### 1. Fork the Repository
-
-Click "Fork" on [GitHub](https://github.com/LuisLadino/claude-kit).
-
-### 2. Clone Your Fork
+### 1. Fork and Clone
 
 ```bash
 git clone https://github.com/YOUR-USERNAME/claude-kit.git
 cd claude-kit
 ```
 
-### 3. Create a Branch
+### 2. Create a Branch
 
 ```bash
 git checkout -b feature/your-feature-name
@@ -59,125 +60,63 @@ git checkout -b feature/your-feature-name
 git checkout -b fix/your-bug-fix
 ```
 
-Branch naming:
-- `feature/description` - New features
-- `fix/description` - Bug fixes
-- `docs/description` - Documentation changes
+### 3. Make Changes
 
-### 4. Make Changes
+Key rules:
+- **Everything must be project-agnostic.** This kit syncs to projects with different stacks. Don't hardcode paths, assume Node.js, or reference files that only exist in this repo.
+- **Read the relevant spec before editing.** The enforce-specs hook will block you otherwise.
+- **Use `/commit` to commit.** The enforce-skills hook blocks raw `git commit`.
 
-See [Development Process](#development-process) for guidelines.
+### 4. Test
 
-### 5. Test Your Changes
-
-- Walk through the complete flow
-- Check edge cases
-- Verify error handling
-- Proofread for typos
+- Verify your changes work in this repo
+- Consider: will this work in a Python project? A Swift project? A brand new project with no setup?
+- Run the hook manually if you changed one: `echo '{"tool_name":"Bash","tool_input":{"command":"test"}}' | node .claude/hooks/your-hook.cjs`
 
 ---
 
-## Development Process
-
-### Understanding the Structure
+## Structure
 
 ```
-claude-kit/
-├── .claude/
-│   ├── CLAUDE.md                          # Framework instructions
-│   ├── framework-source.txt               # Update source URL
-│   ├── commands/
-│   │   ├── development/                   # start-task, add-feature, commit, pr
-│   │   ├── project-management/            # init-project, sync-stack
-│   │   └── utilities/                     # learn, analyze, audit
-│   ├── skills/                            # Auto-routing skills
-│   └── specs/                             # User customizations (coding, config, etc.)
-├── README.md
-├── CHANGELOG.md
-├── CONTRIBUTING.md
-└── LICENSE
+.claude/
+├── CLAUDE.md              # Kit instructions (synced to all projects)
+├── skills/                # Phase skills (SKILL.md format)
+├── hooks/                 # Automation (.cjs files)
+│   ├── safety/
+│   ├── tracking/
+│   ├── context/
+│   ├── quality/
+│   ├── lifecycle/
+│   ├── lib/               # Shared utilities (session-utils.cjs)
+│   └── config/            # security-patterns.json
+├── commands/              # Slash commands (.md files)
+├── agents/                # Agent definitions
+└── specs/                 # Project rules and patterns
 ```
 
-### Editing Commands
+### Kit-owned vs Project-specific
 
-Commands are in `.claude/commands/<category>/*.md`.
+**Kit-owned (synced from this repo):** skills/, hooks/, commands/, agents/, CLAUDE.md
 
-**Command file structure:**
-- Clear purpose statement
-- Step-by-step workflow
-- User interaction points
-- Error handling
-- Examples
-
-**Keep commands:**
-- Stack-agnostic (use placeholders)
-- User-friendly (clear instructions)
-- Robust (handle edge cases)
+**Project-specific (never overwrite):** specs/, docs/, research/, session-state.json, settings.local.json
 
 ---
 
-## Submitting Changes
+## Commit Messages
 
-### Before Submitting
+Format: `type: description`
 
-- [ ] Test your changes work
-- [ ] Documentation is updated
-- [ ] No typos
-- [ ] Follows the standards above
-- [ ] Commit messages are clear
+Types: feat, fix, docs, refactor, chore, test
 
-### Commit Messages
-
-Format: `type(scope): description`
-
-**Types:**
-- `feat` - New feature
-- `fix` - Bug fix
-- `docs` - Documentation only
-- `refactor` - Code refactor
-- `chore` - Maintenance tasks
-
-**Examples:**
 ```bash
-git commit -m "feat(commands): add new utility command"
-git commit -m "fix(install): handle missing git directory"
-git commit -m "docs(readme): update command list"
+feat: add Python debug pattern detection
+fix: resolve yaml dependency crash in track-spec-reads
+chore: update system map after hook changes
 ```
-
-### Create a Pull Request
-
-1. Push your branch:
-```bash
-git push origin feature/your-feature-name
-```
-
-2. Create a Pull Request on GitHub with:
-   - What changed
-   - Why it changed
-   - How to test it
 
 ---
 
 ## Questions?
 
-- **General questions**: [Open a discussion](https://github.com/LuisLadino/claude-kit/discussions)
-- **Bug reports**: [Open an issue](https://github.com/LuisLadino/claude-kit/issues)
-
----
-
-## Code of Conduct
-
-### Our Standards
-
-**Expected behavior:**
-- Be respectful and inclusive
-- Welcome newcomers
-- Focus on constructive feedback
-- Assume good intentions
-
-**Unacceptable behavior:**
-- Harassment or discrimination
-- Trolling or insulting comments
-- Personal or political attacks
-
-Report issues to: [Open an issue with "Code of Conduct" label]
+- [Open an issue](https://github.com/LuisLadino/claude-kit/issues)
+- [Start a discussion](https://github.com/LuisLadino/claude-kit/discussions)

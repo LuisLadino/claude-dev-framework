@@ -8,11 +8,11 @@
 
 ---
 
-## Framework vs Project Files
+## Kit vs Project Files
 
-This `.claude/` folder comes from the framework repo. Some files are shared (framework-owned), others are project-specific.
+This `.claude/` folder comes from claude-kit. Some files are kit-owned (synced), others are project-specific.
 
-**Framework-owned (synced from framework repo):**
+**Kit-owned (synced from claude-kit):**
 - `CLAUDE.md` - these instructions
 - `commands/` - utility commands (analyze, audit, learn, init-project, sync-stack)
 - `hooks/` - all hooks
@@ -26,8 +26,8 @@ This `.claude/` folder comes from the framework repo. Some files are shared (fra
 - `settings.local.json` - per-project permissions
 - `research/` - project research
 
-**To update framework in a project:**
-1. Copy only framework-owned files from the framework repo
+**To update kit in a project:**
+1. Copy only kit-owned files from claude-kit
 2. Do NOT copy specs/ - run `/sync-stack` instead to regenerate for this project
 3. Preserve any project-specific customizations
 
@@ -36,7 +36,7 @@ This `.claude/` folder comes from the framework repo. Some files are shared (fra
 ## Workflow
 
 **Setup (once per project):**
-Discuss → Document → Create repo → Copy framework → /init-project → /sync-stack → Set up GitHub with /plan
+Discuss → Document → Create repo → Copy kit → /init-project → /sync-stack → Set up GitHub with /plan
 
 **Working (repeatable):**
 GitHub Issue → /research → /define → /ideate → /build → /test → /commit → Merge

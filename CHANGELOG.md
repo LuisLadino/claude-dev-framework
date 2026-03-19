@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to the Claude Development Framework will be documented in this file.
+All notable changes to Claude Kit will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -8,6 +8,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 ## [Unreleased]
+
+### Added
+
+- **MCP security scanner** (`mcp-security-scan.cjs`) — Scans outbound MCP tool calls for secrets and sensitive file references before they leave the machine
+- **Sub-agent context injection** (`subagent-context.cjs`) — Injects lightweight project context into every spawned sub-agent
+- **Security patterns config** (`security-patterns.json`) — Externalized security patterns for block-dangerous and MCP scanner
+- **Pre-commit code review** (`/review`) — Multi-agent diff review skill (security, performance, patterns, architecture)
+- **10 new secret patterns** — SendGrid, NPM, PyPI, Docker Hub, Azure Storage, Azure Cognitive, Vercel, Heroku, Supabase tokens
+- **Multi-language debug detection** — verify-before-stop now detects debug statements in Python, Swift, Go, Rust, Ruby (not just JS)
+- **Multi-language config watching** — session-init watches dependency manifests for Python, Rust, Go, Swift, Ruby, PHP, Java, .NET, Elixir
+- **3 config specs registered** — deployment, environment, testing now visible to enforcement
+- **contribute-to-opensource** added to skills spec table
+- **Component-scoped specs** — /sync-stack Step 9 generates specs for individual components
+
+### Fixed
+
+- **track-spec-reads.cjs yaml crash** (#50) — Removed external `yaml` dependency, replaced with inline parser. Was crashing in all downstream projects.
+- **Security pattern bypasses** (#49) — Force-push flag ordering, `--force-with-lease` false block, rm anchor bypass, `cat .env.example` false positive, heredoc body-text scanning
+- **analyze.md portability** (#54) — Removed 5 hardcoded paths, moved personal goals out of kit-owned file
+- **MCP scanner matching** (#52) — Path-aware sensitive file matching replaces naive substring. Fixed AWS example key whitelist. Cleaned non-functional whitelist entries.
+- **JS-biased components** (#56) — session-init, verify-before-stop, subagent-context now language-agnostic
+- **System map inaccuracies** (#53) — spec-triggers description, session-utils used_by, check-teaching-format contradictory status, Co-Authored-By policy
+
+### Changed
+
+- **Terminology** — "framework" → "kit" throughout CLAUDE.md, .claude/CLAUDE.md, analyze.md, README.md, CONTRIBUTING.md
+- **README.md** — Complete rewrite to match current state (skills, hooks, structure)
+- **CONTRIBUTING.md** — Complete rewrite (skills not commands, .cjs not .js, project-agnostic rule)
+- **Force-push patterns** — Consolidated 2 patterns into 1 using order-independent lookaheads
+- **block-dangerous.cjs** — Strips heredoc content before pattern matching to avoid body-text false positives
 
 ### Added
 

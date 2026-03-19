@@ -55,15 +55,37 @@ function getInvokedCommands(tracking) {
   return [...new Set(commands)];
 }
 
-function checkForDebugStatements(filePath) {
-  const debugPatterns = [
-    /console\.log\(/,
-    /console\.debug\(/,
-    /debugger;/,
+function getDebugPatterns(filePath) {
+  const ext = path.extname(filePath);
+  const base = [
     /TODO:\s*REMOVE/i,
     /FIXME:\s*REMOVE/i,
     /XXX:/
   ];
+
+  switch (ext) {
+    case '.js': case '.jsx': case '.ts': case '.tsx': case '.mjs': case '.cjs':
+      return [...base, /console\.log\(/, /console\.debug\(/, /debugger;/];
+    case '.py':
+      return [...base, /breakpoint\(\)/, /pdb\.set_trace\(\)/, /print\((?!.*file=)/];
+    case '.swift':
+      return [...base, /print\(/, /#if\s+DEBUG/];
+    case '.go':
+      return [...base, /fmt\.Print(ln|f)?\(/, /log\.Print(ln|f)?\(/];
+    case '.rs':
+      return [...base, /dbg!\(/, /println!\(/];
+    case '.rb':
+      return [...base, /binding\.pry/, /byebug/, /puts\s/];
+    default:
+      return base;
+  }
+}
+
+function checkForDebugStatements(filePath) {
+  // Skip hook files — they legitimately use console.log for output
+  if (filePath.includes('.claude/hooks/')) return [];
+
+  const debugPatterns = getDebugPatterns(filePath);
 
   try {
     const content = fs.readFileSync(filePath, 'utf8');
@@ -126,7 +148,7 @@ function handleHook(data) {
 
   for (const file of allFiles) {
     if (!fs.existsSync(file)) continue;
-    if (!file.match(/\.(js|jsx|ts|tsx|mjs|cjs)$/)) continue;
+    if (!file.match(/\.(js|jsx|ts|tsx|mjs|cjs|py|swift|go|rs|rb)$/)) continue;
 
     const debugIssues = checkForDebugStatements(file);
     if (debugIssues.length > 0) {

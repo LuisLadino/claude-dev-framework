@@ -82,6 +82,23 @@ specs:
       applies_to: []
       description: "Git conventions"
 
+    - name: deployment
+      file: config/deployment.md
+      applies_to: []
+      description: "Platform, environments, deploy process, CI/CD"
+
+    - name: environment
+      file: config/environment.md
+      applies_to: []
+      description: "Dev environment setup, requirements, scripts"
+
+    - name: testing
+      file: config/testing.md
+      applies_to:
+        - "**/*.test.*"
+        - "**/*.spec.*"
+      description: "Test framework, coverage, testing patterns"
+
 # Project Settings
 project:
   hooks_dir: ".claude/hooks"

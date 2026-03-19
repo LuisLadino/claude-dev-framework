@@ -50,6 +50,17 @@ function handleHook(data) {
 
   // Allow commands with SKILL_ACTIVE marker (set by skills to bypass enforcement)
   if (command.includes('SKILL_ACTIVE=1')) {
+    // Check if documentation was verified (DOCS_CHECKED marker)
+    if (/\bgit\s+commit\b/i.test(command) && !command.includes('DOCS_CHECKED=1')) {
+      console.error('[DOCUMENTATION CHECK REQUIRED] You are committing via the commit skill but skipped the documentation check.');
+      console.error('');
+      console.error('Go back to Step 3 of the commit skill:');
+      console.error('1. Read CHANGELOG.md and README.md (if they exist)');
+      console.error('2. Update what is stale');
+      console.error('3. Output a DOCUMENTATION CHECK report');
+      console.error('4. Then commit with: SKILL_ACTIVE=1 DOCS_CHECKED=1 git commit ...');
+      process.exit(2);
+    }
     process.exit(0);
   }
 

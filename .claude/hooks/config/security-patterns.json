@@ -1,0 +1,266 @@
+{
+  "dangerous_commands": [
+    {
+      "pattern": "rm\\s+(-[rf]+\\s+)*[\\/~](\\s|$)",
+      "flags": "i",
+      "reason": "Refusing to delete root or home directory"
+    },
+    {
+      "pattern": "rm\\s+-rf?\\s+\\*|rm\\s+-rf?\\s+\\.(?!\\w)",
+      "flags": "i",
+      "reason": "Refusing to delete all files or hidden files recursively"
+    },
+    {
+      "pattern": "git\\s+push\\b(?=.*\\b(main|master)\\b)(?!.*--force-with-lease)(?=.*(?:--force|-f\\b))",
+      "flags": "i",
+      "reason": "Refusing to force push to main/master branch"
+    },
+    {
+      "pattern": "git\\s+reset\\s+--hard\\s+origin\\/(main|master)",
+      "flags": "i",
+      "reason": "Refusing to hard reset to remote main/master - this discards local changes"
+    },
+    {
+      "pattern": "git\\s+clean\\s+-fd",
+      "flags": "i",
+      "reason": "Refusing git clean -fd - this removes untracked files permanently"
+    },
+    {
+      "pattern": "drop\\s+database",
+      "flags": "i",
+      "reason": "Refusing to drop database"
+    },
+    {
+      "pattern": "drop\\s+table\\s+(?!if\\s+exists)",
+      "flags": "i",
+      "reason": "Refusing to drop table without IF EXISTS"
+    },
+    {
+      "pattern": "truncate\\s+table",
+      "flags": "i",
+      "reason": "Refusing to truncate table"
+    },
+    {
+      "pattern": "cat\\s+.*\\.(env|pem|key|secret)\\b(?!\\w|\\.(example|sample|template|bak|md))",
+      "flags": "i",
+      "reason": "Refusing to cat credential files"
+    },
+    {
+      "pattern": "echo\\s+.*\\$[A-Z_]*(KEY|SECRET|PASSWORD|TOKEN)",
+      "flags": "i",
+      "reason": "Refusing to echo potential credentials"
+    },
+    {
+      "pattern": ":\\(\\)\\{\\s*:\\|:\\&\\s*\\};:",
+      "flags": "",
+      "reason": "Refusing fork bomb"
+    },
+    {
+      "pattern": "mkfs\\.",
+      "flags": "i",
+      "reason": "Refusing filesystem format command"
+    },
+    {
+      "pattern": "dd\\s+if=.*of=\\/dev\\/",
+      "flags": "i",
+      "reason": "Refusing to write directly to device"
+    }
+  ],
+
+  "secret_patterns": [
+    {
+      "id": "openai_key",
+      "pattern": "sk-[a-zA-Z0-9]{32,}",
+      "reason": "OpenAI API key detected"
+    },
+    {
+      "id": "openai_project_key",
+      "pattern": "sk-proj-[a-zA-Z0-9]{32,}",
+      "reason": "OpenAI project key detected"
+    },
+    {
+      "id": "anthropic_key",
+      "pattern": "sk-ant-[a-zA-Z0-9\\-_]{32,}",
+      "reason": "Anthropic API key detected"
+    },
+    {
+      "id": "github_pat",
+      "pattern": "ghp_[a-zA-Z0-9]{36}",
+      "reason": "GitHub personal access token detected"
+    },
+    {
+      "id": "github_oauth",
+      "pattern": "gho_[a-zA-Z0-9]{36}",
+      "reason": "GitHub OAuth token detected"
+    },
+    {
+      "id": "github_fine_grained",
+      "pattern": "github_pat_[a-zA-Z0-9]{22}_[a-zA-Z0-9]{59}",
+      "reason": "GitHub fine-grained PAT detected"
+    },
+    {
+      "id": "aws_access_key",
+      "pattern": "AKIA[0-9A-Z]{16}",
+      "reason": "AWS access key ID detected"
+    },
+    {
+      "id": "aws_secret",
+      "pattern": "aws_secret_access_key\\s*=\\s*[a-zA-Z0-9\\/+=]{40}",
+      "flags": "i",
+      "reason": "AWS secret access key detected"
+    },
+    {
+      "id": "google_api",
+      "pattern": "AIza[0-9A-Za-z\\-_]{35}",
+      "reason": "Google API key detected"
+    },
+    {
+      "id": "groq_key",
+      "pattern": "gsk_[a-zA-Z0-9]{32,}",
+      "reason": "Groq API key detected"
+    },
+    {
+      "id": "slack_bot",
+      "pattern": "xoxb-[0-9]{10,13}-[0-9]{10,13}-[a-zA-Z0-9]{24}",
+      "reason": "Slack bot token detected"
+    },
+    {
+      "id": "slack_user",
+      "pattern": "xoxp-[0-9]{10,13}-[0-9]{10,13}-[a-zA-Z0-9]{24,32}",
+      "reason": "Slack user token detected"
+    },
+    {
+      "id": "gitlab_pat",
+      "pattern": "glpat-[a-zA-Z0-9\\-_]{20}",
+      "reason": "GitLab PAT detected"
+    },
+    {
+      "id": "twilio_key",
+      "pattern": "SK[a-z0-9]{32}",
+      "reason": "Twilio API key detected"
+    },
+    {
+      "id": "stripe_key",
+      "pattern": "sk_live_[a-zA-Z0-9]{24,}",
+      "reason": "Stripe live key detected"
+    },
+    {
+      "id": "stripe_test_key",
+      "pattern": "sk_test_[a-zA-Z0-9]{24,}",
+      "reason": "Stripe test key detected"
+    },
+    {
+      "id": "private_key",
+      "pattern": "-----BEGIN\\s*(RSA|DSA|EC|OPENSSH|PGP)\\s*PRIVATE KEY-----",
+      "reason": "Private key detected"
+    },
+    {
+      "id": "jwt_token",
+      "pattern": "eyJ[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+\\.[a-zA-Z0-9\\-_]+",
+      "reason": "JWT token detected"
+    },
+    {
+      "id": "db_connection_string",
+      "pattern": "(postgres|postgresql|mysql|mongodb|redis):\\/\\/[^:]+:[^@]+@[^/]+",
+      "reason": "Database connection string with credentials detected"
+    },
+    {
+      "id": "generic_secret_assignment",
+      "pattern": "[A-Z_]+(KEY|TOKEN|SECRET|PASSWORD|PASSWD)\\s*=\\s*[\"']?[^\\s\"']{8,}[\"']?",
+      "reason": "Secret assignment detected"
+    },
+    {
+      "id": "bearer_token",
+      "pattern": "Bearer\\s+[a-zA-Z0-9\\-_.]+\\.[a-zA-Z0-9\\-_.]+\\.[a-zA-Z0-9\\-_.]+",
+      "reason": "Bearer token detected"
+    },
+    {
+      "id": "sendgrid_key",
+      "pattern": "SG\\.[a-zA-Z0-9\\-_]{22}\\.[a-zA-Z0-9\\-_]{43}",
+      "reason": "SendGrid API key detected"
+    },
+    {
+      "id": "npm_token",
+      "pattern": "npm_[a-zA-Z0-9]{36}",
+      "reason": "NPM access token detected"
+    },
+    {
+      "id": "pypi_token",
+      "pattern": "pypi-[a-zA-Z0-9\\-_]{100,}",
+      "reason": "PyPI API token detected"
+    },
+    {
+      "id": "docker_pat",
+      "pattern": "dckr_pat_[a-zA-Z0-9\\-_]{27}",
+      "reason": "Docker Hub PAT detected"
+    },
+    {
+      "id": "azure_subscription_key",
+      "pattern": "[a-f0-9]{32}",
+      "flags": "",
+      "reason": "Azure Cognitive Services key detected (32-char hex)",
+      "_note": "High false-positive risk — only checked in MCP scanner, not in Bash commands"
+    },
+    {
+      "id": "azure_connection_string",
+      "pattern": "DefaultEndpointsProtocol=https;AccountName=[^;]+;AccountKey=[^;]+",
+      "reason": "Azure Storage connection string detected"
+    },
+    {
+      "id": "vercel_token",
+      "pattern": "vercel_[a-zA-Z0-9]{24,}",
+      "flags": "i",
+      "reason": "Vercel token detected"
+    },
+    {
+      "id": "heroku_api_key",
+      "pattern": "heroku_api_key\\s*=\\s*[a-f0-9\\-]{36}",
+      "flags": "i",
+      "reason": "Heroku API key detected"
+    },
+    {
+      "id": "supabase_key",
+      "pattern": "sbp_[a-f0-9]{40}",
+      "reason": "Supabase service key detected"
+    }
+  ],
+
+  "sensitive_files": [
+    ".env",
+    ".env.local",
+    ".env.production",
+    ".env.development",
+    ".env.staging",
+    "credentials.json",
+    "google-credentials.json",
+    "service-account.json",
+    "private.key",
+    "id_rsa",
+    "id_ed25519",
+    "id_dsa",
+    "id_ecdsa",
+    ".pem",
+    ".key",
+    ".p12",
+    ".pfx",
+    "keystore",
+    ".jks",
+    ".npmrc",
+    ".pypirc",
+    "docker-config.json"
+  ],
+
+  "whitelist": [
+    "YOUR_API_KEY",
+    "your_api_key_here",
+    "your-api-key",
+    "INSERT_KEY_HERE",
+    "REPLACE_WITH_KEY",
+    "password=your_password_here",
+    "password=changeme",
+    "password=example",
+    "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "AKIAIOSFODNN7EXAMPLE"
+  ],
+  "whitelist_notes": "Only entries that actually trigger a secret_pattern belong here. Removed: sk-your-key-here, sk-xxxxxxxx, sk-..., Bearer YOUR_TOKEN_HERE, AKIA_EXAMPLE_KEY (none matched any pattern)."
+}

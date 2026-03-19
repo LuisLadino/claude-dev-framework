@@ -32,7 +32,7 @@ type: description
 Types: feat, fix, docs, style, refactor, test, chore
 ```
 
-**No Co-Authored-By for Claude.** Never add yourself as a contributor.
+**Co-Authored-By:** Claude Code's built-in commit behavior adds `Co-Authored-By: Claude`. This is expected and acceptable.
 
 Examples:
 - `feat: add user authentication`
