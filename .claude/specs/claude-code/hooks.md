@@ -148,7 +148,7 @@ console.log('[MY_HOOK] Context information for the session...');
 process.exit(0);
 ```
 
-**Note:** JSON format with `additionalContext` field does NOT work for SessionStart hooks. Use plain `console.log()` instead.
+**Note:** JSON format with `additionalContext` field does NOT work. Use plain `console.log()` for ALL hook output injection (SessionStart, UserPromptSubmit, etc.).
 
 ### PreToolUse Denial
 ```javascript

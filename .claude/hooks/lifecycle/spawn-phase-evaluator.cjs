@@ -11,7 +11,8 @@
  * will see and act on the instruction) instead of PostToolUse (where
  * instructions get buried mid-response).
  *
- * Same instruction pattern as spawn-context-agent.cjs.
+ * Uses plain console.log() — same pattern as spawn-context-agent.cjs.
+ * JSON additionalContext format does NOT work for hook output injection.
  */
 
 const fs = require('fs');
@@ -76,8 +77,9 @@ function handleHook() {
     }).trim();
   } catch {}
 
-  // Output as additionalContext (UserPromptSubmit format)
-  const instruction = `IMPORTANT: A commit was just made. You MUST proactively spawn the phase evaluator agent before responding to the user.
+  // Output as plain text — same pattern as spawn-context-agent.cjs
+  // JSON additionalContext format does not work for UserPromptSubmit hooks
+  console.log(`IMPORTANT: A commit was just made. You MUST proactively spawn the phase evaluator agent before responding to the user.
 
 <commentary>
 A commit just happened: "${commitMsg}"
@@ -92,9 +94,6 @@ Use the Agent tool with these exact parameters:
 - prompt: "A commit was just made: '${commitMsg.replace(/'/g, "\\'")}'. Files changed: ${filesChanged.replace(/\n/g, ', ')}. Evaluate the project state, check if phase transitions are needed, and surface any observations."
 - run_in_background: true
 
-Do NOT skip this. Do NOT wait for the user to ask for it.`;
-
-  const output = { additionalContext: instruction };
-  console.log(JSON.stringify(output));
+Do NOT skip this. Do NOT wait for the user to ask for it.`);
   process.exit(0);
 }
