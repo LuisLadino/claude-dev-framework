@@ -25,42 +25,42 @@ You're beginning work on a task. This is step 3 of the project workflow:
 
 ## What to Do
 
-### 1. Check Branch Status
+### 1. Identify the Issue
 
-```bash
-git branch --show-current
-git status
-```
-
-If on main, ask: "Create a branch first? What issue are you working on?"
-
-If user mentioned an issue number, suggest: `git checkout -b feature/{issue-number}-short-description`
-
-### 2. Load Specs
-
-Read `.claude/specs/stack-config.yaml` to understand the project configuration.
-
-If it exists, read all specs listed under the `specs:` field. These define the rules and patterns for this project.
-
-If no stack-config exists, note this and proceed with general best practices.
-
-### 3. Understand the Task
-
-If user referenced a GitHub issue:
+If user referenced a GitHub issue number:
 ```bash
 gh issue view {number}
 ```
 
-Move the issue to "In Progress" on the project board:
-```bash
-# Get project number first if needed
-gh project item-list --owner @me --format json | head -20
+If user described work without an issue number, ask: "Should we create an issue for this first? (/plan)"
 
-# Move issue to In Progress (adjust project number as needed)
-gh issue edit {number} --add-label "status/in-progress"
+Load the issue body as task context — it contains the problem, rationale, and any prior decisions.
+
+### 2. Create Branch and Move to In Progress
+
+```bash
+# Check current branch
+git branch --show-current
+
+# If on main, create a branch from the issue
+# Use type from issue labels: feat/, fix/, chore/, docs/
+git checkout -b {type}/{issue-number}-short-description
+
+# Mark issue as in progress
+gh issue edit {number} --remove-label "status/backlog" --remove-label "status/ready" --add-label "status/in-progress"
 ```
 
-Ask clarifying questions only if genuinely ambiguous:
+Branch naming: `feat/31-dynamic-spec-triggers`, `fix/34-phase-evaluator`, `chore/33-downstream-sync`
+
+If a branch for this issue already exists, check it out instead of creating a new one.
+
+### 3. Load Specs
+
+Read the spec files in `.claude/specs/` — their frontmatter defines what rules apply to which files.
+
+### 4. Understand the Task
+
+The issue body should have the context. Ask clarifying questions only if genuinely ambiguous:
 - What exactly should this do?
 - Where should it go?
 - Any specific requirements?
