@@ -11,6 +11,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Phase skills** — Five new skills mapping to design thinking phases: `/research` (UNDERSTAND), `/define` (DEFINE), `/ideate` (IDEATE), `/build` (PROTOTYPE), `/test` (TEST). Each is a domain-agnostic method card with forcing functions — questions and thinking prompts, not hardcoded actions.
+- **Dynamic spec triggers** — `spec-triggers.cjs` now scans `.claude/specs/` frontmatter for `triggers` field instead of hardcoded paths. Add `triggers: [keyword1, keyword2]` to any spec's frontmatter for automatic prompt-based loading. Project-agnostic.
+- **`triggers` field in spec format** — New optional frontmatter field documented in `spec-format.md`. Enables per-spec auto-loading without code changes.
+
+### Removed
+
+- **start-task skill + command** — Replaced by `/research` (entry point) and `/build` (commitment point). The monolith that skipped thinking phases is gone.
+- **design-thinking skill** — Task tracking absorbed into phase skills. Phase mindset stays, TaskCreate/TaskUpdate tool dependency removed.
+- **add-feature skill + command** — Planning work split between `/define` and `/ideate`.
+- **route-commands.cjs** — Dead code (379 lines). Opus 4.6 handles skill routing natively via system-reminder.
+- **TaskCreate/TaskUpdate references** — Removed from all skills and inject-context.cjs. Phase mindset remains without tool dependency.
+
+### Changed
+
+- **inject-context.cjs line 85** — Rewritten: design thinking phase reminder now names phases explicitly and points to phase skills.
+- **Phase evaluator hook** — Fixed output format (JSON → plain text for SessionStart, confirmed JSON works for UserPromptSubmit). Moved from PostToolUse to UserPromptSubmit.
+- **Workflow in CLAUDE.md** — Now shows full phase flow: GitHub Issue → /research → /define → /ideate → /build → /test → /commit → Merge.
+- **plan skill** — Task Management section rewritten to reference phase skills and issue comments instead of TaskCreate.
+- **skills.md** — Updated skill table with phase mapping, removed stale "~20% trigger rate" claim (Opus 4.6 auto-surfaces skills).
+- **hooks.md** — Corrected JSON format documentation: works for UserPromptSubmit, not SessionStart.
+
+### Fixed
+
+- **Phase evaluator delivery (#34)** — Two-part fix: moved from PostToolUse to UserPromptSubmit (right trigger), changed output to plain text (right format for SessionStart pattern). Verified working — the fix tested itself.
+
+### Added (previous in this cycle)
+
 - **System map** — New `system-map.yaml` replaces `wiring.md`. Structured YAML dependency graph and change impact guide. Enforced via enforce-specs before editing framework files. `/sync-stack` generates project-specific maps for downstream projects. Agents check freshness and flag updates needed.
 - **Project-agnostic constraint** — Added explicit rule in system map change rules: all framework changes must work in any project, not just this repo.
 - **Design thinking grounding line** — Added to system-prompt.md: every interaction is working through a problem, ground in the rhythm.
