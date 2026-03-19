@@ -148,6 +148,11 @@ Structure your output like this:
 
 **Recent activity:** [what the last 5-10 commits accomplished]
 
+**Observations:**
+- [Strategic observation — patterns, connections, things the main session might miss]
+- [Cross-project opportunity if visible — e.g., "this pattern could apply to voir"]
+- [Rhythm observation — e.g., "3 sessions in prototype without validation"]
+
 **Gaps:**
 - [gap 1 with severity]
 - [gap 2 with severity]
