@@ -102,7 +102,7 @@ You're not automatically watching - Luis tells you when to look and what to focu
 1. **Hook Accuracy**
    - Read session tracking → injections array
    - Check: Are commands being suggested correctly?
-   - Look for false positives (e.g., /start-task for content writing)
+   - Look for false positives (e.g., /build for content writing)
    - Look for false negatives (e.g., missed opportunities to suggest commands)
 
 2. **Data Flow**
@@ -147,7 +147,7 @@ You're not automatically watching - Luis tells you when to look and what to focu
 Tell the STORY, not the metrics:
 - "Last 3 sessions were spent on framework plumbing. Luis's portfolio site hasn't been touched in 2 weeks. The framework is becoming the work instead of enabling the work."
 - "Teaching mode fires on every AI question but Luis still has to say 'explain that' - the teaching isn't calibrated to his level."
-- "Claude keeps suggesting /start-task for content writing tasks. The pattern is too broad."
+- "Claude keeps suggesting /build for content writing tasks. The pattern is too broad."
 
 ### Outputs
 

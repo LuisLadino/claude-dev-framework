@@ -16,7 +16,7 @@ stack:
 # Active Specs
 # Each spec has: name, file path, applies_to patterns, and optional related specs
 # enforce-specs.cjs reads this to determine which spec to require before edits
-# /start-task reads this to load specs into context
+# /build skill reads this to load specs into context
 
 specs:
   claude-code:

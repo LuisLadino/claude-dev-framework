@@ -49,7 +49,7 @@ Directories are created as needed based on your stack.
 3. Generates spec files with content
 4. Updates `stack-config.yaml` with specs and their applies_to patterns
 5. `enforce-specs.cjs` reads stack-config.yaml and blocks edits until spec is read
-6. `/start-task` loads specs listed in stack-config.yaml
+6. `/build` loads relevant specs before implementation
 
 ---
 

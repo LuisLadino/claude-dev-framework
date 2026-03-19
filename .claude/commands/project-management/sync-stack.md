@@ -1015,7 +1015,7 @@ Updated: stack-config.yaml
 Next steps:
 - Review CI workflow in .github/workflows/ci.yml
 - Review specs in .claude/specs/
-- Run /start-task to build with these specs enforced
+- Run /build to implement with these specs enforced
 ```
 
 ### Save state for pivot detection
@@ -1161,10 +1161,10 @@ Confirm the spec was created. Suggest reviewing and customizing.
 
 After running `/sync-stack`:
 
-**For /start-task:**
+**For /build:**
 1. Claude loads `stack-config.yaml`
 2. Reads all spec files listed under `specs:`
-3. Specs are now in context for the task
+3. Specs are now in context for the work
 
 **For enforcement (automatic):**
 1. Claude attempts to edit a file

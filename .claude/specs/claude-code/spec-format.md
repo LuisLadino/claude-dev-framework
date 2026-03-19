@@ -239,4 +239,4 @@ category: config
 ---
 ```
 
-For specs that govern actions (not file edits), `applies_to` can be empty. The hook uses stack-config.yaml to determine which specs to load for `/start-task`.
+For specs that govern actions (not file edits), `applies_to` can be empty. The hook uses stack-config.yaml to determine which specs to load for `/build`.

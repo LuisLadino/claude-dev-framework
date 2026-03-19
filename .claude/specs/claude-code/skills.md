@@ -20,12 +20,15 @@ Skills are stored in `.claude/skills/{skill-name}/SKILL.md`.
 ```
 .claude/
 └── skills/
-    ├── commit/
-    │   └── SKILL.md
-    ├── start-task/
-    │   └── SKILL.md
-    └── plan/
-        └── SKILL.md
+    ├── research/       # UNDERSTAND phase (entry point)
+    ├── define/         # DEFINE phase
+    ├── ideate/         # IDEATE phase
+    ├── build/          # PROTOTYPE phase (commitment point)
+    ├── test/           # TEST phase
+    ├── commit/         # Ship (commit → push → PR)
+    ├── plan/           # Backlog management
+    ├── handoff/        # Session continuity
+    └── contribute-to-opensource/
 ```
 
 ---
@@ -203,10 +206,13 @@ Use commands for explicit-only operations or complex multi-file content.
 
 ## This Framework's Skills
 
-| Skill | Triggers On | Does |
-|-------|-------------|------|
-| `commit` | "commit", "save this", "done" | Commit + Push + PR + Auto-merge |
-| `start-task` | "work on issue", "implement", "build" | Load specs, gather requirements, code |
-| `plan` | "what's next", "add to backlog", "create issue" | Manage GitHub issues/milestones |
-| `add-feature` | "plan feature", "break down", "design" | Create PRD, break into subtasks |
-| `handoff` | "handoff", "end session", "save context" | Capture context for next session |
+| Skill | Phase | Triggers On | Does |
+|-------|-------|-------------|------|
+| `research` | UNDERSTAND | "work on #X", "look into", "explore" | Research problem, load context, create design thinking tasks |
+| `define` | DEFINE | "what are we solving", "root cause", "scope" | Problem statement, root cause, Definition of Done |
+| `ideate` | IDEATE | "options", "approaches", "what if" | Generate 3+ approaches, trade-offs, recommend |
+| `build` | PROTOTYPE | "build it", "implement", "code it" | Create branch, load specs, incremental work |
+| `test` | TEST | "does it work", "verify", "test it" | Verify against DoD, iteration routing |
+| `commit` | Ship | "commit", "save this", "done" | Commit + Push + PR + Auto-merge |
+| `plan` | Pre-work | "what's next", "add to backlog", "create issue" | Manage GitHub issues/milestones |
+| `handoff` | Continuity | "handoff", "end session", "save context" | Capture context for next session |

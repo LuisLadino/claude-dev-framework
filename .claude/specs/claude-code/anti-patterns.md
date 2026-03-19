@@ -228,14 +228,14 @@ git commit -m "message"
 
 **Fix:** Invoke `Skill(skill: "commit")`. Hook enforcement blocks direct commits.
 
-### Coding Without /start-task
+### Building Without Research
 ```
 User: "Let's discuss the feature"
 [Discussion leads to implementation]
-Claude: [Writes code without loading specs]
+Claude: [Writes code without researching or loading specs]
 ```
 
-**Fix:** Before writing code, load specs. enforce-specs hook blocks edits until specs are read.
+**Fix:** Use /research first to understand the problem. Use /build when ready to implement — it loads specs and creates a branch. enforce-specs hook blocks edits until specs are read.
 
 ### Skipping Steps
 ```

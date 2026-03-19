@@ -54,7 +54,7 @@ lifecycle:
     Bash:
       - command-log.cjs          # Logs bash commands
       - detect-pivot.cjs         # Notifies when dependencies change
-      - spawn-phase-evaluator.cjs  # Spawns phase-evaluator after git commits
+      # spawn-phase-evaluator.cjs moved to UserPromptSubmit (own group)
 
   PostToolUseFailure:
     all_tools:
@@ -127,7 +127,7 @@ shared_resources:
   stack-config.yaml:
     path: .claude/specs/stack-config.yaml
     purpose: Single source of truth for spec enforcement
-    read_by: [enforce-specs.cjs, start-task skill, sync-stack command]
+    read_by: [enforce-specs.cjs, build skill, sync-stack command]
     if_changed:
       - Adding specs — create the file AND add applies_to patterns
       - Changing applies_to — test enforce-specs matches correctly
@@ -306,9 +306,9 @@ components:
 
   hooks/lifecycle/spawn-phase-evaluator.cjs:
     purpose: Spawns phase-evaluator agent after git commits
-    trigger: PostToolUse (Bash, git commit only)
-    reads: "git log (last commit message and diff)"
-    outputs: "Injection instruction to spawn via Agent tool"
+    trigger: UserPromptSubmit (detects new commit via HEAD hash comparison)
+    reads: ".claude/last-evaluated-commit, git log"
+    outputs: "Plain text instruction to spawn via Agent tool"
 
   hooks/lifecycle/phase-evaluator-worker.cjs:
     purpose: Background worker for phase evaluation via claude -p
@@ -359,17 +359,9 @@ components:
     enforcement: Must update .md files near changed code
     bypasses: enforce-skills via SKILL_ACTIVE=1
 
-  commands/development/start-task.md:
-    purpose: Execute task with specs enforcement
-    references: [stack-config.yaml, all relevant specs]
-
   commands/development/pr.md:
     purpose: Create PR with commit summary
     references: [version-control.md]
-
-  commands/development/add-feature.md:
-    purpose: Plan complex features with research
-    references: [stack-config.yaml]
 
   commands/project-management/init-project.md:
     purpose: Define WHAT to build
@@ -405,21 +397,30 @@ components:
     sets: "session-state.json pendingIssue flag"
     connected_to: enforce-plan.cjs
 
-  skills/start-task:
-    purpose: Load issue, load specs, execute task
-    reads: [GitHub issue, stack-config.yaml]
+  skills/research:
+    purpose: "UNDERSTAND phase — research problem before acting (entry point)"
+    reads: [GitHub issue, prior art, authoritative sources]
+
+  skills/define:
+    purpose: "DEFINE phase — precise problem statement, root cause, Definition of Done"
+    outputs: "Problem statement, DoD, scope boundaries"
+
+  skills/ideate:
+    purpose: "IDEATE phase — generate approaches, evaluate trade-offs, converge"
+    outputs: "Options, trade-off analysis, recommendation"
+
+  skills/build:
+    purpose: "PROTOTYPE phase — commitment point, branch creation, incremental work"
+    reads: [GitHub issue, stack-config.yaml, specs]
+    creates: "git branch at this phase (not earlier)"
+
+  skills/test:
+    purpose: "TEST phase — verify against DoD, iteration routing"
+    outputs: "Pass/fail, iteration decision, learnings"
 
   skills/handoff:
     purpose: Capture session context for next session
     writes: ["memory/project_handoff.md", "memory/MEMORY.md"]
-
-  skills/design-thinking:
-    purpose: Orchestrate 6-task design thinking flow
-    uses: [TaskCreate, TaskUpdate, TaskList, TaskGet]
-
-  skills/add-feature:
-    purpose: Break down complex features into implementation plan
-    outputs: Plan, not code
 
   skills/contribute-to-opensource:
     purpose: Configure framework to match external project patterns
@@ -556,7 +557,7 @@ change_rules:
 
   changing_stack_config:
     - enforce-specs reads this — test enforcement
-    - start-task reads this — test spec loading
+    - build skill reads this — test spec loading
     - sync-stack reads AND writes this
 
   syncing_to_downstream:
