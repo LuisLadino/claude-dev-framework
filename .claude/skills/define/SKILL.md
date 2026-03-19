@@ -5,7 +5,7 @@ description: >
   "what are we actually solving", "scope this", "root cause", "what's the real
   problem", "narrow this down", "definition of done", or when research is done
   and it's time to get precise about the problem.
-allowed-tools: Read, Bash, TaskCreate, TaskUpdate
+allowed-tools: Read, Bash
 ---
 
 # Define (DEFINE)

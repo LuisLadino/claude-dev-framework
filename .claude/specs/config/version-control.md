@@ -3,6 +3,7 @@ name: version-control
 description: >
   Project-specific git configuration. Covers branch strategy, commit format, pull request conventions, and protected branch rules. Loaded by the commit skill.
 applies_to: []
+triggers: [commit, git, branch, push, merge]
 category: config
 ---
 

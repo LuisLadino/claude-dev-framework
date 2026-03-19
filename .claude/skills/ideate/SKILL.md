@@ -5,7 +5,7 @@ description: >
   says "what are our options", "how should we", "approaches", "ideas", "what if",
   "alternatives", "brainstorm", or when the problem is defined and it's time to
   explore solutions.
-allowed-tools: Read, Grep, Glob, Bash, Agent, WebSearch, WebFetch, TaskUpdate
+allowed-tools: Read, Grep, Glob, Bash, Agent, WebSearch, WebFetch
 ---
 
 # Ideate (IDEATE)

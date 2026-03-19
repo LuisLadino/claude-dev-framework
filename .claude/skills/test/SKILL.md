@@ -5,7 +5,7 @@ description: >
   work", "verify", "check", "test it", "review", "evaluate", or when building
   is done and it's time to validate. Also triggers iteration — if tests reveal
   problems, go back to the right phase.
-allowed-tools: Read, Grep, Glob, Bash, Agent, TaskUpdate
+allowed-tools: Read, Grep, Glob, Bash, Agent
 ---
 
 # Test (TEST)

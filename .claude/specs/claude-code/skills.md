@@ -93,13 +93,13 @@ Claude recognizes pattern, invokes skill.
 
 ## Triggering Behavior
 
-**Skills do NOT trigger reliably from natural language alone.**
+**Opus 4.6+ auto-surfaces all skill descriptions on every prompt** via system-reminder. This means Claude sees the full skill list and trigger phrases every message, significantly improving natural language routing.
 
-Testing shows ~20% trigger rate. To enforce skill usage:
+For critical workflows, enforcement hooks add a hard guarantee:
 
 1. **User-invoked:** `/skill-name`
 2. **Claude-invoked:** `Skill(skill: "name")`
-3. **Hook-enforced:** Block direct commands, require skill
+3. **Hook-enforced:** Block direct commands, require skill (e.g., enforce-skills blocks `git commit`)
 
 ### Hook Enforcement Pattern
 ```javascript

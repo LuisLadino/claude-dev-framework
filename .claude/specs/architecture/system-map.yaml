@@ -224,8 +224,7 @@ components:
   hooks/context/methodology.cjs:
     status: UNUSED — CPMAI folded into system-prompt.md lenses
 
-  hooks/context/route-commands.cjs:
-    status: UNUSED — skills system handles routing
+  # hooks/context/route-commands.cjs — REMOVED (Opus 4.6 handles skill routing natively)
 
   # ---- SAFETY HOOKS ----
 

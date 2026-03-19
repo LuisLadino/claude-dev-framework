@@ -55,9 +55,20 @@ source: optional-url-or-reference
 
 | Field | Type | Purpose |
 |-------|------|---------|
+| `triggers` | array | Keywords that auto-load this spec when mentioned in a prompt |
 | `source` | string | Where patterns came from (docs URL, etc.) |
 | `version` | string | Library version these patterns apply to |
 | `related` | array | Other specs that should be read together |
+
+### triggers Field
+
+The `triggers` field enables automatic spec loading. When a user's prompt contains any trigger keyword, the spec is loaded into context without requiring a manual read.
+
+```yaml
+triggers: [commit, git, branch, push, merge]
+```
+
+The `spec-triggers.cjs` module scans all specs for this field dynamically — no hardcoded paths. Add triggers to any spec to enable auto-loading for that spec.
 
 ---
 

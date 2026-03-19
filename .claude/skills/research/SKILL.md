@@ -25,16 +25,6 @@ gh issue view {number}
 
 If there's existing work (code, docs, prior decisions, closed issues on the same topic), find it. Don't research in a vacuum.
 
-Set up design thinking tasks for this work:
-```
-TaskCreate: "UNDERSTAND - [problem]"
-TaskCreate: "DEFINE - [problem]"
-TaskCreate: "IDEATE - [problem]"
-TaskCreate: "PROTOTYPE - [problem]"
-TaskCreate: "TEST - [problem]"
-```
-Mark UNDERSTAND as in_progress.
-
 ---
 
 ## The Method

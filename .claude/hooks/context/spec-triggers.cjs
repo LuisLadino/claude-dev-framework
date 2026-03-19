@@ -3,45 +3,111 @@
 /**
  * Spec Triggers Module
  *
- * Auto-loads spec files based on keywords in the prompt.
+ * Auto-loads spec files based on keywords in the user's prompt.
+ *
+ * Dynamic — scans .claude/specs/ for files with a `triggers` field in
+ * frontmatter. No hardcoded paths. Works in any project.
+ *
+ * Spec frontmatter example:
+ *   ---
+ *   name: design-system
+ *   triggers: [style, design, color, typography, tailwind]
+ *   ---
+ *
+ * Also handles session-changes.json for "what changed" queries.
  */
 
 const fs = require('fs');
 const path = require('path');
 
-const CONTEXT_TRIGGERS = [
-  {
-    patterns: [/style/i, /design/i, /color/i, /typography/i, /ui\b/i, /component/i, /tailwind/i],
-    specFile: '.claude/specs/design/design-system.md',
-    label: 'Design System'
-  },
-  {
-    patterns: [/test/i, /spec\b/i, /jest/i, /vitest/i, /coverage/i],
-    specFile: '.claude/specs/config/testing.md',
-    label: 'Testing Specs'
-  },
-  {
-    patterns: [/structure/i, /architecture/i, /folder/i, /directory/i, /where.*put/i, /organize/i],
-    specFile: '.claude/specs/architecture/project-structure.md',
-    label: 'Project Structure'
-  },
-  {
-    patterns: [/commit/i, /git\b/i, /branch/i, /push/i, /merge/i],
-    specFile: '.claude/specs/config/version-control.md',
-    label: 'Version Control'
-  },
-  {
-    patterns: [/deploy/i, /production/i, /build\b/i, /release/i],
-    specFile: '.claude/specs/config/deployment.md',
-    label: 'Deployment'
-  },
-  {
+/**
+ * Parse YAML frontmatter from a markdown file (simple parser — no deps)
+ * Returns { name, triggers } or null
+ */
+function parseFrontmatter(content) {
+  const match = content.match(/^---\s*\n([\s\S]*?)\n---/);
+  if (!match) return null;
+
+  const yaml = match[1];
+  const result = {};
+
+  // Parse name
+  const nameMatch = yaml.match(/^name:\s*(.+)$/m);
+  if (nameMatch) result.name = nameMatch[1].trim().replace(/^["']|["']$/g, '');
+
+  // Parse triggers — supports both inline [a, b] and multi-line list
+  const triggersInline = yaml.match(/^triggers:\s*\[([^\]]+)\]/m);
+  const triggersBlock = yaml.match(/^triggers:\s*\n((?:\s+-\s+.+\n?)+)/m);
+
+  if (triggersInline) {
+    result.triggers = triggersInline[1].split(',').map(t => t.trim().replace(/^["']|["']$/g, ''));
+  } else if (triggersBlock) {
+    result.triggers = triggersBlock[1]
+      .split('\n')
+      .map(line => line.replace(/^\s*-\s*/, '').trim().replace(/^["']|["']$/g, ''))
+      .filter(Boolean);
+  }
+
+  return result.triggers ? result : null;
+}
+
+/**
+ * Recursively find all .md files in a directory
+ */
+function findMarkdownFiles(dir) {
+  const results = [];
+  try {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        results.push(...findMarkdownFiles(fullPath));
+      } else if (entry.name.endsWith('.md') && entry.name !== 'README.md') {
+        results.push(fullPath);
+      }
+    }
+  } catch {
+    // Directory doesn't exist — fine
+  }
+  return results;
+}
+
+/**
+ * Build trigger list from spec frontmatter
+ * Cached per process (hook runs once per prompt)
+ */
+function buildTriggers() {
+  const specsDir = path.join(process.cwd(), '.claude/specs');
+  const files = findMarkdownFiles(specsDir);
+  const triggers = [];
+
+  for (const filePath of files) {
+    try {
+      const content = fs.readFileSync(filePath, 'utf8');
+      const meta = parseFrontmatter(content);
+      if (meta && meta.triggers && meta.triggers.length > 0) {
+        const relPath = path.relative(process.cwd(), filePath);
+        triggers.push({
+          patterns: meta.triggers.map(t => new RegExp(`\\b${t}\\b`, 'i')),
+          specFile: relPath,
+          label: meta.name || path.basename(filePath, '.md')
+        });
+      }
+    } catch {
+      // Skip unreadable files
+    }
+  }
+
+  // Built-in: session changes (not a spec, but useful)
+  triggers.push({
     patterns: [/what.*changed/i, /files.*modified/i, /this session/i, /what.*done/i],
     specFile: '.claude/session-changes.json',
     label: 'Session Changes',
     isJson: true
-  }
-];
+  });
+
+  return triggers;
+}
 
 /**
  * Format session changes JSON for display
@@ -90,10 +156,11 @@ function readSpecFile(filePath, isJson = false) {
  * @returns {{ content: string[]|null, specsLoaded: string[] }}
  */
 function check(prompt) {
+  const triggers = buildTriggers();
   const contentParts = [];
   const specsLoaded = [];
 
-  for (const trigger of CONTEXT_TRIGGERS) {
+  for (const trigger of triggers) {
     const matches = trigger.patterns.some(pattern => pattern.test(prompt));
 
     if (matches) {
@@ -112,7 +179,8 @@ function check(prompt) {
 }
 
 module.exports = {
-  CONTEXT_TRIGGERS,
+  buildTriggers,
+  parseFrontmatter,
   formatSessionChanges,
   readSpecFile,
   check

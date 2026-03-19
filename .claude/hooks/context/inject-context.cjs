@@ -81,8 +81,8 @@ function handleHook(data) {
     actions.specsLoaded = specResult.specsLoaded;
   }
 
-  // 6. Task phase + Response format reminder (ALWAYS fires)
-  contextParts.push('[ACTIVE TASK] Phase tracks the TASK, not this message. A question during prototyping is still PROTOTYPE. Only update phase when the WORK moves.\n\n[RESPONSE FORMAT] Start with: **Lens:** [perspective] | **Refine:** [restated prompt] | **Phase:** [design thinking phase] | **Teach:** [concept + framings + usage]. No exceptions.');
+  // 6. Design thinking phase + Response format reminder (ALWAYS fires)
+  contextParts.push('[DESIGN THINKING] You are always in a phase: UNDERSTAND, DEFINE, IDEATE, PROTOTYPE, TEST, or ITERATE. The phase tracks the WORK, not this message. A question during prototyping is still PROTOTYPE. Phase only changes when the work moves. Use the phase skills (/research, /define, /ideate, /build, /test) to guide transitions.\n\n[RESPONSE FORMAT] Start with: **Lens:** [perspective] | **Refine:** [restated prompt] | **Phase:** [design thinking phase] | **Teach:** [concept + framings + usage]. No exceptions.');
   actions.formatReminder = true;
 
   // Log injection (always fires due to format reminder)
