@@ -106,9 +106,21 @@ Based on what the commit touched, search for:
 
 Collect links that would help the main session.
 
-### Step 5: Identify Actionable Items
+### Step 5: Check System Map Impact
+
+If this commit changed framework architecture files (hooks, agents, commands, skills, stack-config.yaml), check if the system map needs updating:
+
+```bash
+# Did this commit change files the system map tracks?
+git diff-tree --no-commit-id --name-only -r HEAD | grep -E '\.claude/(hooks|agents|commands|skills|specs/stack-config)'
+```
+
+If matches found, add an observation: "System map may need updating — this commit changed [files]. Check `.claude/specs/architecture/system-map.yaml`."
+
+### Step 6: Identify Actionable Items
 
 Look for:
+- **System map stale**: "Commit changed hooks/agents — system map needs updating"
 - **Research needs**: "This assumes X works this way - should verify"
 - **Gaps identified**: "Error handling not addressed"
 - **Things to track**: "Performance implications worth monitoring"

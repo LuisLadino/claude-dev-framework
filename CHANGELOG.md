@@ -14,10 +14,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **System map** — New `system-map.yaml` replaces `wiring.md`. Structured YAML dependency graph and change impact guide. Enforced via enforce-specs before editing framework files. `/sync-stack` generates project-specific maps for downstream projects. Agents check freshness and flag updates needed.
 - **Project-agnostic constraint** — Added explicit rule in system map change rules: all framework changes must work in any project, not just this repo.
 - **Design thinking grounding line** — Added to system-prompt.md: every interaction is working through a problem, ground in the rhythm.
+- **Task-level phase tracking** — Per-prompt `[ACTIVE TASK]` reminder: phase tracks the task, not the message. Clarification also added to system-prompt.md Phase definition.
+- **System map freshness checking** — Context agent checks if system-map.yaml is stale at session start. Phase evaluator flags when commits change architecture files.
+
+### Removed
+
+- **enforce-framing.cjs** — Dead hook (was disabled, crashed in non-git dirs). Replaced by per-prompt `[ACTIVE TASK]` reminder and system-prompt.md behavioral constraints.
+- **learnings.md injection** — Removed from session-context.js and post-compact-recovery.js. Behavioral rules already promoted to system-prompt.md.
 
 ### Fixed
 
-- **Issue overlap cleanup** — Consolidated #16 into #15 (strategic advisor role), closed #9 as historical (agent architecture decisions resolved), updated #14 scope (enforce-framing reflects current understanding).
+- **Issue overlap cleanup** — Consolidated #16 into #15 (strategic advisor role), closed #9 as historical (agent architecture decisions resolved), closed #14 (enforce-framing unnecessary).
 
 - **Phase evaluator delivery** — Fixed race condition where evaluation output was consumed (deleted) before Claude could read it. Now marks as `delivered` instead of deleting. Also pre-gathers full project definition, evaluation history, and expanded issue list in spawn hook so sonnet has richer context upfront.
 

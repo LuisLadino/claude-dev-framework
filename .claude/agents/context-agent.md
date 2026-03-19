@@ -85,7 +85,23 @@ Determine the design thinking phase from **activity signals**, not yaml fields (
 
 Use the balance of open issues, recent commits, and task state to judge.
 
-### Step 5: Identify Gaps
+### Step 5: Check System Map Freshness
+
+If `.claude/specs/architecture/system-map.yaml` exists, check if it's stale:
+
+```bash
+# When was the system map last modified?
+stat -f "%Sm" -t "%Y-%m-%d" .claude/specs/architecture/system-map.yaml 2>/dev/null
+
+# What framework files changed since then?
+git log --since="$(stat -f "%Sm" -t "%Y-%m-%d" .claude/specs/architecture/system-map.yaml 2>/dev/null)" --name-only --pretty=format:"" -- .claude/hooks/ .claude/commands/ .claude/skills/ .claude/agents/ .claude/specs/stack-config.yaml | sort -u | head -20
+```
+
+If framework files changed after the system map was last updated, flag it:
+- **high severity** if hooks, agents, or stack-config.yaml changed (these are core connections)
+- **medium severity** if only commands or skills changed
+
+### Step 6: Identify Gaps
 
 Flag from GitHub and git state:
 
@@ -93,6 +109,7 @@ Flag from GitHub and git state:
 |----------|-------|----------|
 | Open blockers | Issues labeled "blocker" | high |
 | Overlapping issues | Two issues with similar scope or title | high |
+| System map stale | Framework files changed since last map update | high |
 | Stale milestones | Target date passed, still open | medium |
 | Stale issues | No activity in 30+ days | low |
 | Unreviewed PRs | Open PRs with no review | medium |
@@ -101,7 +118,7 @@ Flag from GitHub and git state:
 
 When flagging overlapping issues, name both issue numbers and suggest which to merge or close.
 
-### Step 6: Determine Lens
+### Step 7: Determine Lens
 
 Based on current phase:
 

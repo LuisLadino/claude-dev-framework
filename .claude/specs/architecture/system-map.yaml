@@ -23,7 +23,7 @@
 lifecycle:
   SessionStart:
     # Fires once when session begins (or after compaction with source="compact")
-    - session-context.js         # Global: loads project-definition.yaml + learnings
+    - session-context.js         # Global: loads project-definition.yaml
     - session-init.cjs           # Framework: creates session tracking, detects config changes
     - spawn-context-agent.cjs    # Framework: injects instruction to spawn context-agent
     - post-compact-recovery.js   # Global: restores handoff (only after compaction)
@@ -328,16 +328,15 @@ components:
     purpose: Blocks responses missing Lens/Refine/Phase/Teach
 
   hooks/quality/enforce-framing.cjs:
-    status: NOT REGISTERED (disabled — crashed in non-git dirs)
-    see_issue: "#14"
+    status: REMOVED — replaced by per-prompt grounding reminder in inject-context.cjs
 
   # ---- GLOBAL SCRIPTS (outside this repo) ----
 
   scripts/session-context.js:
     path: ~/.gemini/antigravity/scripts/session-context.js
     trigger: SessionStart
-    reads: [project-definition.yaml, "~/.gemini/antigravity/brain/learnings.md"]
-    outputs: "[SESSION CONTEXT] block"
+    reads: [project-definition.yaml]
+    outputs: "[SESSION CONTEXT] block with project definition"
 
   scripts/pre-compact.js:
     path: ~/.gemini/antigravity/scripts/pre-compact.js
@@ -484,8 +483,8 @@ data_stores:
 
   legacy:
     "~/.gemini/antigravity/brain/learnings.md":
-      purpose: Legacy learnings — see #36
-      read_by: [session-context.js, post-compact-recovery.js]
+      purpose: Legacy learnings — no longer injected. Behavioral rules promoted to system-prompt.md.
+      read_by: [] # Removed from session-context.js and post-compact-recovery.js
 
 # ============================================
 # SECTION 5: CHANGE IMPACT RULES
