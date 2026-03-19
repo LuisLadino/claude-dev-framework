@@ -363,6 +363,6 @@ Potential System Prompt Editor features:
 
 ## See Also
 
-- `session-start-decoded.md` - Raw dump of what Claude receives at session start
-- `system-audit.md` - What files exist and when they're read/written
-- `system-diagram.md` - Visual diagrams of the data flow
+- `system-dumps/session-start-4.6-decoded.md` - Raw dump of what Claude receives at session start
+- `enforcement-patterns.md` - How behavior enforcement works
+- `.claude/specs/architecture/system-map.yaml` - Component dependency graph

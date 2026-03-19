@@ -317,4 +317,4 @@ Other AI coding tools (Cursor, Windsurf, Copilot) have their own equivalents of 
 
 ---
 
-*This is a reference document. See `how-claude-receives-data.md` for the technical version with Mermaid diagrams.*
+*This is a reference document. See `prompt-format-guide.md` for the technical input format details.*
