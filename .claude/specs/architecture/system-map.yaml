@@ -333,15 +333,8 @@ components:
 
   # ---- COMMANDS ----
 
-  commands/development/commit.md:
-    purpose: Commit with documentation updates
-    references: [version-control.md]
-    enforcement: Must update .md files near changed code
-    bypasses: enforce-skills via SKILL_ACTIVE=1
-
-  commands/development/pr.md:
-    purpose: Create PR with commit summary
-    references: [version-control.md]
+  # commands/development/commit.md — REMOVED (commit skill handles full workflow)
+  # commands/development/pr.md — REMOVED (commit skill includes push + PR + auto-merge)
 
   commands/project-management/init-project.md:
     purpose: Define WHAT to build

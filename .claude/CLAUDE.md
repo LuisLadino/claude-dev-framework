@@ -14,7 +14,7 @@ This `.claude/` folder comes from the framework repo. Some files are shared (fra
 
 **Framework-owned (synced from framework repo):**
 - `CLAUDE.md` - these instructions
-- `commands/` - workflow commands (commit, pr, plan, etc.)
+- `commands/` - utility commands (analyze, audit, learn, init-project, sync-stack)
 - `hooks/` - all hooks
 - `skills/` - all skills
 - `agents/` - agent definitions
