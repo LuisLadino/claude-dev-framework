@@ -1,3 +1,14 @@
+---
+name: instruction-format
+description: >
+  How to write instructions that Claude follows reliably. Covers formatting patterns, emphasis words, positioning for context retention, and structure templates for agents, skills, and system prompts.
+applies_to:
+  - ".claude/skills/**/*.md"
+  - ".claude/agents/**/*.md"
+  - ".claude/specs/**/*.md"
+category: claude-code
+---
+
 # Instruction Format Guide
 
 How to write instructions that Claude follows reliably. Use this when writing agents, skills, system prompts, or any text meant to direct Claude's behavior.

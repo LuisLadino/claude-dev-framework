@@ -1,3 +1,11 @@
+---
+name: environment
+description: >
+  Project-specific development environment setup template. Covers requirements, installation, dev scripts, environment variables, and editor configuration.
+applies_to: []
+category: config
+---
+
 # Environment
 
 Project-specific development environment setup.

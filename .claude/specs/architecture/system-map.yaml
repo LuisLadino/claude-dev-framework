@@ -211,7 +211,8 @@ components:
   hooks/context/enforce-specs.cjs:
     purpose: BLOCKS edits until required spec is read
     trigger: PreToolUse (Edit|Write)
-    reads: [stack-config.yaml, session-state.json]
+    reads: [".claude/specs/**/*.md frontmatter", session-state.json]
+    note: "Scans spec files directly for applies_to patterns. No stack-config.yaml needed for enforcement."
     exit_codes: { 0: allow, 2: deny }
     if_changed:
       - This IS the enforcement mechanism — changes affect ALL spec enforcement

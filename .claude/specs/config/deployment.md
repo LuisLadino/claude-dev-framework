@@ -1,3 +1,11 @@
+---
+name: deployment
+description: >
+  Project-specific deployment configuration template. Covers platform, environments, deploy process, environment variables, CI/CD, and rollback procedures.
+applies_to: []
+category: config
+---
+
 # Deployment
 
 Project-specific deployment configuration.

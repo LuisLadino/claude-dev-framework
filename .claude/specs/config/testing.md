@@ -1,3 +1,13 @@
+---
+name: testing
+description: >
+  Project-specific testing configuration template. Covers test framework, directory structure, commands, coverage targets, and testing patterns (unit, integration, e2e).
+applies_to:
+  - "**/*.test.*"
+  - "**/*.spec.*"
+category: config
+---
+
 # Testing
 
 Project-specific testing configuration.

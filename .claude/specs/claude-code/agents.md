@@ -1,3 +1,12 @@
+---
+name: agents
+description: >
+  Configuration and behavior for Claude Code agents: file format, frontmatter fields, triggering via hooks or Task tool, model selection, tool permissions, and output patterns.
+applies_to:
+  - ".claude/agents/**/*.md"
+category: claude-code
+---
+
 # Claude Code Agents Reference
 
 Agents are specialized subprocesses that handle complex tasks. They can be invoked via hooks or the Task tool. This spec documents agent configuration and behavior.

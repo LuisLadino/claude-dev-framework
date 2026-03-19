@@ -1,3 +1,11 @@
+---
+name: anti-patterns
+description: >
+  Known failure modes, hallucination patterns, and behavioral mistakes to avoid. Covers hook mistakes, skill mistakes, agent mistakes, file operation errors, and communication anti-patterns.
+applies_to: []
+category: claude-code
+---
+
 # Claude Code Anti-Patterns
 
 Things that don't work, common mistakes, and behavioral issues. Read this to avoid repeating known failures.

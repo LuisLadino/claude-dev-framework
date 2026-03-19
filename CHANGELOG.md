@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Design thinking grounding line** — Added to system-prompt.md: every interaction is working through a problem, ground in the rhythm.
 - **Task-level phase tracking** — Per-prompt `[ACTIVE TASK]` reminder: phase tracks the task, not the message. Clarification also added to system-prompt.md Phase definition.
 - **System map freshness checking** — Context agent checks if system-map.yaml is stale at session start. Phase evaluator flags when commits change architecture files.
+- **Dynamic spec enforcement** — enforce-specs.cjs now scans spec files directly for frontmatter instead of reading stack-config.yaml. Create a spec with `applies_to` in frontmatter, it's automatically enforced. No manual registration needed.
+- **Frontmatter on all specs** — All 11 spec files now have proper YAML frontmatter with name, description, applies_to, and category.
 
 ### Removed
 

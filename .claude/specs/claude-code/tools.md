@@ -1,3 +1,12 @@
+---
+name: tools
+description: >
+  Reference for all Claude Code tools: file operations (Read, Write, Edit, Glob, Grep), execution (Bash), web (WebFetch, WebSearch), task management (Task, Skill), and user interaction (AskUserQuestion).
+applies_to:
+  - ".claude/commands/**/*.md"
+category: claude-code
+---
+
 # Claude Code Tools Reference
 
 Tools are how Claude Code interacts with the system. This spec documents available tools and their parameters.

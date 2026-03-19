@@ -185,8 +185,7 @@ export function Button({ title, onClick }: Props) {
 1. Create file in appropriate `specs/{category}/` directory
 2. Add frontmatter with name, description, applies_to, category
 3. Write the spec content
-4. Add spec name to `stack-config.yaml` under the category
-5. The hook will automatically enforce it
+4. Done — enforce-specs scans spec files directly, no registration needed
 
 ---
 

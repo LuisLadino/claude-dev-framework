@@ -1,3 +1,12 @@
+---
+name: skills
+description: >
+  Configuration and behavior for Claude Code skills: SKILL.md format, frontmatter fields, invocation methods, triggering behavior, hook enforcement patterns, and skill vs command distinctions.
+applies_to:
+  - ".claude/skills/**/*.md"
+category: claude-code
+---
+
 # Claude Code Skills Reference
 
 Skills are reusable workflows invoked via the Skill tool or natural language triggers. This spec documents skill configuration and behavior.
