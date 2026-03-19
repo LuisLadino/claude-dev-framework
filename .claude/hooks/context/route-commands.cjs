@@ -13,8 +13,9 @@ const path = require('path');
 const HOME = process.env.HOME || process.env.USERPROFILE;
 
 // Command routing patterns - match how Luis actually talks
+// Skills map to design thinking phases: research → define → ideate → build → test → commit
 const COMMAND_ROUTES = [
-  // Design thinking - foundational, triggers first for substantive work
+  // Research (UNDERSTAND) - entry point for substantive work
   {
     patterns: [
       /\blet'?s (start|begin|go|do this)\b/i,
@@ -25,31 +26,82 @@ const COMMAND_ROUTES = [
       /\bwhere (do|should) (we|I) start\b/i,
       /\bkick (this |it )?off\b/i,
       /\b(tackle|approach) this (problem|issue|task)?\b/i,
-      /\bdesign thinking\b/i,
-      /\bcreate (the )?tasks?\b/i,
-      /\bset up (the )?tasks?\b/i
+      /\bwork on\s+(issue\s+)?#?\d+\b/i,
+      /\blook into\b/i,
+      /\binvestigat/i,
+      /\bresearch\b/i,
+      /\bexplore\b/i,
+      /\bwhat'?s going on with\b/i
     ],
-    command: '/design-thinking',
-    reason: 'Starting substantive work? Design thinking creates 6 tasks (Understand → Define → Ideate → Prototype → Test → Iterate) to guide the work.',
-    injectWorkflow: true,
-    workflowLoader: 'design-thinking'
+    command: '/research',
+    reason: 'Starting work? /research loads context and guides you through understanding the problem before jumping to solutions.'
   },
+  // Define (DEFINE) - precise problem definition
+  {
+    patterns: [
+      /\bwhat (are|is) we actually (solving|fixing|doing)\b/i,
+      /\bscope this\b/i,
+      /\broot cause\b/i,
+      /\bwhat'?s the (real|actual) problem\b/i,
+      /\bnarrow (this |it )?down\b/i,
+      /\bdefinition of done\b/i,
+      /\bwhat does (done|success) look like\b/i,
+      /\bwhat exactly\b/i
+    ],
+    command: '/define',
+    reason: 'Time to get precise. /define separates symptoms from root causes and sets the Definition of Done.'
+  },
+  // Ideate (IDEATE) - generate and evaluate approaches
+  {
+    patterns: [
+      /\bwhat are (our|the) options\b/i,
+      /\bhow should (we|I)\b/i,
+      /\bapproach(es)?\b/i,
+      /\bwhat if\b/i,
+      /\balternativ/i,
+      /\bbrainstorm\b/i,
+      /\btrade.?offs?\b/i,
+      /\bpros (and|&) cons\b/i,
+      /\bthis is (gonna be |going to be )?(big|complex|complicated)\b/i,
+      /\bneed to (think through|figure out)\b/i,
+      /\blet'?s (think through|break down)\b/i,
+      /\bhow (do|should) (I|we) approach\b/i,
+      /\bplan this out\b/i
+    ],
+    command: '/ideate',
+    reason: 'Exploring options? /ideate generates genuinely different approaches and evaluates trade-offs before committing.'
+  },
+  // Build (PROTOTYPE) - make something concrete
   {
     patterns: [
       /\b(build|create|make|write|add|fix|update|change|modify)\s+(a|an|the|this|that|my)?\s*\w/i,
-      /\blet'?s\s+(build|create|make|write|add|fix|work on)\b/i,
+      /\blet'?s\s+(build|create|make|write|add|fix)\b/i,
       /\bi (want|need) to\s+(build|create|make|write|add|fix)\b/i,
       /\bcan you\s+(build|create|make|write|add|fix|help me)\b/i,
       /\bhelp me (build|create|make|write|add|fix)\b/i,
-      /\b(python|node|typescript|react|astro)\s+(app|script|tool|site|project)\b/i,
       /\bwrite\s+(a|some)?\s*(code|script|function|component)\b/i,
       /\bneed\s+(a|an)\s+(script|tool|app|component|function)\b/i,
-      /\bwork on\b/i,
       /\bimplement\b/i,
-      /\bstart (coding|building|working)\b/i
+      /\bstart (coding|building)\b/i,
+      /\bdraft (it|this|a)\b/i,
+      /\bcode (it|this)\b/i
     ],
-    command: '/start-task',
-    reason: 'This looks like a coding task. /start-task loads your specs and enforces patterns.'
+    command: '/build',
+    reason: 'Ready to build? /build is the commitment point — creates a branch and makes something concrete.'
+  },
+  // Test (TEST) - verify against definition of done
+  {
+    patterns: [
+      /\bdoes (it|this) work\b/i,
+      /\btest (it|this)\b/i,
+      /\bevaluate\b/i,
+      /\bdid (it|we|this) (work|pass|succeed)\b/i,
+      /\bcheck against\b/i,
+      /\bvalidate\b/i,
+      /\bmeet the (criteria|requirements|DoD)\b/i
+    ],
+    command: '/test',
+    reason: 'Time to validate. /test checks work against the Definition of Done and decides if we iterate or ship.'
   },
   {
     patterns: [
@@ -102,21 +154,7 @@ const COMMAND_ROUTES = [
     command: '/audit',
     reason: 'Want a code review? /audit runs parallel agents for security, performance, tests, architecture.'
   },
-  {
-    patterns: [
-      /\bthis is (gonna be |going to be )?(big|complex|complicated)\b/i,
-      /\bneed to (plan|think through|figure out)\b/i,
-      /\blet'?s (plan|think through|break down)\b/i,
-      /\bbreak (this|it) down\b/i,
-      /\bhow should (I|we) approach\b/i,
-      /\bwhere do (I|we) start\b/i,
-      /\blot of (parts|pieces|steps)\b/i,
-      /\bmulti.?step\b/i,
-      /\bplan this out\b/i
-    ],
-    command: '/add-feature',
-    reason: 'Complex feature? /add-feature creates a PRD and breaks it into tasks.'
-  },
+  // Note: /add-feature patterns now handled by /ideate route above
   {
     patterns: [
       /\b(new|start a|starting a|create a) (project|repo|app|site)\b/i,
@@ -188,50 +226,6 @@ const COMMAND_ROUTES = [
  */
 function loadWorkflow(workflowName) {
   const cwd = process.cwd();
-
-  if (workflowName === 'design-thinking') {
-    const skillPath = path.join(cwd, '.claude/skills/design-thinking/SKILL.md');
-    let skillContent = '';
-    try {
-      skillContent = fs.readFileSync(skillPath, 'utf8');
-      const match = skillContent.match(/---[\s\S]*?---\s*([\s\S]*)/);
-      if (match) skillContent = match[1].trim();
-    } catch {
-      skillContent = `## The 6 Tasks
-
-Create these using TaskCreate:
-
-1. UNDERSTAND - Research the problem. What's actually happening?
-2. DEFINE - Name the problem precisely. Not symptoms, root causes.
-3. IDEATE - Generate approaches. What are the options?
-4. PROTOTYPE - Build something concrete. Make it real enough to test.
-5. TEST - Does it work? What did we learn?
-6. ITERATE - Back to any phase based on what you learned.
-
-Set UNDERSTAND to in_progress initially.
-
-## The Rhythm
-
-Movement is non-linear:
-- Go back when: Wrong problem discovered, new insight emerges, approach fails
-- Jump ahead when: Need to build to think, obvious solution needs validation
-- Iteration is NOT failure - it's the rhythm working`;
-    }
-
-    return `[DESIGN THINKING WORKFLOW - AUTO-LOADED]
-
-**This is the operating system for all substantive work.**
-
-${skillContent}
-
----
-
-**ACTION REQUIRED:**
-1. Check TaskList for existing design thinking tasks
-2. If none exist, create the 6 tasks (UNDERSTAND through ITERATE)
-3. Mark the appropriate task as in_progress
-4. Proceed with the work, moving through tasks as you go`;
-  }
 
   if (workflowName === 'handoff') {
     // Get the .claude/projects/ memory path for this workspace
@@ -346,20 +340,13 @@ ${vcContent}
 /**
  * Check prompt for command routing
  * @param {string} prompt - User's prompt
- * @param {object} options - { skipStartTask: boolean } - skip /start-task for content writing
  * @returns {{ content: string|null, command: string|null, workflowInjected: boolean }}
  */
-function check(prompt, options = {}) {
-  const { skipStartTask = false } = options;
-
+function check(prompt) {
   for (const route of COMMAND_ROUTES) {
     const matches = route.patterns.some(pattern => pattern.test(prompt));
 
     if (matches) {
-      // Skip /start-task if this is content writing or ideation
-      if (route.command === '/start-task' && skipStartTask) {
-        continue;
-      }
 
       // If workflow injection enabled, load and inject the full workflow
       if (route.injectWorkflow && route.workflowLoader) {

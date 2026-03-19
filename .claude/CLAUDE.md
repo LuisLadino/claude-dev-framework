@@ -14,7 +14,7 @@ This `.claude/` folder comes from the framework repo. Some files are shared (fra
 
 **Framework-owned (synced from framework repo):**
 - `CLAUDE.md` - these instructions
-- `commands/` - workflow commands (commit, pr, start-task, plan, etc.)
+- `commands/` - workflow commands (commit, pr, plan, etc.)
 - `hooks/` - all hooks
 - `skills/` - all skills
 - `agents/` - agent definitions
@@ -39,9 +39,9 @@ This `.claude/` folder comes from the framework repo. Some files are shared (fra
 Discuss → Document → Create repo → Copy framework → /init-project → /sync-stack → Set up GitHub with /plan
 
 **Working (repeatable):**
-GitHub Issue → Understand → Define → Work → Test → commit → Merge
+GitHub Issue → /research → /define → /ideate → /build → /test → /commit → Merge
 
-When starting work, move issue to "In Progress". Commit skill handles push + PR with "Closes #X". Issue auto-closes on merge.
+Skills map to design thinking phases. /research is the entry point (understand the problem). /build is the commitment point (create branch, start making). Issue moves to "In Progress" at /build. Commit skill handles push + PR. Issue auto-closes on merge.
 
 **Planning (anytime):**
 Use /plan to create issues, review backlog, prioritize, manage milestones. GitHub Issues are the system of record.

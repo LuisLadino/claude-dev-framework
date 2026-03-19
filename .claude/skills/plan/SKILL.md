@@ -283,10 +283,10 @@ Issues track work from idea to completion. The issue body evolves:
 - Problem and context documented
 - May not have solution yet
 
-### When Work Starts (/start-task)
-- Issue moved to "In Progress"
-- Branch created referencing issue number
-- Issue content loaded as task context
+### When Work Starts (/research → /build)
+- Issue loaded and researched (/research)
+- Problem defined, approach chosen (/define → /ideate)
+- Branch created, issue moved to "In Progress" (/build)
 - **Tasks created for design thinking phases**
 
 ### When PR Created
