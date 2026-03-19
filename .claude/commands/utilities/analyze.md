@@ -251,7 +251,7 @@ Background ─► daemon.js watches tracking/, generates overview.txt
 
 ### Framework (what gets distributed to projects)
 ```
-~/Repositories/Personal/claude-dev-framework/
+~/Repositories/Personal/claude-kit/
 ├── .claude/CLAUDE.md                    # Instructions for Claude
 ├── .claude/hooks/
 │   ├── tracking/                        # Observability hooks
@@ -281,10 +281,10 @@ Background ─► daemon.js watches tracking/, generates overview.txt
 
 | Change Type | Location |
 |-------------|----------|
-| Hook logic/patterns | `~/Repositories/Personal/claude-dev-framework/.claude/hooks/` |
-| Skills | `~/Repositories/Personal/claude-dev-framework/.claude/skills/` |
-| Commands | `~/Repositories/Personal/claude-dev-framework/.claude/commands/` |
-| Specs | `~/Repositories/Personal/claude-dev-framework/.claude/specs/` |
+| Hook logic/patterns | `~/Repositories/Personal/claude-kit/.claude/hooks/` |
+| Skills | `~/Repositories/Personal/claude-kit/.claude/skills/` |
+| Commands | `~/Repositories/Personal/claude-kit/.claude/commands/` |
+| Specs | `~/Repositories/Personal/claude-kit/.claude/specs/` |
 | Global scripts | `~/.gemini/antigravity/scripts/` |
 | Hook registration | `~/.claude/settings.json` |
 | Persistent memories | `~/.claude/projects/{workspace-key}/memory/` |

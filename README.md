@@ -71,10 +71,10 @@ Works with any stack: React, Vue, Svelte, Next.js, Python, Rust, Go, etc.
 
 ```bash
 # 1. Fork this repo, then clone your fork
-git clone https://github.com/YOUR-USERNAME/claude-dev-framework.git
+git clone https://github.com/YOUR-USERNAME/claude-kit.git
 
 # 2. Copy .claude/ to your project
-cp -r claude-dev-framework/.claude your-project/.claude
+cp -r claude-kit/.claude your-project/.claude
 
 # 3. In your project, run
 /sync-stack
@@ -206,7 +206,7 @@ You approve → Claude implements → Runs quality gates → Done
 ~/.gemini/antigravity/brain/
 ├── learnings.md              # What Claude has learned (loaded every session)
 ├── voice-profile.md          # Writing style rules
-├── framework-issues.md       # Framework bugs/gaps (loaded in claude-dev-framework)
+├── framework-issues.md       # Framework bugs/gaps (loaded in claude-kit)
 ├── tracking/sessions/        # Global session tracking (framework telemetry)
 └── {workspace-uuid}/         # Per-project context
     ├── task.md               # Task history

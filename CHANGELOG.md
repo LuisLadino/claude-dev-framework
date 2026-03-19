@@ -124,7 +124,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Issue scope criteria in plan skill** - Step 0 before creating issues: check if this has a different Definition of Done than current work. Prevents issue sprawl by defaulting to iteration on current issue unless scope is clearly different.
 
-- **Framework vs project files documentation** - CLAUDE.md now documents which files are framework-owned (sync from claude-dev-framework) vs project-specific (never overwrite).
+- **Framework vs project files documentation** - CLAUDE.md now documents which files are framework-owned (sync from claude-kit) vs project-specific (never overwrite).
 
 ### Removed
 
@@ -542,9 +542,9 @@ The Claude Development Framework v1.0.0 with:
 
 ---
 
-[2.3.0]: https://github.com/LuisLadino/claude-dev-framework/compare/v2.2.0...v2.3.0
-[2.2.0]: https://github.com/LuisLadino/claude-dev-framework/compare/v2.1.0...v2.2.0
-[2.1.0]: https://github.com/LuisLadino/claude-dev-framework/compare/v2.0.1...v2.1.0
-[2.0.1]: https://github.com/LuisLadino/claude-dev-framework/compare/v2.0.0...v2.0.1
-[2.0.0]: https://github.com/LuisLadino/claude-dev-framework/compare/v1.0.0...v2.0.0
-[1.0.0]: https://github.com/LuisLadino/claude-dev-framework/releases/tag/v1.0.0
+[2.3.0]: https://github.com/LuisLadino/claude-kit/compare/v2.2.0...v2.3.0
+[2.2.0]: https://github.com/LuisLadino/claude-kit/compare/v2.1.0...v2.2.0
+[2.1.0]: https://github.com/LuisLadino/claude-kit/compare/v2.0.1...v2.1.0
+[2.0.1]: https://github.com/LuisLadino/claude-kit/compare/v2.0.0...v2.0.1
+[2.0.0]: https://github.com/LuisLadino/claude-kit/compare/v1.0.0...v2.0.0
+[1.0.0]: https://github.com/LuisLadino/claude-kit/releases/tag/v1.0.0

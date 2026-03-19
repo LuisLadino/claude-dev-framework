@@ -2,7 +2,7 @@
 # Last synced: 2026-03-14
 # Source of truth for specs and their enforcement patterns
 
-name: "claude-dev-framework"
+name: "claude-kit"
 version: "1.0.0"
 description: "Shared .claude/ framework for all projects"
 

@@ -8,7 +8,7 @@ Thank you for your interest in contributing.
 
 ### Report Issues
 
-Found a bug or have a suggestion? [Open an issue](https://github.com/LuisLadino/claude-dev-framework/issues).
+Found a bug or have a suggestion? [Open an issue](https://github.com/LuisLadino/claude-kit/issues).
 
 Include:
 - Clear description of the problem
@@ -42,13 +42,13 @@ Commands live in `.claude/commands/` organized by category:
 
 ### 1. Fork the Repository
 
-Click "Fork" on [GitHub](https://github.com/LuisLadino/claude-dev-framework).
+Click "Fork" on [GitHub](https://github.com/LuisLadino/claude-kit).
 
 ### 2. Clone Your Fork
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/claude-dev-framework.git
-cd claude-dev-framework
+git clone https://github.com/YOUR-USERNAME/claude-kit.git
+cd claude-kit
 ```
 
 ### 3. Create a Branch
@@ -82,7 +82,7 @@ See [Development Process](#development-process) for guidelines.
 ### Understanding the Structure
 
 ```
-claude-dev-framework/
+claude-kit/
 ├── .claude/
 │   ├── CLAUDE.md                          # Framework instructions
 │   ├── framework-source.txt               # Update source URL
@@ -160,8 +160,8 @@ git push origin feature/your-feature-name
 
 ## Questions?
 
-- **General questions**: [Open a discussion](https://github.com/LuisLadino/claude-dev-framework/discussions)
-- **Bug reports**: [Open an issue](https://github.com/LuisLadino/claude-dev-framework/issues)
+- **General questions**: [Open a discussion](https://github.com/LuisLadino/claude-kit/discussions)
+- **Bug reports**: [Open an issue](https://github.com/LuisLadino/claude-kit/issues)
 
 ---
 

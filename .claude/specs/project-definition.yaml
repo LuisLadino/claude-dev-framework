@@ -19,7 +19,7 @@
 # What is this project? (Product Management lens)
 
 project:
-  name: "Claude Dev Framework"
+  name: "Claude Kit"
   tagline: "Make Claude a better work partner through persistent context and self-improvement"
   vision: "Claude becomes a true collaborator who remembers, learns, and improves - not a stateless assistant who starts blank every session"
 
