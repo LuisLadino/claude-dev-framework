@@ -27,16 +27,14 @@ This `.claude/` folder comes from claude-kit. Some files are kit-owned (synced),
 - `research/` - project research
 
 **To update kit in a project:**
-1. Copy only kit-owned files from claude-kit
-2. Do NOT copy specs/ - run `/sync-stack` instead to regenerate for this project
-3. Preserve any project-specific customizations
+Run `./sync-kit.sh` from the claude-kit repo. It handles adds, updates, and deletions automatically. Project-specific files are never touched.
 
 ---
 
 ## Workflow
 
 **Setup (once per project):**
-Discuss → Document → Create repo → Copy kit → /init-project → /sync-stack → Set up GitHub with /plan
+Create repo → `./sync-kit.sh /path/to/project` → /init-project → /sync-stack → /plan
 
 **Working (repeatable):**
 GitHub Issue → /research → /define → /ideate → /build → /test → /commit → Merge

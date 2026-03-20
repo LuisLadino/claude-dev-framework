@@ -164,6 +164,8 @@ docs/.vitepress/dist/
 # Local commands (personal, not distributed)
 .claude/commands/local/
 .claude/session-state.json
+.claude/current-context.json
+.claude/.kit-manifest
 
 # Phase Evaluator runtime files (session-specific)
 .claude/phase-evaluation.json

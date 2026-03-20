@@ -227,12 +227,14 @@ Generate `.claude/specs/design/design-system.md`:
 [Describe transition approach]
 ```
 
-Update stack-config.yaml:
+Add the design spec to stack-config.yaml (created in Step 5.5 below):
 
 ```yaml
-specs:
   design:
-    - design-system
+    - name: design-system
+      file: design/design-system.md
+      applies_to: []
+      description: "Visual decisions"
 ```
 
 ---
@@ -453,16 +455,42 @@ Generate `.claude/specs/architecture/project-structure.md` based on solution typ
 
 Generate `.claude/specs/design/design-system.md` (see Step 4 output format).
 
-### 5.5 Update stack-config.yaml
+### 5.5 Create or update stack-config.yaml
+
+If `.claude/specs/stack-config.yaml` doesn't exist yet, create it. If it exists, add the new specs.
 
 ```yaml
+# Stack Configuration
+# Created by /init-project, updated by /sync-stack
+
+name: "[project-name]"
+description: "[from project brief]"
+
+# Tech stack — filled in by /sync-stack after detection
+stack: {}
+
+# Specs registered so far
 specs:
   architecture:
-    - decisions
-    - project-structure
-  design:        # Only if UI project
-    - design-system
+    - name: decisions
+      file: architecture/decisions.md
+      applies_to: []
+      description: "Key technical choices (ADRs)"
+
+    - name: project-structure
+      file: architecture/project-structure.md
+      applies_to: []
+      description: "Where files go"
+
+  # Only if UI project:
+  design:
+    - name: design-system
+      file: design/design-system.md
+      applies_to: []
+      description: "Visual decisions"
 ```
+
+This gives `/sync-stack` a foundation to build on. It will add `stack:` details, `coding:` specs, `config:` specs, and `applies_to` patterns.
 
 ---
 

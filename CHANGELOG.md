@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Sync script** (`sync-kit.sh`) — One command to sync kit to all downstream projects. Handles adds, updates, deletions. Protects project-specific files and credentials. Supports fresh installs.
 - **MCP security scanner** (`mcp-security-scan.cjs`) — Scans outbound MCP tool calls for secrets and sensitive file references before they leave the machine
 - **Sub-agent context injection** (`subagent-context.cjs`) — Injects lightweight project context into every spawned sub-agent
 - **Security patterns config** (`security-patterns.json`) — Externalized security patterns for block-dangerous and MCP scanner

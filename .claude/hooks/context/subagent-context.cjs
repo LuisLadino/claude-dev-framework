@@ -121,8 +121,8 @@ function buildContextBlock(projectRoot) {
     contextLines.push(...extractFromStackConfig(stackConfig));
   }
 
-  // 4. Kit awareness
-  contextLines.push('Kit: claude-kit (specs enforced, design thinking phases, memory persistence)');
+  // 4. Kit awareness (generic — works in any project using the kit)
+  contextLines.push('Environment: claude-kit powered (specs enforced, design thinking phases, memory persistence)');
 
   return contextLines;
 }

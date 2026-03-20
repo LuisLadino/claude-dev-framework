@@ -1076,9 +1076,9 @@ Fix these issues? (yes/no)
 
 ---
 
-## STEP 13: Update stack-config.yaml
+## STEP 13: Create or Update stack-config.yaml
 
-Update `.claude/specs/stack-config.yaml` with:
+Create `.claude/specs/stack-config.yaml` if it doesn't exist, or update the existing one with:
 
 1. **Stack details** - framework, language, styling, testing, package_manager
 2. **Specs list** - each spec needs: name, file, applies_to patterns, description

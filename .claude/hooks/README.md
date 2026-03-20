@@ -52,7 +52,7 @@ All tracking data lives in Claude Code's native per-project directory:
 └── hook-errors.log  # Debug log for hook failures
 ```
 
-The workspace key is deterministic from the git root path (e.g., `-Users-luisladino-Repositories-Personal-my-project`).
+The workspace key is deterministic from the git root path (e.g., `-Users-username-projects-my-project`).
 
 ## Observability
 

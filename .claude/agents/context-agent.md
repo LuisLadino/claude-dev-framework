@@ -150,7 +150,7 @@ Structure your output like this:
 
 **Observations:**
 - [Strategic observation — patterns, connections, things the main session might miss]
-- [Cross-project opportunity if visible — e.g., "this pattern could apply to voir"]
+- [Cross-project opportunity if visible — e.g., "this pattern could apply to other projects"]
 - [Rhythm observation — e.g., "3 sessions in prototype without validation"]
 
 **Gaps:**

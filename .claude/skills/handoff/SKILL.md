@@ -36,7 +36,7 @@ The memory directory for this project lives at:
 
 To get the workspace key, convert the git root path: replace `/` with `-` and prefix with `-`.
 
-Example: `/Users/luisladino/Repositories/Personal/my-project` becomes `-Users-luisladino-Repositories-Personal-my-project`
+Example: `/Users/username/projects/my-project` becomes `-Users-username-projects-my-project`
 
 ### 2. Write handoff as project memory
 

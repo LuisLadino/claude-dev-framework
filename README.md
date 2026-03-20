@@ -62,12 +62,27 @@ Works with any stack: JavaScript, Python, Rust, Go, Swift, Ruby, and more.
 # 1. Clone
 git clone https://github.com/LuisLadino/claude-kit.git
 
-# 2. Copy kit files to your project
-cp -r claude-kit/.claude your-project/.claude
+# 2. Sync kit to your project
+./claude-kit/sync-kit.sh /path/to/your-project
 
-# 3. In your project, run
-/init-project    # Define requirements
+# 3. In your project, open Claude Code and run:
+/init-project    # Define what you're building
 /sync-stack      # Detect stack, generate specs
+```
+
+### Updating
+
+When the kit changes, re-run the sync script. It handles adds, updates, and deletions. Project-specific files (specs, docs, custom commands) are never touched.
+
+```bash
+# Update all downstream projects at once
+./sync-kit.sh
+
+# Update a single project
+./sync-kit.sh /path/to/project
+
+# Preview changes without applying
+./sync-kit.sh --dry-run
 ```
 
 ---
@@ -76,7 +91,7 @@ cp -r claude-kit/.claude your-project/.claude
 
 ### Setup (once per project)
 ```
-Discuss → Document → Create repo → Copy kit → /init-project → /sync-stack → /plan
+Create repo → ./sync-kit.sh /path/to/project → /init-project → /sync-stack → /plan
 ```
 
 ### Development (repeatable)
