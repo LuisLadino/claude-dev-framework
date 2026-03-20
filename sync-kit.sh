@@ -77,6 +77,7 @@ DOWNSTREAM=(
   "$HOME/Repositories/Personal/airedteaming-site"
   "$HOME/Repositories/Personal/adversarial-design-thinking"
   "$HOME/Repositories/Personal/design/PortfolioSite/site"
+  "$HOME/Repositories/Personal/space-names"
 )
 
 # Colors
