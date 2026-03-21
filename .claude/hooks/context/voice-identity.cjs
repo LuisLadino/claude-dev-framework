@@ -10,6 +10,7 @@
 
 // Content writing detection patterns
 const CONTENT_WRITING_PATTERNS = [
+  // Personal/brand content
   /\b(write|draft|create|compose) (a |an |the |my |some )?(article|post|blog|email|message|bio|copy|content|text|description|about|intro|summary)\b/i,
   /\b(write|draft) (this |that |it )?(for me|in my voice)\b/i,
   /\b(portfolio|site|website|page) (content|copy|text)\b/i,
@@ -23,15 +24,24 @@ const CONTENT_WRITING_PATTERNS = [
   /\bblog post\b/i,
   /\bwrite (up|out)\b/i,
   /\bput (this |it )?into words\b/i,
-  /\bhow (should|would) (I|this) (say|phrase|word)\b/i
+  /\bhow (should|would) (I|this) (say|phrase|word)\b/i,
+  // Review/feedback content
+  /\bwelcome comment\b/i,
+  /\bslack message\b/i,
+  /\b(final|review) form\b/i,
+  /\b(write|draft|add|update|fix|change|edit) .{0,30}(comment|feedback|issue|section|point)\b/i,
+  /\b(major|minor) issue/i,
+  /\boccupational (review|assessment)\b/i
 ];
 
 /**
- * Check if prompt is content writing
+ * Check if prompt is content writing on Luis's behalf
  */
 function isContentWriting(prompt) {
   return CONTENT_WRITING_PATTERNS.some(pattern => pattern.test(prompt));
 }
+
+const VOICE_REMINDER = `[VOICE REMINDER] You are writing content on Luis's behalf. Follow the "Writing for Luis" rules in CLAUDE.md. Key points: no em dashes, no corporate speak, active voice, short sentences, contractions, specific examples, varied sentence length. Read it out loud. Would Luis actually say this? If it sounds like AI wrote it, rewrite it.`;
 
 /**
  * Check prompt for voice reminder needs
@@ -44,7 +54,7 @@ function check(prompt) {
   }
 
   return {
-    content: [`[VOICE REMINDER] You are writing content on Luis's behalf. Follow the "Writing for Luis" rules in CLAUDE.md. Key points: no em dashes, no corporate speak, active voice, short sentences, contractions, specific examples. Would Luis actually say this?`],
+    content: [VOICE_REMINDER],
     voiceProfileLoaded: true
   };
 }

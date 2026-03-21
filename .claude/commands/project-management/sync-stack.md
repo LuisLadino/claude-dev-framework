@@ -220,52 +220,83 @@ Confirm? (yes / modify)
 
 ## STEP 5: Research Each Technology
 
-For each confirmed technology, research official patterns.
+For each confirmed technology, research how it actually works — not just the API, but runtime behavior, integration patterns, and common problems.
 
-### REQUIRED: Use context7 MCP
+### Why research is critical
 
+Claude's training data goes stale. Technologies update constantly. What you "know" about Astro, Motion, or Tailwind may be outdated. The point of this step is to **learn the current state** before building anything.
+
+### Research approach: multiple sources
+
+Use ALL available sources. No single source has complete knowledge.
+
+**1. Context7** — Start here for API reference and official patterns.
 ```
-Use the context7 MCP tool to fetch documentation for [technology].
+Use context7 to fetch documentation for [technology].
 Look for: project structure, naming conventions, common patterns, anti-patterns.
 ```
+Context7 is good for: what functions exist, how to call them, official best practices.
+Context7 is weak on: runtime behavior, cross-technology interactions, version-specific gotchas.
 
-### If context7 fails
+**2. Web search** — Use for operational knowledge that docs don't cover.
+```
+Search for:
+- "[technology A] + [technology B] integration" (how technologies work together)
+- "[technology] common problems [current year]" (what breaks in practice)
+- "[technology] SSR hydration issues" (runtime behavior gotchas)
+- "[technology] migration guide [version]" (what changed between versions)
+- "[tech A] with [tech B] example" (real-world integration patterns)
+```
+Web search is good for: community-discovered gotchas, real integration examples, version-specific behavior, "I tried X and it broke because Y."
+Prioritize: official docs, GitHub issues/discussions, well-known dev blogs. Deprioritize: outdated tutorials, AI-generated content, posts without dates.
 
-**STOP and notify the user.** Do not silently fall back to web search.
+**3. WebFetch on official docs** — For specific pages that context7 doesn't index well.
+- Framework integration guides (e.g., Astro's React integration page)
+- Migration/upgrade guides (what changed between versions)
+- Advanced topics pages (SSR, hydration, performance)
+
+### If all sources fail for a technology
 
 ```
-CONTEXT7 UNAVAILABLE
+RESEARCH INCOMPLETE
 
-context7 returned an error for [technology]:
-[error message]
+Could not find sufficient information for [technology]:
+- context7: [result]
+- Web search: [result]
+- Official docs: [result]
 
 Options:
-1. Retry context7
+1. Retry with different search terms
 2. Skip this technology for now
-3. Use WebFetch on official docs (e.g., react.dev, docs.astro.build)
-
-Note: Web search is NOT acceptable for core framework patterns.
-Official documentation only.
+3. Generate spec with what we have (will be marked as incomplete)
 ```
 
 **WAIT FOR USER RESPONSE** before proceeding.
 
-### WebFetch (only with user approval)
+### What to research per technology
 
-If user approves, use WebFetch on official documentation sites only:
-- react.dev (not random blogs)
-- docs.astro.build (not tutorials)
-- tailwindcss.com/docs (not Medium articles)
+Don't just look up "how to use [technology]." Research these specific angles:
 
-Never use general WebSearch for framework patterns.
+- **Current version behavior:** What version is in package.json? What changed in recent versions?
+- **Runtime lifecycle:** What happens at build time vs server time vs client time?
+- **Integration with other stack technologies:** How does this technology interact with the other technologies in this project's stack?
+- **Known issues:** What are the common "why isn't this working" problems?
+- **Anti-patterns with explanations:** Not just "don't do X" but "don't do X because Y happens at runtime"
 
 ### Extract from research (categorized by spec type):
 
-**For coding specs:**
+**For coding specs — API patterns:**
 - Component/function patterns
 - Import style
 - Error handling patterns
 - Common gotchas to avoid
+
+**For coding specs — Runtime behavior:**
+- **Lifecycle:** What happens from initialization to interactive? (e.g., Astro: SSR renders HTML → CSS applies → scripts load → framework hydrates → components become interactive)
+- **SSR/SSG behavior:** If the technology involves server rendering, what HTML does the browser receive? What inline styles or attributes are added during server render? What changes after client JS executes?
+- **Execution order:** When do scripts run? What's synchronous vs asynchronous? What blocks rendering?
+- **Side effects:** What does the technology do that isn't obvious from the API? (e.g., Motion's `initial` prop renders as inline CSS during SSR, making content invisible before JS loads)
+- **Conditional behavior:** Under what conditions does the technology behave differently? (e.g., `client:visible` uses IntersectionObserver — element must be visible in the viewport, not just in the DOM)
 
 **For architecture specs:**
 - File/folder conventions
@@ -281,6 +312,80 @@ Never use general WebSearch for framework patterns.
 - Code comment conventions
 - Docstring formats
 - README patterns
+
+---
+
+## STEP 5b: Cross-Technology Interaction Constraints
+
+**After researching each technology individually, analyze how they interact.**
+
+Individual technology docs describe how THEIR technology works. They don't describe what happens when their technology meets another. This step catches constraints that only emerge from combinations.
+
+### When to run this step
+
+Run this step when the stack has **2+ technologies that share a runtime concern**:
+- SSR framework + client-side library (Astro + React, Next.js + Motion)
+- CSS framework + JS framework (Tailwind + React, CSS Modules + Vue)
+- Build tool + framework (Vite + Svelte, Webpack + React)
+- ORM + API framework (Prisma + Express, Drizzle + tRPC)
+
+Skip this step for stacks where technologies don't interact at runtime (e.g., a Python CLI with just `click` and `requests`).
+
+### How to identify constraints
+
+For each **pair** of technologies in the stack, ask context7 or official docs:
+
+1. **Lifecycle conflicts:** Do both technologies assume control over the same lifecycle phase? (e.g., both try to manage component initialization, both modify the DOM on load)
+2. **SSR/hydration interactions:** If one technology server-renders and another expects client-side state, what happens during the gap? What does the user see between SSR output and full hydration?
+3. **CSS/visibility interactions:** Does one technology control visibility (CSS `display`, `opacity`) while another depends on visibility to activate? (e.g., IntersectionObserver-based hydration + CSS `display:none` containers)
+4. **Execution order dependencies:** Does technology A assume technology B has already run? What happens if B hasn't loaded yet?
+5. **Configuration conflicts:** Do both technologies need the same config option set to different values?
+
+### Research approach
+
+Use web search as the primary source here. Cross-technology interactions are rarely in official docs — they live in community knowledge.
+
+```
+For each technology pair, search for:
+- "[tech A] with [tech B] issues" (what breaks when combined)
+- "[tech A] [tech B] integration guide [current year]" (how to wire them correctly)
+- "[tech A] [tech B] gotchas" (community-discovered problems)
+- GitHub issues in both repos mentioning the other technology
+```
+
+Also check:
+- Official integration guides (e.g., Astro docs on React, Motion docs on SSR)
+- Context7 for any integration-specific documentation
+- Stack Overflow questions about the specific combination
+
+### Document as interaction constraints
+
+For each constraint found, document:
+
+```markdown
+### [Tech A] + [Tech B]: [Constraint Name]
+
+**What happens:** [Observable behavior when these interact]
+**Why:** [The mechanism — what each technology is doing that causes this]
+**Prevent by:** [What to do instead]
+
+Example:
+- Bad: [code that triggers the problem]
+- Good: [code that avoids it]
+```
+
+**Example constraints to look for:**
+
+| Stack Combination | Common Constraint |
+|---|---|
+| Astro + React | `client:visible` uses IntersectionObserver — won't hydrate components inside `display:none` containers (tabs, accordions, modals) |
+| Astro + Motion | Motion's `initial` prop renders as inline `style="opacity:0"` during SSR — content invisible until JS hydrates |
+| Next.js + Zustand | Server Components can't use client-side stores — state must be passed as props across the boundary |
+| Tailwind + dark mode | `darkMode: 'selector'` scopes to a CSS selector, `'class'` requires class on `<html>` — different integration patterns |
+| Prisma + serverless | Cold starts load the Prisma Client — connection pooling needed (PgBouncer, Prisma Accelerate) |
+| React + CSS transitions | React re-renders can interrupt CSS transitions mid-animation if state changes trigger unmount/remount |
+
+These constraints become the `## Interaction Constraints` section in the generated specs (Step 8b).
 
 ---
 
@@ -419,7 +524,7 @@ Update the template with:
 
 ## STEP 8: Generate All Specs
 
-**Use the research from Step 3 to fill in actual content.** Don't create empty templates. Every spec should contain real patterns from official docs.
+**Use the research from Steps 5 and 5b to fill in actual content.** Don't create empty templates. Every spec should contain real patterns from official docs, including runtime behavior and interaction constraints.
 
 ### 8a: Ask which categories to generate
 
@@ -464,6 +569,26 @@ export function Button({ label, onClick }: ButtonProps) {
 ### Hooks
 - Call hooks at the top level, not inside conditions
 - Custom hooks must start with "use"
+
+## Runtime Behavior
+
+### Lifecycle
+[What happens from initialization to interactive — the execution sequence, not just the API]
+
+### SSR Behavior (if applicable)
+[What does the server render? What HTML does the browser receive? What changes after JS executes?]
+
+### Side Effects
+[What does this technology do that isn't obvious from the API? Inline styles added during SSR, DOM mutations, global state changes, etc.]
+
+## Interaction Constraints
+
+[Constraints that emerge from combining this technology with others in the stack. From Step 5b research.]
+
+### [This Tech] + [Other Tech]: [Constraint Name]
+**What happens:** [Observable behavior]
+**Why:** [Mechanism]
+**Prevent by:** [What to do instead]
 
 ## Anti-Patterns
 

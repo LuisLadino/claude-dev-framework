@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Runtime behavior specs** — /sync-stack now generates specs with runtime lifecycle, SSR behavior, side effects, and cross-technology interaction constraints (not just API reference)
+- **Multi-source research** — /sync-stack uses web search + context7 + official docs together. No longer restricted to context7 alone.
+- **Cross-technology constraints** — New Step 5b analyzes technology pairs for interaction gotchas (e.g., Astro hydration + CSS visibility)
+- **Voice hook patterns** — Added review/feedback content detection (welcome comment, slack message, review form, etc.)
 - **Sync script** (`sync-kit.sh`) — One command to sync kit to all downstream projects. Handles adds, updates, deletions. Protects project-specific files and credentials. Supports fresh installs.
 - **MCP security scanner** (`mcp-security-scan.cjs`) — Scans outbound MCP tool calls for secrets and sensitive file references before they leave the machine
 - **Sub-agent context injection** (`subagent-context.cjs`) — Injects lightweight project context into every spawned sub-agent
