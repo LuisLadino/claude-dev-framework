@@ -148,6 +148,7 @@ Update this file with the new pattern.
 | Use commit skill | Marker-based | `enforce-skills.cjs` | Skills undertrigger 80% |
 | Read plan before issues | State-based | `enforce-plan.cjs` | Issues need proper context |
 | Block dangerous commands | Marker-based (no bypass) | `block-dangerous.cjs` | Safety |
+| Voice guidelines on clipboard | Marker-based | `enforce-voice.cjs` | Content represents Luis externally |
 
 Note: `check-teaching-format.cjs` and `enforce-framing.cjs` were removed. Format enforcement is now handled by system-prompt.md (primacy effect) + inject-context.cjs per-prompt reminder (recency effect). Phase tracking is embedded in the phase skills (/research, /define, /ideate, /build, /test), not enforced via TaskCreate/TaskUpdate gates.
 

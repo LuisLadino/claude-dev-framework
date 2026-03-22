@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Voice enforcement on clipboard** (`enforce-voice.cjs`) — Blocks pbcopy until voice guidelines are reviewed. Marker-based: requires `VOICE_CHECKED=1` prefix after reviewing "Writing for Luis" rules. Addresses #59.
 - **Runtime behavior specs** — /sync-stack now generates specs with runtime lifecycle, SSR behavior, side effects, and cross-technology interaction constraints (not just API reference)
 - **Multi-source research** — /sync-stack uses web search + context7 + official docs together. No longer restricted to context7 alone.
 - **Cross-technology constraints** — New Step 5b analyzes technology pairs for interaction gotchas (e.g., Astro hydration + CSS visibility)

@@ -31,6 +31,7 @@ During Session
   ├── inject-context.cjs (phase reminders, spec triggers, voice)
   ├── enforce-specs.cjs BLOCKS edits until specs are read
   ├── enforce-skills.cjs BLOCKS git commit (must use /commit)
+  ├── enforce-voice.cjs BLOCKS pbcopy until voice guidelines reviewed
   ├── block-dangerous.cjs blocks destructive commands + secrets
   └── tracking hooks log tool calls, file changes, commands
        │
@@ -161,7 +162,7 @@ Skills auto-trigger from natural language. They map to design thinking phases.
 ├── hooks/
 │   ├── safety/            # block-dangerous.cjs, enforce-specs.cjs, enforce-skills.cjs, mcp-security-scan.cjs
 │   ├── tracking/          # tool-tracker, track-changes, command-log, awareness
-│   ├── context/           # inject-context, session-init, spawn-context-agent, subagent-context
+│   ├── context/           # inject-context, session-init, spawn-context-agent, subagent-context, enforce-voice
 │   ├── quality/           # verify-before-stop.cjs
 │   └── lifecycle/         # spawn-phase-evaluator.cjs
 ├── commands/
@@ -201,6 +202,7 @@ Hooks fire automatically. They enforce behavior without manual reminders.
 - **session-init.cjs** - Session tracking, config change detection
 - **spawn-context-agent.cjs** - Background project evaluation at session start
 - **subagent-context.cjs** - Injects project context into sub-agents
+- **enforce-voice.cjs** - Blocks pbcopy until voice guidelines are reviewed (marker-based: `VOICE_CHECKED=1`)
 - **detect-pivot.cjs** - Prompts for /sync-stack when dependencies change
 
 ### Quality
