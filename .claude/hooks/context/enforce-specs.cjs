@@ -75,7 +75,9 @@ function handleHook(data) {
   const pendingEditArray = Array.isArray(readSpecs) ? readSpecs : [readSpecs];
 
   // Check if we have the required spec (or any related specs)
-  const requiredSpecs = [match.name, ...(match.related || [])];
+  // Accept both frontmatter name and file basename — track-spec-reads may use either
+  const basename = path.basename(match.specPath, path.extname(match.specPath));
+  const requiredSpecs = [match.name, basename, ...(match.related || [])];
   const hasRequired = requiredSpecs.some(req => pendingEditArray.includes(req));
 
   if (hasRequired) {

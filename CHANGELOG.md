@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **enforce-specs name mismatch** (#60) — Gate now accepts both frontmatter name and file basename when checking `pendingEdit`. Fixes false blocks when `track-spec-reads` stored a different name variant than `enforce-specs` expected.
 - **track-spec-reads.cjs yaml crash** (#50) — Removed external `yaml` dependency, replaced with inline parser. Was crashing in all downstream projects.
 - **Security pattern bypasses** (#49) — Force-push flag ordering, `--force-with-lease` false block, rm anchor bypass, `cat .env.example` false positive, heredoc body-text scanning
 - **analyze.md portability** (#54) — Removed 5 hardcoded paths, moved personal goals out of kit-owned file
