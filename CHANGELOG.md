@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Self-documentation spec** (`self-documentation.md`) — Formatting and content rules for documents Claude writes for its own consumption. Enforced via enforce-specs on CLAUDE.md, specs, agents, skills, commands, and docs. Prevents human-oriented formatting (tables for linear data, decorative separators, ASCII art, redundant information) in files meant for LLM consumption.
 - **Decision-surfacing gate in /ideate** — Ideate skill now requires listing every decision an approach needs before declaring readiness for build. Forces Claude to surface what's being decided, what it's choosing, and what it locks in. Build skill checks decisions were surfaced. Addresses #62.
 - **/review in workflow** — Documented workflow now includes /review between /test and /commit.
 - **Richer ADR template** — init-project ADR template now includes "Options considered" and "Consequences" fields.

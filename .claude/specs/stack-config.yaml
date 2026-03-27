@@ -61,6 +61,19 @@ specs:
         - ".claude/specs/**/*.yaml"
       description: "How to structure spec files"
 
+    - name: self-documentation
+      file: claude-code/self-documentation.md
+      applies_to:
+        - "CLAUDE.md"
+        - ".claude/CLAUDE.md"
+        - ".claude/docs/**/*.md"
+        - ".claude/specs/**/*.md"
+        - ".claude/agents/**/*.md"
+        - ".claude/skills/**/*.md"
+        - ".claude/commands/**/*.md"
+      related: [instruction-format]
+      description: "Formatting and content rules for documents Claude writes for itself"
+
     - name: anti-patterns
       file: claude-code/anti-patterns.md
       applies_to: []
