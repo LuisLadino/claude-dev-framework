@@ -37,8 +37,9 @@ Before starting, state:
 - What you're building (from IDEATE's chosen approach)
 - What the Definition of Done is (from DEFINE)
 - What you're NOT building (scope boundary)
+- What decisions were made (from IDEATE's decision surfacing)
 
-If any of these are unclear, go back. Building the wrong thing fast is worse than building the right thing slow.
+If any of these are unclear, go back to the right phase. If decisions were never surfaced or accepted by the user, go back to IDEATE. Building the wrong thing fast is worse than building the right thing slow.
 
 ---
 
