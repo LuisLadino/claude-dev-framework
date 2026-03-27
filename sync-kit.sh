@@ -78,6 +78,7 @@ DOWNSTREAM=(
   "$HOME/Repositories/Personal/adversarial-design-thinking"
   "$HOME/Repositories/Personal/design/PortfolioSite/site"
   "$HOME/Repositories/Personal/space-names"
+  "$HOME/Repositories/Personal/heading-site"
   "$HOME/Repositories/Work/red-team-ops"
 )
 
