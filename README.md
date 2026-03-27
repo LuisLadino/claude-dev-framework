@@ -12,7 +12,7 @@ A toolkit that makes Claude Code:
 
 1. **Remember across sessions** - Memory persists. What Claude learns today carries forward.
 2. **Work your way** - Your preferences, patterns, and voice are enforced consistently.
-3. **Follow design thinking** - Skills map to phases: research, define, ideate, build, test, commit.
+3. **Follow design thinking** - Skills map to phases: research, define, ideate, build, test, review, commit.
 4. **Stay safe** - Hooks block dangerous commands, enforce specs, and scan for secrets.
 
 Without this, every Claude session starts blank. With it, Claude has continuity, awareness, and structure.

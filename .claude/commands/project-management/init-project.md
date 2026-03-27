@@ -99,10 +99,12 @@ For each significant choice, document:
 ## Decision: [Title]
 
 **Context:** Why this decision matters
-**Options considered:** What alternatives exist
+**Options considered:**
+1. [Option] — [brief rationale]
+2. [Option] — [brief rationale]
 **Decision:** What we chose
 **Rationale:** Why this option
-**Consequences:** What this enables/limits
+**Consequences:** What this locks in. What becomes hard to change.
 ```
 
 Common decisions to capture:
@@ -441,8 +443,12 @@ Generate `.claude/specs/architecture/decisions.md`:
 
 ### Decision 1: [Title]
 **Context:** ...
+**Options considered:**
+1. [Option] — [brief rationale]
+2. [Option] — [brief rationale]
 **Decision:** ...
 **Rationale:** ...
+**Consequences:** What this locks in. What becomes hard to change.
 
 [Continue for each decision from 2.3]
 ```

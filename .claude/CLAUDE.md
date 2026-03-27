@@ -37,7 +37,7 @@ Run `./sync-kit.sh` from the claude-kit repo. It handles adds, updates, and dele
 Create repo → `./sync-kit.sh /path/to/project` → /init-project → /sync-stack → /plan
 
 **Working (repeatable):**
-GitHub Issue → /research → /define → /ideate → /build → /test → /commit → Merge
+GitHub Issue → /research → /define → /ideate → /build → /test → /review → /commit → Merge
 
 Skills map to design thinking phases. /research is the entry point (understand the problem). /build is the commitment point (create branch, start making). Issue moves to "In Progress" at /build. Commit skill handles push + PR. Issue auto-closes on merge.
 
